@@ -1,0 +1,116 @@
+[project]
+name = "ark"
+version = "0.1.0"
+description = "End-to-end data science project to predict battery capacity using the CALCE dataset."
+readme = "README.md"
+license = { text = "Apache-2.0" }
+requires-python = ">=3.11"
+authors = [
+    { name = "sambaiga", email = "sambaiga@gmail.com" }]
+keywords = [ "data-science", "battery"]
+
+dependencies = [
+    "pydantic>=2.10.6",
+    "numpy>=2.0.0",
+    "pandas>=2.2.3",
+    "pyarrow>=17.0.0",
+    "tqdm>=4.66.4,<5.0.0",
+    "lets-plot>=4.7.0",
+    "matplotlib>=3.0.0",
+    "great-tables>=0.20.0"
+]
+
+[project.optional-dependencies]
+modelling = [
+    "xgboost>=3.1.1",
+    "optuna>=4.5.0",
+    "optuna-integration>=4.5.0",
+    "scikit-learn>=1.7.2",
+]
+
+mlops = [
+
+]
+
+test = [
+    "pytest>=8.2.1",
+    "pytest-cov>=6.0.0",
+]
+
+dev = [
+    "commitizen>=4.3.0",
+    "pre-commit>=4.1.0",
+    "pycln>=2.5.0",
+    "ruff>=0.9.3",
+    "mypy>=1.13.0,",
+    "safety>=3.2.0",
+    "ipython>=9.1.0",
+    "ipykernel>=6.29.5",
+    "jupyter",
+    "black>=24.0.0",
+    "prettier>=0.0.7"
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+
+packages = ["ark"]
+
+[tool.pytest.ini_options]
+norecursedirs = ["notebook", "data"]
+addopts = "--cov=ark --cov-report=term-missing --cov-report=xml --cov-config=.coveragerc --cov-fail-under=80"
+
+[tool.ruff]
+target-version = "py311"
+exclude = ["__pycache__", "env", ".env", "venv", ".venv"]
+line-length = 120
+
+[tool.ruff.lint]
+select = [
+    "B", "C4", "D", "E", "F", "I", "N", "PGH", "PTH", "Q", "S", "SIM", "TRY", "UP", "W", "YTT"
+]
+ignore = [
+    "D100", "D101", "D102", "D103", "D104", "D105", "D106", "D107",
+    "D200", "D401", "E402", "F401", "N812", "TRY003", "N803"
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S101"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["ark"]
+known-third-party = ["numpy", "pandas"]
+combine-as-imports = true
+force-sort-within-sections = true
+
+[tool.ruff.format]
+docstring-code-format = true
+
+[tool.ruff.lint.flake8-bugbear]
+extend-immutable-calls = ["chr"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.mypy]
+python_version = "3.11"
+strict = false
+ignore_missing_imports = true
+exclude = ["tests", "examples"]
+
+
+[tool.pycln]
+all = true
+exclude = ["tests/"]
+
+[tool.codespell]
+skip = "*.ipynb"
+
+[tool.commitizen]
+bump_message = "bump: v$current_version → v$new_version"
+tag_format = "v$version"
+update_changelog_on_bump = true
+version_provider = "pep621"
