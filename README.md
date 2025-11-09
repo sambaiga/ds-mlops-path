@@ -86,7 +86,7 @@ This sets up hooks that automatically format and lint your code before each comm
 
 Once setup is complete:
 
-1. Open the project in VS Code (or your preferred IDE).
+1. Open the project in VS Code. Make sure you have [python](https://marketplace.visualstudio.com/items?itemName=ms-python.python) and [jupyter notebook](https://marketplace.visualstudio.com/items?itemName=ms-toolsai.jupyter) extensions installed.
 
 2. Run the `data_exploration.ipynb` notebook from the /notebooks folder.
 
