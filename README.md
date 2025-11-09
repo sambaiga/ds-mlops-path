@@ -30,19 +30,20 @@ Each phase will be developed in a feature branch, reviewed through a Pull Reques
 
 
 
-<details> <summary><b>Installation and Setup </b></summary>
-
+<details>
+<summary><b>Installation and Setup</b></summary>
 
 1. **Clone the repository**:
    ```bash
-   https://github.com/sambaiga/battery-capacity-project.git
+   git clone https://github.com/sambaiga/battery-capacity-project.git
    ```
 
 2. **Install** [uv](https://docs.astral.sh/uv/getting-started/installation/) (if not already installed):
   ```bash
    curl -LsSf https://astral.sh/uv/install.sh | sh
    ```
-1.  **Create and activate the virtual environment**
+
+3.  **Create and activate the virtual environment**
 
   ```bash
     # Create the environment in .venv
@@ -51,6 +52,7 @@ Each phase will be developed in a feature branch, reviewed through a Pull Reques
   ```bash
     # Activate the environment
     source .venv/bin/activate
+  ```
 
 4. **Install all dependencies**
 
@@ -90,27 +92,27 @@ Once setup is complete:
 
 3. Verify imports and paths load correctly.
 
-4. Download the dataset from [CALCE Processed Dataset on Figshare]((https://figshare.com/articles/dataset/Calce_Processed_dataset/30575315))
+4. Download the dataset from [CALCE Processed Dataset on Figshare](https://figshare.com/articles/dataset/Calce_Processed_dataset/30575315)
  and place it under: dataset folder.
 
 
 
 If everything runs smoothly, your environment is correctly configured and ready for development.
 
+```
+</details>
+
 ## 🧭 Next Steps
 
-### First Project: Predict battery capacity
+<details>
+<summary><b>First Project: Predict battery capacity</b></summary>
 
 This project aims to predict battery capacity from charging and discharging features using the CALCE Battery Dataset.
 
 Proceed to:
 
-<details> <summary><b>Phase 1 — Data Loading & Exploration</b></summary>
 
-
-
-Through this project, you will:
-
+### Phase 1 — Data Loading & Exploration
 
 🎯 Goal:
 Understand and explore the dataset to build familiarity with its structure, content, and potential modeling features.
@@ -127,3 +129,6 @@ Understand and explore the dataset to build familiarity with its structure, cont
 
 **References**
 - https://github.com/sambaiga/AI4DLearning?tab=readme-ov-file
+
+```
+</details>
