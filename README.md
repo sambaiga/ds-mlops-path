@@ -77,6 +77,7 @@ This sets up hooks that automatically format and lint your code before each comm
 
 7. **Install git-cliff (for changelog)**
    If you want to maintain an automated changelog:
+   If you want to maintain an automated changelog:
   ```bash
     brew install git-cliff
   ```
