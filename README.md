@@ -1,20 +1,31 @@
 # Predicting Battery Capacity — Data Science End-to-End Project
 
+
+
+
 ## Project Overview
 
 This project aims to predict battery capacity from charging and discharging features using the CALCE Battery Dataset. It is designed as a guided, modular learning path for transitioning  to applied data science and MLOps.
 
 Through this project, you will:
 
-- Build a data science project following software engineering best practices.
+- Build a data science project following both software engineering and data science best practices, using modular, testable, and well-structured code.
 
-- Learn to package your code into reusable components.
+- Follow the [CRISP-DM framework](https://medium.com/@shawn.chumbar/the-crisp-dm-process-a-comprehensive-guide-4d893aecb151) to apply a systematic, end-to-end data science process from business understanding to deployment.
 
-- Apply machine learning pipelines for regression using scikit-learn and XGBoost.
+- Develop regression models using [scikit-learn](https://scikit-learn.org/stable/) and [XGBoost](https://xgboost.readthedocs.io/en/stable/) within reproducible machine learning pipelines.
 
-- Deploy a model locally as an API using FastAPI + Docker.
+_ Deploy the trained model using modern MLOps tools and workflows, including FastAPI, [Docker](https://www.docker.com/), [MLflow](https://mlflow.org/), [prefect](https://www.prefect.io/) to simulate real-world production environments.
 
-- Simulate MLOps principles (versioning, CI/CD, reproducibility).
+## 🎓 Outcome
+
+By the end of this project, you will have mastered:
+
+- The end-to-end data science process — from data to deployment.
+
+- The tools and workflows used in professional ML projects.
+
+- How to think, structure, and deliver like a data scientist working in production environments.
 
 Each phase will be developed in a feature branch, reviewed through a Pull Request (PR), and merged into main.
 
@@ -23,8 +34,7 @@ Each phase will be developed in a feature branch, reviewed through a Pull Reques
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/your-username/your-repo.git
-   cd your-repo
+   https://github.com/sambaiga/battery-capacity-project.git
    ```
 
 2. **Install** [uv](https://docs.astral.sh/uv/getting-started/installation/) (if not already installed):
@@ -65,17 +75,47 @@ This sets up hooks that automatically format and lint your code before each comm
     ```
 
 7. **Install git-cliff (for changelog)**
+   If you want to maintain an automated changelog:
   ```bash
     brew install git-cliff
   ```
-Once you've completed these steps, you are ready to open the project in VS Code and test your setup by running the test notebook.
 
-### Key Development Workflow Commands
 
-| Task                                | Command                                      | Purpose |
-|-------------------------------------|----------------------------------------------|---------|
-| **Code Formatting (Apply)**         | `uv run ruff format .`                       | Applies automatic code formatting across the entire project. Run this frequently to maintain style consistency. |
-| Linting & Fixing                | `uv run ruff check . --fix`                  | Runs the linter to detect issues and attempts to automatically fix simple violations (like unused imports). |
-| Formatting (Check)              | `uv run ruff format . --check`               | Checks if any files require formatting. It fails (exits non-zero) if changes are needed, making it perfect for CI/pre-commit checks. |
-| Test Run (Full)                | `uv run pytest`                              | Executes your entire test suite. This automatically includes coverage reports as configured in your `pyproject.toml`. |
-| Run Hooks Manually              | `uv run pre-commit run --all-files`          | Executes all pre-commit checks (formatting, linting, lock file check) on every file. Use this for a full project cleanup before pushing. |
+### Verification
+
+Once setup is complete:
+
+1. Open the project in VS Code (or your preferred IDE).
+
+2. Run the `data_exploration.ipynb` notebook from the /notebooks folder.
+
+3. Verify imports and paths load correctly.
+
+4. Download the dataset from [CALCE Processed Dataset on Figshare]((https://figshare.com/articles/dataset/Calce_Processed_dataset/30575315))
+ and place it under: dataset folder.
+
+
+
+If everything runs smoothly, your environment is correctly configured and ready for development.
+
+## 🧭 Next Steps
+
+Proceed to:
+
+<details> <summary><b>Phase 1 — Data Loading & Exploration</b></summary>
+
+🎯 Goal:
+Understand and explore the dataset to build familiarity with its structure, content, and potential modeling features.
+
+🧩 Tasks:
+
+- Load and summarize data using a reusable data_loader module.
+
+- Perform exploratory data analysis (EDA) to assess distributions, trends, and data quality.
+
+- Visualize capacity degradation and relationships between features.
+
+- Document insights and questions in a Jupyter notebook.
+
+**References**
+- https://github.com/sambaiga/AI4DLearning?tab=readme-ov-file
