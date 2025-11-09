@@ -18,102 +18,96 @@ Across the various projects—starting with Capacity Prediction (Regression)—y
 ## 🎓 Outcome
 
 By the end of this project, you will have mastered:
+By completing each project, you will:
+- Deliver production-grade ML systems.
+- Use MLOps tools like professionals
+- Structure code and workflowslike a senior data scientist.
 
-- The end-to-end data science process — from data to deployment.
-
-- The tools and workflows used in professional ML projects.
-
-- How to think, structure, and deliver like a data scientist working in production environments.
-
-Each phase will be developed in a feature branch, reviewed through a Pull Request (PR), and merged into main.
+> Each phase uses feature branches → PR reviews → merge to main.
 
 
 
 
-<details>
-<summary><b>Installation and Setup</b></summary>
+## Installation and Setup
 
 1. **Clone the repository**:
-   ```bash
-   git clone https://github.com/sambaiga/battery-capacity-project.git
-   ```
+```bash
+git clone https://github.com/sambaiga/ds-mlops-path
+```
 
 2. **Install** [uv](https://docs.astral.sh/uv/getting-started/installation/) (if not already installed):
-  ```bash
+```bash
    curl -LsSf https://astral.sh/uv/install.sh | sh
-   ```
+```
 
 3.  **Create and activate the virtual environment**
 
-  ```bash
-    # Create the environment in .venv
-    uv venv --python 3.11
-  ```
-  ```bash
-    # Activate the environment
-    source .venv/bin/activate
-  ```
+```bash
+# Create the environment in .venv
+uv venv --python 3.11
+```
+```bash
+# Activate the environment
+source .venv/bin/activate
+```
 
 4. **Install all dependencies**
 
 This command reads the ``pyproject.toml`` file and installs all required packages (main, dev, test, etc.).
 
- ```bash
-     uv sync --extra modelling  --extra dev --extra test
- ```
-
+```bash
+uv sync --extra modelling  --extra dev --extra test
+```
 
 5. **Install the project in editable mode**.
-   This is crucial for development and ensures you can import your local ark package (e.g., in Jupyter notebooks).
-    ```bash
+This is crucial for development and ensures you can import your local ark package (e.g., in Jupyter notebooks).
+```bash
         uv pip install -e .
-    ```
+```
 
 6. **Initialize pre-commit hooks**
 This sets up hooks that automatically format and lint your code before each commit. Since pre-commit is now installed in your environment, we run it via `uv run`.
-    ```bash
-    uv run pre-commit install
-    ```
+```bash
+uv run pre-commit install
+```
 
 7. **Install git-cliff (for changelog)**
-   If you want to maintain an automated changelog:
-   If you want to maintain an automated changelog:
-  ```bash
+If you want to maintain an automated changelog.
+```bash
     brew install git-cliff
-  ```
+```
 
 
 ### Verification
 
 Once setup is complete:
 
-1. Open the project in VS Code. Make sure you have [python](https://marketplace.visualstudio.com/items?itemName=ms-python.python) and [jupyter notebook](https://marketplace.visualstudio.com/items?itemName=ms-toolsai.jupyter) extensions installed.
-
-2. Run the `data_exploration.ipynb` notebook from the /notebooks folder.
-
-3. Verify imports and paths load correctly.
-
-4. Download the dataset from [CALCE Processed Dataset on Figshare](https://figshare.com/articles/dataset/Calce_Processed_dataset/30575315)
+1. Download the dataset from [CALCE Processed Dataset on Figshare](https://figshare.com/articles/dataset/Calce_Processed_dataset/30575315)
  and place it under: dataset folder.
 
+2. Open the project in VS Code. Make sure you have [python](https://marketplace.visualstudio.com/items?itemName=ms-python.python) and [jupyter notebook](https://marketplace.visualstudio.com/items?itemName=ms-toolsai.jupyter) extensions installed.
+
+3. Run the `data_exploration.ipynb` notebook from the /notebooks folder.
+
+4. Verify imports and paths load correctly.
 
 
 If everything runs smoothly, your environment is correctly configured and ready for development.
 
-```
-</details>
+
 
 ## 🧭 Next Steps
 
-<details>
-<summary><b>First Project: Predict battery capacity</b></summary>
+### First Project: Predict battery capacity
 
 This project aims to predict battery capacity from charging and discharging features using the CALCE Battery Dataset.
 
-Proceed to:
+Proceed to.
 
 
-### Phase 1 — Data Loading & Exploration
+<details>
+<summary><b>hase 1 — Data Loading & Exploration</b></summary>
+
 
 🎯 Goal:
 Understand and explore the dataset to build familiarity with its structure, content, and potential modeling features.
@@ -131,5 +125,5 @@ Understand and explore the dataset to build familiarity with its structure, cont
 **References**
 - https://github.com/sambaiga/AI4DLearning?tab=readme-ov-file
 
-```
 </details>
+
