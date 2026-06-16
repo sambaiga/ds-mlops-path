@@ -34,6 +34,13 @@ jobs:
             pre-commit-
       - name: Run pre-commit hooks
         uses: pre-commit/action@v3.0.1
+        env:
+          # no-commit-to-branch checks out the branch a *push* landed on, which
+          # for the push-to-main trigger below is always main by definition -
+          # it would fail on every single merge. It still runs (and protects)
+          # locally and on pull_request runs, where the checked-out branch is
+          # the feature branch, not main.
+          SKIP: no-commit-to-branch
 
   test-and-lint:
     runs-on: ubuntu-latest
