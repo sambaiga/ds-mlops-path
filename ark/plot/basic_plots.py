@@ -17,6 +17,8 @@ from lets_plot import (
 import numpy as np
 import pandas as pd
 
+from ark.plot.tokens import INFO
+
 from .theme import modern_theme, pro_colors
 
 
@@ -58,7 +60,7 @@ def line_plot(
         ggplot()
         + geom_line(
             aes(x=x_arr, y=y_arr),
-            color="#1f77b4",
+            color=INFO,
             size=1.2,
             stat="identity",
             sampling=None,
@@ -70,7 +72,6 @@ def line_plot(
             title=title,
         )
         + modern_theme()
-        + scale_color_manual(values=pro_colors)
         + ggsize(*plot_size)
     )
 
