@@ -1,0 +1,1479 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.38">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>12&nbsp; Part 11: Polars &amp; the Expression API – DS-MLOps Path</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<link href="../../tutorials/01-python-basics/10-combining-reshaping.html" rel="prev">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-de63f62b328812d8e578a4d74e282472.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-25d02d6ee2c20d6bcb3e5ee92e71e791.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-sidebar floating nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">DS-MLOps Path</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/sambaiga/ds-mlops-path"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+    <a href="https://github.com/sambaiga/ds-mlops-path" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../tutorials/01-python-basics/08-pandas-core.html">Part 2 - Data Analysis</a></li><li class="breadcrumb-item"><a href="../../tutorials/01-python-basics/11-polars.html"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Part 11: Polars &amp; the Expression API</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Welcome</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Part 1 - Python Basics</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/01-python-core.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Part 1: Language Core (Data &amp; Types)</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/02-control-flow.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Part 2: Language Core (Control Flow &amp; Comprehensions)</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/03-python-patterns.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Part 3: Patterns for Data Science &amp; ML</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/04-numpy.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Part 4: NumPy for Data &amp; ML</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/05-matplotlib.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Part 5: Matplotlib and Its Ecosystem</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/06-lets-plot.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Part 6: Grammar of Graphics with Lets-Plot</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/07-data-storytelling.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Part 7: Data Storytelling and House Style</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Part 2 - Data Analysis</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/08-pandas-core.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Part 8: Pandas Core</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/09-pandas-operations.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Part 9: Pandas Operations</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/10-combining-reshaping.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Part 10: Combining, Reshaping &amp; Time Series</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/11-polars.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Part 11: Polars &amp; the Expression API</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#before-you-begin" id="toc-before-you-begin" class="nav-link active" data-scroll-target="#before-you-begin"><span class="header-section-number">12.1</span> Before you begin</a></li>
+  <li><a href="#callout-guide" id="toc-callout-guide" class="nav-link" data-scroll-target="#callout-guide"><span class="header-section-number">12.2</span> Callout guide</a></li>
+  <li><a href="#learning-objectives" id="toc-learning-objectives" class="nav-link" data-scroll-target="#learning-objectives"><span class="header-section-number">12.3</span> Learning Objectives</a></li>
+  <li><a href="#dataframe-construction" id="toc-dataframe-construction" class="nav-link" data-scroll-target="#dataframe-construction"><span class="header-section-number">12.4</span> 1. DataFrame Construction</a></li>
+  <li><a href="#the-expression-api-select-filter-with_columns" id="toc-the-expression-api-select-filter-with_columns" class="nav-link" data-scroll-target="#the-expression-api-select-filter-with_columns"><span class="header-section-number">12.5</span> 2. The Expression API: <code>select</code>, <code>filter</code>, <code>with_columns</code></a></li>
+  <li><a href="#groupby-and-aggregation" id="toc-groupby-and-aggregation" class="nav-link" data-scroll-target="#groupby-and-aggregation"><span class="header-section-number">12.6</span> 3. GroupBy and Aggregation</a></li>
+  <li><a href="#lazyframe-and-lazy-evaluation" id="toc-lazyframe-and-lazy-evaluation" class="nav-link" data-scroll-target="#lazyframe-and-lazy-evaluation"><span class="header-section-number">12.7</span> 4. LazyFrame and Lazy Evaluation</a></li>
+  <li><a href="#datetime-in-polars" id="toc-datetime-in-polars" class="nav-link" data-scroll-target="#datetime-in-polars"><span class="header-section-number">12.8</span> 5. Date/Time in Polars</a></li>
+  <li><a href="#migration-patterns-pandas-to-polars" id="toc-migration-patterns-pandas-to-polars" class="nav-link" data-scroll-target="#migration-patterns-pandas-to-polars"><span class="header-section-number">12.9</span> 6. Migration Patterns: pandas to Polars</a></li>
+  <li><a href="#capstone-reproduce-the-pandas-capstone-exercises-in-polars" id="toc-capstone-reproduce-the-pandas-capstone-exercises-in-polars" class="nav-link" data-scroll-target="#capstone-reproduce-the-pandas-capstone-exercises-in-polars"><span class="header-section-number">12.10</span> Capstone: Reproduce the pandas Capstone Exercises in Polars</a></li>
+  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary"><span class="header-section-number">12.11</span> Summary</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.dev/sambaiga/ds-mlops-path/blob/main/tutorials/01-python-basics/11-polars.ipynb" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/sambaiga/ds-mlops-path/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../tutorials/01-python-basics/08-pandas-core.html">Part 2 - Data Analysis</a></li><li class="breadcrumb-item"><a href="../../tutorials/01-python-basics/11-polars.html"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Part 11: Polars &amp; the Expression API</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Part 11: Polars &amp; the Expression API</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p><a href="https://colab.research.google.com/github/sambaiga/ds-mlops-path/blob/main/tutorials/01-python-basics/11-polars.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open In Colab"></a> <a href="https://raw.githubusercontent.com/sambaiga/ds-mlops-path/main/tutorials/01-python-basics/11-polars.ipynb"><img src="https://img.shields.io/badge/Download-Notebook-blue.svg?logo=jupyter&amp;logoColor=white" class="img-fluid" alt="Download Notebook"></a></p>
+<p><strong>DS-MLOps Data Analysis</strong></p>
+<p><strong>Python 3.12+ | Author: Anthony Faustine</strong></p>
+<section id="before-you-begin" class="level2" data-number="12.1">
+<h2 data-number="12.1" class="anchored" data-anchor-id="before-you-begin"><span class="header-section-number">12.1</span> Before you begin</h2>
+<p>This notebook continues from Part 10 (<code>10-combining-reshaping.ipynb</code>). You should be comfortable with pandas DataFrames, <code>groupby</code>, merging, and time-indexed data before starting here.</p>
+<p>Polars is a modern DataFrame library written in Rust. It uses an expression-based API and a lazy evaluation model that lets it optimize queries before running them. The same two datasets from Parts 8-10 are used here so you can compare pandas and Polars syntax on familiar ground.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Topic</th>
+<th>Why it matters</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>DataFrame construction</strong></td>
+<td>Polars and pandas share the concept; the API differs in key ways</td>
+</tr>
+<tr class="even">
+<td><strong>Expression API</strong></td>
+<td><code>pl.col()</code> expressions replace bracket indexing and make queries composable</td>
+</tr>
+<tr class="odd">
+<td><strong>GroupBy and aggregation</strong></td>
+<td>Same split-apply-combine logic, cleaner syntax</td>
+</tr>
+<tr class="even">
+<td><strong>LazyFrame</strong></td>
+<td>Defer execution and let Polars optimize the query plan before running</td>
+</tr>
+<tr class="odd">
+<td><strong>Date/time</strong></td>
+<td>Polars parses and handles dates natively, no <code>.dt</code> accessor for most operations</td>
+</tr>
+<tr class="even">
+<td><strong>Migration patterns</strong></td>
+<td>Side-by-side pandas-to-Polars translations for the operations you already know</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="callout-guide" class="level2" data-number="12.2">
+<h2 data-number="12.2" class="anchored" data-anchor-id="callout-guide"><span class="header-section-number">12.2</span> Callout guide</h2>
+<table style="border-collapse:collapse;width:60%">
+<tbody><tr>
+<td style="padding:6px 12px;background:#EAF3FA;border-left:4px solid #0369A1">
+<i class="bi bi-info-circle-fill" style="color:#0369A1"></i> <b>Key Concept</b>
+</td>
+<td style="padding:6px 12px">
+Core idea with precise definition
+</td>
+</tr>
+<tr>
+<td style="padding:6px 12px;background:#EAF7F0;border-left:4px solid #059669">
+<i class="bi bi-journal-code" style="color:#059669"></i> <b>Example</b>
+</td>
+<td style="padding:6px 12px">
+Worked illustration
+</td>
+</tr>
+<tr>
+<td style="padding:6px 12px;background:#FFF1E6;border-left:4px solid #EA580C">
+<i class="bi bi-puzzle-fill" style="color:#EA580C"></i> <b>Activity</b>
+</td>
+<td style="padding:6px 12px">
+Hands-on challenge to try yourself
+</td>
+</tr>
+<tr>
+<td style="padding:6px 12px;background:#FEF2F2;border-left:4px solid #DC2626">
+<i class="bi bi-bug-fill" style="color:#DC2626"></i> <b>Common Mistake</b>
+</td>
+<td style="padding:6px 12px">
+Bug pattern to watch for
+</td>
+</tr>
+<tr>
+<td style="padding:6px 12px;background:#F4F5F6;border-left:4px solid #6B7280">
+<i class="bi bi-lightbulb-fill" style="color:#6B7280"></i> <b>Pro Tip</b>
+</td>
+<td style="padding:6px 12px">
+Production-grade habit
+</td>
+</tr>
+</tbody></table>
+</section>
+<section id="learning-objectives" class="level2" data-number="12.3">
+<h2 data-number="12.3" class="anchored" data-anchor-id="learning-objectives"><span class="header-section-number">12.3</span> Learning Objectives</h2>
+<p>By the end of Part 11 you will be able to:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>#</th>
+<th>Skill</th>
+<th>Covered in</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td>Build and inspect Polars DataFrames and compare them to pandas</td>
+<td>Sec. 1</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td>Use <code>pl.col()</code> expressions to select, filter, and derive columns</td>
+<td>Sec. 2</td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td>Aggregate data with <code>group_by</code> and the expression API</td>
+<td>Sec. 3</td>
+</tr>
+<tr class="even">
+<td>4</td>
+<td>Understand eager vs lazy evaluation and use <code>LazyFrame</code></td>
+<td>Sec. 4</td>
+</tr>
+<tr class="odd">
+<td>5</td>
+<td>Parse and manipulate dates with Polars’s built-in datetime support</td>
+<td>Sec. 5</td>
+</tr>
+<tr class="even">
+<td>6</td>
+<td>Translate common pandas operations to Polars equivalents</td>
+<td>Sec. 6</td>
+</tr>
+</tbody>
+</table>
+<div id="4" class="cell" data-execution_count="1">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> polars <span class="im">as</span> pl</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Polars reads CSV directly; no separate parse step needed for standard columns</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pl.read_csv(<span class="st">"data/students_exams_results.csv"</span>)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"shape : </span><span class="sc">{</span>df<span class="sc">.</span>shape<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>df.head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-error">
+<div class="ansi-escaped-output">
+<pre><span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">ModuleNotFoundError</span>                       Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[1]</span><span class="ansi-green-fg">, line 2</span>
+<span class="ansi-green-fg">      1</span> <span style="font-weight:bold;color:rgb(0,135,0)">import</span><span style="color:rgb(188,188,188)"> </span><span class="ansi-blue-fg ansi-bold">numpy</span><span style="color:rgb(188,188,188)"> </span><span style="font-weight:bold;color:rgb(0,135,0)">as</span><span style="color:rgb(188,188,188)"> </span><span class="ansi-blue-fg ansi-bold">np</span>
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">2</span> <span style="font-weight:bold;color:rgb(0,135,0)">import</span><span style="color:rgb(188,188,188)"> </span><span class="ansi-blue-fg ansi-bold">polars</span><span style="color:rgb(188,188,188)"> </span><span style="font-weight:bold;color:rgb(0,135,0)">as</span><span style="color:rgb(188,188,188)"> </span><span class="ansi-blue-fg ansi-bold">pl</span>
+<span class="ansi-green-fg">      4</span> <span style="font-style:italic;color:rgb(95,135,135)"># Polars reads CSV directly; no separate parse step needed for standard columns</span>
+<span class="ansi-green-fg">      5</span> df = pl.read_csv(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">data/students_exams_results.csv</span><span class="ansi-yellow-fg">"</span>)
+
+<span class="ansi-red-fg">ModuleNotFoundError</span>: No module named 'polars'</pre>
+</div>
+</div>
+</div>
+</section>
+<section id="dataframe-construction" class="level2" data-number="12.4">
+<h2 data-number="12.4" class="anchored" data-anchor-id="dataframe-construction"><span class="header-section-number">12.4</span> 1. DataFrame Construction</h2>
+<p>Building a Polars DataFrame from a Python dict looks almost identical to pandas. The difference shows up in the schema: Polars always knows the dtype of every column, and it tells you explicitly:</p>
+<div id="7" class="cell" data-execution_count="2">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> polars <span class="im">as</span> pl</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>sample <span class="op">=</span> pl.DataFrame(</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    {</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>        <span class="st">"student_id"</span>: [<span class="st">"s001"</span>, <span class="st">"s002"</span>, <span class="st">"s003"</span>],</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>        <span class="st">"mathematics_marks"</span>: [<span class="fl">0.62</span>, <span class="fl">0.78</span>, <span class="fl">0.91</span>],</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>        <span class="st">"gender"</span>: [<span class="st">"F"</span>, <span class="st">"M"</span>, <span class="st">"F"</span>],</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(sample.schema)</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>sample</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-error">
+<div class="ansi-escaped-output">
+<pre><span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">ModuleNotFoundError</span>                       Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[2]</span><span class="ansi-green-fg">, line 1</span>
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">1</span> <span style="font-weight:bold;color:rgb(0,135,0)">import</span><span style="color:rgb(188,188,188)"> </span><span class="ansi-blue-fg ansi-bold">polars</span><span style="color:rgb(188,188,188)"> </span><span style="font-weight:bold;color:rgb(0,135,0)">as</span><span style="color:rgb(188,188,188)"> </span><span class="ansi-blue-fg ansi-bold">pl</span>
+<span class="ansi-green-fg">      3</span> sample = pl.DataFrame(
+<span class="ansi-green-fg">      4</span>     {
+<span class="ansi-green-fg">      5</span>         <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">student_id</span><span class="ansi-yellow-fg">"</span>: [<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">s001</span><span class="ansi-yellow-fg">"</span>, <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">s002</span><span class="ansi-yellow-fg">"</span>, <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">s003</span><span class="ansi-yellow-fg">"</span>],
+<span class="ansi-green-fg">   (...)</span><span class="ansi-green-fg">      8</span>     }
+<span class="ansi-green-fg">      9</span> )
+<span class="ansi-green-fg">     10</span> <span style="color:rgb(0,135,0)">print</span>(sample.schema)
+
+<span class="ansi-red-fg">ModuleNotFoundError</span>: No module named 'polars'</pre>
+</div>
+</div>
+</div>
+<div style="background:#EAF3FA;border-left:5px solid #0369A1;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-info-circle-fill"></i> Key Concept: Polars enforces strict dtypes; pandas 3 infers them</span><br><br> Every Polars column has a fixed dtype from creation: <code>pl.Utf8</code> for strings, <code>pl.Float64</code> for floats, <code>pl.Int64</code> for integers. Polars raises an error if you try to mix types within a column. Pandas 3’s <code>str</code> dtype is conceptually similar but more permissive: it silently allows <code>None</code> values in a string column. Polars is stricter, which makes bugs surface earlier.</p>
+</div>
+<p>The first checks after loading data are the same in Polars as in pandas, but the method names differ slightly:</p>
+<div id="10" class="cell" data-execution_count="3">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"shape      : </span><span class="sc">{</span>df<span class="sc">.</span>shape<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"dtypes     :</span><span class="ch">\n</span><span class="sc">{</span>df<span class="sc">.</span>dtypes<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>df.describe()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-error">
+<div class="ansi-escaped-output">
+<pre><span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[3]</span><span class="ansi-green-fg">, line 1</span>
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">1</span> <span style="color:rgb(0,135,0)">print</span>(<span class="ansi-yellow-fg">f</span><span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">shape      : </span><span style="font-weight:bold;color:rgb(175,95,135)">{</span><span class="ansi-yellow-bg">df</span>.shape<span style="font-weight:bold;color:rgb(175,95,135)">}</span><span class="ansi-yellow-fg">"</span>)
+<span class="ansi-green-fg">      2</span> <span style="color:rgb(0,135,0)">print</span>(<span class="ansi-yellow-fg">f</span><span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">dtypes     :</span><span style="font-weight:bold;color:rgb(175,95,0)">\n</span><span style="font-weight:bold;color:rgb(175,95,135)">{</span>df.dtypes<span style="font-weight:bold;color:rgb(175,95,135)">}</span><span class="ansi-yellow-fg">"</span>)
+<span class="ansi-green-fg">      3</span> df.describe()
+
+<span class="ansi-red-fg">NameError</span>: name 'df' is not defined</pre>
+</div>
+</div>
+</div>
+<div style="background:#F4F5F6;border-left:5px solid #6B7280;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#6B7280;font-weight:bold"><i class="bi bi-lightbulb-fill"></i> Pro Tip: Use <code>df.schema</code> to see column names and dtypes in one dict-like view</span><br><br> <code>df.schema</code> returns a <code>Schema</code> object, a mapping from column name to Polars dtype. It is the fastest way to confirm that <code>read_csv</code> inferred the right types before any analysis starts.</p>
+</div>
+<div style="background:#FFF1E6;border-left:5px solid #EA580C;padding:14px 18px;border-radius:6px;margin:16px 0">
+<span style="color:#9A3412;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 1 - First Look at the Polars DataFrame</span><br><br> <b>Goal:</b> Print the schema of <code>df</code>, then use <code>df.describe()</code> to get summary statistics. Compare the dtype labels to the pandas output from Part 8.
+<pre style="background:#FFF8E1;padding:10px;border-radius:4px;font-size:0.9em">print(df.schema)
+df.describe()</pre>
+</div>
+<div id="13" class="cell" data-execution_count="4">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: print schema, then call df.describe()</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="the-expression-api-select-filter-with_columns" class="level2" data-number="12.5">
+<h2 data-number="12.5" class="anchored" data-anchor-id="the-expression-api-select-filter-with_columns"><span class="header-section-number">12.5</span> 2. The Expression API: <code>select</code>, <code>filter</code>, <code>with_columns</code></h2>
+<p>The biggest difference from pandas is that Polars does not use bracket indexing for column selection or boolean filtering. Instead, every operation goes through <code>pl.col()</code> expressions, which describe what to compute without computing it immediately.</p>
+<div id="16" class="cell" data-execution_count="5">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Select specific columns -- equivalent to df[["col_a", "col_b"]] in pandas</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>df.select([<span class="st">"student_id"</span>, <span class="st">"mathematics_marks"</span>, <span class="st">"english_marks"</span>]).head(<span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-error">
+<div class="ansi-escaped-output">
+<pre><span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[5]</span><span class="ansi-green-fg">, line 2</span>
+<span class="ansi-green-fg">      1</span> <span style="font-style:italic;color:rgb(95,135,135)"># Select specific columns -- equivalent to df[["col_a", "col_b"]] in pandas</span>
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">2</span> <span class="ansi-yellow-bg">df</span>.select([<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">student_id</span><span class="ansi-yellow-fg">"</span>, <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">mathematics_marks</span><span class="ansi-yellow-fg">"</span>, <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">english_marks</span><span class="ansi-yellow-fg">"</span>]).head(<span class="ansi-green-fg">3</span>)
+
+<span class="ansi-red-fg">NameError</span>: name 'df' is not defined</pre>
+</div>
+</div>
+</div>
+<div style="background:#EAF3FA;border-left:5px solid #0369A1;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-info-circle-fill"></i> Key Concept: <code>pl.col()</code> is an expression, not a value</span><br><br> <code>pl.col(“mathematics_marks”)</code> describes a column reference, not the column itself. Expressions compose: <code>pl.col(“a”) + pl.col(“b”)</code> describes an addition without performing it. Polars evaluates all expressions in a <code>.select()</code> or <code>.with_columns()</code> call together, which is what lets it parallelize across columns automatically.</p>
+</div>
+<p><code>filter</code> is the Polars equivalent of boolean indexing:</p>
+<div id="19" class="cell" data-execution_count="6">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># filter -- equivalent to df[df["mathematics_marks"] &gt; 0.9] in pandas</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>high_scorers <span class="op">=</span> df.<span class="bu">filter</span>(pl.col(<span class="st">"mathematics_marks"</span>) <span class="op">&gt;</span> <span class="fl">0.9</span>)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"high scorers: </span><span class="sc">{</span><span class="bu">len</span>(high_scorers)<span class="sc">}</span><span class="ss"> of </span><span class="sc">{</span><span class="bu">len</span>(df)<span class="sc">}</span><span class="ss"> students"</span>)</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>high_scorers.head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-error">
+<div class="ansi-escaped-output">
+<pre><span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[6]</span><span class="ansi-green-fg">, line 2</span>
+<span class="ansi-green-fg">      1</span> <span style="font-style:italic;color:rgb(95,135,135)"># filter -- equivalent to df[df["mathematics_marks"] &gt; 0.9] in pandas</span>
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">2</span> high_scorers = <span class="ansi-yellow-bg">df</span>.filter(pl.col(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">mathematics_marks</span><span class="ansi-yellow-fg">"</span>) &gt; <span class="ansi-green-fg">0.9</span>)
+<span class="ansi-green-fg">      3</span> <span style="color:rgb(0,135,0)">print</span>(<span class="ansi-yellow-fg">f</span><span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">high scorers: </span><span style="font-weight:bold;color:rgb(175,95,135)">{</span><span style="color:rgb(0,135,0)">len</span>(high_scorers)<span style="font-weight:bold;color:rgb(175,95,135)">}</span><span class="ansi-yellow-fg"> of </span><span style="font-weight:bold;color:rgb(175,95,135)">{</span><span style="color:rgb(0,135,0)">len</span>(df)<span style="font-weight:bold;color:rgb(175,95,135)">}</span><span class="ansi-yellow-fg"> students</span><span class="ansi-yellow-fg">"</span>)
+<span class="ansi-green-fg">      4</span> high_scorers.head()
+
+<span class="ansi-red-fg">NameError</span>: name 'df' is not defined</pre>
+</div>
+</div>
+</div>
+<p>Combine conditions with <code>&amp;</code> and <code>|</code>, same as pandas, but directly inside <code>filter</code> with <code>pl.col()</code> expressions:</p>
+<div id="21" class="cell" data-execution_count="7">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>dropped_with_internet <span class="op">=</span> df.<span class="bu">filter</span>((pl.col(<span class="st">"continue_drop"</span>) <span class="op">==</span> <span class="st">"drop"</span>) <span class="op">&amp;</span> (pl.col(<span class="st">"internet"</span>) <span class="op">==</span> <span class="dv">1</span>))</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"dropped with internet: </span><span class="sc">{</span><span class="bu">len</span>(dropped_with_internet)<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-error">
+<div class="ansi-escaped-output">
+<pre><span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[7]</span><span class="ansi-green-fg">, line 1</span>
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">1</span> dropped_with_internet = <span class="ansi-yellow-bg">df</span>.filter((pl.col(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">continue_drop</span><span class="ansi-yellow-fg">"</span>) == <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">drop</span><span class="ansi-yellow-fg">"</span>) &amp; (pl.col(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">internet</span><span class="ansi-yellow-fg">"</span>) == <span class="ansi-green-fg">1</span>))
+<span class="ansi-green-fg">      2</span> <span style="color:rgb(0,135,0)">print</span>(<span class="ansi-yellow-fg">f</span><span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">dropped with internet: </span><span style="font-weight:bold;color:rgb(175,95,135)">{</span><span style="color:rgb(0,135,0)">len</span>(dropped_with_internet)<span style="font-weight:bold;color:rgb(175,95,135)">}</span><span class="ansi-yellow-fg">"</span>)
+
+<span class="ansi-red-fg">NameError</span>: name 'df' is not defined</pre>
+</div>
+</div>
+</div>
+<p><code>with_columns</code> adds or replaces columns. The result is always a new DataFrame; the original is never modified:</p>
+<div id="23" class="cell" data-execution_count="8">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Add average_marks -- equivalent to df["average_marks"] = ... in pandas</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> df.with_columns(</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    average_marks<span class="op">=</span>((pl.col(<span class="st">"mathematics_marks"</span>) <span class="op">+</span> pl.col(<span class="st">"english_marks"</span>) <span class="op">+</span> pl.col(<span class="st">"science_marks"</span>)) <span class="op">/</span> <span class="dv">3</span>)</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>df.select([<span class="st">"student_id"</span>, <span class="st">"average_marks"</span>]).head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-error">
+<div class="ansi-escaped-output">
+<pre><span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[8]</span><span class="ansi-green-fg">, line 2</span>
+<span class="ansi-green-fg">      1</span> <span style="font-style:italic;color:rgb(95,135,135)"># Add average_marks -- equivalent to df["average_marks"] = ... in pandas</span>
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">2</span> df = <span class="ansi-yellow-bg">df</span>.with_columns(
+<span class="ansi-green-fg">      3</span>     average_marks=((pl.col(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">mathematics_marks</span><span class="ansi-yellow-fg">"</span>) + pl.col(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">english_marks</span><span class="ansi-yellow-fg">"</span>) + pl.col(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">science_marks</span><span class="ansi-yellow-fg">"</span>)) / <span class="ansi-green-fg">3</span>)
+<span class="ansi-green-fg">      4</span> )
+<span class="ansi-green-fg">      5</span> df.select([<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">student_id</span><span class="ansi-yellow-fg">"</span>, <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">average_marks</span><span class="ansi-yellow-fg">"</span>]).head()
+
+<span class="ansi-red-fg">NameError</span>: name 'df' is not defined</pre>
+</div>
+</div>
+</div>
+<div style="background:#FEF2F2;border-left:5px solid #DC2626;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#991B1B;font-weight:bold"><i class="bi bi-bug-fill"></i> Common Mistake: Using bracket assignment instead of <code>with_columns</code></span><br><br> <code>df[“average_marks”] = …</code> raises an error in Polars, unlike pandas. Polars DataFrames are immutable by design: the only way to add or modify a column is to call <code>.with_columns()</code> and reassign the result. This enforces the copy-on-write discipline explicitly, rather than relying on the runtime to enforce it as pandas 3 does.</p>
+</div>
+<div style="background:#FFF1E6;border-left:5px solid #EA580C;padding:14px 18px;border-radius:6px;margin:16px 0">
+<span style="color:#9A3412;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 2 - Filter and Derive</span><br><br> <b>Goal:</b> Add a <code>passed</code> column that is <code>True</code> when <code>average_marks &gt;= 0.5</code>, using <code>.with_columns()</code> and <code>pl.col(“average_marks”) &gt;= 0.5</code>. Then filter to passing students and print how many there are.
+<pre style="background:#FFF8E1;padding:10px;border-radius:4px;font-size:0.9em">df = df.with_columns(
+    passed=(pl.col("average_marks") &gt;= 0.5)
+)
+df.filter(pl.col("passed")).shape[0]</pre>
+</div>
+<div id="26" class="cell" data-execution_count="9">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: add "passed" column, filter to passing students, print count</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="groupby-and-aggregation" class="level2" data-number="12.6">
+<h2 data-number="12.6" class="anchored" data-anchor-id="groupby-and-aggregation"><span class="header-section-number">12.6</span> 3. GroupBy and Aggregation</h2>
+<p>Polars <code>group_by</code> uses the same split-apply-combine concept as pandas, but the aggregation is specified as a list of expressions inside <code>.agg()</code>, not as a method chained after <code>.mean()</code> or <code>.sum()</code>:</p>
+<div id="29" class="cell" data-execution_count="10">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>df.group_by(<span class="st">"caste"</span>).agg(</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    pl.col(<span class="st">"average_marks"</span>).mean().alias(<span class="st">"mean_marks"</span>),</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    pl.col(<span class="st">"average_marks"</span>).std().alias(<span class="st">"std_marks"</span>),</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    pl.<span class="bu">len</span>().alias(<span class="st">"count"</span>),</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>).sort(<span class="st">"caste"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-error">
+<div class="ansi-escaped-output">
+<pre><span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[10]</span><span class="ansi-green-fg">, line 1</span>
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">1</span> <span class="ansi-yellow-bg">df</span>.group_by(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">caste</span><span class="ansi-yellow-fg">"</span>).agg(
+<span class="ansi-green-fg">      2</span>     pl.col(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">average_marks</span><span class="ansi-yellow-fg">"</span>).mean().alias(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">mean_marks</span><span class="ansi-yellow-fg">"</span>),
+<span class="ansi-green-fg">      3</span>     pl.col(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">average_marks</span><span class="ansi-yellow-fg">"</span>).std().alias(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">std_marks</span><span class="ansi-yellow-fg">"</span>),
+<span class="ansi-green-fg">      4</span>     pl.len().alias(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">count</span><span class="ansi-yellow-fg">"</span>),
+<span class="ansi-green-fg">      5</span> ).sort(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">caste</span><span class="ansi-yellow-fg">"</span>)
+
+<span class="ansi-red-fg">NameError</span>: name 'df' is not defined</pre>
+</div>
+</div>
+</div>
+<div style="background:#EAF3FA;border-left:5px solid #0369A1;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-info-circle-fill"></i> Key Concept: <code>.agg()</code> takes a list of expressions, each producing one output column</span><br><br> In pandas, <code>groupby(“caste”)[“average_marks”].agg([“mean”, “std”, “count”])</code> returns a DataFrame with the stats as columns. In Polars the same result comes from passing named expressions to <code>.agg()</code>: <code>pl.col(“average_marks”).mean().alias(“mean_marks”)</code>. The explicit <code>.alias()</code> is required when the default auto-generated name would be ambiguous.</p>
+</div>
+<p>Grouping by more than one column works the same way:</p>
+<div id="32" class="cell" data-execution_count="11">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>df.group_by([<span class="st">"caste"</span>, <span class="st">"gender"</span>]).agg(</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    pl.col(<span class="st">"average_marks"</span>).mean().alias(<span class="st">"mean_marks"</span>),</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>).sort([<span class="st">"caste"</span>, <span class="st">"gender"</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-error">
+<div class="ansi-escaped-output">
+<pre><span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[11]</span><span class="ansi-green-fg">, line 1</span>
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">1</span> <span class="ansi-yellow-bg">df</span>.group_by([<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">caste</span><span class="ansi-yellow-fg">"</span>, <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">gender</span><span class="ansi-yellow-fg">"</span>]).agg(
+<span class="ansi-green-fg">      2</span>     pl.col(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">average_marks</span><span class="ansi-yellow-fg">"</span>).mean().alias(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">mean_marks</span><span class="ansi-yellow-fg">"</span>),
+<span class="ansi-green-fg">      3</span> ).sort([<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">caste</span><span class="ansi-yellow-fg">"</span>, <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">gender</span><span class="ansi-yellow-fg">"</span>])
+
+<span class="ansi-red-fg">NameError</span>: name 'df' is not defined</pre>
+</div>
+</div>
+</div>
+<div style="background:#F4F5F6;border-left:5px solid #6B7280;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#6B7280;font-weight:bold"><i class="bi bi-lightbulb-fill"></i> Pro Tip: Sort the result explicitly: <code>group_by</code> order is not guaranteed</span><br><br> Polars <code>group_by</code> does not preserve or sort the output by the grouping key. Always chain <code>.sort(“key_col”)</code> after <code>.agg()</code> if the output order matters. The pandas equivalent sorted by default in older versions but no longer guarantees it either.</p>
+</div>
+<div style="background:#FFF1E6;border-left:5px solid #EA580C;padding:14px 18px;border-radius:6px;margin:16px 0">
+<span style="color:#9A3412;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 3 - Dropout Rate by Caste</span><br><br> <b>Goal:</b> Group <code>df</code> by <code>caste</code> and compute, for each group, the fraction of students whose <code>continue_drop</code> is <code>“drop”</code>. In Polars, <code>(pl.col(“continue_drop”) == “drop”).mean()</code> gives the fraction directly.
+<pre style="background:#FFF8E1;padding:10px;border-radius:4px;font-size:0.9em">df.group_by("caste").agg(
+    drop_fraction=(pl.col("continue_drop") == "drop").mean()
+).sort("caste")</pre>
+</div>
+<div id="35" class="cell" data-execution_count="12">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: group by caste, compute drop fraction per group, sort by caste</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="lazyframe-and-lazy-evaluation" class="level2" data-number="12.7">
+<h2 data-number="12.7" class="anchored" data-anchor-id="lazyframe-and-lazy-evaluation"><span class="header-section-number">12.7</span> 4. LazyFrame and Lazy Evaluation</h2>
+<p>Every Polars operation above ran eagerly: it computed the result immediately and returned a new DataFrame. <code>df.lazy()</code> switches to lazy mode. In lazy mode, operations build a <em>query plan</em> instead of executing immediately. <code>.collect()</code> runs the optimized plan.</p>
+<div id="38" class="cell" data-execution_count="13">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Build a query plan -- nothing executes yet</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>lazy_query <span class="op">=</span> (</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    df.lazy()</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    .<span class="bu">filter</span>(pl.col(<span class="st">"internet"</span>) <span class="op">==</span> <span class="dv">1</span>)</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    .group_by(<span class="st">"caste"</span>)</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>    .agg(pl.col(<span class="st">"average_marks"</span>).mean().alias(<span class="st">"mean_marks"</span>))</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>    .sort(<span class="st">"mean_marks"</span>, descending<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Inspect the query plan before running</span></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(lazy_query.explain())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-error">
+<div class="ansi-escaped-output">
+<pre><span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[13]</span><span class="ansi-green-fg">, line 3</span>
+<span class="ansi-green-fg">      1</span> <span style="font-style:italic;color:rgb(95,135,135)"># Build a query plan -- nothing executes yet</span>
+<span class="ansi-green-fg">      2</span> lazy_query = (
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">3</span>     <span class="ansi-yellow-bg">df</span>.lazy()
+<span class="ansi-green-fg">      4</span>     .filter(pl.col(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">internet</span><span class="ansi-yellow-fg">"</span>) == <span class="ansi-green-fg">1</span>)
+<span class="ansi-green-fg">      5</span>     .group_by(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">caste</span><span class="ansi-yellow-fg">"</span>)
+<span class="ansi-green-fg">      6</span>     .agg(pl.col(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">average_marks</span><span class="ansi-yellow-fg">"</span>).mean().alias(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">mean_marks</span><span class="ansi-yellow-fg">"</span>))
+<span class="ansi-green-fg">      7</span>     .sort(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">mean_marks</span><span class="ansi-yellow-fg">"</span>, descending=<span style="font-weight:bold;color:rgb(0,135,0)">True</span>)
+<span class="ansi-green-fg">      8</span> )
+<span class="ansi-green-fg">     10</span> <span style="font-style:italic;color:rgb(95,135,135)"># Inspect the query plan before running</span>
+<span class="ansi-green-fg">     11</span> <span style="color:rgb(0,135,0)">print</span>(lazy_query.explain())
+
+<span class="ansi-red-fg">NameError</span>: name 'df' is not defined</pre>
+</div>
+</div>
+</div>
+<div id="39" class="cell" data-execution_count="14">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Execute the plan and get the result</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>lazy_query.collect()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-error">
+<div class="ansi-escaped-output">
+<pre><span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[14]</span><span class="ansi-green-fg">, line 2</span>
+<span class="ansi-green-fg">      1</span> <span style="font-style:italic;color:rgb(95,135,135)"># Execute the plan and get the result</span>
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">2</span> <span class="ansi-yellow-bg">lazy_query</span>.collect()
+
+<span class="ansi-red-fg">NameError</span>: name 'lazy_query' is not defined</pre>
+</div>
+</div>
+</div>
+<div style="background:#EAF3FA;border-left:5px solid #0369A1;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-info-circle-fill"></i> Key Concept: Lazy evaluation lets Polars optimize the query before running it</span><br><br> When you call <code>.collect()</code>, Polars analyses the whole query plan: it pushes filters as early as possible (predicate pushdown), drops columns that are not needed (projection pushdown), and parallelizes independent operations. The same query in eager mode runs each step sequentially with no cross-step optimization. For large datasets the difference is significant; for small ones it is negligible. The API is identical apart from the <code>.lazy()</code> / <code>.collect()</code> bookends.</p>
+</div>
+<div style="background:#FEF2F2;border-left:5px solid #DC2626;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#991B1B;font-weight:bold"><i class="bi bi-bug-fill"></i> Common Mistake: Forgetting <code>.collect()</code> and treating a <code>LazyFrame</code> as a result</span><br><br> <code>df.lazy().filter(…).group_by(…).agg(…)</code> returns a <code>LazyFrame</code>, not a <code>DataFrame</code>. Printing it shows the query plan, not the data. Call <code>.collect()</code> to get a real <code>DataFrame</code>. If you need the shape, columns, or to iterate over rows, you must collect first.</p>
+</div>
+<div style="background:#FFF1E6;border-left:5px solid #EA580C;padding:14px 18px;border-radius:6px;margin:16px 0">
+<span style="color:#9A3412;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 4 - Lazy Top Schools</span><br><br> <b>Goal:</b> Rewrite the top-schools capstone from Part 8 using a lazy query: filter to students with <code>internet == 1</code>, group by <code>school_id</code>, take the mean <code>average_marks</code>, sort descending, and <code>.collect()</code> the top 5.
+<pre style="background:#FFF8E1;padding:10px;border-radius:4px;font-size:0.9em">top_schools = (
+    df.lazy()
+    .filter(pl.col("internet") == 1)
+    .group_by("school_id")
+    .agg(pl.col("average_marks").mean().alias("mean_marks"))
+    .sort("mean_marks", descending=True)
+    .limit(5)
+    .collect()
+)
+top_schools</pre>
+</div>
+<div id="43" class="cell" data-execution_count="15">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: lazy top-schools query</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="datetime-in-polars" class="level2" data-number="12.8">
+<h2 data-number="12.8" class="anchored" data-anchor-id="datetime-in-polars"><span class="header-section-number">12.8</span> 5. Date/Time in Polars</h2>
+<p>Polars can parse dates directly at read time with <code>try_parse_dates=True</code>. There is no separate <code>to_datetime</code> step for standard ISO-format date strings:</p>
+<div id="46" class="cell" data-execution_count="16">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>attendance <span class="op">=</span> pl.read_csv(<span class="st">"data/daily_attendance.csv"</span>, try_parse_dates<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(attendance.dtypes)</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>attendance.head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-error">
+<div class="ansi-escaped-output">
+<pre><span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[16]</span><span class="ansi-green-fg">, line 1</span>
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">1</span> attendance = <span class="ansi-yellow-bg">pl</span>.read_csv(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">data/daily_attendance.csv</span><span class="ansi-yellow-fg">"</span>, try_parse_dates=<span style="font-weight:bold;color:rgb(0,135,0)">True</span>)
+<span class="ansi-green-fg">      2</span> <span style="color:rgb(0,135,0)">print</span>(attendance.dtypes)
+<span class="ansi-green-fg">      3</span> attendance.head()
+
+<span class="ansi-red-fg">NameError</span>: name 'pl' is not defined</pre>
+</div>
+</div>
+</div>
+<div style="background:#EAF3FA;border-left:5px solid #0369A1;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-info-circle-fill"></i> Key Concept: Polars parses dates at load time; pandas requires an explicit conversion step</span><br><br> In pandas, date columns read as <code>str</code> dtype until you call <code>pd.to_datetime()</code>. Polars with <code>try_parse_dates=True</code> infers and parses ISO-format dates automatically during <code>read_csv</code>, producing a <code>pl.Date</code> or <code>pl.Datetime</code> column. This means filtering and arithmetic work on dates immediately, without a conversion step.</p>
+</div>
+<p>Date-component extraction uses the <code>.dt</code> namespace, similar to pandas:</p>
+<div id="49" class="cell" data-execution_count="17">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract year, month, and weekday from the date column</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>attendance.select(</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>    [</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>        <span class="st">"date"</span>,</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>        pl.col(<span class="st">"date"</span>).dt.year().alias(<span class="st">"year"</span>),</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>        pl.col(<span class="st">"date"</span>).dt.month().alias(<span class="st">"month"</span>),</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>        pl.col(<span class="st">"date"</span>).dt.weekday().alias(<span class="st">"weekday"</span>),  <span class="co"># Mon=1 ... Sun=7</span></span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>    ]</span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>).head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-error">
+<div class="ansi-escaped-output">
+<pre><span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[17]</span><span class="ansi-green-fg">, line 2</span>
+<span class="ansi-green-fg">      1</span> <span style="font-style:italic;color:rgb(95,135,135)"># Extract year, month, and weekday from the date column</span>
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">2</span> <span class="ansi-yellow-bg">attendance</span>.select(
+<span class="ansi-green-fg">      3</span>     [
+<span class="ansi-green-fg">      4</span>         <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">date</span><span class="ansi-yellow-fg">"</span>,
+<span class="ansi-green-fg">      5</span>         pl.col(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">date</span><span class="ansi-yellow-fg">"</span>).dt.year().alias(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">year</span><span class="ansi-yellow-fg">"</span>),
+<span class="ansi-green-fg">      6</span>         pl.col(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">date</span><span class="ansi-yellow-fg">"</span>).dt.month().alias(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">month</span><span class="ansi-yellow-fg">"</span>),
+<span class="ansi-green-fg">      7</span>         pl.col(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">date</span><span class="ansi-yellow-fg">"</span>).dt.weekday().alias(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">weekday</span><span class="ansi-yellow-fg">"</span>),  <span style="font-style:italic;color:rgb(95,135,135)"># Mon=1 ... Sun=7</span>
+<span class="ansi-green-fg">      8</span>     ]
+<span class="ansi-green-fg">      9</span> ).head()
+
+<span class="ansi-red-fg">NameError</span>: name 'attendance' is not defined</pre>
+</div>
+</div>
+</div>
+<p>Resampling to weekly or monthly means uses <code>group_by_dynamic</code> instead of pandas’ <code>resample</code>:</p>
+<div id="51" class="cell" data-execution_count="18">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Monthly mean attendance rate per school using group_by_dynamic</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>school_300 <span class="op">=</span> attendance.<span class="bu">filter</span>(pl.col(<span class="st">"school_id"</span>) <span class="op">==</span> <span class="dv">300</span>)</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>school_300.sort(<span class="st">"date"</span>).group_by_dynamic(<span class="st">"date"</span>, every<span class="op">=</span><span class="st">"1mo"</span>, group_by<span class="op">=</span><span class="st">"school_id"</span>).agg(</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>    pl.col(<span class="st">"attendance_rate"</span>).mean().alias(<span class="st">"monthly_mean"</span>)</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-error">
+<div class="ansi-escaped-output">
+<pre><span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[18]</span><span class="ansi-green-fg">, line 2</span>
+<span class="ansi-green-fg">      1</span> <span style="font-style:italic;color:rgb(95,135,135)"># Monthly mean attendance rate per school using group_by_dynamic</span>
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">2</span> school_300 = <span class="ansi-yellow-bg">attendance</span>.filter(pl.col(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">school_id</span><span class="ansi-yellow-fg">"</span>) == <span class="ansi-green-fg">300</span>)
+<span class="ansi-green-fg">      4</span> school_300.sort(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">date</span><span class="ansi-yellow-fg">"</span>).group_by_dynamic(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">date</span><span class="ansi-yellow-fg">"</span>, every=<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">1mo</span><span class="ansi-yellow-fg">"</span>, group_by=<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">school_id</span><span class="ansi-yellow-fg">"</span>).agg(
+<span class="ansi-green-fg">      5</span>     pl.col(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">attendance_rate</span><span class="ansi-yellow-fg">"</span>).mean().alias(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">monthly_mean</span><span class="ansi-yellow-fg">"</span>)
+<span class="ansi-green-fg">      6</span> )
+
+<span class="ansi-red-fg">NameError</span>: name 'attendance' is not defined</pre>
+</div>
+</div>
+</div>
+<div style="background:#F4F5F6;border-left:5px solid #6B7280;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#6B7280;font-weight:bold"><i class="bi bi-lightbulb-fill"></i> Pro Tip: <code>group_by_dynamic</code> replaces <code>resample</code> in Polars</span><br><br> <code>series.resample(“M”).mean()</code> in pandas becomes <code>df.sort(“date”).group_by_dynamic(“date”, every=“1mo”).agg(…)</code> in Polars. The <code>sort</code> before <code>group_by_dynamic</code> is required: Polars raises an error if the time column is not sorted.</p>
+</div>
+<div style="background:#FFF1E6;border-left:5px solid #EA580C;padding:14px 18px;border-radius:6px;margin:16px 0">
+<span style="color:#9A3412;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 5 - Monthly Attendance by School</span><br><br> <b>Goal:</b> Use <code>group_by_dynamic</code> to compute the mean <code>attendance_rate</code> per school per month across all schools in the <code>attendance</code> table. Sort by <code>date</code> before grouping.
+<pre style="background:#FFF8E1;padding:10px;border-radius:4px;font-size:0.9em">attendance.sort("date").group_by_dynamic(
+    "date", every="1mo", group_by="school_id"
+).agg(
+    pl.col("attendance_rate").mean().alias("monthly_mean")
+).sort(["school_id", "date"])</pre>
+</div>
+<div id="54" class="cell" data-execution_count="19">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: monthly mean attendance per school using group_by_dynamic</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="migration-patterns-pandas-to-polars" class="level2" data-number="12.9">
+<h2 data-number="12.9" class="anchored" data-anchor-id="migration-patterns-pandas-to-polars"><span class="header-section-number">12.9</span> 6. Migration Patterns: pandas to Polars</h2>
+<p>The table below maps the most common pandas operations from Parts 8-10 to their Polars equivalents. The concepts are the same; the API surface is different:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Task</th>
+<th>pandas</th>
+<th>Polars</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Load CSV</td>
+<td><code>pd.read_csv(path)</code></td>
+<td><code>pl.read_csv(path, try_parse_dates=True)</code></td>
+</tr>
+<tr class="even">
+<td>Select columns</td>
+<td><code>df[["a", "b"]]</code></td>
+<td><code>df.select(["a", "b"])</code></td>
+</tr>
+<tr class="odd">
+<td>Filter rows</td>
+<td><code>df[df["col"] &gt; 0.5]</code></td>
+<td><code>df.filter(pl.col("col") &gt; 0.5)</code></td>
+</tr>
+<tr class="even">
+<td>Add column</td>
+<td><code>df["c"] = df["a"] + df["b"]</code></td>
+<td><code>df.with_columns(c=pl.col("a") + pl.col("b"))</code></td>
+</tr>
+<tr class="odd">
+<td>Rename column</td>
+<td><code>df.rename(columns={"old": "new"})</code></td>
+<td><code>df.rename({"old": "new"})</code></td>
+</tr>
+<tr class="even">
+<td>GroupBy + agg</td>
+<td><code>df.groupby("k")["v"].mean()</code></td>
+<td><code>df.group_by("k").agg(pl.col("v").mean())</code></td>
+</tr>
+<tr class="odd">
+<td>Sort</td>
+<td><code>df.sort_values("col", ascending=False)</code></td>
+<td><code>df.sort("col", descending=True)</code></td>
+</tr>
+<tr class="even">
+<td>Missing values</td>
+<td><code>df.isna().sum()</code></td>
+<td><code>df.null_count()</code></td>
+</tr>
+<tr class="odd">
+<td>Fill missing</td>
+<td><code>df["col"].fillna(val)</code></td>
+<td><code>df.with_columns(pl.col("col").fill_null(val))</code></td>
+</tr>
+<tr class="even">
+<td>One-hot encode</td>
+<td><code>pd.get_dummies(df["col"])</code></td>
+<td><code>df.to_dummies("col")</code></td>
+</tr>
+<tr class="odd">
+<td>Value counts</td>
+<td><code>df["col"].value_counts()</code></td>
+<td><code>df["col"].value_counts()</code></td>
+</tr>
+<tr class="even">
+<td>Lazy query</td>
+<td><em>(eager only)</em></td>
+<td><code>df.lazy()</code> … <code>.collect()</code></td>
+</tr>
+<tr class="odd">
+<td>Resample</td>
+<td><code>series.resample("M").mean()</code></td>
+<td><code>df.sort("date").group_by_dynamic("date", every="1mo").agg(...)</code></td>
+</tr>
+</tbody>
+</table>
+<div style="background:#EAF3FA;border-left:5px solid #0369A1;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-info-circle-fill"></i> Key Concept: Polars is strict; pandas is permissive</span><br><br> Polars raises errors early: wrong dtype in a column, missing <code>.collect()</code> on a LazyFrame, unsorted data before <code>group_by_dynamic</code>. Pandas absorbs most of these quietly, sometimes silently producing a wrong result. The Polars errors feel strict at first but save time in larger pipelines where a wrong-but-valid pandas result would surface much later.</p>
+</div>
+</section>
+<section id="capstone-reproduce-the-pandas-capstone-exercises-in-polars" class="level2" data-number="12.10">
+<h2 data-number="12.10" class="anchored" data-anchor-id="capstone-reproduce-the-pandas-capstone-exercises-in-polars"><span class="header-section-number">12.10</span> Capstone: Reproduce the pandas Capstone Exercises in Polars</h2>
+<div style="background:#FFF1E6;border-left:5px solid #EA580C;padding:14px 18px;border-radius:6px;margin:16px 0">
+<span style="color:#9A3412;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Capstone Exercise - Top Schools, Risk Report, and Regional Summary</span><br><br> <b>Goal:</b> Reproduce three capstones from earlier parts using Polars:
+<ol>
+<li>
+<b>Top schools (Part 8):</b> Filter to students with <code>internet == 1</code>, group by <code>school_id</code>, compute mean <code>average_marks</code>, sort descending, show top 5.
+</li>
+<li>
+<b>Risk report (Part 9):</b> Add a <code>grade</code> column based on <code>average_marks</code> using <code>pl.when().then().otherwise()</code>. Print grade distribution as proportions.
+</li>
+<li>
+<b>Regional summary (Part 10):</b> Create a <code>schools</code> DataFrame mapping <code>school_id</code> to <code>region</code>, join it onto <code>df</code>, and compute mean marks per region.
+</li>
+</ol>
+<pre style="background:#FFF8E1;padding:10px;border-radius:4px;font-size:0.9em"># 1. Top schools
+top_schools = (
+    df.lazy()
+    .filter(pl.col("internet") == 1)
+    .group_by("school_id")
+    .agg(pl.col("average_marks").mean().alias("mean_marks"))
+    .sort("mean_marks", descending=True)
+    .limit(5)
+    .collect()
+)
+
+# 2. Risk report -- pl.when().then().otherwise() replaces df.apply(letter_grade)
+df_graded = df.with_columns(
+    grade=pl.when(pl.col("average_marks") &gt;= 0.8).then(pl.lit("A"))
+           .when(pl.col("average_marks") &gt;= 0.6).then(pl.lit("B"))
+           .when(pl.col("average_marks") &gt;= 0.4).then(pl.lit("C"))
+           .otherwise(pl.lit("D"))
+)
+grade_distribution = df_graded["grade"].value_counts(normalize=True).sort("grade")
+
+# 3. Regional summary
+import polars as pl
+school_ids = df["school_id"].unique().sort()
+regions = ["North", "South", "East", "West"]
+schools = pl.DataFrame({
+    "school_id": school_ids,
+    "region": [regions[i % 4] for i in range(len(school_ids))],
+})
+merged = df.join(schools, on="school_id", how="left")
+regional_summary = merged.group_by("region").agg(
+    pl.col("average_marks").mean().alias("mean_marks")
+).sort("region")</pre>
+</div>
+<div id="61" class="cell" data-execution_count="20">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: reproduce top schools, risk report, and regional summary in Polars</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="summary" class="level2" data-number="12.11">
+<h2 data-number="12.11" class="anchored" data-anchor-id="summary"><span class="header-section-number">12.11</span> Summary</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Concept</th>
+<th>Key rule</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>pl.read_csv(try_parse_dates=True)</code></td>
+<td>Load data with automatic date inference</td>
+</tr>
+<tr class="even">
+<td><code>df.schema</code></td>
+<td>Dict-like view of column names and Polars dtypes</td>
+</tr>
+<tr class="odd">
+<td><code>df.select([...])</code></td>
+<td>Select columns; equivalent to <code>df[["a", "b"]]</code> in pandas</td>
+</tr>
+<tr class="even">
+<td><code>pl.col("name")</code></td>
+<td>Column expression; compose with arithmetic, comparisons, and string ops</td>
+</tr>
+<tr class="odd">
+<td><code>df.filter(expr)</code></td>
+<td>Keep rows where the expression is True</td>
+</tr>
+<tr class="even">
+<td><code>df.with_columns(alias=expr)</code></td>
+<td>Add or overwrite columns; returns a new DataFrame</td>
+</tr>
+<tr class="odd">
+<td><code>df.group_by(key).agg([exprs])</code></td>
+<td>Split-apply-combine with explicit expression list</td>
+</tr>
+<tr class="even">
+<td><code>.alias("name")</code></td>
+<td>Rename an expression’s output column</td>
+</tr>
+<tr class="odd">
+<td><code>df.lazy()</code> … <code>.collect()</code></td>
+<td>Defer execution so Polars can optimize the query plan</td>
+</tr>
+<tr class="even">
+<td><code>pl.when().then().otherwise()</code></td>
+<td>Conditional column derivation; replaces <code>apply(lambda ...)</code></td>
+</tr>
+<tr class="odd">
+<td><code>df.join(other, on=key, how=...)</code></td>
+<td>SQL-style join; same <code>how</code> values as pandas <code>merge</code></td>
+</tr>
+<tr class="even">
+<td><code>.dt.year()</code>, <code>.dt.month()</code></td>
+<td>Date-component extraction in the <code>.dt</code> namespace</td>
+</tr>
+<tr class="odd">
+<td><code>group_by_dynamic("date", every="1mo")</code></td>
+<td>Time-window grouping; requires sorted input</td>
+</tr>
+<tr class="even">
+<td><code>df.null_count()</code></td>
+<td>Count missing values per column; replaces <code>df.isna().sum()</code></td>
+</tr>
+</tbody>
+</table>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/sambaiga\.github\.io\/ds-mlops-path\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../../tutorials/01-python-basics/10-combining-reshaping.html" class="pagination-link" aria-label="Part 10: Combining, Reshaping &amp; Time Series">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Part 10: Combining, Reshaping &amp; Time Series</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.dev/sambaiga/ds-mlops-path/blob/main/tutorials/01-python-basics/11-polars.ipynb" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/sambaiga/ds-mlops-path/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>

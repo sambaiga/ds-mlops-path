@@ -1,0 +1,1405 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.38">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>10&nbsp; Part 9: Pandas Operations – DS-MLOps Path</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<link href="../../tutorials/01-python-basics/10-combining-reshaping.html" rel="next">
+<link href="../../tutorials/01-python-basics/08-pandas-core.html" rel="prev">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-de63f62b328812d8e578a4d74e282472.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-25d02d6ee2c20d6bcb3e5ee92e71e791.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-sidebar floating nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">DS-MLOps Path</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/sambaiga/ds-mlops-path"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+    <a href="https://github.com/sambaiga/ds-mlops-path" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../tutorials/01-python-basics/08-pandas-core.html">Part 2 - Data Analysis</a></li><li class="breadcrumb-item"><a href="../../tutorials/01-python-basics/09-pandas-operations.html"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Part 9: Pandas Operations</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Welcome</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Part 1 - Python Basics</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/01-python-core.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Part 1: Language Core (Data &amp; Types)</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/02-control-flow.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Part 2: Language Core (Control Flow &amp; Comprehensions)</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/03-python-patterns.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Part 3: Patterns for Data Science &amp; ML</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/04-numpy.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Part 4: NumPy for Data &amp; ML</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/05-matplotlib.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Part 5: Matplotlib and Its Ecosystem</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/06-lets-plot.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Part 6: Grammar of Graphics with Lets-Plot</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/07-data-storytelling.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Part 7: Data Storytelling and House Style</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Part 2 - Data Analysis</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/08-pandas-core.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Part 8: Pandas Core</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/09-pandas-operations.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Part 9: Pandas Operations</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/10-combining-reshaping.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Part 10: Combining, Reshaping &amp; Time Series</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/11-polars.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Part 11: Polars &amp; the Expression API</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#before-you-begin" id="toc-before-you-begin" class="nav-link active" data-scroll-target="#before-you-begin"><span class="header-section-number">10.1</span> Before you begin</a></li>
+  <li><a href="#callout-guide" id="toc-callout-guide" class="nav-link" data-scroll-target="#callout-guide"><span class="header-section-number">10.2</span> Callout guide</a></li>
+  <li><a href="#learning-objectives" id="toc-learning-objectives" class="nav-link" data-scroll-target="#learning-objectives"><span class="header-section-number">10.3</span> Learning Objectives</a></li>
+  <li><a href="#whats-new-in-pandas-3" id="toc-whats-new-in-pandas-3" class="nav-link" data-scroll-target="#whats-new-in-pandas-3"><span class="header-section-number">10.4</span> 0. What’s New in Pandas 3</a></li>
+  <li><a href="#function-application-with-map-and-apply" id="toc-function-application-with-map-and-apply" class="nav-link" data-scroll-target="#function-application-with-map-and-apply"><span class="header-section-number">10.5</span> 1. Function Application with <code>map</code> and <code>apply</code></a></li>
+  <li><a href="#unique-values-value-counts-and-membership" id="toc-unique-values-value-counts-and-membership" class="nav-link" data-scroll-target="#unique-values-value-counts-and-membership"><span class="header-section-number">10.6</span> 2. Unique Values, Value Counts, and Membership</a></li>
+  <li><a href="#working-with-text-columns-the-.str-accessor" id="toc-working-with-text-columns-the-.str-accessor" class="nav-link" data-scroll-target="#working-with-text-columns-the-.str-accessor"><span class="header-section-number">10.7</span> 3. Working with Text Columns: the <code>.str</code> Accessor</a></li>
+  <li><a href="#descriptive-statistics-and-summarization" id="toc-descriptive-statistics-and-summarization" class="nav-link" data-scroll-target="#descriptive-statistics-and-summarization"><span class="header-section-number">10.8</span> 4. Descriptive Statistics and Summarization</a></li>
+  <li><a href="#capstone-risk-and-performance-report" id="toc-capstone-risk-and-performance-report" class="nav-link" data-scroll-target="#capstone-risk-and-performance-report"><span class="header-section-number">10.9</span> Capstone: Risk and Performance Report</a></li>
+  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary"><span class="header-section-number">10.10</span> Summary</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.dev/sambaiga/ds-mlops-path/blob/main/tutorials/01-python-basics/09-pandas-operations.ipynb" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/sambaiga/ds-mlops-path/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../tutorials/01-python-basics/08-pandas-core.html">Part 2 - Data Analysis</a></li><li class="breadcrumb-item"><a href="../../tutorials/01-python-basics/09-pandas-operations.html"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Part 9: Pandas Operations</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Part 9: Pandas Operations</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p><a href="https://colab.research.google.com/github/sambaiga/ds-mlops-path/blob/main/tutorials/01-python-basics/09-pandas-operations.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open In Colab"></a> <a href="https://raw.githubusercontent.com/sambaiga/ds-mlops-path/main/tutorials/01-python-basics/09-pandas-operations.ipynb"><img src="https://img.shields.io/badge/Download-Notebook-blue.svg?logo=jupyter&amp;logoColor=white" class="img-fluid" alt="Download Notebook"></a></p>
+<p><strong>DS-MLOps Data Analysis</strong></p>
+<p><strong>Python 3.12+ | Author: Anthony Faustine</strong></p>
+<section id="before-you-begin" class="level2" data-number="10.1">
+<h2 data-number="10.1" class="anchored" data-anchor-id="before-you-begin"><span class="header-section-number">10.1</span> Before you begin</h2>
+<p>This notebook continues directly from Part 8 (<code>08-pandas-core.ipynb</code>). It assumes you can read a CSV, select rows and columns with <code>.loc</code>/<code>.iloc</code>, and filter with a boolean mask. We reload the same dataset from scratch below, so you can run this notebook on its own.</p>
+<p>Part 8 covered the dataset’s shape and structure. Part 9 covers the operations that turn raw columns into derived ones: applying your own functions row-by-row, counting and filtering categorical values, cleaning text columns, and summarizing a dataset in a few calls instead of many.</p>
+<p>Part 10 (<code>10-combining-reshaping.ipynb</code>) continues with combining datasets, <code>groupby</code>, pivoting, and time series.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Topic</th>
+<th>Why it matters</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Pandas 3: <code>str</code> dtype and Copy-on-Write</strong></td>
+<td>Two behaviour changes that affect every example in this notebook and the ones before it</td>
+</tr>
+<tr class="even">
+<td><strong><code>map</code> and <code>apply</code></strong></td>
+<td>Run your own function over a Series or DataFrame when there is no built-in vectorized operation</td>
+</tr>
+<tr class="odd">
+<td><strong>Value counts, membership, and encoding</strong></td>
+<td>Understand a categorical column, filter on a set of values, and prepare it for a model</td>
+</tr>
+<tr class="even">
+<td><strong>The <code>.str</code> accessor</strong></td>
+<td>String methods on a Series need <code>.str</code>; calling them directly is the most common error here</td>
+</tr>
+<tr class="odd">
+<td><strong>Descriptive statistics</strong></td>
+<td><code>.describe()</code> and <code>.agg()</code> summarize a dataset in one call instead of many</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="callout-guide" class="level2" data-number="10.2">
+<h2 data-number="10.2" class="anchored" data-anchor-id="callout-guide"><span class="header-section-number">10.2</span> Callout guide</h2>
+<table style="border-collapse:collapse;width:60%">
+<tbody><tr>
+<td style="padding:6px 12px;background:#EAF3FA;border-left:4px solid #0369A1">
+<i class="bi bi-info-circle-fill" style="color:#0369A1"></i> <b>Key Concept</b>
+</td>
+<td style="padding:6px 12px">
+Core idea with precise definition
+</td>
+</tr>
+<tr>
+<td style="padding:6px 12px;background:#EAF7F0;border-left:4px solid #059669">
+<i class="bi bi-journal-code" style="color:#059669"></i> <b>Example</b>
+</td>
+<td style="padding:6px 12px">
+Worked illustration
+</td>
+</tr>
+<tr>
+<td style="padding:6px 12px;background:#FFF1E6;border-left:4px solid #EA580C">
+<i class="bi bi-puzzle-fill" style="color:#EA580C"></i> <b>Activity</b>
+</td>
+<td style="padding:6px 12px">
+Hands-on challenge to try yourself
+</td>
+</tr>
+<tr>
+<td style="padding:6px 12px;background:#FEF2F2;border-left:4px solid #DC2626">
+<i class="bi bi-bug-fill" style="color:#DC2626"></i> <b>Common Mistake</b>
+</td>
+<td style="padding:6px 12px">
+Bug pattern to watch for
+</td>
+</tr>
+<tr>
+<td style="padding:6px 12px;background:#F4F5F6;border-left:4px solid #6B7280">
+<i class="bi bi-lightbulb-fill" style="color:#6B7280"></i> <b>Pro Tip</b>
+</td>
+<td style="padding:6px 12px">
+Production-grade habit
+</td>
+</tr>
+</tbody></table>
+</section>
+<section id="learning-objectives" class="level2" data-number="10.3">
+<h2 data-number="10.3" class="anchored" data-anchor-id="learning-objectives"><span class="header-section-number">10.3</span> Learning Objectives</h2>
+<p>By the end of Part 9 you will be able to:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>#</th>
+<th>Skill</th>
+<th>Covered in</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td>Recognise pandas 3’s <code>str</code> dtype and Copy-on-Write behaviour</td>
+<td>Sec. 0</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td>Apply your own function to a Series or DataFrame with <code>map</code> and <code>apply</code></td>
+<td>Sec. 1</td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td>Count, filter, and encode categorical columns</td>
+<td>Sec. 2</td>
+</tr>
+<tr class="even">
+<td>4</td>
+<td>Clean and query text columns with the <code>.str</code> accessor</td>
+<td>Sec. 3</td>
+</tr>
+<tr class="odd">
+<td>5</td>
+<td>Summarize a dataset with descriptive statistics in one call</td>
+<td>Sec. 4</td>
+</tr>
+</tbody>
+</table>
+<div id="4" class="cell" data-execution_count="1">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.read_csv(<span class="st">"data/students_exams_results.csv"</span>)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"average_marks"</span>] <span class="op">=</span> (df[<span class="st">"mathematics_marks"</span>] <span class="op">+</span> df[<span class="st">"english_marks"</span>] <span class="op">+</span> df[<span class="st">"science_marks"</span>]) <span class="op">/</span> <span class="dv">3</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>df.head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-error">
+<div class="ansi-escaped-output">
+<pre><span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">FileNotFoundError</span>                         Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[1]</span><span class="ansi-green-fg">, line 4</span>
+<span class="ansi-green-fg">      1</span> <span style="font-weight:bold;color:rgb(0,135,0)">import</span><span style="color:rgb(188,188,188)"> </span><span class="ansi-blue-fg ansi-bold">numpy</span><span style="color:rgb(188,188,188)"> </span><span style="font-weight:bold;color:rgb(0,135,0)">as</span><span style="color:rgb(188,188,188)"> </span><span class="ansi-blue-fg ansi-bold">np</span>
+<span class="ansi-green-fg">      2</span> <span style="font-weight:bold;color:rgb(0,135,0)">import</span><span style="color:rgb(188,188,188)"> </span><span class="ansi-blue-fg ansi-bold">pandas</span><span style="color:rgb(188,188,188)"> </span><span style="font-weight:bold;color:rgb(0,135,0)">as</span><span style="color:rgb(188,188,188)"> </span><span class="ansi-blue-fg ansi-bold">pd</span>
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">4</span> df = <span class="ansi-yellow-bg">pd</span><span class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">read_csv</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-fg ansi-yellow-bg">"</span><span class="ansi-yellow-fg ansi-yellow-bg">data/students_exams_results.csv</span><span class="ansi-yellow-fg ansi-yellow-bg">"</span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">      5</span> df[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">average_marks</span><span class="ansi-yellow-fg">"</span>] = (df[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">mathematics_marks</span><span class="ansi-yellow-fg">"</span>] + df[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">english_marks</span><span class="ansi-yellow-fg">"</span>] + df[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">science_marks</span><span class="ansi-yellow-fg">"</span>]) / <span class="ansi-green-fg">3</span>
+<span class="ansi-green-fg">      6</span> df.head()
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/ds-mlops-path/ds-mlops-path/.venv/lib/python3.12/site-packages/pandas/io/parsers/readers.py:873</span>, in <span class="ansi-cyan-fg">read_csv</span><span class="ansi-blue-fg">(filepath_or_buffer, sep, delimiter, header, names, index_col, usecols, dtype, engine, converters, true_values, false_values, skipinitialspace, skiprows, skipfooter, nrows, na_values, keep_default_na, na_filter, skip_blank_lines, parse_dates, date_format, dayfirst, cache_dates, iterator, chunksize, compression, thousands, decimal, lineterminator, quotechar, quoting, doublequote, escapechar, comment, encoding, encoding_errors, dialect, on_bad_lines, low_memory, memory_map, float_precision, storage_options, dtype_backend)</span>
+<span class="ansi-green-fg">    861</span> kwds_defaults = _refine_defaults_read(
+<span class="ansi-green-fg">    862</span>     dialect,
+<span class="ansi-green-fg">    863</span>     delimiter,
+<span class="ansi-green-fg">   (...)</span><span class="ansi-green-fg">    869</span>     dtype_backend=dtype_backend,
+<span class="ansi-green-fg">    870</span> )
+<span class="ansi-green-fg">    871</span> kwds.update(kwds_defaults)
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">873</span> <span style="font-weight:bold;color:rgb(0,135,0)">return</span> <span class="ansi-yellow-bg">_read</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">filepath_or_buffer</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">kwds</span><span class="ansi-yellow-bg">)</span>
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/ds-mlops-path/ds-mlops-path/.venv/lib/python3.12/site-packages/pandas/io/parsers/readers.py:300</span>, in <span class="ansi-cyan-fg">_read</span><span class="ansi-blue-fg">(filepath_or_buffer, kwds)</span>
+<span class="ansi-green-fg">    297</span> _validate_names(kwds.get(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">names</span><span class="ansi-yellow-fg">"</span>, <span style="font-weight:bold;color:rgb(0,135,0)">None</span>))
+<span class="ansi-green-fg">    299</span> <span style="font-style:italic;color:rgb(95,135,135)"># Create the parser.</span>
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">300</span> parser = <span class="ansi-yellow-bg">TextFileReader</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">filepath_or_buffer</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">*</span><span class="ansi-yellow-bg">*</span><span class="ansi-yellow-bg">kwds</span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">    302</span> <span style="font-weight:bold;color:rgb(0,135,0)">if</span> chunksize <span style="font-weight:bold;color:rgb(175,0,255)">or</span> iterator:
+<span class="ansi-green-fg">    303</span>     <span style="font-weight:bold;color:rgb(0,135,0)">return</span> parser
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/ds-mlops-path/ds-mlops-path/.venv/lib/python3.12/site-packages/pandas/io/parsers/readers.py:1645</span>, in <span class="ansi-cyan-fg">TextFileReader.__init__</span><span class="ansi-blue-fg">(self, f, engine, **kwds)</span>
+<span class="ansi-green-fg">   1642</span>     <span style="color:rgb(0,135,0)">self</span>.options[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">has_index_names</span><span class="ansi-yellow-fg">"</span>] = kwds[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">has_index_names</span><span class="ansi-yellow-fg">"</span>]
+<span class="ansi-green-fg">   1644</span> <span style="color:rgb(0,135,0)">self</span>.handles: IOHandles | <span style="font-weight:bold;color:rgb(0,135,0)">None</span> = <span style="font-weight:bold;color:rgb(0,135,0)">None</span>
+<span class="ansi-green-fg">-&gt; </span><span class="ansi-green-fg">1645</span> <span style="color:rgb(0,135,0)">self</span>._engine = <span style="color:rgb(0,135,0)" class="ansi-yellow-bg">self</span><span class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">_make_engine</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">f</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span style="color:rgb(0,135,0)" class="ansi-yellow-bg">self</span><span class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">engine</span><span class="ansi-yellow-bg">)</span>
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/ds-mlops-path/ds-mlops-path/.venv/lib/python3.12/site-packages/pandas/io/parsers/readers.py:1904</span>, in <span class="ansi-cyan-fg">TextFileReader._make_engine</span><span class="ansi-blue-fg">(self, f, engine)</span>
+<span class="ansi-green-fg">   1902</span>     <span style="font-weight:bold;color:rgb(0,135,0)">if</span> <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">b</span><span class="ansi-yellow-fg">"</span> <span style="font-weight:bold;color:rgb(175,0,255)">not</span> <span style="font-weight:bold;color:rgb(175,0,255)">in</span> mode:
+<span class="ansi-green-fg">   1903</span>         mode += <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">b</span><span class="ansi-yellow-fg">"</span>
+<span class="ansi-green-fg">-&gt; </span><span class="ansi-green-fg">1904</span> <span style="color:rgb(0,135,0)">self</span>.handles = <span class="ansi-yellow-bg">get_handle</span><span class="ansi-yellow-bg">(</span>
+<span class="ansi-green-fg">   1905</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">f</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   1906</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">mode</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   1907</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">encoding</span><span class="ansi-yellow-bg">=</span><span style="color:rgb(0,135,0)" class="ansi-yellow-bg">self</span><span class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">options</span><span class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">get</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-fg ansi-yellow-bg">"</span><span class="ansi-yellow-fg ansi-yellow-bg">encoding</span><span class="ansi-yellow-fg ansi-yellow-bg">"</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span style="font-weight:bold;color:rgb(0,135,0)" class="ansi-yellow-bg">None</span><span class="ansi-yellow-bg">)</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   1908</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">compression</span><span class="ansi-yellow-bg">=</span><span style="color:rgb(0,135,0)" class="ansi-yellow-bg">self</span><span class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">options</span><span class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">get</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-fg ansi-yellow-bg">"</span><span class="ansi-yellow-fg ansi-yellow-bg">compression</span><span class="ansi-yellow-fg ansi-yellow-bg">"</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span style="font-weight:bold;color:rgb(0,135,0)" class="ansi-yellow-bg">None</span><span class="ansi-yellow-bg">)</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   1909</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">memory_map</span><span class="ansi-yellow-bg">=</span><span style="color:rgb(0,135,0)" class="ansi-yellow-bg">self</span><span class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">options</span><span class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">get</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-fg ansi-yellow-bg">"</span><span class="ansi-yellow-fg ansi-yellow-bg">memory_map</span><span class="ansi-yellow-fg ansi-yellow-bg">"</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span style="font-weight:bold;color:rgb(0,135,0)" class="ansi-yellow-bg">False</span><span class="ansi-yellow-bg">)</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   1910</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">is_text</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">is_text</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   1911</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">errors</span><span class="ansi-yellow-bg">=</span><span style="color:rgb(0,135,0)" class="ansi-yellow-bg">self</span><span class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">options</span><span class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">get</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-fg ansi-yellow-bg">"</span><span class="ansi-yellow-fg ansi-yellow-bg">encoding_errors</span><span class="ansi-yellow-fg ansi-yellow-bg">"</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-fg ansi-yellow-bg">"</span><span class="ansi-yellow-fg ansi-yellow-bg">strict</span><span class="ansi-yellow-fg ansi-yellow-bg">"</span><span class="ansi-yellow-bg">)</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   1912</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">storage_options</span><span class="ansi-yellow-bg">=</span><span style="color:rgb(0,135,0)" class="ansi-yellow-bg">self</span><span class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">options</span><span class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">get</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-fg ansi-yellow-bg">"</span><span class="ansi-yellow-fg ansi-yellow-bg">storage_options</span><span class="ansi-yellow-fg ansi-yellow-bg">"</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span style="font-weight:bold;color:rgb(0,135,0)" class="ansi-yellow-bg">None</span><span class="ansi-yellow-bg">)</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   1913</span> <span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">   1914</span> <span style="font-weight:bold;color:rgb(0,135,0)">assert</span> <span style="color:rgb(0,135,0)">self</span>.handles <span style="font-weight:bold;color:rgb(175,0,255)">is</span> <span style="font-weight:bold;color:rgb(175,0,255)">not</span> <span style="font-weight:bold;color:rgb(0,135,0)">None</span>
+<span class="ansi-green-fg">   1915</span> f = <span style="color:rgb(0,135,0)">self</span>.handles.handle
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/ds-mlops-path/ds-mlops-path/.venv/lib/python3.12/site-packages/pandas/io/common.py:930</span>, in <span class="ansi-cyan-fg">get_handle</span><span class="ansi-blue-fg">(path_or_buf, mode, encoding, compression, memory_map, is_text, errors, storage_options)</span>
+<span class="ansi-green-fg">    925</span> <span style="font-weight:bold;color:rgb(0,135,0)">elif</span> <span style="color:rgb(0,135,0)">isinstance</span>(handle, <span style="color:rgb(0,135,0)">str</span>):
+<span class="ansi-green-fg">    926</span>     <span style="font-style:italic;color:rgb(95,135,135)"># Check whether the filename is to be opened in binary mode.</span>
+<span class="ansi-green-fg">    927</span>     <span style="font-style:italic;color:rgb(95,135,135)"># Binary mode does not support 'encoding' and 'newline'.</span>
+<span class="ansi-green-fg">    928</span>     <span style="font-weight:bold;color:rgb(0,135,0)">if</span> ioargs.encoding <span style="font-weight:bold;color:rgb(175,0,255)">and</span> <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">b</span><span class="ansi-yellow-fg">"</span> <span style="font-weight:bold;color:rgb(175,0,255)">not</span> <span style="font-weight:bold;color:rgb(175,0,255)">in</span> ioargs.mode:
+<span class="ansi-green-fg">    929</span>         <span style="font-style:italic;color:rgb(95,135,135)"># Encoding</span>
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">930</span>         handle = <span style="color:rgb(0,135,0)" class="ansi-yellow-bg">open</span><span class="ansi-yellow-bg">(</span>
+<span class="ansi-green-fg">    931</span> <span class="ansi-yellow-bg">            </span><span class="ansi-yellow-bg">handle</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    932</span> <span class="ansi-yellow-bg">            </span><span class="ansi-yellow-bg">ioargs</span><span class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">mode</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    933</span> <span class="ansi-yellow-bg">            </span><span class="ansi-yellow-bg">encoding</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">ioargs</span><span class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">encoding</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    934</span> <span class="ansi-yellow-bg">            </span><span class="ansi-yellow-bg">errors</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">errors</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    935</span> <span class="ansi-yellow-bg">            </span><span class="ansi-yellow-bg">newline</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-fg ansi-yellow-bg">"</span><span class="ansi-yellow-fg ansi-yellow-bg">"</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    936</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">    937</span>     <span style="font-weight:bold;color:rgb(0,135,0)">else</span>:
+<span class="ansi-green-fg">    938</span>         <span style="font-style:italic;color:rgb(95,135,135)"># Binary mode</span>
+<span class="ansi-green-fg">    939</span>         handle = <span style="color:rgb(0,135,0)">open</span>(handle, ioargs.mode)
+
+<span class="ansi-red-fg">FileNotFoundError</span>: [Errno 2] No such file or directory: 'data/students_exams_results.csv'</pre>
+</div>
+</div>
+</div>
+</section>
+<section id="whats-new-in-pandas-3" class="level2" data-number="10.4">
+<h2 data-number="10.4" class="anchored" data-anchor-id="whats-new-in-pandas-3"><span class="header-section-number">10.4</span> 0. What’s New in Pandas 3</h2>
+<p>This series is written against pandas 3, released in 2025, and two of its changes are worth understanding before going further, because they change what you see in everyday output.</p>
+<p>Run <code>df.dtypes</code> and look at the text columns. In pandas 2 they showed up as <code>object</code>, the catch-all dtype for anything that is not a fixed-width number. Pandas 3 gives strings a dedicated <code>str</code> dtype instead, backed by PyArrow when it is installed:</p>
+<div id="7" class="cell" data-execution_count="2">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>df.dtypes</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-error">
+<div class="ansi-escaped-output">
+<pre><span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[2]</span><span class="ansi-green-fg">, line 1</span>
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">1</span> <span class="ansi-yellow-bg">df</span>.dtypes
+
+<span class="ansi-red-fg">NameError</span>: name 'df' is not defined</pre>
+</div>
+</div>
+</div>
+<div style="background:#EAF3FA;border-left:5px solid #0369A1;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-info-circle-fill"></i> Key Concept: A dedicated <code>str</code> dtype, not <code>object</code></span><br><br> <code>object</code> dtype could hold strings, but it could just as easily hold a mix of strings, numbers, and Python objects, with no guarantee which. The new <code>str</code> dtype can only hold strings or missing values, so a column typed <code>str</code> is a stronger guarantee than <code>object</code> ever was, and the PyArrow backing makes string operations faster. This is the same dtype the <code>.str</code> accessor in Sec. 3 operates on.</p>
+</div>
+<p>The second change does not show up in any output, it changes how assignment behaves. Pandas 3 makes Copy-on-Write the only behaviour: selecting a subset of a DataFrame never lets you accidentally modify the original through it.</p>
+<div id="10" class="cell" data-execution_count="3">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>subset <span class="op">=</span> df[[<span class="st">"student_id"</span>, <span class="st">"average_marks"</span>]]</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>subset.loc[<span class="dv">0</span>, <span class="st">"average_marks"</span>] <span class="op">=</span> <span class="fl">0.0</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"original unaffected: </span><span class="sc">{</span>df<span class="sc">.</span>loc[<span class="dv">0</span>, <span class="st">'average_marks'</span>]<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"subset changed     : </span><span class="sc">{</span>subset<span class="sc">.</span>loc[<span class="dv">0</span>, <span class="st">'average_marks'</span>]<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-error">
+<div class="ansi-escaped-output">
+<pre><span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[3]</span><span class="ansi-green-fg">, line 1</span>
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">1</span> subset = <span class="ansi-yellow-bg">df</span>[[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">student_id</span><span class="ansi-yellow-fg">"</span>, <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">average_marks</span><span class="ansi-yellow-fg">"</span>]]
+<span class="ansi-green-fg">      2</span> subset.loc[<span class="ansi-green-fg">0</span>, <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">average_marks</span><span class="ansi-yellow-fg">"</span>] = <span class="ansi-green-fg">0.0</span>
+<span class="ansi-green-fg">      3</span> <span style="color:rgb(0,135,0)">print</span>(<span class="ansi-yellow-fg">f</span><span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">original unaffected: </span><span style="font-weight:bold;color:rgb(175,95,135)">{</span>df.loc[<span class="ansi-green-fg">0</span>,<span style="color:rgb(188,188,188)"> </span><span class="ansi-yellow-fg">'</span><span class="ansi-yellow-fg">average_marks</span><span class="ansi-yellow-fg">'</span>]<span style="font-weight:bold;color:rgb(175,95,135)">}</span><span class="ansi-yellow-fg">"</span>)
+
+<span class="ansi-red-fg">NameError</span>: name 'df' is not defined</pre>
+</div>
+</div>
+</div>
+<div style="background:#EAF3FA;border-left:5px solid #0369A1;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-info-circle-fill"></i> Key Concept: Copy-on-Write removes the <code>SettingWithCopyWarning</code> guessing game</span><br><br> Before pandas 3, whether <code>subset</code> above was a view into <code>df</code> or an independent copy depended on details of how <code>subset</code> was created, the source of the infamous <code>SettingWithCopyWarning</code>. Pandas 3 makes every such selection behave as an independent copy: modifying <code>subset</code> never touches <code>df</code>. The warning is gone because the ambiguity it warned about is gone.</p>
+</div>
+<div style="background:#F4F5F6;border-left:5px solid #6B7280;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#6B7280;font-weight:bold"><i class="bi bi-lightbulb-fill"></i> Pro Tip: <code>pd.col()</code> previews the expression style Polars uses</span><br><br> Pandas 3 adds <code>pd.col(“name”)</code> as an alternative to a <code>lambda</code> inside <code>.assign()</code>: <code>df.assign(c=pd.col(“a”) + pd.col(“b”))</code> instead of <code>df.assign(c=lambda d: d[“a”] + d[“b”])</code>. It reads closer to the column-expression style used throughout Polars, covered in Part 11 of this series, and is worth recognising even though this notebook keeps using <code>apply</code> and <code>lambda</code>, the more widely used style today.</p>
+</div>
+</section>
+<section id="function-application-with-map-and-apply" class="level2" data-number="10.5">
+<h2 data-number="10.5" class="anchored" data-anchor-id="function-application-with-map-and-apply"><span class="header-section-number">10.5</span> 1. Function Application with <code>map</code> and <code>apply</code></h2>
+<p>NumPy’s vectorized operations cover arithmetic and comparisons, but sometimes the transformation you need is your own logic: a lookup, a multi-branch rule, a calculation that combines several columns per row. <code>map</code> and <code>apply</code> are how pandas runs that logic.</p>
+<p><code>Series.map()</code> is for simple one-to-one substitution: pass it a dict (or a function) and it replaces every value with its mapped equivalent. Recoding the <code>gender</code> column’s short codes into full labels is a <code>map</code> problem, not an <code>apply</code> one:</p>
+<div id="15" class="cell" data-execution_count="4">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>gender_labels <span class="op">=</span> {<span class="st">"M"</span>: <span class="st">"Male"</span>, <span class="st">"F"</span>: <span class="st">"Female"</span>}</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"gender_label"</span>] <span class="op">=</span> df[<span class="st">"gender"</span>].<span class="bu">map</span>(gender_labels)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>df[[<span class="st">"gender"</span>, <span class="st">"gender_label"</span>]].head(<span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-error">
+<div class="ansi-escaped-output">
+<pre><span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[4]</span><span class="ansi-green-fg">, line 2</span>
+<span class="ansi-green-fg">      1</span> gender_labels = {<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">M</span><span class="ansi-yellow-fg">"</span>: <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">Male</span><span class="ansi-yellow-fg">"</span>, <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">F</span><span class="ansi-yellow-fg">"</span>: <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">Female</span><span class="ansi-yellow-fg">"</span>}
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">2</span> df[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">gender_label</span><span class="ansi-yellow-fg">"</span>] = <span class="ansi-yellow-bg">df</span>[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">gender</span><span class="ansi-yellow-fg">"</span>].map(gender_labels)
+<span class="ansi-green-fg">      3</span> df[[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">gender</span><span class="ansi-yellow-fg">"</span>, <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">gender_label</span><span class="ansi-yellow-fg">"</span>]].head(<span class="ansi-green-fg">3</span>)
+
+<span class="ansi-red-fg">NameError</span>: name 'df' is not defined</pre>
+</div>
+</div>
+</div>
+<div style="background:#EAF3FA;border-left:5px solid #0369A1;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-info-circle-fill"></i> Key Concept: <code>map</code> is for substitution, <code>apply</code> is for logic</span><br><br> <code>map</code> expects a dict or a simple function and only ever looks at one value at a time. <code>apply</code> accepts any function, including one with branching logic, and can run over a Series (one value at a time) or a DataFrame (one row or one column at a time, depending on <code>axis</code>). Reach for <code>map</code> first; reach for <code>apply</code> when the rule does not fit in a lookup table.</p>
+</div>
+<p>Converting a normalized mark (0 to 1) into a letter grade needs a multi-branch rule, a job for <code>apply</code> with a plain Python function:</p>
+<div id="18" class="cell" data-execution_count="5">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> letter_grade(mark: <span class="bu">float</span>) <span class="op">-&gt;</span> <span class="bu">str</span>:</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> mark <span class="op">&gt;=</span> <span class="fl">0.8</span>:</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="st">"A"</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">elif</span> mark <span class="op">&gt;=</span> <span class="fl">0.6</span>:</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="st">"B"</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">elif</span> mark <span class="op">&gt;=</span> <span class="fl">0.4</span>:</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="st">"C"</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="st">"D"</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"grade"</span>] <span class="op">=</span> df[<span class="st">"average_marks"</span>].<span class="bu">apply</span>(letter_grade)</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>df[[<span class="st">"student_id"</span>, <span class="st">"average_marks"</span>, <span class="st">"grade"</span>]].head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-error">
+<div class="ansi-escaped-output">
+<pre><span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[5]</span><span class="ansi-green-fg">, line 12</span>
+<span class="ansi-green-fg">      8</span>     <span style="font-weight:bold;color:rgb(0,135,0)">else</span>:
+<span class="ansi-green-fg">      9</span>         <span style="font-weight:bold;color:rgb(0,135,0)">return</span> <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">D</span><span class="ansi-yellow-fg">"</span>
+<span class="ansi-green-fg">---&gt; </span><span class="ansi-green-fg">12</span> df[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">grade</span><span class="ansi-yellow-fg">"</span>] = <span class="ansi-yellow-bg">df</span>[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">average_marks</span><span class="ansi-yellow-fg">"</span>].apply(letter_grade)
+<span class="ansi-green-fg">     13</span> df[[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">student_id</span><span class="ansi-yellow-fg">"</span>, <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">average_marks</span><span class="ansi-yellow-fg">"</span>, <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">grade</span><span class="ansi-yellow-fg">"</span>]].head()
+
+<span class="ansi-red-fg">NameError</span>: name 'df' is not defined</pre>
+</div>
+</div>
+</div>
+<p><code>DataFrame.apply(..., axis=1)</code> runs a function once per row, with the whole row available as a Series. Use it when the rule needs more than one column at a time, for example flagging students who are both low-scoring and without internet access:</p>
+<div id="20" class="cell" data-execution_count="6">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> at_risk(row: pd.Series) <span class="op">-&gt;</span> <span class="bu">bool</span>:</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> row[<span class="st">"average_marks"</span>] <span class="op">&lt;</span> <span class="fl">0.4</span> <span class="kw">and</span> row[<span class="st">"internet"</span>] <span class="op">==</span> <span class="dv">0</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"at_risk"</span>] <span class="op">=</span> df.<span class="bu">apply</span>(at_risk, axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"at_risk"</span>].<span class="bu">sum</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-error">
+<div class="ansi-escaped-output">
+<pre><span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[6]</span><span class="ansi-green-fg">, line 5</span>
+<span class="ansi-green-fg">      1</span> <span style="font-weight:bold;color:rgb(0,135,0)">def</span><span style="color:rgb(188,188,188)"> </span><span class="ansi-blue-fg">at_risk</span>(row: pd.Series) -&gt; <span style="color:rgb(0,135,0)">bool</span>:
+<span class="ansi-green-fg">      2</span>     <span style="font-weight:bold;color:rgb(0,135,0)">return</span> row[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">average_marks</span><span class="ansi-yellow-fg">"</span>] &lt; <span class="ansi-green-fg">0.4</span> <span style="font-weight:bold;color:rgb(175,0,255)">and</span> row[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">internet</span><span class="ansi-yellow-fg">"</span>] == <span class="ansi-green-fg">0</span>
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">5</span> df[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">at_risk</span><span class="ansi-yellow-fg">"</span>] = <span class="ansi-yellow-bg">df</span>.apply(at_risk, axis=<span class="ansi-green-fg">1</span>)
+<span class="ansi-green-fg">      6</span> df[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">at_risk</span><span class="ansi-yellow-fg">"</span>].sum()
+
+<span class="ansi-red-fg">NameError</span>: name 'df' is not defined</pre>
+</div>
+</div>
+</div>
+<div style="background:#FEF2F2;border-left:5px solid #DC2626;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#991B1B;font-weight:bold"><i class="bi bi-bug-fill"></i> Common Mistake: Reaching for <code>apply(axis=1)</code> when a vectorized operation already does the job</span><br><br> <code>df.apply(at_risk, axis=1)</code> calls a Python function once per row, 17,190 times here, which is far slower than an equivalent boolean mask: <code>(df[“average_marks”] &lt; 0.4) &amp; (df[“internet”] == 0)</code> computes the same result with NumPy operating on whole columns at once. Use <code>apply</code> when the rule cannot be written with column-wise operations and comparisons; reach for masking first.</p>
+</div>
+<div style="background:#FFF1E6;border-left:5px solid #EA580C;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#9A3412;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 1 - Grade Distribution</span><br><br></p>
+<b>Goal:</b> Write a function that returns <code>True</code> for marks of 0.6 or higher and <code>False</code> otherwise, apply it to <code>average_marks</code> to create a new column <code>passed</code>, then print how many students passed.
+<pre style="background:#FFF8E1;padding:10px;border-radius:4px;font-size:0.9em">def passed_threshold(mark: float) -&gt; bool:
+    ...
+
+
+df["passed"] = df["average_marks"].apply(passed_threshold)
+df["passed"].sum()
+# -&gt; 6011</pre>
+</div>
+<div id="23" class="cell" data-execution_count="7">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: write passed_threshold, apply it, and print the count of students who passed</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="unique-values-value-counts-and-membership" class="level2" data-number="10.6">
+<h2 data-number="10.6" class="anchored" data-anchor-id="unique-values-value-counts-and-membership"><span class="header-section-number">10.6</span> 2. Unique Values, Value Counts, and Membership</h2>
+<p><code>.unique()</code>, <code>.value_counts()</code>, and <code>.isin()</code> are usually the first three calls worth making on any categorical column, before any filtering or grouping.</p>
+<div id="25" class="cell" data-execution_count="8">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"caste"</span>].unique()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-error">
+<div class="ansi-escaped-output">
+<pre><span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[8]</span><span class="ansi-green-fg">, line 1</span>
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">1</span> <span class="ansi-yellow-bg">df</span>[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">caste</span><span class="ansi-yellow-fg">"</span>].unique()
+
+<span class="ansi-red-fg">NameError</span>: name 'df' is not defined</pre>
+</div>
+</div>
+</div>
+<p><code>.value_counts()</code> counts how many rows fall into each category, sorted from most to least common. Passing <code>normalize=True</code> turns the counts into proportions, which is what you want for a question like “what fraction of students dropped out?”:</p>
+<div style="background:#EAF7F0;border-left:5px solid #059669;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#059669;font-weight:bold"><i class="bi bi-journal-code"></i> Example: Dropout rate from <code>value_counts</code></span><br><br> <code>df[“continue_drop”].value_counts(normalize=True)</code> answers the dropout-rate question in a single line, no manual division required.</p>
+</div>
+<div id="28" class="cell" data-execution_count="9">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"continue_drop"</span>].value_counts(normalize<span class="op">=</span><span class="va">True</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-error">
+<div class="ansi-escaped-output">
+<pre><span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[9]</span><span class="ansi-green-fg">, line 1</span>
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">1</span> <span class="ansi-yellow-bg">df</span>[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">continue_drop</span><span class="ansi-yellow-fg">"</span>].value_counts(normalize=<span style="font-weight:bold;color:rgb(0,135,0)">True</span>)
+
+<span class="ansi-red-fg">NameError</span>: name 'df' is not defined</pre>
+</div>
+</div>
+</div>
+<p><code>.isin()</code> filters rows whose value is in a given list, the categorical equivalent of a boolean comparison. Filtering to the two largest caste categories combines <code>.value_counts()</code> and <code>.isin()</code> directly:</p>
+<div id="30" class="cell" data-execution_count="10">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>top_castes <span class="op">=</span> df[<span class="st">"caste"</span>].value_counts().head(<span class="dv">2</span>).index</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>df_top_castes <span class="op">=</span> df[df[<span class="st">"caste"</span>].isin(top_castes)]</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>df_top_castes[<span class="st">"caste"</span>].value_counts()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-error">
+<div class="ansi-escaped-output">
+<pre><span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[10]</span><span class="ansi-green-fg">, line 1</span>
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">1</span> top_castes = <span class="ansi-yellow-bg">df</span>[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">caste</span><span class="ansi-yellow-fg">"</span>].value_counts().head(<span class="ansi-green-fg">2</span>).index
+<span class="ansi-green-fg">      2</span> df_top_castes = df[df[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">caste</span><span class="ansi-yellow-fg">"</span>].isin(top_castes)]
+<span class="ansi-green-fg">      3</span> df_top_castes[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">caste</span><span class="ansi-yellow-fg">"</span>].value_counts()
+
+<span class="ansi-red-fg">NameError</span>: name 'df' is not defined</pre>
+</div>
+</div>
+</div>
+<div style="background:#F4F5F6;border-left:5px solid #6B7280;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#6B7280;font-weight:bold"><i class="bi bi-lightbulb-fill"></i> Pro Tip: <code>.nunique()</code> before <code>.unique()</code> on a column you have not seen yet</span><br><br> <code>.nunique()</code> returns just the count of distinct values. Running it before <code>.unique()</code> tells you whether printing every unique value is even a reasonable idea, useful for a column that turns out to have 4 categories versus one that turns out to have 4,000.</p>
+</div>
+<p>A column with a small, fixed set of values is a candidate for the <code>category</code> dtype: pandas stores each value once and keeps a compact integer code per row instead of repeating the full string, which is most of <code>gender</code>, <code>caste</code>, and <code>guardian</code> here:</p>
+<div id="33" class="cell" data-execution_count="11">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"caste"</span>] <span class="op">=</span> df[<span class="st">"caste"</span>].astype(<span class="st">"category"</span>)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"caste"</span>].dtype</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-error">
+<div class="ansi-escaped-output">
+<pre><span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[11]</span><span class="ansi-green-fg">, line 1</span>
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">1</span> df[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">caste</span><span class="ansi-yellow-fg">"</span>] = <span class="ansi-yellow-bg">df</span>[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">caste</span><span class="ansi-yellow-fg">"</span>].astype(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">category</span><span class="ansi-yellow-fg">"</span>)
+<span class="ansi-green-fg">      2</span> df[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">caste</span><span class="ansi-yellow-fg">"</span>].dtype
+
+<span class="ansi-red-fg">NameError</span>: name 'df' is not defined</pre>
+</div>
+</div>
+</div>
+<p>Most ML models need numbers, not category labels. <code>pd.get_dummies()</code> one-hot encodes a categorical column into one binary column per category, the standard first step before fitting a model on top of this data:</p>
+<div id="35" class="cell" data-execution_count="12">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>caste_dummies <span class="op">=</span> pd.get_dummies(df[<span class="st">"caste"</span>], prefix<span class="op">=</span><span class="st">"caste"</span>)</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>caste_dummies.head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-error">
+<div class="ansi-escaped-output">
+<pre><span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[12]</span><span class="ansi-green-fg">, line 1</span>
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">1</span> caste_dummies = pd.get_dummies(<span class="ansi-yellow-bg">df</span>[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">caste</span><span class="ansi-yellow-fg">"</span>], prefix=<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">caste</span><span class="ansi-yellow-fg">"</span>)
+<span class="ansi-green-fg">      2</span> caste_dummies.head()
+
+<span class="ansi-red-fg">NameError</span>: name 'df' is not defined</pre>
+</div>
+</div>
+</div>
+<div style="background:#EAF3FA;border-left:5px solid #0369A1;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-info-circle-fill"></i> Key Concept: <code>category</code> dtype for memory, one-hot encoding for models</span><br><br> <code>.astype(“category”)</code> is about storage and speed: it does not change what a column means, only how compactly pandas stores it. <code>pd.get_dummies()</code> is about preparing data for a model that expects numeric input: it turns one categorical column into several binary columns. The two are often used together, category dtype while exploring, dummy columns right before training.</p>
+</div>
+<div style="background:#FFF1E6;border-left:5px solid #EA580C;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#9A3412;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 2 - Guardian Breakdown</span><br><br></p>
+<b>Goal:</b> Print the value counts for the <code>guardian</code> column, then filter the DataFrame to students whose guardian is <code>“mother”</code> or <code>“father”</code> using <code>.isin()</code>, and print how many rows remain.
+<pre style="background:#FFF8E1;padding:10px;border-radius:4px;font-size:0.9em">df["guardian"].value_counts()
+
+parents = df[df["guardian"].isin(["mother", "father"])]
+len(parents)</pre>
+</div>
+<div id="38" class="cell" data-execution_count="13">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: print value counts for guardian, then filter to mother/father and print row count</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="working-with-text-columns-the-.str-accessor" class="level2" data-number="10.7">
+<h2 data-number="10.7" class="anchored" data-anchor-id="working-with-text-columns-the-.str-accessor"><span class="header-section-number">10.7</span> 3. Working with Text Columns: the <code>.str</code> Accessor</h2>
+<p><code>student_id</code> is a string column, and pandas keeps every string method behind a <code>.str</code> accessor rather than directly on the Series. The accessor exists because a Series can hold any dtype, <code>.str</code> is what tells pandas you specifically want the string-handling behaviour.</p>
+<div style="background:#FEF2F2;border-left:5px solid #DC2626;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#991B1B;font-weight:bold"><i class="bi bi-bug-fill"></i> Common Mistake: Calling a string method directly on a Series</span><br><br> <code>df[“student_id”].upper()</code> raises an <code>AttributeError</code>: <code>Series</code> has no <code>upper</code> method. The string methods live on <code>df[“student_id”].str</code>, not on the Series itself, because the Series itself is a general-purpose container that happens to hold strings here.</p>
+</div>
+<div id="41" class="cell" data-execution_count="14">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"student_id"</span>].<span class="bu">str</span>.upper().head(<span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-error">
+<div class="ansi-escaped-output">
+<pre><span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[14]</span><span class="ansi-green-fg">, line 1</span>
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">1</span> <span class="ansi-yellow-bg">df</span>[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">student_id</span><span class="ansi-yellow-fg">"</span>].str.upper().head(<span class="ansi-green-fg">3</span>)
+
+<span class="ansi-red-fg">NameError</span>: name 'df' is not defined</pre>
+</div>
+</div>
+</div>
+<p><code>.str.len()</code> gives the length of every string at once, useful for spotting malformed values before they cause problems downstream:</p>
+<div id="43" class="cell" data-execution_count="15">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>id_lengths <span class="op">=</span> df[<span class="st">"student_id"</span>].<span class="bu">str</span>.<span class="bu">len</span>()</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>id_lengths.value_counts()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-error">
+<div class="ansi-escaped-output">
+<pre><span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[15]</span><span class="ansi-green-fg">, line 1</span>
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">1</span> id_lengths = <span class="ansi-yellow-bg">df</span>[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">student_id</span><span class="ansi-yellow-fg">"</span>].str.len()
+<span class="ansi-green-fg">      2</span> id_lengths.value_counts()
+
+<span class="ansi-red-fg">NameError</span>: name 'df' is not defined</pre>
+</div>
+</div>
+</div>
+<p><code>.str.extract()</code> pulls a regex capture group out of every value, the cleanest way to turn a structured string column into a usable numeric one. Every <code>student_id</code> here is the letter <code>s</code> followed by five digits, so extracting just the digits gives a numeric ID:</p>
+<div id="45" class="cell" data-execution_count="16">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"student_id"</span>].<span class="bu">str</span>.match(<span class="vs">r"</span><span class="dv">^</span><span class="vs">s</span><span class="dv">\d</span><span class="op">{5}</span><span class="dv">$</span><span class="vs">"</span>).<span class="bu">all</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-error">
+<div class="ansi-escaped-output">
+<pre><span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[16]</span><span class="ansi-green-fg">, line 1</span>
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">1</span> <span class="ansi-yellow-bg">df</span>[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">student_id</span><span class="ansi-yellow-fg">"</span>].str.match(<span class="ansi-yellow-fg">r</span><span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">^s</span><span class="ansi-yellow-fg">\</span><span class="ansi-yellow-fg">d</span><span style="font-weight:bold;color:rgb(175,95,135)">{5}</span><span class="ansi-yellow-fg">$</span><span class="ansi-yellow-fg">"</span>).all()
+
+<span class="ansi-red-fg">NameError</span>: name 'df' is not defined</pre>
+</div>
+</div>
+</div>
+<div id="46" class="cell" data-execution_count="17">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>numeric_id <span class="op">=</span> df[<span class="st">"student_id"</span>].<span class="bu">str</span>.extract(<span class="vs">r"s</span><span class="kw">(</span><span class="dv">\d</span><span class="op">+</span><span class="kw">)</span><span class="vs">"</span>).astype(<span class="bu">int</span>)</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"numeric_id"</span>] <span class="op">=</span> numeric_id</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>df[[<span class="st">"student_id"</span>, <span class="st">"numeric_id"</span>]].head(<span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-error">
+<div class="ansi-escaped-output">
+<pre><span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[17]</span><span class="ansi-green-fg">, line 1</span>
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">1</span> numeric_id = <span class="ansi-yellow-bg">df</span>[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">student_id</span><span class="ansi-yellow-fg">"</span>].str.extract(<span class="ansi-yellow-fg">r</span><span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">s(</span><span class="ansi-yellow-fg">\</span><span class="ansi-yellow-fg">d+)</span><span class="ansi-yellow-fg">"</span>).astype(<span style="color:rgb(0,135,0)">int</span>)
+<span class="ansi-green-fg">      2</span> df[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">numeric_id</span><span class="ansi-yellow-fg">"</span>] = numeric_id
+<span class="ansi-green-fg">      3</span> df[[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">student_id</span><span class="ansi-yellow-fg">"</span>, <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">numeric_id</span><span class="ansi-yellow-fg">"</span>]].head(<span class="ansi-green-fg">3</span>)
+
+<span class="ansi-red-fg">NameError</span>: name 'df' is not defined</pre>
+</div>
+</div>
+</div>
+<div style="background:#FFF1E6;border-left:5px solid #EA580C;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#9A3412;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 3 - Validate and Filter by ID</span><br><br></p>
+<b>Goal:</b> Use <code>.str.startswith(“s”)</code> to confirm every <code>student_id</code> starts with the letter <code>“s”</code>, then use <code>.str.contains()</code> to count how many contain the digit <code>“0”</code> anywhere in the ID.
+<pre style="background:#FFF8E1;padding:10px;border-radius:4px;font-size:0.9em">df["student_id"].str.startswith("s").all()
+df["student_id"].str.contains("0").sum()</pre>
+</div>
+<div id="48" class="cell" data-execution_count="18">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: confirm every student_id starts with "s", then count IDs containing "0"</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="descriptive-statistics-and-summarization" class="level2" data-number="10.8">
+<h2 data-number="10.8" class="anchored" data-anchor-id="descriptive-statistics-and-summarization"><span class="header-section-number">10.8</span> 4. Descriptive Statistics and Summarization</h2>
+<p><code>.describe()</code> from Part 1 summarizes every numeric column with one call. <code>.agg()</code> goes a step further: it computes a chosen list of statistics for a chosen set of columns, in whatever combination you ask for.</p>
+<div id="50" class="cell" data-execution_count="19">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>df[[<span class="st">"mathematics_marks"</span>, <span class="st">"english_marks"</span>, <span class="st">"science_marks"</span>]].describe()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-error">
+<div class="ansi-escaped-output">
+<pre><span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[19]</span><span class="ansi-green-fg">, line 1</span>
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">1</span> <span class="ansi-yellow-bg">df</span>[[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">mathematics_marks</span><span class="ansi-yellow-fg">"</span>, <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">english_marks</span><span class="ansi-yellow-fg">"</span>, <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">science_marks</span><span class="ansi-yellow-fg">"</span>]].describe()
+
+<span class="ansi-red-fg">NameError</span>: name 'df' is not defined</pre>
+</div>
+</div>
+</div>
+<p><code>.agg()</code> accepts a list of function names and applies every one of them to every selected column, returning a single small table instead of one Series per statistic:</p>
+<div id="52" class="cell" data-execution_count="20">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>df[[<span class="st">"mathematics_marks"</span>, <span class="st">"english_marks"</span>, <span class="st">"science_marks"</span>]].agg([<span class="st">"mean"</span>, <span class="st">"std"</span>, <span class="st">"min"</span>, <span class="st">"max"</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-error">
+<div class="ansi-escaped-output">
+<pre><span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[20]</span><span class="ansi-green-fg">, line 1</span>
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">1</span> <span class="ansi-yellow-bg">df</span>[[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">mathematics_marks</span><span class="ansi-yellow-fg">"</span>, <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">english_marks</span><span class="ansi-yellow-fg">"</span>, <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">science_marks</span><span class="ansi-yellow-fg">"</span>]].agg([<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">mean</span><span class="ansi-yellow-fg">"</span>, <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">std</span><span class="ansi-yellow-fg">"</span>, <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">min</span><span class="ansi-yellow-fg">"</span>, <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">max</span><span class="ansi-yellow-fg">"</span>])
+
+<span class="ansi-red-fg">NameError</span>: name 'df' is not defined</pre>
+</div>
+</div>
+</div>
+<p><code>.corr()</code> computes the pairwise correlation between numeric columns, a quick way to see whether strong performance in one subject tends to come with strong performance in another:</p>
+<div id="54" class="cell" data-execution_count="21">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>df[[<span class="st">"mathematics_marks"</span>, <span class="st">"english_marks"</span>, <span class="st">"science_marks"</span>]].corr()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-error">
+<div class="ansi-escaped-output">
+<pre><span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[21]</span><span class="ansi-green-fg">, line 1</span>
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">1</span> <span class="ansi-yellow-bg">df</span>[[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">mathematics_marks</span><span class="ansi-yellow-fg">"</span>, <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">english_marks</span><span class="ansi-yellow-fg">"</span>, <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">science_marks</span><span class="ansi-yellow-fg">"</span>]].corr()
+
+<span class="ansi-red-fg">NameError</span>: name 'df' is not defined</pre>
+</div>
+</div>
+</div>
+<div style="background:#F4F5F6;border-left:5px solid #6B7280;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#6B7280;font-weight:bold"><i class="bi bi-lightbulb-fill"></i> Pro Tip: <code>.agg()</code> over chaining several single-statistic calls</span><br><br> Five separate lines like <code>df[“mathematics_marks”].mean()</code>, <code>.std()</code>, <code>.min()</code> read fine in isolation but scatter related numbers across separate outputs. One <code>.agg([…])</code> call keeps them in a single table that is easier to read and to compare across columns.</p>
+</div>
+<div style="background:#FFF1E6;border-left:5px solid #EA580C;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#9A3412;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 4 - Subject Spread</span><br><br></p>
+<b>Goal:</b> Use <code>.agg()</code> to compute the mean and standard deviation of <code>mathematics_marks</code>, <code>english_marks</code>, and <code>science_marks</code> for students with <code>internet == 1</code> only.
+<pre style="background:#FFF8E1;padding:10px;border-radius:4px;font-size:0.9em">with_internet = df[df["internet"] == 1]
+with_internet[["mathematics_marks", "english_marks", "science_marks"]].agg(["mean", "std"])</pre>
+</div>
+<div id="57" class="cell" data-execution_count="22">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: agg mean and std for the three mark columns, restricted to internet == 1</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="capstone-risk-and-performance-report" class="level2" data-number="10.9">
+<h2 data-number="10.9" class="anchored" data-anchor-id="capstone-risk-and-performance-report"><span class="header-section-number">10.9</span> Capstone: Risk and Performance Report</h2>
+<p>Combine everything from this notebook into one short report: a derived grade column, a categorical breakdown, a text-column check, and a summary statistic, the same operations used in any first pass over a new dataset.</p>
+<div style="background:#FFF1E6;border-left:5px solid #EA580C;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#9A3412;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Capstone Exercise - Risk and Performance Report</span><br><br></p>
+<b>Goal:</b>
+<ol>
+<li>
+Confirm every <code>student_id</code> matches the pattern <code>s</code> followed by 5 digits, using <code>.str.match()</code> (Sec. 3)
+</li>
+<li>
+Print the <code>grade</code> distribution as proportions with <code>.value_counts(normalize=True)</code> (Sec. 1, Sec. 2)
+</li>
+<li>
+Use <code>.agg()</code> to compute the mean <code>average_marks</code> for <code>continue_drop == “continue”</code> and <code>continue_drop == “drop”</code> separately (Sec. 4)
+</li>
+</ol>
+<pre style="background:#FFF8E1;padding:10px;border-radius:4px;font-size:0.9em">valid_ids = df["student_id"].str.match(r"^s\d{5}$").all()
+
+grade_distribution = df["grade"].value_counts(normalize=True)
+
+continuing = df[df["continue_drop"] == "continue"]["average_marks"].agg(["mean"])
+dropped = df[df["continue_drop"] == "drop"]["average_marks"].agg(["mean"])</pre>
+</div>
+<div id="60" class="cell" data-execution_count="23">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: build the risk and performance report described above</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="summary" class="level2" data-number="10.10">
+<h2 data-number="10.10" class="anchored" data-anchor-id="summary"><span class="header-section-number">10.10</span> Summary</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Concept</th>
+<th>Key rule</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>str</code> dtype</td>
+<td>Pandas 3’s default for text columns, backed by PyArrow, replacing <code>object</code></td>
+</tr>
+<tr class="even">
+<td>Copy-on-Write</td>
+<td>Selecting a subset always behaves as an independent copy; the original is never modified through it</td>
+</tr>
+<tr class="odd">
+<td><code>Series.map()</code></td>
+<td>One-to-one substitution with a dict or simple function</td>
+</tr>
+<tr class="even">
+<td><code>Series.apply()</code></td>
+<td>Run any function, including multi-branch logic, one value at a time</td>
+</tr>
+<tr class="odd">
+<td><code>DataFrame.apply(axis=1)</code></td>
+<td>Run a function once per row, with the whole row available</td>
+</tr>
+<tr class="even">
+<td>Vectorized ops vs <code>apply</code></td>
+<td>Prefer a boolean mask or arithmetic when one exists; <code>apply</code> is the fallback, not the default</td>
+</tr>
+<tr class="odd">
+<td><code>.value_counts(normalize=True)</code></td>
+<td>Category proportions in one call</td>
+</tr>
+<tr class="even">
+<td><code>.isin()</code></td>
+<td>Filter rows whose value is in a given list</td>
+</tr>
+<tr class="odd">
+<td><code>.astype("category")</code></td>
+<td>Compact storage for a column with a small, fixed set of values</td>
+</tr>
+<tr class="even">
+<td><code>pd.get_dummies()</code></td>
+<td>One-hot encode a categorical column before fitting a model</td>
+</tr>
+<tr class="odd">
+<td><code>.str</code> accessor</td>
+<td>Required for any string method on a Series; calling the method directly raises <code>AttributeError</code></td>
+</tr>
+<tr class="even">
+<td><code>.str.extract()</code></td>
+<td>Pull a regex capture group into a new column</td>
+</tr>
+<tr class="odd">
+<td><code>.agg([...])</code></td>
+<td>Compute several statistics for several columns in one call, instead of chaining single-statistic calls</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Next:</strong> <code>10-combining-reshaping.ipynb</code>, covering concatenation, merging, <code>groupby</code>, pivot tables, and time series.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/sambaiga\.github\.io\/ds-mlops-path\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../../tutorials/01-python-basics/08-pandas-core.html" class="pagination-link" aria-label="Part 8: Pandas Core">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Part 8: Pandas Core</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../../tutorials/01-python-basics/10-combining-reshaping.html" class="pagination-link" aria-label="Part 10: Combining, Reshaping &amp; Time Series">
+        <span class="nav-page-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Part 10: Combining, Reshaping &amp; Time Series</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.dev/sambaiga/ds-mlops-path/blob/main/tutorials/01-python-basics/09-pandas-operations.ipynb" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/sambaiga/ds-mlops-path/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>
