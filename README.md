@@ -83,11 +83,11 @@ If you want to maintain an automated changelog.
 Once setup is complete:
 
 1. Download the dataset from [CALCE Processed Dataset on Figshare](https://figshare.com/articles/dataset/Calce_Processed_dataset/30575315)
- and place it under: dataset folder.
+ and place it at `tutorials/data/calce_battery_dataset.parquet`.
 
 2. Open the project in VS Code. Make sure you have [python](https://marketplace.visualstudio.com/items?itemName=ms-python.python) and [jupyter notebook](https://marketplace.visualstudio.com/items?itemName=ms-toolsai.jupyter) extensions installed.
 
-3. Run the `data_exploration.ipynb` notebook from the /notebooks folder.
+3. Run the `00-data-exploration.ipynb` notebook from the `tutorials/03-data-analysis/` folder.
 
 4. Verify imports and paths load correctly.
 
@@ -126,4 +126,3 @@ Understand and explore the dataset to build familiarity with its structure, cont
 - https://github.com/sambaiga/AI4DLearning?tab=readme-ov-file
 
 </details>
-
