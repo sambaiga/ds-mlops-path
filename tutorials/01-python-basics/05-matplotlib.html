@@ -266,6 +266,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
+<p><a href="https://colab.research.google.com/github/sambaiga/ds-mlops-path/blob/main/tutorials/01-python-basics/05-matplotlib.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open In Colab"></a> <a href="https://raw.githubusercontent.com/sambaiga/ds-mlops-path/main/tutorials/01-python-basics/05-matplotlib.ipynb"><img src="https://img.shields.io/badge/Download-Notebook-blue.svg?logo=jupyter&amp;logoColor=white" class="img-fluid" alt="Download Notebook"></a></p>
 <section id="part-5-matplotlib-and-its-ecosystem" class="level2" data-number="6.1">
 <h2 data-number="6.1" class="anchored" data-anchor-id="part-5-matplotlib-and-its-ecosystem"><span class="header-section-number">6.1</span> Part 5: Matplotlib and Its Ecosystem</h2>
 <p><strong>Python 3.12+ | Author: Anthony Faustine</strong></p>
@@ -403,7 +404,7 @@ Production-grade habit
 <section id="why-visualise-the-figure-and-axes" class="level2" data-number="6.3">
 <h2 data-number="6.3" class="anchored" data-anchor-id="why-visualise-the-figure-and-axes"><span class="header-section-number">6.3</span> 1. Why Visualise? The Figure and Axes</h2>
 <p>A table of a thousand exam scores tells you nothing at a glance. A histogram of the same thousand scores tells you the shape of the distribution in about half a second. That is the entire case for visualisation: it trades a small amount of precision for a large amount of immediate understanding, which is exactly what you want before you have decided which question to ask next.</p>
-<div id="3" class="cell" data-execution_count="1">
+<div id="4" class="cell" data-execution_count="1">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>rng <span class="op">=</span> np.random.default_rng(<span class="dv">7</span>)</span>
@@ -421,7 +422,7 @@ std    : 11.3</code></pre>
 </div>
 </div>
 <p>matplotlib has two APIs for building the same chart. The older one, <code>pyplot</code> (<code>plt.plot(...)</code>), is a state machine: it always draws onto “whichever figure was most recently touched,” which is fine for a single quick chart and confusing the moment you need two charts side by side. The <strong>object-oriented API</strong> is explicit instead: you ask for a <code>Figure</code> (the whole canvas) and one or more <code>Axes</code> (an individual plot inside it), then call methods directly on the <code>Axes</code> you want to draw on.</p>
-<div id="5" class="cell" data-execution_count="2">
+<div id="6" class="cell" data-execution_count="2">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># The object-oriented pattern you will use for almost every chart in this</span></span>
@@ -442,6 +443,19 @@ std    : 11.3</code></pre>
 <div style="background:#EAF3FA;border-left:5px solid #0369A1;padding:14px 18px;border-radius:6px;margin:16px 0">
 <p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-info-circle-fill"></i> Key Concept: Figure vs.&nbsp;Axes</span><br><br> A <code>Figure</code> is the whole canvas: the window or page a chart is drawn on, and the thing you save to a file. An <code>Axes</code> is one plot inside that canvas, with its own x-axis, y-axis, title, and data. <code>fig, ax = plt.subplots()</code> gives you one of each. Every method that actually draws data (<code>.plot()</code>, <code>.scatter()</code>, <code>.bar()</code>, <code>.hist()</code>) lives on the <code>Axes</code>, not the <code>Figure</code>.</p>
 </div>
+<p>The dashed boundary below is the one thing in this diagram that has no real line of code behind it: it is just there to make the Figure’s own edge visible, since otherwise it is easy to forget it exists at all.</p>
+<div id="9" class="cell" data-execution_count="3">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> ark.plot.diagrams <span class="im">import</span> figure_axes_diagram</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>figure_axes_diagram()<span class="op">;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="05-matplotlib_files/figure-html/cell-4-output-1.png" width="725" height="312" class="figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
 <div style="background:#FEF2F2;border-left:5px solid #DC2626;padding:14px 18px;border-radius:6px;margin:16px 0">
 <p><span style="color:#991B1B;font-weight:bold"><i class="bi bi-bug-fill"></i> Common Mistake: Mixing <code>plt.plot()</code> and <code>ax.plot()</code></span><br><br> <code>plt.title(“x”)</code> sets the title of whichever Axes <code>pyplot</code> thinks is “current”, which silently changes after you create a new subplot. The moment you have more than one Axes, calling <code>plt.xlabel()</code> instead of <code>ax.set_xlabel()</code> is a common way to label the wrong chart. Once you have an <code>ax</code> object, call methods on it directly and skip <code>plt.*</code> entirely.</p>
 </div>
@@ -449,85 +463,85 @@ std    : 11.3</code></pre>
 <section id="core-chart-types" class="level2" data-number="6.4">
 <h2 data-number="6.4" class="anchored" data-anchor-id="core-chart-types"><span class="header-section-number">6.4</span> 2. Core Chart Types</h2>
 <p>Four chart types cover most of what you will plot day to day. Each answers a different question, and picking the wrong one is the fastest way to make a chart that looks fine but says nothing useful.</p>
-<div id="9" class="cell" data-execution_count="3">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Build the running dataset: exam results across three courses and two</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co"># semesters for the university analytics platform.</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>rng <span class="op">=</span> np.random.default_rng(<span class="dv">42</span>)</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>courses <span class="op">=</span> np.array([<span class="st">"Machine Learning"</span>, <span class="st">"Data Structures"</span>, <span class="st">"Statistics"</span>])</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>semesters <span class="op">=</span> np.array([<span class="st">"Fall 2024"</span>, <span class="st">"Spring 2025"</span>])</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>n_per_group <span class="op">=</span> <span class="dv">60</span></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>course_col <span class="op">=</span> np.repeat(courses, n_per_group <span class="op">*</span> <span class="bu">len</span>(semesters))</span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>semester_col <span class="op">=</span> np.tile(np.repeat(semesters, n_per_group), <span class="bu">len</span>(courses))</span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Each course has a slightly different difficulty and improves slightly</span></span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="co"># from Fall to Spring, to give the line chart in this section something</span></span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="co"># real to show.</span></span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>course_base <span class="op">=</span> {<span class="st">"Machine Learning"</span>: <span class="dv">68</span>, <span class="st">"Data Structures"</span>: <span class="dv">74</span>, <span class="st">"Statistics"</span>: <span class="dv">71</span>}</span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>semester_bump <span class="op">=</span> {<span class="st">"Fall 2024"</span>: <span class="dv">0</span>, <span class="st">"Spring 2025"</span>: <span class="dv">4</span>}</span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>exam_score <span class="op">=</span> np.array(</span>
-<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>    [rng.normal(course_base[c] <span class="op">+</span> semester_bump[s], <span class="dv">10</span>) <span class="cf">for</span> c, s <span class="kw">in</span> <span class="bu">zip</span>(course_col, semester_col, strict<span class="op">=</span><span class="va">True</span>)]</span>
-<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>).clip(<span class="dv">0</span>, <span class="dv">100</span>)</span>
-<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>study_hours <span class="op">=</span> rng.uniform(<span class="dv">0</span>, <span class="dv">25</span>, size<span class="op">=</span><span class="bu">len</span>(course_col))</span>
-<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>attendance_pct <span class="op">=</span> rng.uniform(<span class="dv">50</span>, <span class="dv">100</span>, size<span class="op">=</span><span class="bu">len</span>(course_col))</span>
-<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"rows: </span><span class="sc">{</span><span class="bu">len</span>(course_col)<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"courses: </span><span class="sc">{</span>courses<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="12" class="cell" data-execution_count="4">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Build the running dataset: exam results across three courses and two</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co"># semesters for the university analytics platform.</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>rng <span class="op">=</span> np.random.default_rng(<span class="dv">42</span>)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>courses <span class="op">=</span> np.array([<span class="st">"Machine Learning"</span>, <span class="st">"Data Structures"</span>, <span class="st">"Statistics"</span>])</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>semesters <span class="op">=</span> np.array([<span class="st">"Fall 2024"</span>, <span class="st">"Spring 2025"</span>])</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>n_per_group <span class="op">=</span> <span class="dv">60</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>course_col <span class="op">=</span> np.repeat(courses, n_per_group <span class="op">*</span> <span class="bu">len</span>(semesters))</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>semester_col <span class="op">=</span> np.tile(np.repeat(semesters, n_per_group), <span class="bu">len</span>(courses))</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Each course has a slightly different difficulty and improves slightly</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="co"># from Fall to Spring, to give the line chart in this section something</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="co"># real to show.</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>course_base <span class="op">=</span> {<span class="st">"Machine Learning"</span>: <span class="dv">68</span>, <span class="st">"Data Structures"</span>: <span class="dv">74</span>, <span class="st">"Statistics"</span>: <span class="dv">71</span>}</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>semester_bump <span class="op">=</span> {<span class="st">"Fall 2024"</span>: <span class="dv">0</span>, <span class="st">"Spring 2025"</span>: <span class="dv">4</span>}</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>exam_score <span class="op">=</span> np.array(</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>    [rng.normal(course_base[c] <span class="op">+</span> semester_bump[s], <span class="dv">10</span>) <span class="cf">for</span> c, s <span class="kw">in</span> <span class="bu">zip</span>(course_col, semester_col, strict<span class="op">=</span><span class="va">True</span>)]</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>).clip(<span class="dv">0</span>, <span class="dv">100</span>)</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>study_hours <span class="op">=</span> rng.uniform(<span class="dv">0</span>, <span class="dv">25</span>, size<span class="op">=</span><span class="bu">len</span>(course_col))</span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>attendance_pct <span class="op">=</span> rng.uniform(<span class="dv">50</span>, <span class="dv">100</span>, size<span class="op">=</span><span class="bu">len</span>(course_col))</span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"rows: </span><span class="sc">{</span><span class="bu">len</span>(course_col)<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"courses: </span><span class="sc">{</span>courses<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>rows: 360
 courses: ['Machine Learning' 'Data Structures' 'Statistics']</code></pre>
 </div>
 </div>
 <p><strong>Line chart</strong>, for a trend across an ordered sequence. Here, average score per course from Fall to Spring:</p>
-<div id="11" class="cell" data-execution_count="4">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">5</span>, <span class="dv">3</span>))</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> course <span class="kw">in</span> courses:</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    course_mask <span class="op">=</span> course_col <span class="op">==</span> course</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    means <span class="op">=</span> [exam_score[course_mask <span class="op">&amp;</span> (semester_col <span class="op">==</span> s)].mean() <span class="cf">for</span> s <span class="kw">in</span> semesters]</span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    ax.plot(semesters, means, marker<span class="op">=</span><span class="st">"o"</span>, label<span class="op">=</span>course)</span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">"Average exam score"</span>)</span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">"Average score by course, Fall to Spring"</span>)</span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>ax.legend()<span class="op">;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="14" class="cell" data-execution_count="5">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">5</span>, <span class="dv">3</span>))</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> course <span class="kw">in</span> courses:</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    course_mask <span class="op">=</span> course_col <span class="op">==</span> course</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    means <span class="op">=</span> [exam_score[course_mask <span class="op">&amp;</span> (semester_col <span class="op">==</span> s)].mean() <span class="cf">for</span> s <span class="kw">in</span> semesters]</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    ax.plot(semesters, means, marker<span class="op">=</span><span class="st">"o"</span>, label<span class="op">=</span>course)</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">"Average exam score"</span>)</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">"Average score by course, Fall to Spring"</span>)</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>ax.legend()<span class="op">;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="05-matplotlib_files/figure-html/cell-5-output-1.png" width="459" height="283" class="figure-img"></p>
+<p><img src="05-matplotlib_files/figure-html/cell-6-output-1.png" width="459" height="283" class="figure-img"></p>
 </figure>
 </div>
 </div>
 </div>
 <p><strong>Scatter plot</strong>, for the relationship between two continuous variables. Here, study hours against exam score:</p>
-<div id="13" class="cell" data-execution_count="5">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">5</span>, <span class="dv">3</span>))</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>ax.scatter(study_hours, exam_score, alpha<span class="op">=</span><span class="fl">0.4</span>, color<span class="op">=</span><span class="st">"#4477AA"</span>)</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">"Study hours"</span>)</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">"Exam score"</span>)</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">"Study hours vs. exam score"</span>)<span class="op">;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="16" class="cell" data-execution_count="6">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">5</span>, <span class="dv">3</span>))</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>ax.scatter(study_hours, exam_score, alpha<span class="op">=</span><span class="fl">0.4</span>, color<span class="op">=</span><span class="st">"#4477AA"</span>)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">"Study hours"</span>)</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">"Exam score"</span>)</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">"Study hours vs. exam score"</span>)<span class="op">;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="05-matplotlib_files/figure-html/cell-6-output-1.png" width="444" height="302" class="figure-img"></p>
+<p><img src="05-matplotlib_files/figure-html/cell-7-output-1.png" width="444" height="302" class="figure-img"></p>
 </figure>
 </div>
 </div>
 </div>
 <p><strong>Bar chart</strong>, for comparing a single number across categories. Here, average score per course:</p>
-<div id="15" class="cell" data-execution_count="6">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>course_means <span class="op">=</span> [exam_score[course_col <span class="op">==</span> c].mean() <span class="cf">for</span> c <span class="kw">in</span> courses]</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">5</span>, <span class="dv">3</span>))</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>ax.bar(courses, course_means, color<span class="op">=</span>[<span class="st">"#4477AA"</span>, <span class="st">"#EE6677"</span>, <span class="st">"#228833"</span>])</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">"Average exam score"</span>)</span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">"Average score by course"</span>)</span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>ax.tick_params(axis<span class="op">=</span><span class="st">"x"</span>, labelrotation<span class="op">=</span><span class="dv">15</span>)<span class="op">;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="18" class="cell" data-execution_count="7">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>course_means <span class="op">=</span> [exam_score[course_col <span class="op">==</span> c].mean() <span class="cf">for</span> c <span class="kw">in</span> courses]</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">5</span>, <span class="dv">3</span>))</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>ax.bar(courses, course_means, color<span class="op">=</span>[<span class="st">"#4477AA"</span>, <span class="st">"#EE6677"</span>, <span class="st">"#228833"</span>])</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">"Average exam score"</span>)</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">"Average score by course"</span>)</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>ax.tick_params(axis<span class="op">=</span><span class="st">"x"</span>, labelrotation<span class="op">=</span><span class="dv">15</span>)<span class="op">;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="05-matplotlib_files/figure-html/cell-7-output-1.png" width="436" height="313" class="figure-img"></p>
+<p><img src="05-matplotlib_files/figure-html/cell-8-output-1.png" width="436" height="313" class="figure-img"></p>
 </figure>
 </div>
 </div>
@@ -540,23 +554,23 @@ ax.hist(attendance_pct, bins=15, ...)
 # expect a roughly uniform spread between 50 and 100, since
 # attendance_pct was generated with rng.uniform(50, 100, ...)</pre>
 </div>
-<div id="17" class="cell" data-execution_count="7">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">5</span>, <span class="dv">3</span>))</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: plot the histogram, then set xlabel, ylabel, and title</span></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>...</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>fig</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="7">
+<div id="20" class="cell" data-execution_count="8">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">5</span>, <span class="dv">3</span>))</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: plot the histogram, then set xlabel, ylabel, and title</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>...</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>fig</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="8">
 <div>
 <figure class="figure">
-<p><img src="05-matplotlib_files/figure-html/cell-8-output-1.png" width="432" height="268" class="figure-img"></p>
+<p><img src="05-matplotlib_files/figure-html/cell-9-output-1.png" width="432" height="268" class="figure-img"></p>
 </figure>
 </div>
 </div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="05-matplotlib_files/figure-html/cell-8-output-2.png" width="432" height="268" class="figure-img"></p>
+<p><img src="05-matplotlib_files/figure-html/cell-9-output-2.png" width="432" height="268" class="figure-img"></p>
 </figure>
 </div>
 </div>
@@ -568,21 +582,21 @@ ax.hist(attendance_pct, bins=15, ...)
 <section id="multiple-axes-and-saving-figures" class="level2" data-number="6.5">
 <h2 data-number="6.5" class="anchored" data-anchor-id="multiple-axes-and-saving-figures"><span class="header-section-number">6.5</span> 3. Multiple Axes and Saving Figures</h2>
 <p>Real analysis rarely stops at one chart. <code>plt.subplots(nrows, ncols)</code> returns a whole grid of <code>Axes</code> at once, as a NumPy array, so you can loop over it the same way you looped over any other array in Part 4.</p>
-<div id="20" class="cell" data-execution_count="8">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>fig, axes <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">3</span>, figsize<span class="op">=</span>(<span class="dv">11</span>, <span class="dv">3</span>), sharey<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> ax, course <span class="kw">in</span> <span class="bu">zip</span>(axes.flat, courses, strict<span class="op">=</span><span class="va">True</span>):</span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    course_scores <span class="op">=</span> exam_score[course_col <span class="op">==</span> course]</span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    ax.hist(course_scores, bins<span class="op">=</span><span class="dv">15</span>, color<span class="op">=</span><span class="st">"#4477AA"</span>, edgecolor<span class="op">=</span><span class="st">"white"</span>)</span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    ax.set_title(course, fontsize<span class="op">=</span><span class="dv">10</span>)</span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    ax.set_xlabel(<span class="st">"Exam score"</span>)</span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">0</span>].set_ylabel(<span class="st">"Number of students"</span>)</span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>fig.suptitle(<span class="st">"Score distribution per course"</span>)<span class="op">;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="23" class="cell" data-execution_count="9">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>fig, axes <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">3</span>, figsize<span class="op">=</span>(<span class="dv">11</span>, <span class="dv">3</span>), sharey<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> ax, course <span class="kw">in</span> <span class="bu">zip</span>(axes.flat, courses, strict<span class="op">=</span><span class="va">True</span>):</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    course_scores <span class="op">=</span> exam_score[course_col <span class="op">==</span> course]</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    ax.hist(course_scores, bins<span class="op">=</span><span class="dv">15</span>, color<span class="op">=</span><span class="st">"#4477AA"</span>, edgecolor<span class="op">=</span><span class="st">"white"</span>)</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    ax.set_title(course, fontsize<span class="op">=</span><span class="dv">10</span>)</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>    ax.set_xlabel(<span class="st">"Exam score"</span>)</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">0</span>].set_ylabel(<span class="st">"Number of students"</span>)</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>fig.suptitle(<span class="st">"Score distribution per course"</span>)<span class="op">;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="05-matplotlib_files/figure-html/cell-9-output-1.png" width="884" height="310" class="figure-img"></p>
+<p><img src="05-matplotlib_files/figure-html/cell-10-output-1.png" width="884" height="310" class="figure-img"></p>
 </figure>
 </div>
 </div>
@@ -592,33 +606,33 @@ ax.hist(attendance_pct, bins=15, ...)
 <p><span style="color:#991B1B;font-weight:bold"><i class="bi bi-bug-fill"></i> Common Mistake: Comparing histograms with different y-axis scales</span><br><br> Without <code>sharey=True</code>, matplotlib autoscales each Axes to its own data. Three histograms that look like they have the same number of students can actually have wildly different counts, because each y-axis silently uses a different scale. Whenever you put similar charts side by side for comparison, force a shared scale.</p>
 </div>
 <p>Saving a figure has two choices that matter: resolution (<code>dpi</code>, dots per inch) and file format. A raster format (PNG) at low <code>dpi</code> looks blurry when scaled up; a vector format (SVG or PDF) stays sharp at any size because it stores shapes, not pixels:</p>
-<div id="24" class="cell" data-execution_count="9">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pathlib <span class="im">import</span> Path</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>output_dir <span class="op">=</span> Path(<span class="st">"tmp_plots"</span>)</span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>output_dir.mkdir(exist_ok<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">5</span>, <span class="dv">3</span>))</span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>ax.hist(exam_scores, bins<span class="op">=</span><span class="dv">20</span>, color<span class="op">=</span><span class="st">"#4477AA"</span>, edgecolor<span class="op">=</span><span class="st">"white"</span>)</span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">"Exam score distribution"</span>)</span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="co"># PNG: fine for slides and notebooks, blurry if you zoom in or print large</span></span>
-<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>fig.savefig(output_dir <span class="op">/</span> <span class="st">"scores.png"</span>, dpi<span class="op">=</span><span class="dv">150</span>)</span>
-<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a><span class="co"># SVG: vector format, stays crisp at any size, the right choice for reports</span></span>
-<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>fig.savefig(output_dir <span class="op">/</span> <span class="st">"scores.svg"</span>)</span>
-<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="bu">sorted</span>(p.name <span class="cf">for</span> p <span class="kw">in</span> output_dir.iterdir()))</span>
-<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> shutil</span>
-<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>shutil.rmtree(output_dir)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="27" class="cell" data-execution_count="10">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pathlib <span class="im">import</span> Path</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>output_dir <span class="op">=</span> Path(<span class="st">"tmp_plots"</span>)</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>output_dir.mkdir(exist_ok<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">5</span>, <span class="dv">3</span>))</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>ax.hist(exam_scores, bins<span class="op">=</span><span class="dv">20</span>, color<span class="op">=</span><span class="st">"#4477AA"</span>, edgecolor<span class="op">=</span><span class="st">"white"</span>)</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">"Exam score distribution"</span>)</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a><span class="co"># PNG: fine for slides and notebooks, blurry if you zoom in or print large</span></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>fig.savefig(output_dir <span class="op">/</span> <span class="st">"scores.png"</span>, dpi<span class="op">=</span><span class="dv">150</span>)</span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a><span class="co"># SVG: vector format, stays crisp at any size, the right choice for reports</span></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>fig.savefig(output_dir <span class="op">/</span> <span class="st">"scores.svg"</span>)</span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="bu">sorted</span>(p.name <span class="cf">for</span> p <span class="kw">in</span> output_dir.iterdir()))</span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> shutil</span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a>shutil.rmtree(output_dir)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>['scores.png', 'scores.svg']</code></pre>
 </div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="05-matplotlib_files/figure-html/cell-10-output-2.png" width="426" height="283" class="figure-img"></p>
+<p><img src="05-matplotlib_files/figure-html/cell-11-output-2.png" width="426" height="283" class="figure-img"></p>
 </figure>
 </div>
 </div>
@@ -631,20 +645,20 @@ ax.hist(attendance_pct, bins=15, ...)
 <h2 data-number="6.6" class="anchored" data-anchor-id="seaborn-statistical-graphics-in-one-line"><span class="header-section-number">6.6</span> 4. Seaborn: Statistical Graphics in One Line</h2>
 <p>Seaborn is built directly on matplotlib. It does not replace anything from Sections 1-3: it adds a layer of functions that know how to take a whole DataFrame, split it by a category, color each group, and draw a legend, all in a single call. Reaching for seaborn first whenever your chart needs grouping or a statistical summary saves a genuine amount of code.</p>
 <p>Seaborn expects <strong>tidy data</strong>: one row per observation, one column per variable. A full pandas introduction comes later in the data analysis tutorials, but building a DataFrame from arrays you already have is one line:</p>
-<div id="28" class="cell" data-execution_count="10">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>results <span class="op">=</span> pd.DataFrame(</span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    {</span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>        <span class="st">"course"</span>: course_col,</span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>        <span class="st">"semester"</span>: semester_col,</span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>        <span class="st">"exam_score"</span>: exam_score,</span>
-<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>        <span class="st">"study_hours"</span>: study_hours,</span>
-<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>        <span class="st">"attendance_pct"</span>: attendance_pct,</span>
-<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>results.head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="10">
+<div id="31" class="cell" data-execution_count="11">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>results <span class="op">=</span> pd.DataFrame(</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    {</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>        <span class="st">"course"</span>: course_col,</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>        <span class="st">"semester"</span>: semester_col,</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>        <span class="st">"exam_score"</span>: exam_score,</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>        <span class="st">"study_hours"</span>: study_hours,</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>        <span class="st">"attendance_pct"</span>: attendance_pct,</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>results.head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="11">
 <div>
 
 
@@ -706,16 +720,16 @@ ax.hist(attendance_pct, bins=15, ...)
 </div>
 </div>
 </div>
-<div id="29" class="cell" data-execution_count="11">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">6</span>, <span class="fl">3.5</span>))</span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>sns.histplot(data<span class="op">=</span>results, x<span class="op">=</span><span class="st">"exam_score"</span>, hue<span class="op">=</span><span class="st">"course"</span>, kde<span class="op">=</span><span class="va">True</span>, ax<span class="op">=</span>ax)</span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">"Exam score distribution by course"</span>)<span class="op">;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="32" class="cell" data-execution_count="12">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">6</span>, <span class="fl">3.5</span>))</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>sns.histplot(data<span class="op">=</span>results, x<span class="op">=</span><span class="st">"exam_score"</span>, hue<span class="op">=</span><span class="st">"course"</span>, kde<span class="op">=</span><span class="va">True</span>, ax<span class="op">=</span>ax)</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">"Exam score distribution by course"</span>)<span class="op">;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="05-matplotlib_files/figure-html/cell-12-output-1.png" width="510" height="339" class="figure-img"></p>
+<p><img src="05-matplotlib_files/figure-html/cell-13-output-1.png" width="510" height="339" class="figure-img"></p>
 </figure>
 </div>
 </div>
@@ -724,30 +738,30 @@ ax.hist(attendance_pct, bins=15, ...)
 <p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-info-circle-fill"></i> Key Concept: Seaborn returns a matplotlib Axes</span><br><br> <code>sns.histplot(…, ax=ax)</code> draws onto the <code>Axes</code> you pass it and returns that same <code>Axes</code>. Nothing from Sections 1-3 is wasted: every <code>ax.set_title()</code>, <code>ax.set_xlabel()</code>, or <code>fig.savefig()</code> you already know still works on a seaborn chart. Seaborn only replaces the part where you would otherwise have looped over groups and called <code>ax.hist()</code> once per group yourself.</p>
 </div>
 <p><code>sns.boxplot</code> summarises a whole distribution (median, quartiles, outliers) per category in one call, the kind of comparison that would take a loop and several <code>ax.hist()</code> calls in raw matplotlib:</p>
-<div id="32" class="cell" data-execution_count="12">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">6</span>, <span class="fl">3.5</span>))</span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>sns.boxplot(data<span class="op">=</span>results, x<span class="op">=</span><span class="st">"course"</span>, y<span class="op">=</span><span class="st">"exam_score"</span>, hue<span class="op">=</span><span class="st">"semester"</span>, ax<span class="op">=</span>ax)</span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">"Exam score by course and semester"</span>)<span class="op">;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="35" class="cell" data-execution_count="13">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">6</span>, <span class="fl">3.5</span>))</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>sns.boxplot(data<span class="op">=</span>results, x<span class="op">=</span><span class="st">"course"</span>, y<span class="op">=</span><span class="st">"exam_score"</span>, hue<span class="op">=</span><span class="st">"semester"</span>, ax<span class="op">=</span>ax)</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">"Exam score by course and semester"</span>)<span class="op">;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="05-matplotlib_files/figure-html/cell-13-output-1.png" width="519" height="339" class="figure-img"></p>
+<p><img src="05-matplotlib_files/figure-html/cell-14-output-1.png" width="519" height="339" class="figure-img"></p>
 </figure>
 </div>
 </div>
 </div>
 <p><code>sns.heatmap</code> is the standard way to visualise a correlation matrix. Pass it <code>results[numeric_cols].corr()</code>, a small DataFrame seaborn happily turns into a colour grid with the actual numbers annotated:</p>
-<div id="34" class="cell" data-execution_count="13">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>numeric_cols <span class="op">=</span> [<span class="st">"exam_score"</span>, <span class="st">"study_hours"</span>, <span class="st">"attendance_pct"</span>]</span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>corr <span class="op">=</span> results[numeric_cols].corr()</span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">4</span>, <span class="fl">3.5</span>))</span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>sns.heatmap(corr, annot<span class="op">=</span><span class="va">True</span>, fmt<span class="op">=</span><span class="st">".2f"</span>, cmap<span class="op">=</span><span class="st">"coolwarm"</span>, center<span class="op">=</span><span class="dv">0</span>, ax<span class="op">=</span>ax)</span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">"Feature correlation"</span>)<span class="op">;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="37" class="cell" data-execution_count="14">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>numeric_cols <span class="op">=</span> [<span class="st">"exam_score"</span>, <span class="st">"study_hours"</span>, <span class="st">"attendance_pct"</span>]</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>corr <span class="op">=</span> results[numeric_cols].corr()</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">4</span>, <span class="fl">3.5</span>))</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>sns.heatmap(corr, annot<span class="op">=</span><span class="va">True</span>, fmt<span class="op">=</span><span class="st">".2f"</span>, cmap<span class="op">=</span><span class="st">"coolwarm"</span>, center<span class="op">=</span><span class="dv">0</span>, ax<span class="op">=</span>ax)</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">"Feature correlation"</span>)<span class="op">;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="05-matplotlib_files/figure-html/cell-14-output-1.png" width="428" height="411" class="figure-img"></p>
+<p><img src="05-matplotlib_files/figure-html/cell-15-output-1.png" width="428" height="411" class="figure-img"></p>
 </figure>
 </div>
 </div>
@@ -760,23 +774,23 @@ sns.boxplot(data=results, x="course", y="study_hours", ax=ax)
 ax.set_title(...)</pre>
 <p><b>Hint:</b> This is almost identical to the boxplot above, just with a different y-axis and no <code>hue</code>.</p>
 </div>
-<div id="36" class="cell" data-execution_count="14">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">6</span>, <span class="fl">3.5</span>))</span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: boxplot of study_hours by course, plus a title</span></span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>...</span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>fig</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="14">
+<div id="39" class="cell" data-execution_count="15">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">6</span>, <span class="fl">3.5</span>))</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: boxplot of study_hours by course, plus a title</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>...</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>fig</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="15">
 <div>
 <figure class="figure">
-<p><img src="05-matplotlib_files/figure-html/cell-15-output-1.png" width="507" height="305" class="figure-img"></p>
+<p><img src="05-matplotlib_files/figure-html/cell-16-output-1.png" width="507" height="305" class="figure-img"></p>
 </figure>
 </div>
 </div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="05-matplotlib_files/figure-html/cell-15-output-2.png" width="507" height="305" class="figure-img"></p>
+<p><img src="05-matplotlib_files/figure-html/cell-16-output-2.png" width="507" height="305" class="figure-img"></p>
 </figure>
 </div>
 </div>
@@ -804,30 +818,30 @@ Axes 2: bar chart of average <code>exam_score</code> per course (all courses)
 </ol>
 <p>Give the Figure an overall title with <code>fig.suptitle()</code> and each Axes its own <code>ax.set_title()</code>. <b>Hint:</b> Filter with <code>ml_mask = results[“course”] == “Machine Learning”</code>, then index <code>results[ml_mask]</code> for the first two panels.</p>
 </div>
-<div id="40" class="cell" data-execution_count="15">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>fig, axes <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">3</span>, figsize<span class="op">=</span>(<span class="dv">13</span>, <span class="fl">3.5</span>))</span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>ml_mask <span class="op">=</span> results[<span class="st">"course"</span>] <span class="op">==</span> <span class="st">"Machine Learning"</span></span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>ml_results <span class="op">=</span> results[ml_mask]</span>
-<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co"> panel 0: histogram of ml_results["exam_score"]</span></span>
-<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co"> panel 1: scatter of ml_results["study_hours"] vs ml_results["exam_score"]</span></span>
-<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co"> panel 2: bar chart of average exam_score per course (all courses)</span></span>
-<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>...</span>
-<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>fig.suptitle(<span class="st">"Course Report: Machine Learning"</span>)</span>
-<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>fig</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="15">
+<div id="43" class="cell" data-execution_count="16">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>fig, axes <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">3</span>, figsize<span class="op">=</span>(<span class="dv">13</span>, <span class="fl">3.5</span>))</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>ml_mask <span class="op">=</span> results[<span class="st">"course"</span>] <span class="op">==</span> <span class="st">"Machine Learning"</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>ml_results <span class="op">=</span> results[ml_mask]</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co"> panel 0: histogram of ml_results["exam_score"]</span></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co"> panel 1: scatter of ml_results["study_hours"] vs ml_results["exam_score"]</span></span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co"> panel 2: bar chart of average exam_score per course (all courses)</span></span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>...</span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>fig.suptitle(<span class="st">"Course Report: Machine Learning"</span>)</span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>fig</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="16">
 <div>
 <figure class="figure">
-<p><img src="05-matplotlib_files/figure-html/cell-16-output-1.png" width="1027" height="334" class="figure-img"></p>
+<p><img src="05-matplotlib_files/figure-html/cell-17-output-1.png" width="1027" height="334" class="figure-img"></p>
 </figure>
 </div>
 </div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="05-matplotlib_files/figure-html/cell-16-output-2.png" width="1027" height="334" class="figure-img"></p>
+<p><img src="05-matplotlib_files/figure-html/cell-17-output-2.png" width="1027" height="334" class="figure-img"></p>
 </figure>
 </div>
 </div>
