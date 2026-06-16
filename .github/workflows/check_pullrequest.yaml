@@ -64,8 +64,14 @@ jobs:
           uv run ruff check . --exit-non-zero-on-fix
           uv run ruff format . --check
       - name: Run Tests with Coverage
-      #ignore unit test for now
-        run: uv run pytest --cov=ark--cov-report=xml --cov-config=.coveragerc --cov-fail-under=0
+        # No tests/ directory yet - tolerate pytest's "no tests collected" exit
+        # code (5) so this step doesn't block CI before tests are written.
+        run: |
+          set +e
+          uv run pytest --cov=ark --cov-report=xml --cov-fail-under=0
+          code=$?
+          set -e
+          if [ "$code" -ne 0 ] && [ "$code" -ne 5 ]; then exit "$code"; fi
       - name: Upload coverage
         uses: codecov/codecov-action@v4
         with:
