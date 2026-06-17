@@ -47,7 +47,7 @@ A lockfile solves this. It records the exact version of every package in the dep
 
 Create the `grade-predictor` project with the `--package` flag, which generates the `src/` layout:
 
-```{bash eval=false}
+```bash
 uv init grade-predictor --package
 cd grade-predictor
 ```
@@ -68,7 +68,7 @@ The `--package` flag matters. Without it, `uv init` creates a simple script proj
 
 Run `uv sync` to create the virtual environment and generate `uv.lock`:
 
-```{bash eval=false}
+```bash
 uv sync
 ```
 
@@ -85,7 +85,7 @@ The `.venv/` directory appears at the project root. You do not activate it manua
 
 Here is a complete `pyproject.toml` for `grade-predictor` with annotations:
 
-```{toml eval=false}
+```toml
 [project]
 name = "grade-predictor"
 version = "0.1.0"
@@ -142,7 +142,7 @@ It replaces <code>setup.py</code>, <code>requirements.txt</code>, <code>setup.cf
 
 `uv add` is the correct way to add a dependency. It updates `pyproject.toml`, resolves the full dependency graph, and writes a new `uv.lock` in one step:
 
-```{bash eval=false}
+```bash
 uv add pandas numpy
 uv add --optional dev ruff pytest
 uv sync
@@ -152,7 +152,7 @@ Compare this to `pip install pandas`: pip installs the package into whatever env
 
 Useful commands:
 
-```{bash eval=false}
+```bash
 uv add <package>                      # add to core dependencies
 uv add --optional dev <package>       # add to the dev group
 uv remove <package>                   # remove from dependencies
@@ -164,7 +164,7 @@ uv lock --upgrade-package pandas      # upgrade one package and update lock
 
 After `uv sync`, confirm the environment works:
 
-```{bash eval=false}
+```bash
 uv run python -c "import pandas; print(pandas.__version__)"
 ```
 
@@ -182,7 +182,7 @@ uv run python -c "import pandas; print(pandas.__version__)"
 
 Heavy ML dependencies are the single biggest cause of slow CI pipelines. A cold install of PyTorch takes three to four minutes. A cold install of scikit-learn and pytest takes under 20 seconds. Separating them into optional groups makes CI run only what it needs.
 
-```{toml eval=false}
+```toml
 [project.optional-dependencies]
 modelling = [
     "scikit-learn>=1.7",
@@ -226,7 +226,7 @@ A database password or API key committed to a public GitHub repository is search
 
 Create `.env` at the project root:
 
-```{bash eval=false}
+```bash
 # .env  -- never commit this file
 DATABASE_URL=postgresql://user:password@localhost/grades
 OPENAI_API_KEY=sk-...
@@ -235,14 +235,14 @@ REPORT_TITLE=Grade Predictor Report
 
 Add to `.gitignore` immediately:
 
-```{bash eval=false}
+```bash
 echo ".env" >> .gitignore
 echo "*.env" >> .gitignore
 ```
 
 Load in Python with `python-dotenv`:
 
-```{python eval=false}
+```python
 from dotenv import load_dotenv
 import os
 
@@ -253,7 +253,7 @@ report_title = os.getenv("REPORT_TITLE", "Default Title")  # second arg is fallb
 
 Commit an `.env.example` with placeholder values so collaborators know which variables to set:
 
-```{bash eval=false}
+```bash
 # .env.example  -- commit this file
 DATABASE_URL=postgresql://user:password@localhost/grades
 OPENAI_API_KEY=sk-your-key-here
@@ -274,7 +274,7 @@ Never put a real secret as a default value in code: <code>os.getenv("API_KEY", "
 
 `uv run` executes any command inside the project environment without requiring manual activation of `.venv`:
 
-```{bash eval=false}
+```bash
 uv run python scripts/report.py           # run a script
 uv run pytest                              # run tests
 uv run ruff check .                        # lint

@@ -44,7 +44,7 @@ A formatter can never catch <code>df.drop("column")</code> without <code>inplace
 
 Start with a deliberately messy `core.py` that contains several common issues:
 
-```{python eval=false}
+```python
 # src/grade_predictor/core.py  (intentionally broken version for this section)
 import os
 import sys
@@ -65,7 +65,7 @@ def flag_at_risk(df, threshold=50.0):
 
 Run `ruff check` on it:
 
-```{bash eval=false}
+```bash
 uv run ruff check src/
 ```
 
@@ -86,14 +86,14 @@ Reading the output: each line is `file:line:col: CODE message`. The `[*]` marker
 
 Auto-fix what can be fixed automatically, then inspect the rest:
 
-```{bash eval=false}
+```bash
 uv run ruff check src/ --fix
 uv run ruff check src/
 ```
 
 `B006` (mutable default argument) and `E722` (bare `except`) need manual fixes:
 
-```{python eval=false}
+```python
 def compute_grade(
     midterm: float,
     final: float,
@@ -121,7 +121,7 @@ uv run ruff check src/</pre>
 
 `ruff format` rewrites the layout of every Python file it touches. It is opinionated and non-configurable by design: line length is the only setting. The result is that two developers with different editor preferences produce identical diffs.
 
-```{bash eval=false}
+```bash
 uv run ruff format src/              # format in place
 uv run ruff format src/ --check      # exit 1 if anything would change (CI mode)
 uv run ruff format src/ --diff       # show what would change without writing it
@@ -130,13 +130,13 @@ uv run ruff format src/ --diff       # show what would change without writing it
 The `--check` flag is what CI uses. If any file needs reformatting, the check fails and the push is blocked. The developer runs `ruff format .` locally, stages the changes, and pushes again.
 
 Before format:
-```{python eval=false}
+```python
 def compute_grade(midterm,final,project,weights=(0.30,0.45,0.25)):
     return midterm*weights[0]+final*weights[1]+project*weights[2]
 ```
 
 After format:
-```{python eval=false}
+```python
 def compute_grade(
     midterm,
     final,
@@ -155,7 +155,7 @@ In VS Code, add <code>"editor.formatOnSave": true</code> and <code>"[python]": {
 
 Without configuration, ruff checks only the `E` and `F` rules (pycodestyle and pyflakes). For DS work, several more rule groups pay for themselves:
 
-```{toml eval=false}
+```toml
 [tool.ruff]
 target-version = "py312"
 line-length = 100
@@ -197,7 +197,7 @@ The `E` and `F` rules catch syntax and unused-import issues. The rules that catc
 
 This is the most common silent bug in DS code:
 
-```{python eval=false}
+```python
 # Wrong: the same list is shared across every call
 def aggregate(df, group_cols=["program", "semester"]):
     return df.groupby(group_cols).mean()
@@ -213,7 +213,7 @@ The wrong version works fine until someone calls `aggregate(df)` and the default
 
 A common pattern in ML training callbacks:
 
-```{python eval=false}
+```python
 # Wrong: all callbacks capture the same (final) value of threshold
 callbacks = []
 for threshold in [0.5, 0.6, 0.7]:
@@ -227,14 +227,14 @@ callbacks = [lambda df, t=t: df[df["score"] > t] for t in [0.5, 0.6, 0.7]]
 
 A dead intermediate variable in a pipeline is often a sign of a forgotten transformation:
 
-```{python eval=false}
+```python
 filtered = df[df["passed"]]          # F841 if filtered is never used again
 result = df.groupby("course").mean() # this uses df, not filtered
 ```
 
 **SIM108: Use ternary expression**
 
-```{python eval=false}
+```python
 # Before
 if score >= 50:
     label = "Pass"
@@ -256,7 +256,7 @@ label = "Pass" if score >= 50 else "Fail"
 
 Legitimate uses:
 
-```{python eval=false}
+```python
 # A URL that cannot be shortened
 # See https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.merge.html  # noqa: E501
 
@@ -269,7 +269,7 @@ pattern = r"^S\d{4}$"  # noqa: E501
 
 Not legitimate:
 
-```{python eval=false}
+```python
 result = df.groupby("program").agg({"score": "mean", "grade": "first", "cohort": "nunique", "semester": "count", "attendance": "mean"})  # noqa: E501
 # Fix: break the line instead of suppressing
 ```

@@ -35,7 +35,7 @@ Without pre-commit, hooks are raw shell scripts in `.git/hooks/`. They are not v
 
 Pre-commit solves this by managing hooks as configuration: `.pre-commit-config.yaml` is committed to the repository. Anyone who clones it and runs `pre-commit install` gets the identical set of hooks, each running in an isolated environment with pinned tool versions.
 
-```{bash eval=false}
+```bash
 uv add --optional dev pre-commit
 uv run pre-commit install          # install hooks into .git/hooks/
 ```
@@ -51,7 +51,7 @@ The hooks live in <code>.pre-commit-config.yaml</code> (versioned, shared), not 
 
 A complete `.pre-commit-config.yaml` for a DS project:
 
-```{yaml eval=false}
+```yaml
 default_language_version:
   python: python3.12
 
@@ -119,7 +119,7 @@ Jupyter saves cell outputs, plots, and printed values inside the `.ipynb` JSON f
 
 Two modes, two stages:
 
-```{yaml eval=false}
+```yaml
 - repo: local
   hooks:
     - id: nbstripout-dev
@@ -162,7 +162,7 @@ In [Part 16](04-git-github.qmd), you wrote conventional commit messages by hand.
 
 Add to `pyproject.toml`:
 
-```{toml eval=false}
+```toml
 [tool.commitizen]
 bump_message = "bump: v$current_version to v$new_version"
 tag_format = "v$version"
@@ -172,7 +172,7 @@ version_provider = "pep621"
 
 Add to `.pre-commit-config.yaml`:
 
-```{yaml eval=false}
+```yaml
   - repo: local
     hooks:
       - id: commitizen
@@ -194,7 +194,7 @@ With this in place, `git commit -m "update stuff"` is blocked. `git commit -m "f
 
 Two more commitizen commands that pay for themselves:
 
-```{bash eval=false}
+```bash
 cz bump           # reads commit history, bumps version automatically
 cz changelog      # generates CHANGELOG.md from commit history
 ```
@@ -230,7 +230,7 @@ The rule: if a check takes more than 5 seconds, move it to `pre-push`. If it bre
 
 Assign a hook to a stage with `stages: [pre-push]`:
 
-```{yaml eval=false}
+```yaml
   - repo: local
     hooks:
       - id: ty-check
@@ -247,14 +247,14 @@ When a hook fails, git blocks the commit. The hook output explains why. Read the
 
 The most common failure pattern: ruff finds an issue, fixes it, and exits non-zero. The file is now changed but not staged. The fix is:
 
-```{bash eval=false}
+```bash
 git add src/grade_predictor/core.py   # stage the fix ruff just made
 git commit -m "fix(core): address ruff finding"
 ```
 
 The `SKIP` environment variable bypasses specific hooks for one commit:
 
-```{bash eval=false}
+```bash
 SKIP=ruff git commit -m "wip: draft in progress"
 ```
 
@@ -262,7 +262,7 @@ SKIP=ruff git commit -m "wip: draft in progress"
 
 `pre-commit run --all-files` runs all hooks on every file, not just staged ones. Use it as a one-time audit when setting up a new project or after adding a new hook:
 
-```{bash eval=false}
+```bash
 uv run pre-commit run --all-files
 ```
 

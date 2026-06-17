@@ -36,7 +36,7 @@ In DS, silent bugs are the hard ones. A test suite converts "I think this is rig
 
 Here is the simplest possible test for `compute_grade`:
 
-```{python eval=false}
+```python
 # tests/test_core.py
 from grade_predictor.core import compute_grade
 
@@ -47,7 +47,7 @@ def test_compute_grade_defaults():
 
 Run it:
 
-```{bash eval=false}
+```bash
 uv run pytest tests/ -v
 ```
 
@@ -64,7 +64,7 @@ Writing one test function per boundary case produces a lot of duplicated code. `
 
 Grade boundaries in `grade-predictor`:
 
-```{python eval=false}
+```python
 import pytest
 from grade_predictor.core import grade_to_letter
 
@@ -104,7 +104,7 @@ def test_normalize_score(raw, min_val, max_val, expected): ...</pre>
 
 A fixture is a function that provides a value to a test. Any test that declares the fixture's name as a parameter receives it automatically. Fixtures live in `conftest.py` so they are shared across all test files.
 
-```{python eval=false}
+```python
 # tests/conftest.py
 import pandas as pd
 import pytest
@@ -123,7 +123,7 @@ def sample_df() -> pd.DataFrame:
 
 Use it in any test file:
 
-```{python eval=false}
+```python
 def test_flag_at_risk(sample_df):
     from grade_predictor.core import flag_at_risk
     result = flag_at_risk(sample_df, threshold=65.0)
@@ -140,7 +140,7 @@ Fixture scope controls how often the fixture runs:
 
 For a fixture that loads `university_analytics.csv`, use `session` scope. Reading 2,400 rows once per run is fast enough; reading it 40 times (once per test) adds up.
 
-```{python eval=false}
+```python
 @pytest.fixture(scope="session")
 def university_df() -> pd.DataFrame:
     return pd.read_csv("data/university_analytics.csv")
@@ -160,7 +160,7 @@ Three patterns cover almost every DataFrame test in DS code.
 
 **Pattern 1: Shape and column presence**
 
-```{python eval=false}
+```python
 def test_add_average_marks_adds_column(sample_df):
     from grade_predictor.core import add_average_marks
     result = add_average_marks(sample_df)
@@ -170,7 +170,7 @@ def test_add_average_marks_adds_column(sample_df):
 
 **Pattern 2: `pd.testing.assert_frame_equal`**
 
-```{python eval=false}
+```python
 def test_filter_passing_students(sample_df):
     from grade_predictor.core import filter_passing
     result = filter_passing(sample_df)
@@ -182,7 +182,7 @@ def test_filter_passing_students(sample_df):
 
 **Pattern 3: dtype and schema assertions**
 
-```{python eval=false}
+```python
 def test_output_dtypes(sample_df):
     from grade_predictor.core import add_average_marks
     result = add_average_marks(sample_df)
@@ -211,7 +211,7 @@ def test_add_average_marks_shape(sample_df):
 
 A function that raises a clear exception on bad input is better than one that silently returns a wrong answer. Test the exception with `pytest.raises`:
 
-```{python eval=false}
+```python
 def test_invalid_weights_raises():
     with pytest.raises(ValueError, match="weights must sum to 1"):
         compute_grade(80.0, 85.0, 90.0, weights=(0.5, 0.5, 0.5))
@@ -219,7 +219,7 @@ def test_invalid_weights_raises():
 
 The `match` argument checks that the error message contains the given string. Without `match`, the test passes for any `ValueError`, even one from an unrelated part of the code. With `match`, you confirm that the right error, from the right place, with the right message, was raised.
 
-```{python eval=false}
+```python
 # tests/test_core.py
 @pytest.mark.parametrize("weights", [
     (0.5, 0.5, 0.5),    # sums to 1.5
@@ -240,7 +240,7 @@ def test_invalid_weights_all_raise(weights):
 
 Coverage measures which lines of code are executed during the test suite. Lines that are never executed are either dead code or untested paths.
 
-```{bash eval=false}
+```bash
 uv run pytest tests/ --cov=grade_predictor --cov-report=term-missing
 ```
 
@@ -248,7 +248,7 @@ The `term-missing` report shows which specific lines are not covered. A line num
 
 Enforce a minimum threshold in `pyproject.toml`:
 
-```{toml eval=false}
+```toml
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "--cov=grade_predictor --cov-report=term-missing --cov-fail-under=80"
@@ -279,7 +279,7 @@ Unit tests test one function in isolation with synthetic data. They run in milli
 
 Run only unit tests locally during development, all tests in CI:
 
-```{bash eval=false}
+```bash
 uv run pytest tests/unit/ -v                    # fast, local
 uv run pytest tests/ -v --override-ini=addopts=  # full suite, CI
 ```
