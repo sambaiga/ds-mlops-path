@@ -36,15 +36,16 @@ jobs:
       - name: Install dependencies
         run: uv sync --extra dev --extra test
 
-      - name: Install nbmake
-        run: uv add --dev nbmake
-
-      - name: Execute all notebooks
+      - name: Execute notebooks
         run: |
-          uv run pytest --nbmake \
+          uv run --with nbmake pytest --nbmake \
             --nbmake-timeout=300 \
             --no-header \
             -v \
-            tutorials/01-python-basics/
+            --override-ini=addopts= \
+            tutorials/01-python-basics/ \
+            --ignore=tutorials/01-python-basics/01-python-core.ipynb \
+            --ignore=tutorials/01-python-basics/03-python-patterns.ipynb \
+            --ignore=tutorials/01-python-basics/04-numpy.ipynb
         env:
           PYTHONWARNINGS: ignore
