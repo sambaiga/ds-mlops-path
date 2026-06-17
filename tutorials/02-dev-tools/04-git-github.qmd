@@ -1,0 +1,303 @@
+---
+title: "Part 16: Git and GitHub for Data Science"
+---
+
+**DS-MLOps Dev Tools**
+
+**Python 3.12+ | Author: Anthony Faustine**
+
+## Before you begin
+
+This chapter assumes you have completed [Part 13](01-uv-project-setup.qmd) through [Part 15](03-type-annotations.ipynb). The `grade-predictor` project should have typed, ruff-clean code. This chapter versions that project with git and connects it to GitHub.
+
+If you have used git before, this chapter fills in the DS-specific gaps: what to keep out of git, how to name commits so they serve as a searchable log, and how to structure branches for ML experiments.
+
+> Callout markers used throughout this chapter are explained on the [book cover page](../../index.qmd#callout-guide).
+
+## Learning Objectives
+
+By the end of Part 16 you will be able to:
+
+| # | Skill | Covered in |
+|---|---|---|
+| 1 | Initialize a git repository and write a correct `.gitignore` for a DS project | Sec. 1 |
+| 2 | Understand the three-state model: working tree, staging area, commit history | Sec. 2 |
+| 3 | Write conventional commits that serve as a searchable project log | Sec. 3 |
+| 4 | Use branches to run experiments without breaking working code | Sec. 4 |
+| 5 | Open a pull request and understand what good PR descriptions contain | Sec. 5 |
+| 6 | Write a GitHub Actions workflow that runs tests on every push | Sec. 6 |
+
+## 1. What Git Tracks and What It Must Not
+
+Git is a time machine for code. It is not a time machine for data, models, or secrets. The single most important setup decision for a DS project is getting `.gitignore` right before the first commit, because a file committed once is in git history permanently.
+
+A DS `.gitignore` covers five categories:
+
+```{bash eval=false}
+# Python runtime
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+dist/
+*.egg-info/
+
+# Secrets: never in git, ever
+.env
+*.env
+.env.local
+
+# Data: too large for git; use cloud storage or DVC
+*.csv
+*.parquet
+*.pkl
+*.h5
+data/raw/
+data/processed/
+
+# Model artifacts
+models/
+*.pt
+*.onnx
+*.joblib
+
+# Jupyter
+.ipynb_checkpoints/
+*-checkpoint.ipynb
+
+# IDE
+.idea/
+.vscode/settings.json
+```
+
+Add this to `grade-predictor/.gitignore` before running `git init`.
+
+<div style="background:#EAF3FA;border-left:5px solid #0369A1;padding:14px 18px;border-radius:6px;margin:16px 0">
+<span style="color:#0369A1;font-weight:bold"><i class="bi bi-info-circle-fill"></i> Key Concept: Git tracks code. Data and secrets belong elsewhere.</span><br><br>
+A 2GB CSV committed by accident is hard to remove cleanly: it lives in history even after <code>git rm</code> and requires rewriting history to fully erase. Secrets committed to a public repo are searchable and must be rotated immediately. The safest habit is to set up <code>.gitignore</code> and run <code>git status</code> before every first commit in a new project.
+</div>
+
+## 2. The Three-State Model
+
+Every file in a git project lives in one of three states: the working tree (what is on disk right now), the staging area (what will go into the next commit), and the commit history (what is permanent). Understanding these three states is what separates confident git use from "type commands and hope".
+
+```{bash eval=false}
+git init
+git status                                         # see all three states
+git add src/grade_predictor/core.py                # move specific file to staging
+git status                                         # confirm it moved
+git commit -m "feat(core): add compute_grade function"
+git log --oneline                                  # inspect history
+```
+
+The flow: make changes in the working tree, select which changes belong in this commit with `git add`, then seal them into history with `git commit`. Changes left unstaged are visible in the working tree but invisible to the next commit.
+
+`git diff` shows what is in the working tree but not yet staged. `git diff --staged` shows what is staged but not yet committed. Running both before committing is a habit worth building.
+
+<div style="background:#FEF2F2;border-left:5px solid #DC2626;padding:14px 18px;border-radius:6px;margin:16px 0">
+<span style="color:#991B1B;font-weight:bold"><i class="bi bi-bug-fill"></i> Common Mistake: <code>git add .</code> adds everything</span><br><br>
+<code>git add .</code> stages every changed file in the current directory, including <code>.env</code>, CSV files, and anything else that slipped past <code>.gitignore</code>. Always run <code>git status</code> before <code>git add</code>. Stage specific files by name: <code>git add src/grade_predictor/core.py</code>. Use <code>git add -p</code> to stage hunks interactively when a file has multiple independent changes.
+</div>
+
+<div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
+<span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 1 - First Commit</span><br><br>
+<b>Goal:</b> Initialize a git repo in <code>grade-predictor</code>. Add <code>.gitignore</code> first. Then run <code>git status</code> and confirm <code>.env</code> and <code>.venv/</code> do not appear in the untracked list. Stage and commit only the source files.
+<pre style='background:#FFF8E1;padding:10px;border-radius:4px;font-size:0.9em'>git init
+git status              # .env and .venv should NOT appear here
+git add pyproject.toml src/ .gitignore
+git commit -m "feat: initial grade-predictor project setup"</pre>
+</div>
+
+## 3. Conventional Commits
+
+A git log is only useful if the messages are readable. `git log --oneline` on a project with messages like "fix", "update", "wip", and "changes" tells you nothing. Conventional commits solve this by imposing a consistent format: `type(scope): description`.
+
+| Type | When to use |
+|---|---|
+| `feat` | New capability: a new model, a new pipeline step, a new analysis function |
+| `fix` | Corrects a bug: wrong normalization, off-by-one in a split, a missing fillna |
+| `refactor` | Restructures code without changing behavior: extract a function, rename |
+| `test` | Adds or updates tests only |
+| `docs` | Documentation only: docstrings, README, notebook prose |
+| `chore` | Tooling: update dependencies, fix CI, update lockfile |
+| `data` | Data changes: new dataset version, updated schema, changed preprocessing |
+
+Real commit messages from a DS project log:
+
+```
+feat(model): add gradient boosting baseline, 5-fold CV accuracy=0.84
+fix(preprocessing): normalize features before train/test split, not after
+data(university): add 2025 cohort, student_id format unchanged
+refactor(core): extract grade_to_letter from compute_grade
+test(core): parametrize grade boundary tests for all five letter grades
+chore: bump scikit-learn to 1.7, update uv.lock
+```
+
+Each message answers: what changed and why does it matter? Two months from now, `git log --oneline` with messages like these tells the whole project story.
+
+`commitizen` enforces this format automatically. See [Part 18](06-pre-commit-automation.qmd) for setup. For now, write the messages by hand.
+
+<div style="background:#F5F3FF;border-left:5px solid #7C3AED;padding:14px 18px;border-radius:6px;margin:16px 0">
+<span style="color:#5B21B6;font-weight:bold"><i class="bi bi-lightbulb-fill"></i> Pro Tip: The scope is optional but valuable</span><br><br>
+<code>fix: normalize features</code> is fine. <code>fix(preprocessing): normalize features before split</code> is searchable. <code>git log --oneline --grep="fix(preprocessing)"</code> finds every bug fix in the preprocessing layer in one command. This matters when a production issue arrives at 2am and you need to trace exactly when the normalization logic changed.
+</div>
+
+<div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
+<span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 2 - Write Three Commits</span><br><br>
+<b>Goal:</b> Make three separate conventional commits to <code>grade-predictor</code>: one <code>feat</code> for adding a function to <code>core.py</code>, one <code>test</code> for adding a test, and one <code>docs</code> for updating the README. Then run <code>git log --oneline</code> and confirm all three messages follow the format.
+</div>
+
+## 4. Branches for Experiments
+
+The main branch of a project should always be in a working state. New features, experiments, and bug fixes belong on separate branches. In DS work, this applies especially to model experiments: a branch per experiment means you can run them in parallel, compare results, and abandon a dead end without any cleanup.
+
+```{bash eval=false}
+git checkout -b experiment/ridge-regression    # create and switch in one step
+# ...make changes...
+git add src/
+git commit -m "feat(model): ridge regression baseline, RMSE=9.2"
+
+git checkout main
+git merge experiment/ridge-regression
+git branch -d experiment/ridge-regression      # clean up after merging
+```
+
+Naming conventions that work well for DS projects:
+
+| Pattern | Use for |
+|---|---|
+| `feature/<name>` | New capabilities: a new pipeline step, a new API |
+| `experiment/<name>` | Model experiments: may be abandoned without guilt |
+| `fix/<name>` | Bug fixes: wrong calculation, broken test |
+| `chore/<name>` | Dependency updates, tooling changes |
+
+<div style="background:#F5F3FF;border-left:5px solid #7C3AED;padding:14px 18px;border-radius:6px;margin:16px 0">
+<span style="color:#5B21B6;font-weight:bold"><i class="bi bi-lightbulb-fill"></i> Pro Tip: Branches track code. MLflow tracks metrics.</span><br><br>
+A branch captures what code produced a result. MLflow (or a simple results CSV) captures what the result was. Use both together: the branch name references the experiment, the MLflow run name references the same experiment. Two months later you can find both the code and the metric.
+</div>
+
+<div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
+<span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 3 - Experiment Branch</span><br><br>
+<b>Goal:</b> Create a branch <code>experiment/weighted-average</code>. Change the default weights in <code>compute_grade</code> from <code>(0.30, 0.45, 0.25)</code> to <code>(0.25, 0.50, 0.25)</code>. Commit the change with a <code>feat(model)</code> message that states the new weights. Merge the branch back to main and delete it.
+<pre style='background:#FFF8E1;padding:10px;border-radius:4px;font-size:0.9em'>git checkout -b experiment/weighted-average
+# ...edit core.py...
+git add src/
+git commit -m "feat(model): change weights to 0.25/0.50/0.25, favour final exam"
+git checkout main && git merge experiment/weighted-average</pre>
+</div>
+
+## 5. Pull Requests
+
+A pull request is a request to merge a branch into main, plus a structured conversation about the change. On a solo project, it is still worth opening PRs: the PR description forces you to articulate what changed and why, and the CI check runs automatically.
+
+For DS work, a useful PR description answers:
+
+- What changed (one sentence summary)
+- Why (what problem does this solve or what experiment does this run)
+- What metrics were observed, if any
+- What tests were added or updated
+- Any known limitations
+
+```{bash eval=false}
+git push -u origin experiment/ridge-regression
+gh pr create \
+  --title "feat(model): ridge regression baseline" \
+  --body "Adds ridge regression (alpha=1.0) as a second baseline. RMSE=9.2 vs linear=10.4 on held-out 20%. Tests added for predict() signature and output shape."
+```
+
+The `gh` CLI creates the PR without leaving the terminal. CI runs automatically on the push that opens the PR.
+
+## 6. GitHub Actions for Automated Testing
+
+GitHub Actions is a CI/CD platform that runs jobs on every push or pull request. The job definition is a YAML file in `.github/workflows/`. Here is a minimal workflow for `grade-predictor`:
+
+```{yaml eval=false}
+# .github/workflows/test.yml
+name: Test
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          version: "latest"
+
+      - name: Install dependencies
+        run: uv sync --extra test
+
+      - name: Run tests
+        run: uv run pytest tests/ --override-ini=addopts=
+        env:
+          PYTHONWARNINGS: ignore
+```
+
+Step by step:
+
+- `actions/checkout@v4`: clones the repo into the CI runner
+- `astral-sh/setup-uv@v3`: installs uv (no Python setup needed; uv handles it)
+- `uv sync --extra test`: installs core + test dependencies only, no dev or modelling
+- `uv run pytest tests/`: runs tests inside the project environment
+- `--override-ini=addopts=`: strips local `addopts` from `pyproject.toml` that may reference local paths not present in CI
+
+When the job fails, GitHub shows the full log. Reading CI logs is a skill: look for the first `FAILED` or `Error` line, not the summary at the bottom.
+
+<div style="background:#EAF7F0;border-left:5px solid #059669;padding:14px 18px;border-radius:6px;margin:16px 0">
+<span style="color:#059669;font-weight:bold"><i class="bi bi-journal-code"></i> Example: Reading a CI log</span><br><br>
+A failing test produces output like:<br>
+<code>FAILED tests/test_core.py::test_compute_grade_defaults - AssertionError: assert 83.5 == 84.25</code><br><br>
+The important parts: the test file (<code>tests/test_core.py</code>), the test name (<code>test_compute_grade_defaults</code>), and the assertion that failed (<code>83.5 != 84.25</code>). The number tells you which weights were used: 83.5 is the old weights, 84.25 is the expected value with the new ones. This is why the test exists.
+</div>
+
+<div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
+<span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 4 - First CI Run</span><br><br>
+<b>Goal:</b> Create <code>.github/workflows/test.yml</code> in <code>grade-predictor</code>. Push the branch to GitHub. Watch the Actions tab. If CI fails, read the log and fix the issue.
+<pre style='background:#FFF8E1;padding:10px;border-radius:4px;font-size:0.9em'>mkdir -p .github/workflows
+# create test.yml as above
+git add .github/
+git commit -m "chore: add GitHub Actions test workflow"
+git push -u origin main</pre>
+</div>
+
+## Capstone - Version grade-predictor
+
+Bring the full `grade-predictor` project under version control.
+
+<div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
+<span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Capstone - From Local to GitHub</span><br><br>
+<ol>
+<li>Add a proper DS <code>.gitignore</code> covering Python, secrets, data, and IDE files</li>
+<li>Initialize a git repository: <code>git init</code></li>
+<li>Make three conventional commits: one for the project setup, one for <code>core.py</code>, one for the test file</li>
+<li>Create a new repository on GitHub (without README, without .gitignore)</li>
+<li>Push: <code>git remote add origin &lt;url&gt; && git push -u origin main</code></li>
+<li>Add the test workflow. Push and confirm CI runs green</li>
+</ol>
+</div>
+
+## Further Reading
+
+| Resource | Why it matters |
+|---|---|
+| [Conventional Commits specification](https://www.conventionalcommits.org/) | The format used throughout this book |
+| [commitizen documentation](https://commitizen-tools.github.io/commitizen/) | Enforces and automates conventional commits; covered in Part 18 |
+| [GitHub Actions for Python](https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python) | Official guide with uv and pytest examples |
+| [gitignore.io](https://www.toptal.com/developers/gitignore) | Generator for `.gitignore` by language and IDE |
+| [DVC documentation](https://dvc.org/doc) | Data Version Control: the git equivalent for datasets and model weights |
+
+## Summary
+
+| Concept | Key rule |
+|---|---|
+| `.gitignore` | Set it up before the first commit. Secrets, data, and virtualenvs never go in git. |
+| Staging | `git add <specific files>`. Run `git status` before every commit. |
+| Conventional commits | `type(scope): description`. The log is searchable only if the format is consistent. |
+| Branches | One per experiment or feature. `main` stays working at all times. |
+| CI | Every push runs tests. A failing CI run is a blocker, not a suggestion. |
+
+**Next:** [Part 17: Testing with pytest](05-pytest-testing.qmd) writes tests for the code you have just versioned.

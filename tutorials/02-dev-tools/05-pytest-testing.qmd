@@ -1,0 +1,324 @@
+---
+title: "Part 17: Testing DS Code with pytest"
+---
+
+**DS-MLOps Dev Tools**
+
+**Python 3.12+ | Author: Anthony Faustine**
+
+## Before you begin
+
+This chapter assumes you have completed [Part 13](01-uv-project-setup.qmd) through [Part 16](04-git-github.qmd). The `grade-predictor` project should have typed, linted code under version control. This chapter writes tests for it.
+
+The testing patterns here apply to any DS function or data pipeline step, not just `grade-predictor`. If you have written tests before, focus on sections 4 and 5: they cover DataFrame testing and schema validation, which are rarely covered in standard pytest tutorials.
+
+> Callout markers used throughout this chapter are explained on the [book cover page](../../index.qmd#callout-guide).
+
+## Learning Objectives
+
+By the end of Part 17 you will be able to:
+
+| # | Skill | Covered in |
+|---|---|---|
+| 1 | Write and run pytest tests for DS functions | Sec. 1 |
+| 2 | Use `@pytest.mark.parametrize` to test multiple inputs without duplicating code | Sec. 2 |
+| 3 | Write fixtures that provide reusable sample DataFrames | Sec. 3 |
+| 4 | Test pandas transforms with `assert_frame_equal` and schema assertions | Sec. 4 |
+| 5 | Test exception handling with `pytest.raises` | Sec. 5 |
+| 6 | Measure test coverage and set a minimum threshold | Sec. 6 |
+| 7 | Organize a test suite for a DS project | Sec. 7 |
+
+## 1. Why DS Code Needs Tests
+
+A normalization function applied after the train/test split instead of before. A `fillna(0)` that should have been `fillna(df["score"].mean())`. A boolean column that silently became an integer. These bugs do not raise exceptions; they produce wrong outputs quietly.
+
+In DS, silent bugs are the hard ones. A test suite converts "I think this is right" into "this is verifiably correct, and stays correct when the code changes."
+
+Here is the simplest possible test for `compute_grade`:
+
+```{python eval=false}
+# tests/test_core.py
+from grade_predictor.core import compute_grade
+
+def test_compute_grade_defaults():
+    result = compute_grade(midterm=80.0, final=85.0, project=90.0)
+    assert abs(result - 84.25) < 0.01   # 0.30*80 + 0.45*85 + 0.25*90
+```
+
+Run it:
+
+```{bash eval=false}
+uv run pytest tests/ -v
+```
+
+The `-v` flag shows each test name and its pass/fail status. Without it, pytest shows only a dot per passing test.
+
+<div style="background:#EAF3FA;border-left:5px solid #0369A1;padding:14px 18px;border-radius:6px;margin:16px 0">
+<span style="color:#0369A1;font-weight:bold"><i class="bi bi-info-circle-fill"></i> Key Concept: A test is an executable specification</span><br><br>
+<code>test_compute_grade_defaults</code> says: given these inputs, this function must return this value. If the function ever changes and breaks this, the test fails immediately. A failing test is not a problem; it is useful information. A passing test on wrong code is the actual problem.
+</div>
+
+## 2. Parametrize: One Test, Many Inputs
+
+Writing one test function per boundary case produces a lot of duplicated code. `@pytest.mark.parametrize` runs the same test body once per row in a table of inputs.
+
+Grade boundaries in `grade-predictor`:
+
+```{python eval=false}
+import pytest
+from grade_predictor.core import grade_to_letter
+
+@pytest.mark.parametrize("midterm,final,project,expected", [
+    (90.0, 92.0, 88.0, "A"),   # composite >= 85
+    (75.0, 78.0, 80.0, "B"),   # composite >= 70
+    (55.0, 60.0, 58.0, "C"),   # composite >= 55
+    (40.0, 42.0, 45.0, "D"),   # composite >= 45
+    (20.0, 25.0, 30.0, "F"),   # composite < 45
+])
+def test_grade_letter_boundaries(midterm, final, project, expected):
+    assert grade_to_letter(midterm, final, project) == expected
+```
+
+Each row becomes a separate test case in the output:
+
+```
+tests/test_core.py::test_grade_letter_boundaries[90.0-92.0-88.0-A] PASSED
+tests/test_core.py::test_grade_letter_boundaries[75.0-78.0-80.0-B] PASSED
+...
+```
+
+Adding a new edge case is one extra row. Without parametrize, it is a new function. Parametrize also makes it easy to spot which case failed: the bracket notation shows the exact inputs that produced the failure.
+
+<div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
+<span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 1 - Parametrize a Boundary Test</span><br><br>
+<b>Goal:</b> Write a <code>normalize_score(raw, min_val, max_val)</code> function in <code>core.py</code> that maps a raw score to the 0-100 range. Write a parametrized test covering: raw equals min_val returns 0, raw equals max_val returns 100, and one midpoint. Confirm all three cases pass.
+<pre style='background:#FFF8E1;padding:10px;border-radius:4px;font-size:0.9em'>@pytest.mark.parametrize("raw,min_val,max_val,expected", [
+    (0.0, 0.0, 100.0, 0.0),   # raw == min
+    (100.0, 0.0, 100.0, 100.0),
+    (50.0, 0.0, 100.0, 50.0),
+])
+def test_normalize_score(raw, min_val, max_val, expected): ...</pre>
+</div>
+
+## 3. Fixtures for Reusable Test Data
+
+A fixture is a function that provides a value to a test. Any test that declares the fixture's name as a parameter receives it automatically. Fixtures live in `conftest.py` so they are shared across all test files.
+
+```{python eval=false}
+# tests/conftest.py
+import pandas as pd
+import pytest
+
+@pytest.fixture
+def sample_df() -> pd.DataFrame:
+    return pd.DataFrame({
+        "student_id": ["S0001", "S0002", "S0003"],
+        "midterm_score": [80.0, None, 60.0],
+        "final_score": [85.0, 70.0, 55.0],
+        "project_score": [90.0, 75.0, 65.0],
+        "program": ["CS", "DS", "IT"],
+        "passed": [True, True, False],
+    })
+```
+
+Use it in any test file:
+
+```{python eval=false}
+def test_flag_at_risk(sample_df):
+    from grade_predictor.core import flag_at_risk
+    result = flag_at_risk(sample_df, threshold=65.0)
+    assert result.sum() == 1   # only S0003 is at risk
+```
+
+Fixture scope controls how often the fixture runs:
+
+| Scope | Created | Right for |
+|---|---|---|
+| `function` (default) | Before each test | Small synthetic DataFrames |
+| `module` | Once per file | Medium-sized fixtures |
+| `session` | Once per pytest run | Loading a large CSV from disk |
+
+For a fixture that loads `university_analytics.csv`, use `session` scope. Reading 2,400 rows once per run is fast enough; reading it 40 times (once per test) adds up.
+
+```{python eval=false}
+@pytest.fixture(scope="session")
+def university_df() -> pd.DataFrame:
+    return pd.read_csv("data/university_analytics.csv")
+```
+
+<div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
+<span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 2 - Session-Scoped Fixture</span><br><br>
+<b>Goal:</b> Write a session-scoped fixture in <code>conftest.py</code> that loads a 50-row sample from <code>university_analytics.csv</code> (use <code>.head(50)</code>). Write three tests that each use this fixture: one that checks column names, one that checks there are no null values in <code>student_id</code>, and one that confirms <code>passed</code> is boolean.
+<pre style='background:#FFF8E1;padding:10px;border-radius:4px;font-size:0.9em'>@pytest.fixture(scope="session")
+def small_df():
+    return pd.read_csv("data/university_analytics.csv").head(50)</pre>
+</div>
+
+## 4. Testing pandas Transforms
+
+Three patterns cover almost every DataFrame test in DS code.
+
+**Pattern 1: Shape and column presence**
+
+```{python eval=false}
+def test_add_average_marks_adds_column(sample_df):
+    from grade_predictor.core import add_average_marks
+    result = add_average_marks(sample_df)
+    assert "average_marks" in result.columns
+    assert result.shape == (3, 7)           # original 6 columns + 1 new
+```
+
+**Pattern 2: `pd.testing.assert_frame_equal`**
+
+```{python eval=false}
+def test_filter_passing_students(sample_df):
+    from grade_predictor.core import filter_passing
+    result = filter_passing(sample_df)
+    expected = sample_df.iloc[[0, 1]].reset_index(drop=True)
+    pd.testing.assert_frame_equal(result, expected, check_like=True)
+```
+
+`check_like=True` ignores column and row order. This is usually what you want when testing a filter: the data should match, but the order may vary.
+
+**Pattern 3: dtype and schema assertions**
+
+```{python eval=false}
+def test_output_dtypes(sample_df):
+    from grade_predictor.core import add_average_marks
+    result = add_average_marks(sample_df)
+    assert result["average_marks"].dtype == "float64"
+    assert result["passed"].dtype == "bool"
+```
+
+These three patterns together test the shape, the values, and the types. A transform that passes all three is well-specified.
+
+<div style="background:#FEF2F2;border-left:5px solid #DC2626;padding:14px 18px;border-radius:6px;margin:16px 0">
+<span style="color:#991B1B;font-weight:bold"><i class="bi bi-bug-fill"></i> Common Mistake: <code>assert df1.equals(df2)</code> for floats</span><br><br>
+<code>DataFrame.equals</code> uses exact equality. Floating-point arithmetic means <code>0.30 * 80 + 0.45 * 85 + 0.25 * 90</code> may not equal <code>84.25</code> to the last bit on all platforms. <code>pd.testing.assert_frame_equal</code> has <code>check_exact=False</code> and <code>rtol</code> and <code>atol</code> parameters for numeric tolerance. Use it for all DataFrame comparisons.
+</div>
+
+<div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
+<span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 3 - Test a Transform</span><br><br>
+<b>Goal:</b> Write an <code>add_average_marks(df)</code> function in <code>core.py</code> that adds a column <code>average_marks = (midterm + final + project) / 3</code>. Write three tests: shape assertion, <code>assert_frame_equal</code> on a manually computed expected DataFrame, and a dtype check. All three should pass.
+<pre style='background:#FFF8E1;padding:10px;border-radius:4px;font-size:0.9em'>import pandas as pd
+
+def test_add_average_marks_shape(sample_df):
+    result = add_average_marks(sample_df)
+    assert result.shape == (3, 7)</pre>
+</div>
+
+## 5. Testing Exception Handling
+
+A function that raises a clear exception on bad input is better than one that silently returns a wrong answer. Test the exception with `pytest.raises`:
+
+```{python eval=false}
+def test_invalid_weights_raises():
+    with pytest.raises(ValueError, match="weights must sum to 1"):
+        compute_grade(80.0, 85.0, 90.0, weights=(0.5, 0.5, 0.5))
+```
+
+The `match` argument checks that the error message contains the given string. Without `match`, the test passes for any `ValueError`, even one from an unrelated part of the code. With `match`, you confirm that the right error, from the right place, with the right message, was raised.
+
+```{python eval=false}
+# tests/test_core.py
+@pytest.mark.parametrize("weights", [
+    (0.5, 0.5, 0.5),    # sums to 1.5
+    (0.1, 0.1, 0.1),    # sums to 0.3
+    (-0.3, 0.8, 0.5),   # negative weight
+])
+def test_invalid_weights_all_raise(weights):
+    with pytest.raises(ValueError):
+        compute_grade(80.0, 85.0, 90.0, weights=weights)
+```
+
+<div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
+<span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 4 - Test an Exception</span><br><br>
+<b>Goal:</b> Add a <code>ValueError</code> to <code>compute_grade</code> when any weight is negative or the weights do not sum to approximately 1.0 (within 0.001). Write a parametrized test that covers three invalid cases. Confirm all three raise <code>ValueError</code> and that a valid call still passes.
+</div>
+
+## 6. Coverage
+
+Coverage measures which lines of code are executed during the test suite. Lines that are never executed are either dead code or untested paths.
+
+```{bash eval=false}
+uv run pytest tests/ --cov=grade_predictor --cov-report=term-missing
+```
+
+The `term-missing` report shows which specific lines are not covered. A line number in the "missing" column means no test exercises that path.
+
+Enforce a minimum threshold in `pyproject.toml`:
+
+```{toml eval=false}
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "--cov=grade_predictor --cov-report=term-missing --cov-fail-under=80"
+```
+
+With `--cov-fail-under=80`, pytest exits with a non-zero code if coverage drops below 80%. CI catches this automatically.
+
+The right target for DS library code is 80% to 85%. 100% is often counterproductive: it forces testing trivial property accessors and error messages that add no value. What matters is covering every code path that can produce a wrong answer silently.
+
+<div style="background:#F5F3FF;border-left:5px solid #7C3AED;padding:14px 18px;border-radius:6px;margin:16px 0">
+<span style="color:#5B21B6;font-weight:bold"><i class="bi bi-lightbulb-fill"></i> Pro Tip: Focus coverage on the paths that matter</span><br><br>
+A missing line on a trivial <code>return self._name</code> property is not worth a test. A missing line on the normalization branch of a preprocessing function is. Read the "missing" column as a checklist of untested logic paths, not a number to maximize for its own sake.
+</div>
+
+## 7. Organizing a DS Test Suite
+
+```
+tests/
+├── conftest.py            # shared fixtures: sample_df, university_df
+├── unit/
+│   ├── test_core.py       # individual function tests
+│   └── test_config.py     # settings and environment variable loading
+└── integration/
+    └── test_pipeline.py   # end-to-end: load CSV, transform, compute grades
+```
+
+Unit tests test one function in isolation with synthetic data. They run in milliseconds and should always run. Integration tests test the full pipeline with real data from disk. They run in seconds and should run in CI and before releases.
+
+Run only unit tests locally during development, all tests in CI:
+
+```{bash eval=false}
+uv run pytest tests/unit/ -v                    # fast, local
+uv run pytest tests/ -v --override-ini=addopts=  # full suite, CI
+```
+
+## Capstone - A Working Test Suite
+
+Write a complete test suite for `grade-predictor`.
+
+<div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
+<span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Capstone - 80% Coverage</span><br><br>
+Write a test suite that achieves 80% coverage. It must include:
+<ol>
+<li>One parametrized test covering all five grade letter boundaries</li>
+<li>A session-scoped fixture that loads a sample from <code>university_analytics.csv</code></li>
+<li>One <code>assert_frame_equal</code> test on a DataFrame transform</li>
+<li>One <code>pytest.raises</code> test on <code>compute_grade</code> with invalid weights</li>
+<li>Coverage configured in <code>pyproject.toml</code> with <code>--cov-fail-under=80</code></li>
+</ol>
+<pre style='background:#FFF8E1;padding:10px;border-radius:4px;font-size:0.9em'>uv run pytest tests/ --cov=grade_predictor --cov-report=term-missing</pre>
+</div>
+
+## Further Reading
+
+| Resource | Why it matters |
+|---|---|
+| BetterStack, [pytest guide](https://betterstack.com/community/guides/testing/pytest-guide/) | Comprehensive walkthrough of parametrize, fixtures, and plugins |
+| pydevtools, [pytest + uv](https://pydevtools.com/handbook/tutorial/setting-up-testing-with-pytest-and-uv/) | The exact uv + pytest integration workflow |
+| [pandas testing utilities](https://pandas.pydata.org/docs/reference/testing.html) | `assert_frame_equal` and `assert_series_equal` reference |
+| [pytest-cov documentation](https://pytest-cov.readthedocs.io/) | Coverage measurement and HTML report generation |
+| [pandera documentation](https://pandera.readthedocs.io/) | Schema-level DataFrame validation: the next step after dtype assertions |
+
+## Summary
+
+| Concept | Key rule |
+|---|---|
+| Test function naming | `test_<what_it_does>`. Describes behavior, not implementation. |
+| `parametrize` | One test body, many inputs. Boundary cases go in the table, not in separate functions. |
+| Fixtures | `conftest.py` for shared data. Session scope for large CSV files. |
+| `assert_frame_equal` | Never `df1.equals(df2)` for floats. Numeric tolerance is built in. |
+| Coverage | 80% target. Focus on silent-failure paths, not trivial lines. |
+
+**Next:** [Part 18: Automation with pre-commit](06-pre-commit-automation.qmd) automates every check from Parts 14-17 so they run without thinking.
