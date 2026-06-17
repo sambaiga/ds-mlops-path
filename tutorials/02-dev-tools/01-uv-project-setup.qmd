@@ -38,8 +38,8 @@ The standard Python answer has been to pair a virtual environment (an isolated P
 
 A lockfile solves this. It records the exact version of every package in the dependency tree, direct and transitive, so that two different machines installing from the same lockfile get byte-for-byte identical environments. `uv` provides both the virtual environment and the lockfile in a single fast tool.
 
-<div style="background:#EAF3FA;border-left:5px solid #0369A1;padding:14px 18px;border-radius:6px;margin:16px 0">
-<span style="color:#0369A1;font-weight:bold"><i class="bi bi-info-circle-fill"></i> Key Concept: A lockfile is a snapshot of the environment that worked</span><br><br>
+<div class='ark-concept'>
+<span class='ark-concept-title'><i class="bi bi-info-circle-fill"></i> Key Concept: A lockfile is a snapshot of the environment that worked</span><br><br>
 <code>uv.lock</code> pins the exact version of every dependency, including transitive ones. Commit it alongside your code. Anyone who clones the repo and runs <code>uv sync</code> gets the identical environment, on any machine, at any time.
 </div>
 
@@ -74,8 +74,8 @@ uv sync
 
 The `.venv/` directory appears at the project root. You do not activate it manually. `uv run` handles activation automatically.
 
-<div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
-<span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 1 - Initialize and Inspect</span><br><br>
+<div class='ark-activity'>
+<span class='ark-activity-title'><i class="bi bi-puzzle-fill"></i> Activity 1 - Initialize and Inspect</span><br><br>
 <b>Goal:</b> Run <code>uv init grade-predictor --package</code> in a temporary directory, then open <code>pyproject.toml</code> and identify the <code>[project]</code> section. List the three files whose purpose you cannot immediately guess and look each one up.
 </div>
 
@@ -128,13 +128,13 @@ target-version = "py312"
 line-length = 100
 ```
 
-<div style="background:#EAF3FA;border-left:5px solid #0369A1;padding:14px 18px;border-radius:6px;margin:16px 0">
-<span style="color:#0369A1;font-weight:bold"><i class="bi bi-info-circle-fill"></i> Key Concept: <code>pyproject.toml</code> is the single source of truth</span><br><br>
+<div class='ark-concept'>
+<span class='ark-concept-title'><i class="bi bi-info-circle-fill"></i> Key Concept: <code>pyproject.toml</code> is the single source of truth</span><br><br>
 It replaces <code>setup.py</code>, <code>requirements.txt</code>, <code>setup.cfg</code>, and <code>pytest.ini</code>. Read it and you can understand any modern Python project in under five minutes: what it does, what it depends on, how to test it, and how to build it.
 </div>
 
-<div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
-<span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 2 - Edit pyproject.toml</span><br><br>
+<div class='ark-activity'>
+<span class='ark-activity-title'><i class="bi bi-puzzle-fill"></i> Activity 2 - Edit pyproject.toml</span><br><br>
 <b>Goal:</b> Open the <code>pyproject.toml</code> from Activity 1. Change <code>requires-python</code> to <code>>=3.12</code>, add <code>polars>=1.0</code> to <code>dependencies</code>, and add a <code>dev</code> optional group containing <code>jupyter>=1.0</code>. Then run <code>uv sync</code> and confirm no errors.
 </div>
 
@@ -168,13 +168,13 @@ After `uv sync`, confirm the environment works:
 uv run python -c "import pandas; print(pandas.__version__)"
 ```
 
-<div style="background:#F5F3FF;border-left:5px solid #7C3AED;padding:14px 18px;border-radius:6px;margin:16px 0">
-<span style="color:#5B21B6;font-weight:bold"><i class="bi bi-lightbulb-fill"></i> Pro Tip: Commit <code>uv.lock</code>, not <code>requirements.txt</code></span><br><br>
+<div class='ark-tip'>
+<span class='ark-tip-title'><i class="bi bi-lightbulb-fill"></i> Pro Tip: Commit <code>uv.lock</code>, not <code>requirements.txt</code></span><br><br>
 <code>uv.lock</code> records every transitive dependency. A <code>requirements.txt</code> generated from it records only what you asked for, not what was actually resolved. When you pin with <code>requirements.txt</code>, a colleague installing a week later may get different transitive versions. Commit <code>uv.lock</code> and delete any <code>requirements.txt</code> workflow.
 </div>
 
-<div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
-<span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 3 - Add and Verify a Dependency</span><br><br>
+<div class='ark-activity'>
+<span class='ark-activity-title'><i class="bi bi-puzzle-fill"></i> Activity 3 - Add and Verify a Dependency</span><br><br>
 <b>Goal:</b> Add <code>polars>=1.0</code> as a core dependency with <code>uv add</code>. Then add <code>great-tables>=0.20</code> to the <code>dev</code> group. Run <code>uv sync</code> and confirm both packages import: <code>uv run python -c "import polars, great_tables; print('ok')"</code>.
 </div>
 
@@ -210,13 +210,13 @@ Three installation profiles:
 
 The GitHub Actions workflow from [Ch04](04-git-github.qmd) uses `uv sync --extra test`. Your local environment uses `uv sync --all-extras`. The production Docker image uses `uv sync` with no extras.
 
-<div style="background:#F5F3FF;border-left:5px solid #7C3AED;padding:14px 18px;border-radius:6px;margin:16px 0">
-<span style="color:#5B21B6;font-weight:bold"><i class="bi bi-lightbulb-fill"></i> Pro Tip: Keep torch in an optional group</span><br><br>
+<div class='ark-tip'>
+<span class='ark-tip-title'><i class="bi bi-lightbulb-fill"></i> Pro Tip: Keep torch in an optional group</span><br><br>
 A CI run that installs PyTorch takes 3 to 4 minutes on a cold cache. One that installs only <code>pandas</code> and <code>pytest</code> takes under 30 seconds. Multiply by 20 pushes per day and that is two hours of CI time saved weekly, for free.
 </div>
 
-<div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
-<span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 4 - Verify Group Isolation</span><br><br>
+<div class='ark-activity'>
+<span class='ark-activity-title'><i class="bi bi-puzzle-fill"></i> Activity 4 - Verify Group Isolation</span><br><br>
 <b>Goal:</b> Add <code>scikit-learn>=1.7</code> to a <code>modelling</code> group. Run <code>uv sync</code> (no extras) and confirm scikit-learn is NOT importable: <code>uv run python -c "import sklearn"</code> should raise <code>ModuleNotFoundError</code>. Then run <code>uv sync --extra modelling</code> and confirm it imports.
 </div>
 
@@ -260,13 +260,13 @@ OPENAI_API_KEY=sk-your-key-here
 REPORT_TITLE=My Report
 ```
 
-<div style="background:#FEF2F2;border-left:5px solid #DC2626;padding:14px 18px;border-radius:6px;margin:16px 0">
-<span style="color:#991B1B;font-weight:bold"><i class="bi bi-bug-fill"></i> Common Mistake: Defaults that are real values</span><br><br>
+<div class='ark-mistake'>
+<span class='ark-mistake-title'><i class="bi bi-bug-fill"></i> Common Mistake: Defaults that are real values</span><br><br>
 Never put a real secret as a default value in code: <code>os.getenv("API_KEY", "sk-prod-abc123")</code>. The moment that file is committed, the key is in git history permanently. A placeholder default like <code>"your-key-here"</code> is safe; a real credential is not. If a key is committed by accident, rotate it immediately.
 </div>
 
-<div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
-<span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 5 - Load a Secret from .env</span><br><br>
+<div class='ark-activity'>
+<span class='ark-activity-title'><i class="bi bi-puzzle-fill"></i> Activity 5 - Load a Secret from .env</span><br><br>
 <b>Goal:</b> Create <code>.env</code> with <code>REPORT_TITLE="Grade Predictor"</code>. Add <code>python-dotenv</code> to the <code>dev</code> group. Write a script <code>scripts/report.py</code> that loads the title and prints it. Confirm <code>.env</code> is in <code>.gitignore</code> before running <code>git status</code>.
 </div>
 
@@ -286,8 +286,8 @@ The `--with` flag installs a package into the run environment for that command o
 
 `uv run` always uses the project environment defined by `uv.lock`. Shell state (which `conda` environment is active, whether you ran `source .venv/bin/activate` in another terminal) never leaks in.
 
-<div style="background:#EAF3FA;border-left:5px solid #0369A1;padding:14px 18px;border-radius:6px;margin:16px 0">
-<span style="color:#0369A1;font-weight:bold"><i class="bi bi-info-circle-fill"></i> Key Concept: <code>uv run</code> replaces manual venv activation</span><br><br>
+<div class='ark-concept'>
+<span class='ark-concept-title'><i class="bi bi-info-circle-fill"></i> Key Concept: <code>uv run</code> replaces manual venv activation</span><br><br>
 <code>source .venv/bin/activate</code> changes your shell state. Forget to run it and you install into the wrong Python. <code>uv run</code> needs no shell state: it always resolves the project environment from <code>uv.lock</code>. Use it for every command in a project, and activation errors disappear entirely.
 </div>
 
@@ -295,8 +295,8 @@ The `--with` flag installs a package into the run environment for that command o
 
 Build the complete initial structure of the `grade-predictor` project. By the end of this exercise, you will have a runnable Python package with a proper environment.
 
-<div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
-<span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Capstone: grade-predictor initial setup</span><br><br>
+<div class='ark-activity'>
+<span class='ark-activity-title'><i class="bi bi-puzzle-fill"></i> Capstone: grade-predictor initial setup</span><br><br>
 
 <ol>
 <li>Run <code>uv init grade-predictor --package</code> and <code>cd grade-predictor</code></li>

@@ -42,8 +42,8 @@ uv run pre-commit install          # install hooks into .git/hooks/
 
 This two-step setup must happen once after every clone.
 
-<div style="background:#EAF3FA;border-left:5px solid #0369A1;padding:14px 18px;border-radius:6px;margin:16px 0">
-<span style="color:#0369A1;font-weight:bold"><i class="bi bi-info-circle-fill"></i> Key Concept: <code>pre-commit install</code> must run after every clone</span><br><br>
+<div class='ark-concept'>
+<span class='ark-concept-title'><i class="bi bi-info-circle-fill"></i> Key Concept: <code>pre-commit install</code> must run after every clone</span><br><br>
 The hooks live in <code>.pre-commit-config.yaml</code> (versioned, shared), not in <code>.git/hooks/</code> (not versioned, local only). <code>pre-commit install</code> writes the actual hook scripts into <code>.git/hooks/</code> based on the config. Without running it, no hooks execute. Add it to your project README under "Getting started".
 </div>
 
@@ -99,10 +99,10 @@ Walking through the important ones:
 - `no-commit-to-branch`: prevents direct commits to `main`. All changes go through branches.
 - `ruff --fix --exit-non-zero-on-fix`: runs ruff, applies auto-fixes, and then exits non-zero if it changed anything. This forces you to stage the fix before re-committing, which keeps the staging area honest.
 
-<div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
-<span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 1 - First Hook Run</span><br><br>
+<div class='ark-activity'>
+<span class='ark-activity-title'><i class="bi bi-puzzle-fill"></i> Activity 1 - First Hook Run</span><br><br>
 <b>Goal:</b> Create <code>.pre-commit-config.yaml</code> in <code>grade-predictor</code> with the config above. Run <code>pre-commit install</code>. Then try to commit a Python file with an unused import. Observe the hook blocking the commit and fixing the file. Stage the fix and commit again.
-<pre style='background:#FFF8E1;padding:10px;border-radius:4px;font-size:0.9em'>uv run pre-commit install
+<pre>uv run pre-commit install
 # add unused import to core.py
 git add src/grade_predictor/core.py
 git commit -m "test: intentional ruff failure"
@@ -141,18 +141,18 @@ Two modes, two stages:
 
 The `--keep-output` version keeps outputs in the committed file so reviewers can see what a cell produces without running it. The `--drop-empty-cells` version at push time ensures the remote branch has clean JSON that CI can read without noise.
 
-<div style="background:#EAF7F0;border-left:5px solid #059669;padding:14px 18px;border-radius:6px;margin:16px 0">
-<span style="color:#059669;font-weight:bold"><i class="bi bi-journal-code"></i> Example: Before and after nbstripout</span><br><br>
+<div class='ark-example'>
+<span class='ark-example-title'><i class="bi bi-journal-code"></i> Example: Before and after nbstripout</span><br><br>
 Without nbstripout, a notebook <code>git diff</code> after re-running a cell with a matplotlib plot looks like:<br>
 <pre>-   "outputs": [{"data": {"image/png": "iVBORw0KGgoAAAANSU..."}, ...}]
 +   "outputs": [{"data": {"image/png": "iVBORw0KGgoAAAANSU..."}, ...}]</pre>
 Thousands of base64 characters, one line each. The code changed by two characters. With nbstripout, the diff is two lines.
 </div>
 
-<div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
-<span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 2 - Clean Notebook Diffs</span><br><br>
+<div class='ark-activity'>
+<span class='ark-activity-title'><i class="bi bi-puzzle-fill"></i> Activity 2 - Clean Notebook Diffs</span><br><br>
 <b>Goal:</b> Add <code>nbstripout-dev</code> to your <code>.pre-commit-config.yaml</code>. Create a simple notebook in <code>grade-predictor</code>, run a cell that prints a value, save it, then run <code>git diff</code>. Confirm the output is stripped in the staged version. Commit and push.
-<pre style='background:#FFF8E1;padding:10px;border-radius:4px;font-size:0.9em'>git add notebooks/analysis.ipynb
+<pre>git add notebooks/analysis.ipynb
 git diff --staged     # should show code, not output JSON</pre>
 </div>
 
@@ -201,15 +201,15 @@ cz changelog      # generates CHANGELOG.md from commit history
 
 `feat` commits bump the minor version. `fix` commits bump the patch. With `update_changelog_on_bump = true`, the changelog writes itself.
 
-<div style="background:#F5F3FF;border-left:5px solid #7C3AED;padding:14px 18px;border-radius:6px;margin:16px 0">
-<span style="color:#5B21B6;font-weight:bold"><i class="bi bi-lightbulb-fill"></i> Pro Tip: <code>cz bump</code> replaces manual version management</span><br><br>
+<div class='ark-tip'>
+<span class='ark-tip-title'><i class="bi bi-lightbulb-fill"></i> Pro Tip: <code>cz bump</code> replaces manual version management</span><br><br>
 Without commitizen, bumping a version means editing <code>pyproject.toml</code>, updating <code>CHANGELOG.md</code>, tagging the commit, and pushing the tag. With commitizen: <code>cz bump</code> does all four in one command, reading the commit history to determine whether this is a major, minor, or patch release.
 </div>
 
-<div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
-<span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 3 - Commitizen in Action</span><br><br>
+<div class='ark-activity'>
+<span class='ark-activity-title'><i class="bi bi-puzzle-fill"></i> Activity 3 - Commitizen in Action</span><br><br>
 <b>Goal:</b> Add commitizen to your project. Try to commit with <code>git commit -m "update stuff"</code> and confirm it is blocked. Then commit the same change with a valid conventional message. Finally, run <code>cz changelog</code> and inspect the generated output.
-<pre style='background:#FFF8E1;padding:10px;border-radius:4px;font-size:0.9em'>git commit -m "update stuff"              # should fail
+<pre>git commit -m "update stuff"              # should fail
 git commit -m "docs: update README with setup instructions"  # should pass
 uv run cz changelog</pre>
 </div>
@@ -266,8 +266,8 @@ SKIP=ruff git commit -m "wip: draft in progress"
 uv run pre-commit run --all-files
 ```
 
-<div style="background:#FEF2F2;border-left:5px solid #DC2626;padding:14px 18px;border-radius:6px;margin:16px 0">
-<span style="color:#991B1B;font-weight:bold"><i class="bi bi-bug-fill"></i> Common Mistake: Using <code>--no-verify</code></span><br><br>
+<div class='ark-mistake'>
+<span class='ark-mistake-title'><i class="bi bi-bug-fill"></i> Common Mistake: Using <code>--no-verify</code></span><br><br>
 <code>git commit --no-verify</code> bypasses all hooks at once: commitizen, ruff, detect-private-key, nbstripout, everything. There is almost no legitimate reason for it on a shared branch. Use <code>SKIP=&lt;hook-id&gt;</code> to bypass only the hook that is blocking you. If you find yourself reaching for <code>--no-verify</code> regularly, the hook is probably too slow or misconfigured, and that is the real problem to fix.
 </div>
 
@@ -275,8 +275,8 @@ uv run pre-commit run --all-files
 
 Set up the full automation pipeline for `grade-predictor`.
 
-<div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
-<span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Capstone - Zero Findings</span><br><br>
+<div class='ark-activity'>
+<span class='ark-activity-title'><i class="bi bi-puzzle-fill"></i> Capstone - Zero Findings</span><br><br>
 <ol>
 <li>Create <code>.pre-commit-config.yaml</code> with: <code>pre-commit-hooks</code> (yaml, json, large files, private key, no-commit-to-branch), ruff + ruff-format, nbstripout (dev), commitizen (commit-msg stage)</li>
 <li>Run <code>pre-commit install</code></li>
@@ -284,7 +284,7 @@ Set up the full automation pipeline for `grade-predictor`.
 <li>Make a final commit using <code>cz commit</code> with a valid conventional message</li>
 <li>Push to GitHub and confirm CI runs green</li>
 </ol>
-<pre style='background:#FFF8E1;padding:10px;border-radius:4px;font-size:0.9em'>uv run pre-commit run --all-files
+<pre>uv run pre-commit run --all-files
 uv run cz commit</pre>
 </div>
 

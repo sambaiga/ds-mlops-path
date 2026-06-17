@@ -72,8 +72,8 @@ models/
 
 Add this to `grade-predictor/.gitignore` before running `git init`.
 
-<div style="background:#EAF3FA;border-left:5px solid #0369A1;padding:14px 18px;border-radius:6px;margin:16px 0">
-<span style="color:#0369A1;font-weight:bold"><i class="bi bi-info-circle-fill"></i> Key Concept: Git tracks code. Data and secrets belong elsewhere.</span><br><br>
+<div class='ark-concept'>
+<span class='ark-concept-title'><i class="bi bi-info-circle-fill"></i> Key Concept: Git tracks code. Data and secrets belong elsewhere.</span><br><br>
 A 2GB CSV committed by accident is hard to remove cleanly: it lives in history even after <code>git rm</code> and requires rewriting history to fully erase. Secrets committed to a public repo are searchable and must be rotated immediately. The safest habit is to set up <code>.gitignore</code> and run <code>git status</code> before every first commit in a new project.
 </div>
 
@@ -94,15 +94,15 @@ The flow: make changes in the working tree, select which changes belong in this 
 
 `git diff` shows what is in the working tree but not yet staged. `git diff --staged` shows what is staged but not yet committed. Running both before committing is a habit worth building.
 
-<div style="background:#FEF2F2;border-left:5px solid #DC2626;padding:14px 18px;border-radius:6px;margin:16px 0">
-<span style="color:#991B1B;font-weight:bold"><i class="bi bi-bug-fill"></i> Common Mistake: <code>git add .</code> adds everything</span><br><br>
+<div class='ark-mistake'>
+<span class='ark-mistake-title'><i class="bi bi-bug-fill"></i> Common Mistake: <code>git add .</code> adds everything</span><br><br>
 <code>git add .</code> stages every changed file in the current directory, including <code>.env</code>, CSV files, and anything else that slipped past <code>.gitignore</code>. Always run <code>git status</code> before <code>git add</code>. Stage specific files by name: <code>git add src/grade_predictor/core.py</code>. Use <code>git add -p</code> to stage hunks interactively when a file has multiple independent changes.
 </div>
 
-<div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
-<span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 1 - First Commit</span><br><br>
+<div class='ark-activity'>
+<span class='ark-activity-title'><i class="bi bi-puzzle-fill"></i> Activity 1 - First Commit</span><br><br>
 <b>Goal:</b> Initialize a git repo in <code>grade-predictor</code>. Add <code>.gitignore</code> first. Then run <code>git status</code> and confirm <code>.env</code> and <code>.venv/</code> do not appear in the untracked list. Stage and commit only the source files.
-<pre style='background:#FFF8E1;padding:10px;border-radius:4px;font-size:0.9em'>git init
+<pre>git init
 git status              # .env and .venv should NOT appear here
 git add pyproject.toml src/ .gitignore
 git commit -m "feat: initial grade-predictor project setup"</pre>
@@ -137,13 +137,13 @@ Each message answers: what changed and why does it matter? Two months from now, 
 
 `commitizen` enforces this format automatically. See [Part 18](06-pre-commit-automation.qmd) for setup. For now, write the messages by hand.
 
-<div style="background:#F5F3FF;border-left:5px solid #7C3AED;padding:14px 18px;border-radius:6px;margin:16px 0">
-<span style="color:#5B21B6;font-weight:bold"><i class="bi bi-lightbulb-fill"></i> Pro Tip: The scope is optional but valuable</span><br><br>
+<div class='ark-tip'>
+<span class='ark-tip-title'><i class="bi bi-lightbulb-fill"></i> Pro Tip: The scope is optional but valuable</span><br><br>
 <code>fix: normalize features</code> is fine. <code>fix(preprocessing): normalize features before split</code> is searchable. <code>git log --oneline --grep="fix(preprocessing)"</code> finds every bug fix in the preprocessing layer in one command. This matters when a production issue arrives at 2am and you need to trace exactly when the normalization logic changed.
 </div>
 
-<div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
-<span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 2 - Write Three Commits</span><br><br>
+<div class='ark-activity'>
+<span class='ark-activity-title'><i class="bi bi-puzzle-fill"></i> Activity 2 - Write Three Commits</span><br><br>
 <b>Goal:</b> Make three separate conventional commits to <code>grade-predictor</code>: one <code>feat</code> for adding a function to <code>core.py</code>, one <code>test</code> for adding a test, and one <code>docs</code> for updating the README. Then run <code>git log --oneline</code> and confirm all three messages follow the format.
 </div>
 
@@ -171,15 +171,15 @@ Naming conventions that work well for DS projects:
 | `fix/<name>` | Bug fixes: wrong calculation, broken test |
 | `chore/<name>` | Dependency updates, tooling changes |
 
-<div style="background:#F5F3FF;border-left:5px solid #7C3AED;padding:14px 18px;border-radius:6px;margin:16px 0">
-<span style="color:#5B21B6;font-weight:bold"><i class="bi bi-lightbulb-fill"></i> Pro Tip: Branches track code. MLflow tracks metrics.</span><br><br>
+<div class='ark-tip'>
+<span class='ark-tip-title'><i class="bi bi-lightbulb-fill"></i> Pro Tip: Branches track code. MLflow tracks metrics.</span><br><br>
 A branch captures what code produced a result. MLflow (or a simple results CSV) captures what the result was. Use both together: the branch name references the experiment, the MLflow run name references the same experiment. Two months later you can find both the code and the metric.
 </div>
 
-<div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
-<span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 3 - Experiment Branch</span><br><br>
+<div class='ark-activity'>
+<span class='ark-activity-title'><i class="bi bi-puzzle-fill"></i> Activity 3 - Experiment Branch</span><br><br>
 <b>Goal:</b> Create a branch <code>experiment/weighted-average</code>. Change the default weights in <code>compute_grade</code> from <code>(0.30, 0.45, 0.25)</code> to <code>(0.25, 0.50, 0.25)</code>. Commit the change with a <code>feat(model)</code> message that states the new weights. Merge the branch back to main and delete it.
-<pre style='background:#FFF8E1;padding:10px;border-radius:4px;font-size:0.9em'>git checkout -b experiment/weighted-average
+<pre>git checkout -b experiment/weighted-average
 # ...edit core.py...
 git add src/
 git commit -m "feat(model): change weights to 0.25/0.50/0.25, favour final exam"
@@ -247,17 +247,17 @@ Step by step:
 
 When the job fails, GitHub shows the full log. Reading CI logs is a skill: look for the first `FAILED` or `Error` line, not the summary at the bottom.
 
-<div style="background:#EAF7F0;border-left:5px solid #059669;padding:14px 18px;border-radius:6px;margin:16px 0">
-<span style="color:#059669;font-weight:bold"><i class="bi bi-journal-code"></i> Example: Reading a CI log</span><br><br>
+<div class='ark-example'>
+<span class='ark-example-title'><i class="bi bi-journal-code"></i> Example: Reading a CI log</span><br><br>
 A failing test produces output like:<br>
 <code>FAILED tests/test_core.py::test_compute_grade_defaults - AssertionError: assert 83.5 == 84.25</code><br><br>
 The important parts: the test file (<code>tests/test_core.py</code>), the test name (<code>test_compute_grade_defaults</code>), and the assertion that failed (<code>83.5 != 84.25</code>). The number tells you which weights were used: 83.5 is the old weights, 84.25 is the expected value with the new ones. This is why the test exists.
 </div>
 
-<div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
-<span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 4 - First CI Run</span><br><br>
+<div class='ark-activity'>
+<span class='ark-activity-title'><i class="bi bi-puzzle-fill"></i> Activity 4 - First CI Run</span><br><br>
 <b>Goal:</b> Create <code>.github/workflows/test.yml</code> in <code>grade-predictor</code>. Push the branch to GitHub. Watch the Actions tab. If CI fails, read the log and fix the issue.
-<pre style='background:#FFF8E1;padding:10px;border-radius:4px;font-size:0.9em'>mkdir -p .github/workflows
+<pre>mkdir -p .github/workflows
 # create test.yml as above
 git add .github/
 git commit -m "chore: add GitHub Actions test workflow"
@@ -268,8 +268,8 @@ git push -u origin main</pre>
 
 Bring the full `grade-predictor` project under version control.
 
-<div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
-<span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Capstone - From Local to GitHub</span><br><br>
+<div class='ark-activity'>
+<span class='ark-activity-title'><i class="bi bi-puzzle-fill"></i> Capstone - From Local to GitHub</span><br><br>
 <ol>
 <li>Add a proper DS <code>.gitignore</code> covering Python, secrets, data, and IDE files</li>
 <li>Initialize a git repository: <code>git init</code></li>

@@ -53,8 +53,8 @@ uv run pytest tests/ -v
 
 The `-v` flag shows each test name and its pass/fail status. Without it, pytest shows only a dot per passing test.
 
-<div style="background:#EAF3FA;border-left:5px solid #0369A1;padding:14px 18px;border-radius:6px;margin:16px 0">
-<span style="color:#0369A1;font-weight:bold"><i class="bi bi-info-circle-fill"></i> Key Concept: A test is an executable specification</span><br><br>
+<div class='ark-concept'>
+<span class='ark-concept-title'><i class="bi bi-info-circle-fill"></i> Key Concept: A test is an executable specification</span><br><br>
 <code>test_compute_grade_defaults</code> says: given these inputs, this function must return this value. If the function ever changes and breaks this, the test fails immediately. A failing test is not a problem; it is useful information. A passing test on wrong code is the actual problem.
 </div>
 
@@ -89,10 +89,10 @@ tests/test_core.py::test_grade_letter_boundaries[75.0-78.0-80.0-B] PASSED
 
 Adding a new edge case is one extra row. Without parametrize, it is a new function. Parametrize also makes it easy to spot which case failed: the bracket notation shows the exact inputs that produced the failure.
 
-<div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
-<span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 1 - Parametrize a Boundary Test</span><br><br>
+<div class='ark-activity'>
+<span class='ark-activity-title'><i class="bi bi-puzzle-fill"></i> Activity 1 - Parametrize a Boundary Test</span><br><br>
 <b>Goal:</b> Write a <code>normalize_score(raw, min_val, max_val)</code> function in <code>core.py</code> that maps a raw score to the 0-100 range. Write a parametrized test covering: raw equals min_val returns 0, raw equals max_val returns 100, and one midpoint. Confirm all three cases pass.
-<pre style='background:#FFF8E1;padding:10px;border-radius:4px;font-size:0.9em'>@pytest.mark.parametrize("raw,min_val,max_val,expected", [
+<pre>@pytest.mark.parametrize("raw,min_val,max_val,expected", [
     (0.0, 0.0, 100.0, 0.0),   # raw == min
     (100.0, 0.0, 100.0, 100.0),
     (50.0, 0.0, 100.0, 50.0),
@@ -146,10 +146,10 @@ def university_df() -> pd.DataFrame:
     return pd.read_csv("data/university_analytics.csv")
 ```
 
-<div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
-<span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 2 - Session-Scoped Fixture</span><br><br>
+<div class='ark-activity'>
+<span class='ark-activity-title'><i class="bi bi-puzzle-fill"></i> Activity 2 - Session-Scoped Fixture</span><br><br>
 <b>Goal:</b> Write a session-scoped fixture in <code>conftest.py</code> that loads a 50-row sample from <code>university_analytics.csv</code> (use <code>.head(50)</code>). Write three tests that each use this fixture: one that checks column names, one that checks there are no null values in <code>student_id</code>, and one that confirms <code>passed</code> is boolean.
-<pre style='background:#FFF8E1;padding:10px;border-radius:4px;font-size:0.9em'>@pytest.fixture(scope="session")
+<pre>@pytest.fixture(scope="session")
 def small_df():
     return pd.read_csv("data/university_analytics.csv").head(50)</pre>
 </div>
@@ -192,15 +192,15 @@ def test_output_dtypes(sample_df):
 
 These three patterns together test the shape, the values, and the types. A transform that passes all three is well-specified.
 
-<div style="background:#FEF2F2;border-left:5px solid #DC2626;padding:14px 18px;border-radius:6px;margin:16px 0">
-<span style="color:#991B1B;font-weight:bold"><i class="bi bi-bug-fill"></i> Common Mistake: <code>assert df1.equals(df2)</code> for floats</span><br><br>
+<div class='ark-mistake'>
+<span class='ark-mistake-title'><i class="bi bi-bug-fill"></i> Common Mistake: <code>assert df1.equals(df2)</code> for floats</span><br><br>
 <code>DataFrame.equals</code> uses exact equality. Floating-point arithmetic means <code>0.30 * 80 + 0.45 * 85 + 0.25 * 90</code> may not equal <code>84.25</code> to the last bit on all platforms. <code>pd.testing.assert_frame_equal</code> has <code>check_exact=False</code> and <code>rtol</code> and <code>atol</code> parameters for numeric tolerance. Use it for all DataFrame comparisons.
 </div>
 
-<div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
-<span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 3 - Test a Transform</span><br><br>
+<div class='ark-activity'>
+<span class='ark-activity-title'><i class="bi bi-puzzle-fill"></i> Activity 3 - Test a Transform</span><br><br>
 <b>Goal:</b> Write an <code>add_average_marks(df)</code> function in <code>core.py</code> that adds a column <code>average_marks = (midterm + final + project) / 3</code>. Write three tests: shape assertion, <code>assert_frame_equal</code> on a manually computed expected DataFrame, and a dtype check. All three should pass.
-<pre style='background:#FFF8E1;padding:10px;border-radius:4px;font-size:0.9em'>import pandas as pd
+<pre>import pandas as pd
 
 def test_add_average_marks_shape(sample_df):
     result = add_average_marks(sample_df)
@@ -231,8 +231,8 @@ def test_invalid_weights_all_raise(weights):
         compute_grade(80.0, 85.0, 90.0, weights=weights)
 ```
 
-<div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
-<span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 4 - Test an Exception</span><br><br>
+<div class='ark-activity'>
+<span class='ark-activity-title'><i class="bi bi-puzzle-fill"></i> Activity 4 - Test an Exception</span><br><br>
 <b>Goal:</b> Add a <code>ValueError</code> to <code>compute_grade</code> when any weight is negative or the weights do not sum to approximately 1.0 (within 0.001). Write a parametrized test that covers three invalid cases. Confirm all three raise <code>ValueError</code> and that a valid call still passes.
 </div>
 
@@ -258,8 +258,8 @@ With `--cov-fail-under=80`, pytest exits with a non-zero code if coverage drops 
 
 The right target for DS library code is 80% to 85%. 100% is often counterproductive: it forces testing trivial property accessors and error messages that add no value. What matters is covering every code path that can produce a wrong answer silently.
 
-<div style="background:#F5F3FF;border-left:5px solid #7C3AED;padding:14px 18px;border-radius:6px;margin:16px 0">
-<span style="color:#5B21B6;font-weight:bold"><i class="bi bi-lightbulb-fill"></i> Pro Tip: Focus coverage on the paths that matter</span><br><br>
+<div class='ark-tip'>
+<span class='ark-tip-title'><i class="bi bi-lightbulb-fill"></i> Pro Tip: Focus coverage on the paths that matter</span><br><br>
 A missing line on a trivial <code>return self._name</code> property is not worth a test. A missing line on the normalization branch of a preprocessing function is. Read the "missing" column as a checklist of untested logic paths, not a number to maximize for its own sake.
 </div>
 
@@ -288,8 +288,8 @@ uv run pytest tests/ -v --override-ini=addopts=  # full suite, CI
 
 Write a complete test suite for `grade-predictor`.
 
-<div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
-<span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Capstone - 80% Coverage</span><br><br>
+<div class='ark-activity'>
+<span class='ark-activity-title'><i class="bi bi-puzzle-fill"></i> Capstone - 80% Coverage</span><br><br>
 Write a test suite that achieves 80% coverage. It must include:
 <ol>
 <li>One parametrized test covering all five grade letter boundaries</li>
@@ -298,7 +298,7 @@ Write a test suite that achieves 80% coverage. It must include:
 <li>One <code>pytest.raises</code> test on <code>compute_grade</code> with invalid weights</li>
 <li>Coverage configured in <code>pyproject.toml</code> with <code>--cov-fail-under=80</code></li>
 </ol>
-<pre style='background:#FFF8E1;padding:10px;border-radius:4px;font-size:0.9em'>uv run pytest tests/ --cov=grade_predictor --cov-report=term-missing</pre>
+<pre>uv run pytest tests/ --cov=grade_predictor --cov-report=term-missing</pre>
 </div>
 
 ## Further Reading

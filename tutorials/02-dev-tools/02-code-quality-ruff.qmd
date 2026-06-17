@@ -35,8 +35,8 @@ A **linter** reads the code and flags patterns that are wrong, suspicious, or li
 
 Ruff handles both. They are separate commands with separate jobs: `ruff format` for layout, `ruff check` for correctness. Running format first is the usual order: get the code looking clean, then read what the linter flags.
 
-<div style="background:#EAF3FA;border-left:5px solid #0369A1;padding:14px 18px;border-radius:6px;margin:16px 0">
-<span style="color:#0369A1;font-weight:bold"><i class="bi bi-info-circle-fill"></i> Key Concept: Formatting is about style. Linting is about correctness.</span><br><br>
+<div class='ark-concept'>
+<span class='ark-concept-title'><i class="bi bi-info-circle-fill"></i> Key Concept: Formatting is about style. Linting is about correctness.</span><br><br>
 A formatter can never catch <code>df.drop("column")</code> without <code>inplace=True</code> silently doing nothing. A linter can. Use both: format automatically on every save, run the linter before every commit.
 </div>
 
@@ -109,10 +109,10 @@ def flag_at_risk(df, threshold: float = 50.0):
         return None
 ```
 
-<div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
-<span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 1 - Read and Fix ruff Output</span><br><br>
+<div class='ark-activity'>
+<span class='ark-activity-title'><i class="bi bi-puzzle-fill"></i> Activity 1 - Read and Fix ruff Output</span><br><br>
 <b>Goal:</b> Add an unused import, a bare <code>except:</code>, and a variable assigned but never used to your <code>core.py</code>. Run <code>ruff check src/</code> and read every line of output. Fix each one manually (do not use <code>--fix</code> for this exercise). Confirm <code>ruff check src/</code> returns zero findings.
-<pre style='background:#FFF8E1;padding:10px;border-radius:4px;font-size:0.9em'>uv run ruff check src/
+<pre>uv run ruff check src/
 # Fix each finding, then re-run
 uv run ruff check src/</pre>
 </div>
@@ -146,8 +146,8 @@ def compute_grade(
     return midterm * weights[0] + final * weights[1] + project * weights[2]
 ```
 
-<div style="background:#F5F3FF;border-left:5px solid #7C3AED;padding:14px 18px;border-radius:6px;margin:16px 0">
-<span style="color:#5B21B6;font-weight:bold"><i class="bi bi-lightbulb-fill"></i> Pro Tip: Set your editor to run ruff format on save</span><br><br>
+<div class='ark-tip'>
+<span class='ark-tip-title'><i class="bi bi-lightbulb-fill"></i> Pro Tip: Set your editor to run ruff format on save</span><br><br>
 In VS Code, add <code>"editor.formatOnSave": true</code> and <code>"[python]": {"editor.defaultFormatter": "charliermarsh.ruff"}</code> to <code>settings.json</code>. After that, every save produces a correctly formatted file. CI's <code>ruff format --check</code> becomes a safety net for the rare case where it did not run, not a first-pass fix.
 </div>
 
@@ -181,10 +181,10 @@ ignore = [
 
 The `per-file-ignores` section is where you handle legitimate exceptions. Notebooks need `E501` suppressed because output lines can be long. Tests need `S101` suppressed because `assert` is the whole point.
 
-<div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
-<span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 2 - Configure and Run</span><br><br>
+<div class='ark-activity'>
+<span class='ark-activity-title'><i class="bi bi-puzzle-fill"></i> Activity 2 - Configure and Run</span><br><br>
 <b>Goal:</b> Add the configuration above to your <code>grade-predictor/pyproject.toml</code>. Run <code>ruff check src/</code> and fix every finding without using <code># noqa</code>. Then run <code>ruff format src/</code> and commit the clean state.
-<pre style='background:#FFF8E1;padding:10px;border-radius:4px;font-size:0.9em'>uv run ruff check src/ --fix
+<pre>uv run ruff check src/ --fix
 uv run ruff check src/          # should be zero findings
 uv run ruff format src/</pre>
 </div>
@@ -245,8 +245,8 @@ else:
 label = "Pass" if score >= 50 else "Fail"
 ```
 
-<div style="background:#FEF2F2;border-left:5px solid #DC2626;padding:14px 18px;border-radius:6px;margin:16px 0">
-<span style="color:#991B1B;font-weight:bold"><i class="bi bi-bug-fill"></i> Common Mistake: Mutable default argument</span><br><br>
+<div class='ark-mistake'>
+<span class='ark-mistake-title'><i class="bi bi-bug-fill"></i> Common Mistake: Mutable default argument</span><br><br>
 <code>def split(df, cols=[])</code> shares the same list object across every call. The second call gets whatever the first call left in the list. This exact pattern appears in DS code regularly because it looks like a harmless convenience. Use an empty tuple <code>()</code> or <code>None</code> with a guard inside the function.
 </div>
 
@@ -276,8 +276,8 @@ result = df.groupby("program").agg({"score": "mean", "grade": "first", "cohort":
 
 `per-file-ignores` is better than per-line `# noqa` for patterns that apply to all files of a type, such as `E501` in all notebooks.
 
-<div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
-<span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 3 - Legitimate Suppression</span><br><br>
+<div class='ark-activity'>
+<span class='ark-activity-title'><i class="bi bi-puzzle-fill"></i> Activity 3 - Legitimate Suppression</span><br><br>
 <b>Goal:</b> Find one place in your <code>core.py</code> where a <code># noqa</code> comment is the right choice (a long docstring URL, a regex, or a ruff false positive). Add the comment with the specific rule code. Then find one place where you were tempted to use <code># noqa</code> but fixed the code instead. Explain in a comment why you chose each path.
 </div>
 
@@ -285,8 +285,8 @@ result = df.groupby("program").agg({"score": "mean", "grade": "first", "cohort":
 
 Apply the full ruff workflow to the `grade-predictor` project you have built so far.
 
-<div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
-<span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Capstone - A Clean Codebase</span><br><br>
+<div class='ark-activity'>
+<span class='ark-activity-title'><i class="bi bi-puzzle-fill"></i> Capstone - A Clean Codebase</span><br><br>
 <ol>
 <li>Add the DS ruleset (<code>E, F, I, B, N, UP, SIM</code>) to <code>pyproject.toml</code></li>
 <li>Add at least one intentional version of each of these bugs to <code>core.py</code>: unused import, mutable default, bare <code>except</code>, assigned-but-never-used variable</li>
