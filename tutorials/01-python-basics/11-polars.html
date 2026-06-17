@@ -79,7 +79,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../../site_libs/quarto-html/quarto-syntax-highlighting-de63f62b328812d8e578a4d74e282472.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-25d02d6ee2c20d6bcb3e5ee92e71e791.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-0f3842b63b3a17d781c7303dc189e804.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -253,6 +253,52 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
       </ul>
   </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false">
+ <span class="menu-text">Part 3: Dev Tools</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/02-dev-tools/01-uv-project-setup.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 13: Project Setup with uv</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/02-dev-tools/02-code-quality-ruff.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 14: Code Quality with ruff</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/02-dev-tools/03-type-annotations.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 15: Type Annotations</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/02-dev-tools/04-git-github.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 16: Git and GitHub for Data Science</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/02-dev-tools/05-pytest-testing.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 17: Testing DS Code with pytest</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/02-dev-tools/06-pre-commit-automation.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 18: Automation with pre-commit</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/02-dev-tools/07-pydantic-validation.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 19: Data Validation with Pydantic</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
     </ul>
     </div>
 </nav>
@@ -272,6 +318,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#sql-interface" id="toc-sql-interface" class="nav-link" data-scroll-target="#sql-interface">4.5 SQL Interface</a></li>
   <li><a href="#datetime-in-polars" id="toc-datetime-in-polars" class="nav-link" data-scroll-target="#datetime-in-polars">5. Date/Time in Polars</a></li>
   <li><a href="#migration-patterns-pandas-to-polars" id="toc-migration-patterns-pandas-to-polars" class="nav-link" data-scroll-target="#migration-patterns-pandas-to-polars">6. Migration Patterns: pandas to Polars</a></li>
+  <li><a href="#window-functions-with-over-and-streaming-large-files" id="toc-window-functions-with-over-and-streaming-large-files" class="nav-link" data-scroll-target="#window-functions-with-over-and-streaming-large-files">7. Window Functions with <code>over()</code> and Streaming Large Files</a>
+  <ul class="collapse">
+  <li><a href="#a.-the-over-expression" id="toc-a.-the-over-expression" class="nav-link" data-scroll-target="#a.-the-over-expression">7a. The <code>over()</code> Expression</a></li>
+  <li><a href="#b.-streaming-processing-files-larger-than-memory" id="toc-b.-streaming-processing-files-larger-than-memory" class="nav-link" data-scroll-target="#b.-streaming-processing-files-larger-than-memory">7b. Streaming: Processing Files Larger Than Memory</a></li>
+  </ul></li>
   <li><a href="#capstone-reproduce-the-pandas-capstone-exercises-in-polars" id="toc-capstone-reproduce-the-pandas-capstone-exercises-in-polars" class="nav-link" data-scroll-target="#capstone-reproduce-the-pandas-capstone-exercises-in-polars">Capstone: Reproduce the pandas Capstone Exercises in Polars</a></li>
   <li><a href="#further-reading" id="toc-further-reading" class="nav-link" data-scroll-target="#further-reading">Further Reading</a></li>
   <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary">Summary</a></li>
@@ -343,6 +394,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td><strong>Migration patterns</strong></td>
 <td>Side-by-side pandas-to-Polars translations for the operations you already know</td>
 </tr>
+<tr class="odd">
+<td><strong><code>over()</code> and streaming</strong></td>
+<td>Group-aware window stats without reducing rows; process files larger than RAM in chunks</td>
+</tr>
 </tbody>
 </table>
 <blockquote class="blockquote">
@@ -351,7 +406,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="learning-objectives" class="level2">
 <h2 class="anchored" data-anchor-id="learning-objectives">Learning Objectives</h2>
-<p>By the end of Part 11 you will be able to:</p>
+<p>By the end of Part 11 (Polars) you will be able to:</p>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 33%">
@@ -395,6 +450,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td>6</td>
 <td>Translate common pandas operations to Polars equivalents</td>
 <td>Sec. 6</td>
+</tr>
+<tr class="odd">
+<td>7</td>
+<td>Compute per-group window stats with <code>over()</code> and process large files with <code>scan_csv</code></td>
+<td>Sec. 7</td>
 </tr>
 </tbody>
 </table>
@@ -1828,6 +1888,291 @@ shape: (5, 2)
 <p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-info-circle-fill"></i> Key Concept: Polars is strict; pandas is permissive</span><br><br> Polars raises errors early: wrong dtype in a column, missing <code>.collect()</code> on a LazyFrame, unsorted data before <code>group_by_dynamic</code>. Pandas absorbs most of these quietly, sometimes silently producing a wrong result. The Polars errors feel strict at first but save time in larger pipelines where a wrong-but-valid pandas result would surface much later.</p>
 </div>
 </section>
+<section id="window-functions-with-over-and-streaming-large-files" class="level2">
+<h2 class="anchored" data-anchor-id="window-functions-with-over-and-streaming-large-files">7. Window Functions with <code>over()</code> and Streaming Large Files</h2>
+<p>Two Polars strengths that have no direct pandas equivalent: <code>over()</code> for grouped window calculations without reducing rows, and <code>scan_csv</code>/<code>scan_parquet</code> for processing files that do not fit in memory.</p>
+<section id="a.-the-over-expression" class="level3">
+<h3 class="anchored" data-anchor-id="a.-the-over-expression">7a. The <code>over()</code> Expression</h3>
+<p>In pandas, adding a per-group statistic back to the original rows requires <code>groupby().transform()</code>. In Polars, <code>pl.col("x").mean().over("group")</code> does the same thing inside a single <code>with_columns()</code> call. It computes the aggregation per group and broadcasts the result back to every row, aligned to the original index automatically.</p>
+<div id="64" class="cell" data-execution_count="21">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Add the per-program mean and std to every student row, in one expression</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> df.with_columns(</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>    program_mean<span class="op">=</span>pl.col(<span class="st">"average_marks"</span>).mean().over(<span class="st">"program"</span>),</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>    program_std<span class="op">=</span>pl.col(<span class="st">"average_marks"</span>).std().over(<span class="st">"program"</span>),</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Z-score: how many standard deviations from the program mean?</span></span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> df.with_columns(marks_zscore<span class="op">=</span>(pl.col(<span class="st">"average_marks"</span>) <span class="op">-</span> pl.col(<span class="st">"program_mean"</span>)) <span class="op">/</span> pl.col(<span class="st">"program_std"</span>))</span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a>df.select([<span class="st">"student_id"</span>, <span class="st">"program"</span>, <span class="st">"average_marks"</span>, <span class="st">"program_mean"</span>, <span class="st">"marks_zscore"</span>]).head(<span class="dv">6</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="21">
+<div><style>
+.dataframe > thead > tr,
+.dataframe > tbody > tr {
+  text-align: right;
+  white-space: pre-wrap;
+}
+</style>
+<small>shape: (6, 5)</small>
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">student_id</th>
+<th data-quarto-table-cell-role="th">program</th>
+<th data-quarto-table-cell-role="th">average_marks</th>
+<th data-quarto-table-cell-role="th">program_mean</th>
+<th data-quarto-table-cell-role="th">marks_zscore</th>
+</tr>
+<tr class="even">
+<td>str</td>
+<td>str</td>
+<td>f64</td>
+<td>f64</td>
+<td>f64</td>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>"S0001"</td>
+<td>"Information Technology"</td>
+<td>52.766667</td>
+<td>59.920338</td>
+<td>-0.852207</td>
+</tr>
+<tr class="even">
+<td>"S0001"</td>
+<td>"Information Technology"</td>
+<td>60.6</td>
+<td>59.920338</td>
+<td>0.080967</td>
+</tr>
+<tr class="odd">
+<td>"S0001"</td>
+<td>"Information Technology"</td>
+<td>68.133333</td>
+<td>59.920338</td>
+<td>0.978403</td>
+</tr>
+<tr class="even">
+<td>"S0001"</td>
+<td>"Information Technology"</td>
+<td>66.466667</td>
+<td>59.920338</td>
+<td>0.779855</td>
+</tr>
+<tr class="odd">
+<td>"S0001"</td>
+<td>"Information Technology"</td>
+<td>56.666667</td>
+<td>59.920338</td>
+<td>-0.387605</td>
+</tr>
+<tr class="even">
+<td>"S0001"</td>
+<td>"Information Technology"</td>
+<td>69.466667</td>
+<td>59.920338</td>
+<td>1.137241</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div style="background:#EAF3FA;border-left:5px solid #0369A1;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-info-circle-fill"></i> Key Concept: <code>over()</code> computes group stats without reducing rows</span><br><br> <code>group_by().agg()</code> produces one row per group: the result has as many rows as there are unique group values. <code>.over(“group”)</code> inside <code>with_columns()</code> keeps all original rows and attaches the group stat to each one. This is the right tool for feature engineering: every student in the <code>“Engineering”</code> program gets the engineering mean attached to their row, ready for modelling without a join.</p>
+</div>
+<div id="66" class="cell" data-execution_count="22">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Rolling mean per school using over() -- group-aware rolling window</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> polars <span class="im">as</span> pl</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>attendance <span class="op">=</span> pl.read_csv(<span class="st">"data/daily_attendance.csv"</span>, try_parse_dates<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>attendance_with_rolling <span class="op">=</span> attendance.sort([<span class="st">"school_id"</span>, <span class="st">"date"</span>]).with_columns(</span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>    rolling_avg<span class="op">=</span>pl.col(<span class="st">"attendance_rate"</span>).rolling_mean(window_size<span class="op">=</span><span class="dv">5</span>, min_periods<span class="op">=</span><span class="dv">3</span>).over(<span class="st">"school_id"</span>)</span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a>attendance_with_rolling.<span class="bu">filter</span>(pl.col(<span class="st">"school_id"</span>) <span class="op">==</span> <span class="dv">300</span>).head(<span class="dv">8</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="22">
+<div><style>
+.dataframe > thead > tr,
+.dataframe > tbody > tr {
+  text-align: right;
+  white-space: pre-wrap;
+}
+</style>
+<small>shape: (8, 4)</small>
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">date</th>
+<th data-quarto-table-cell-role="th">school_id</th>
+<th data-quarto-table-cell-role="th">attendance_rate</th>
+<th data-quarto-table-cell-role="th">rolling_avg</th>
+</tr>
+<tr class="even">
+<td>date</td>
+<td>i64</td>
+<td>f64</td>
+<td>f64</td>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>2025-01-06</td>
+<td>300</td>
+<td>0.874</td>
+<td>null</td>
+</tr>
+<tr class="even">
+<td>2025-01-07</td>
+<td>300</td>
+<td>0.928</td>
+<td>null</td>
+</tr>
+<tr class="odd">
+<td>2025-01-08</td>
+<td>300</td>
+<td>0.933</td>
+<td>0.911667</td>
+</tr>
+<tr class="even">
+<td>2025-01-09</td>
+<td>300</td>
+<td>0.847</td>
+<td>0.8955</td>
+</tr>
+<tr class="odd">
+<td>2025-01-10</td>
+<td>300</td>
+<td>0.866</td>
+<td>0.8896</td>
+</tr>
+<tr class="even">
+<td>2025-01-13</td>
+<td>300</td>
+<td>0.909</td>
+<td>0.8966</td>
+</tr>
+<tr class="odd">
+<td>2025-01-14</td>
+<td>300</td>
+<td>0.896</td>
+<td>0.8902</td>
+</tr>
+<tr class="even">
+<td>2025-01-15</td>
+<td>300</td>
+<td>0.905</td>
+<td>0.8846</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 6 - Per-Program Z-Score</span><br><br></p>
+<b>Goal:</b> Using <code>over()</code>, add a column <code>gender_mean_marks</code> that is the mean <code>average_marks</code> within each gender group. Then add <code>gender_zscore = (average_marks - gender_mean_marks) / gender_std_marks</code>. Print the top 3 students by z-score in each gender.
+<pre style="background:#FFF8E1;padding:10px;border-radius:4px;font-size:0.9em">df_z = df.with_columns(
+    gender_mean = pl.col("average_marks").mean().over("gender"),
+    gender_std  = pl.col("average_marks").std().over("gender"),
+).with_columns(
+    gender_zscore = (pl.col("average_marks") - pl.col("gender_mean")) / pl.col("gender_std")
+)
+df_z.sort("gender_zscore", descending=True).select(["student_id", "gender", "average_marks", "gender_zscore"]).head(6)</pre>
+</div>
+<div id="68" class="cell" data-execution_count="23">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: per-gender z-score using over()</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="b.-streaming-processing-files-larger-than-memory" class="level3">
+<h3 class="anchored" data-anchor-id="b.-streaming-processing-files-larger-than-memory">7b. Streaming: Processing Files Larger Than Memory</h3>
+<p><code>pl.scan_csv()</code> and <code>pl.scan_parquet()</code> read a file lazily: no data loads until <code>.collect()</code> is called. Combined with Polars’ streaming engine, filters and projections execute in chunks, so the working memory never exceeds what the query actually needs, even if the source file is larger than RAM.</p>
+<p>The API is identical to eager reads; the difference is <code>scan_</code> instead of <code>read_</code>.</p>
+<div id="70" class="cell" data-execution_count="24">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># scan_csv: no data loads here, only a query plan is built</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>lazy_scan <span class="op">=</span> (</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>    pl.scan_csv(<span class="st">"data/university_analytics.csv"</span>)</span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>    .<span class="bu">filter</span>(pl.col(<span class="st">"final_score"</span>) <span class="op">&gt;</span> <span class="dv">80</span>)</span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>    .select([<span class="st">"student_id"</span>, <span class="st">"program"</span>, <span class="st">"final_score"</span>])</span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>    .sort(<span class="st">"final_score"</span>, descending<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a><span class="co"># .collect() executes with streaming (chunks through the file)</span></span>
+<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a>result <span class="op">=</span> lazy_scan.collect(streaming<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Rows matching filter: </span><span class="sc">{</span><span class="bu">len</span>(result)<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb32-12"><a href="#cb32-12" aria-hidden="true" tabindex="-1"></a>result.head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows matching filter: 197</code></pre>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="24">
+<div><style>
+.dataframe > thead > tr,
+.dataframe > tbody > tr {
+  text-align: right;
+  white-space: pre-wrap;
+}
+</style>
+<small>shape: (5, 3)</small>
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">student_id</th>
+<th data-quarto-table-cell-role="th">program</th>
+<th data-quarto-table-cell-role="th">final_score</th>
+</tr>
+<tr class="even">
+<td>str</td>
+<td>str</td>
+<td>f64</td>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>"S0010"</td>
+<td>"Data Science"</td>
+<td>100.0</td>
+</tr>
+<tr class="even">
+<td>"S0017"</td>
+<td>"Data Science"</td>
+<td>100.0</td>
+</tr>
+<tr class="odd">
+<td>"S0021"</td>
+<td>"Information Technology"</td>
+<td>100.0</td>
+</tr>
+<tr class="even">
+<td>"S0125"</td>
+<td>"Computer Science"</td>
+<td>100.0</td>
+</tr>
+<tr class="odd">
+<td>"S0148"</td>
+<td>"Data Science"</td>
+<td>100.0</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div style="background:#F5F3FF;border-left:5px solid #7C3AED;padding:14px 18px;border-radius:6px;margin:16px 0">
+<span style="color:#5B21B6;font-weight:bold"><i class="bi bi-lightbulb-fill"></i> Pro Tip: Use Parquet instead of CSV for large files</span><br><br> CSV is plain text: Polars must read every byte to find the columns you asked for. Parquet is columnar: <code>scan_parquet()</code> reads only the columns referenced in your query, skipping all others. A file with 50 columns where you only need 3 loads roughly 3/50th of the data. For production pipelines with large files, converting a CSV to Parquet once and scanning Parquet from then on is a common and effective optimisation.
+<pre style="background:#F4F5F6;padding:10px;border-radius:4px;font-size:0.9em"># Convert once
+df.write_parquet("data/university_analytics.parquet")
+
+# All future reads: columnar, faster, smaller
+pl.scan_parquet("data/university_analytics.parquet")   .select(["student_id", "final_score"])   .filter(pl.col("final_score") &gt; 80)   .collect(streaming=True)</pre>
+</div>
+<div style="background:#FEF2F2;border-left:5px solid #DC2626;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#991B1B;font-weight:bold"><i class="bi bi-bug-fill"></i> Common Mistake: Not sorting before a rolling window in Polars</span><br><br> <code>pl.col(“rate”).rolling_mean(5).over(“school_id”)</code> operates on whatever order the rows are in. Without <code>.sort([“school_id”, “date”])</code> first, the 5-row window picks up rows in an arbitrary order and produces meaningless values. Polars does not sort automatically; it raises an error only for <code>group_by_dynamic</code>. For <code>rolling_mean().over()</code>, the wrong-order mistake is silent.</p>
+</div>
+</section>
+</section>
 <section id="capstone-reproduce-the-pandas-capstone-exercises-in-polars" class="level2">
 <h2 class="anchored" data-anchor-id="capstone-reproduce-the-pandas-capstone-exercises-in-polars">Capstone: Reproduce the pandas Capstone Exercises in Polars</h2>
 <div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
@@ -1876,9 +2221,9 @@ regional_summary = merged.group_by("region").agg(
     pl.col("average_marks").mean().alias("mean_marks")
 ).sort("region")</pre>
 </div>
-<div id="64" class="cell" data-execution_count="21">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: reproduce top schools, risk report, and regional summary in Polars</span></span>
-<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="75" class="cell" data-execution_count="25">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: reproduce top schools, risk report, and regional summary in Polars</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="further-reading" class="level2">
@@ -1892,7 +2237,7 @@ regional_summary = merged.group_by("region").agg(
 </thead>
 <tbody>
 <tr class="odd">
-<td><a href="https://docs.pola.rs">Polars documentation — Getting started</a></td>
+<td><a href="https://docs.pola.rs">Polars documentation: Getting started</a></td>
 <td>The primary reference; the user guide covers lazy evaluation, the expression API, and performance tips</td>
 </tr>
 <tr class="even">
@@ -1901,11 +2246,15 @@ regional_summary = merged.group_by("region").agg(
 </tr>
 <tr class="odd">
 <td>Vink, R. (2023). <a href="https://kevinheavey.github.io/modern-polars/">Modern Polars</a></td>
-<td>Free online book that mirrors the official pandas docs structure — useful for side-by-side comparison</td>
+<td>Free online book that mirrors the official pandas docs structure, useful for side-by-side comparison</td>
 </tr>
 <tr class="even">
+<td><a href="https://docs.pola.rs/user-guide/expressions/">Polars expression cheat sheet</a></td>
+<td><code>over()</code>, <code>rolling_*</code>, selectors, and string ops in one place</td>
+</tr>
+<tr class="odd">
 <td>Ritchie Vink, creator of Polars, explains the design in the <a href="https://pola.rs/posts/">Polars blog</a></td>
-<td>The posts on the expression API and lazy evaluation explain <em>why</em> certain pandas patterns don’t translate</td>
+<td>The posts on the expression API and lazy evaluation explain why certain pandas patterns do not translate</td>
 </tr>
 </tbody>
 </table>
@@ -1979,6 +2328,22 @@ regional_summary = merged.group_by("region").agg(
 <tr class="even">
 <td><code>df.null_count()</code></td>
 <td>Count missing values per column; replaces <code>df.isna().sum()</code></td>
+</tr>
+<tr class="odd">
+<td><code>.over("group")</code></td>
+<td>Broadcast a group aggregation back to every row; no join needed</td>
+</tr>
+<tr class="even">
+<td><code>pl.col("x").rolling_mean(n).over("g")</code></td>
+<td>Per-group rolling window; sort by group and time first</td>
+</tr>
+<tr class="odd">
+<td><code>pl.scan_csv()</code> / <code>pl.scan_parquet()</code></td>
+<td>Lazy file scan; push-down filters execute without loading full file</td>
+</tr>
+<tr class="even">
+<td><code>.collect(streaming=True)</code></td>
+<td>Execute in chunks; keeps peak memory low for files larger than RAM</td>
 </tr>
 </tbody>
 </table>

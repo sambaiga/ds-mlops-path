@@ -79,7 +79,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../../site_libs/quarto-html/quarto-syntax-highlighting-de63f62b328812d8e578a4d74e282472.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-25d02d6ee2c20d6bcb3e5ee92e71e791.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-0f3842b63b3a17d781c7303dc189e804.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -253,6 +253,52 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
       </ul>
   </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false">
+ <span class="menu-text">Part 3: Dev Tools</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/02-dev-tools/01-uv-project-setup.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 13: Project Setup with uv</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/02-dev-tools/02-code-quality-ruff.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 14: Code Quality with ruff</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/02-dev-tools/03-type-annotations.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 15: Type Annotations</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/02-dev-tools/04-git-github.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 16: Git and GitHub for Data Science</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/02-dev-tools/05-pytest-testing.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 17: Testing DS Code with pytest</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/02-dev-tools/06-pre-commit-automation.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 18: Automation with pre-commit</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/02-dev-tools/07-pydantic-validation.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 19: Data Validation with Pydantic</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
     </ul>
     </div>
 </nav>
@@ -269,6 +315,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#the-datetimeindex" id="toc-the-datetimeindex" class="nav-link" data-scroll-target="#the-datetimeindex">2. The <code>DatetimeIndex</code></a></li>
   <li><a href="#selecting-data-from-a-time-series" id="toc-selecting-data-from-a-time-series" class="nav-link" data-scroll-target="#selecting-data-from-a-time-series">3. Selecting Data from a Time Series</a></li>
   <li><a href="#the-power-of-pandas-resample" id="toc-the-power-of-pandas-resample" class="nav-link" data-scroll-target="#the-power-of-pandas-resample">4. The Power of Pandas: <code>resample</code></a></li>
+  <li><a href="#timezones" id="toc-timezones" class="nav-link" data-scroll-target="#timezones">5. Timezones</a></li>
+  <li><a href="#lag-lead-and-autocorrelation" id="toc-lag-lead-and-autocorrelation" class="nav-link" data-scroll-target="#lag-lead-and-autocorrelation">6. Lag, Lead, and Autocorrelation</a></li>
   <li><a href="#capstone-term-end-attendance-report" id="toc-capstone-term-end-attendance-report" class="nav-link" data-scroll-target="#capstone-term-end-attendance-report">Capstone: Term-End Attendance Report</a></li>
   <li><a href="#further-reading" id="toc-further-reading" class="nav-link" data-scroll-target="#further-reading">Further Reading</a></li>
   <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary">Summary</a></li>
@@ -302,7 +350,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p><strong>Python 3.12+ | Author: Anthony Faustine</strong></p>
 <section id="before-you-begin" class="level2">
 <h2 class="anchored" data-anchor-id="before-you-begin">Before you begin</h2>
-<p>This notebook continues from Part 10 (<code>10-combining-reshaping.ipynb</code>), which covered concatenation, merging, groupby, and pivoting. The student exam results dataset has no real dates in it, only an <code>establishment_year</code>, so this part introduces a second dataset built for the job: daily attendance records for 5 schools over a school term — the shape most time-indexed data takes in practice, one row per day per entity.</p>
+<p>This notebook continues from Part 10 (<code>10-combining-reshaping.ipynb</code>), which covered concatenation, merging, groupby, and pivoting. The student exam results dataset has no real dates in it, only an <code>establishment_year</code>, so this part introduces a second dataset built for the job: daily attendance records for 5 schools over a school term: the shape most time-indexed data takes in practice, one row per day per entity.</p>
 <p>Part 12 (<code>11-polars.ipynb</code>) continues with Polars, including its own (faster) take on time-indexed data.</p>
 <table class="caption-top table">
 <colgroup>
@@ -332,6 +380,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td><strong><code>resample</code></strong></td>
 <td>Change the time granularity of a series: daily to weekly, weekly to monthly</td>
 </tr>
+<tr class="odd">
+<td><strong>Timezones</strong></td>
+<td>Localize naive timestamps, convert between zones, and store everything in UTC</td>
+</tr>
+<tr class="even">
+<td><strong>Lag, lead, and autocorrelation</strong></td>
+<td>Create feature-engineered columns from past values; measure how much a series predicts itself</td>
+</tr>
 </tbody>
 </table>
 <blockquote class="blockquote">
@@ -340,7 +396,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="learning-objectives" class="level2">
 <h2 class="anchored" data-anchor-id="learning-objectives">Learning Objectives</h2>
-<p>By the end of Part 4 you will be able to:</p>
+<p>By the end of Part 11 you will be able to:</p>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 33%">
@@ -374,6 +430,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td>4</td>
 <td>Change the time granularity of a series with <code>resample</code></td>
 <td>Sec. 4</td>
+</tr>
+<tr class="odd">
+<td>5</td>
+<td>Localize naive timestamps, convert between timezones, and store in UTC</td>
+<td>Sec. 5</td>
+</tr>
+<tr class="even">
+<td>6</td>
+<td>Create lag and lead features with <code>shift</code>, measure autocorrelation</td>
+<td>Sec. 6</td>
 </tr>
 </tbody>
 </table>
@@ -632,12 +698,285 @@ Freq: ME, Name: attendance_rate, dtype: float64</code></pre>
 </div>
 <div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
 <p><span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 4 - Monthly Comparison Across Schools</span><br><br></p>
-<b>Goal:</b> Set <code>date</code> as the index on the full <code>attendance</code> table, group by <code>school_id</code>, and resample to monthly means in one chained call. Use <code>“ME”</code> (month-end) — the pandas 3 replacement for the removed <code>“M”</code> alias.
+<b>Goal:</b> Set <code>date</code> as the index on the full <code>attendance</code> table, group by <code>school_id</code>, and resample to monthly means in one chained call. Use <code>“ME”</code> (month-end): the pandas 3 replacement for the removed <code>“M”</code> alias.
 <pre style="background:#FFF8E1;padding:10px;border-radius:4px;font-size:0.9em">attendance.set_index("date").groupby("school_id")["attendance_rate"].resample("ME").mean()</pre>
 </div>
 <div id="32" class="cell" data-execution_count="13">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: set date as index, group by school_id, resample monthly, take the mean</span></span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="timezones" class="level2">
+<h2 class="anchored" data-anchor-id="timezones">5. Timezones</h2>
+<p>The timestamps in this dataset are naive: they carry no timezone information. That is fine for a single-country attendance dataset. It is not fine for anything that crosses system boundaries: API responses, cloud server logs, or sensor readings from devices in different cities. Naive timestamps from different sources silently offset against each other when you join them, with no error to warn you.</p>
+<p>Two operations handle timezones in pandas:</p>
+<ul>
+<li><code>tz_localize(tz)</code>: stamps a naive series with a timezone. The values do not change, only their meaning.</li>
+<li><code>tz_convert(tz)</code>: shifts a timezone-aware series to a different timezone. The values change to represent the same instant in the target zone.</li>
+</ul>
+<p>The standard practice for storage: localize to UTC, convert to local time only for display.</p>
+<div id="34" class="cell" data-execution_count="14">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Localize the naive DatetimeIndex to East Africa Time (UTC+3, Tanzania/Kenya)</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>school_300_eat <span class="op">=</span> school_300.copy()</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>school_300_eat.index <span class="op">=</span> school_300_eat.index.tz_localize(<span class="st">"Africa/Nairobi"</span>)</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Localized (EAT):"</span>, school_300_eat.index[:<span class="dv">2</span>])</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert to UTC for storage</span></span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>school_300_utc <span class="op">=</span> school_300_eat.copy()</span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>school_300_utc.index <span class="op">=</span> school_300_utc.index.tz_convert(<span class="st">"UTC"</span>)</span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"UTC:            "</span>, school_300_utc.index[:<span class="dv">2</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Localized (EAT): DatetimeIndex(['2025-01-06 00:00:00+03:00', '2025-01-07 00:00:00+03:00'], dtype='datetime64[us, Africa/Nairobi]', name='date', freq=None)
+UTC:             DatetimeIndex(['2025-01-05 21:00:00+00:00', '2025-01-06 21:00:00+00:00'], dtype='datetime64[us, UTC]', name='date', freq=None)</code></pre>
+</div>
+</div>
+<div style="background:#EAF3FA;border-left:5px solid #0369A1;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-info-circle-fill"></i> Key Concept: Store in UTC, display in local time</span><br><br> UTC has no daylight saving transitions and no ambiguous hours, so it is the only safe format for storing timestamps that will be compared, sorted, or joined across sources. Localize to UTC at ingestion; convert to the user’s timezone only when formatting for display. Timestamps stored as naive local time break silently when DST shifts: two records that look 60 minutes apart may actually be 120 minutes apart, or the same instant twice.</p>
+</div>
+<p>Mixing naive and aware timestamps raises a <code>TypeError</code>, which is actually helpful: it prevents silent wrong answers.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>school_300_utc.index[<span class="dv">0</span>] <span class="op">&gt;</span> school_300.index[<span class="dv">0</span>]</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="co"># TypeError: Cannot compare tz-naive and tz-aware datetime-like objects</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>The fix is always to localize the naive series before comparing:</p>
+<div id="37" class="cell" data-execution_count="15">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Compare two timezone-aware timestamps safely</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>school_300_eat_end <span class="op">=</span> school_300_eat.index[<span class="op">-</span><span class="dv">1</span>]</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>school_300_utc_end <span class="op">=</span> school_300_utc.index[<span class="op">-</span><span class="dv">1</span>]</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Same instant, different representation</span></span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"EAT end:"</span>, school_300_eat_end)</span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"UTC end:"</span>, school_300_utc_end)</span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Same instant:"</span>, school_300_eat_end <span class="op">==</span> school_300_utc_end)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>EAT end: 2025-03-28 00:00:00+03:00
+UTC end: 2025-03-27 21:00:00+00:00
+Same instant: True</code></pre>
+</div>
+</div>
+<div style="background:#FEF2F2;border-left:5px solid #DC2626;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#991B1B;font-weight:bold"><i class="bi bi-bug-fill"></i> Common Mistake: Localizing when you should be converting</span><br><br> <code>tz_localize</code> stamps the existing values with a timezone label: <code>2025-01-06 00:00</code> becomes <code>2025-01-06 00:00+03:00</code>. The number did not change. <code>tz_convert</code> shifts the values to represent the same instant elsewhere: <code>2025-01-06 00:00+03:00</code> becomes <code>2025-01-05 21:00+00:00</code>. If you call <code>tz_localize(“UTC”)</code> on data that is actually in EAT, you have mislabelled it. The timestamps will compare as if they are 3 hours earlier than they really are.</p>
+</div>
+<div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 5 - Localize and Convert</span><br><br></p>
+<b>Goal:</b> Starting from <code>school_302</code> (built in Activity 2), localize its naive index to <code>“Africa/Nairobi”</code>, then convert to <code>“Europe/London”</code>. Print the first timestamp in both representations and confirm they are the same instant.
+<pre style="background:#FFF8E1;padding:10px;border-radius:4px;font-size:0.9em">school_302 = attendance[attendance["school_id"] == 302].set_index("date")
+s302_eat = school_302.copy()
+s302_eat.index = s302_eat.index.tz_localize("Africa/Nairobi")
+s302_london = s302_eat.copy()
+s302_london.index = s302_london.index.tz_convert("Europe/London")
+print(s302_eat.index[0])
+print(s302_london.index[0])</pre>
+</div>
+<div id="40" class="cell" data-execution_count="16">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: localize school_302 to Africa/Nairobi then convert to Europe/London</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="lag-lead-and-autocorrelation" class="level2">
+<h2 class="anchored" data-anchor-id="lag-lead-and-autocorrelation">6. Lag, Lead, and Autocorrelation</h2>
+<p>A lag feature answers the question: “what was the value yesterday?” It is the most common feature engineering step for time series in ML. If Monday’s attendance rate predicts Tuesday’s, a lag-1 feature captures that relationship in a column a model can consume.</p>
+<p><code>shift(n)</code> moves values forward by <code>n</code> periods (positive = lag, negative = lead). The first <code>n</code> rows get <code>NaN</code> because there is no previous value to fill them.</p>
+<div id="42" class="cell" data-execution_count="17">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>rate <span class="op">=</span> school_300[<span class="st">"attendance_rate"</span>].copy()</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="co"># lag-1: yesterday's attendance rate</span></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>lag1 <span class="op">=</span> rate.shift(<span class="dv">1</span>)</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>lag1.name <span class="op">=</span> <span class="st">"rate_lag1"</span></span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a><span class="co"># lag-5: one school week ago</span></span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>lag5 <span class="op">=</span> rate.shift(<span class="dv">5</span>)</span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>lag5.name <span class="op">=</span> <span class="st">"rate_lag5"</span></span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>features <span class="op">=</span> pd.concat([rate, lag1, lag5], axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>features.head(<span class="dv">8</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="17">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">attendance_rate</th>
+<th data-quarto-table-cell-role="th">rate_lag1</th>
+<th data-quarto-table-cell-role="th">rate_lag5</th>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">date</th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2025-01-06</th>
+<td>0.874</td>
+<td>NaN</td>
+<td>NaN</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">2025-01-07</th>
+<td>0.928</td>
+<td>0.874</td>
+<td>NaN</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2025-01-08</th>
+<td>0.933</td>
+<td>0.928</td>
+<td>NaN</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">2025-01-09</th>
+<td>0.847</td>
+<td>0.933</td>
+<td>NaN</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2025-01-10</th>
+<td>0.866</td>
+<td>0.847</td>
+<td>NaN</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">2025-01-13</th>
+<td>0.909</td>
+<td>0.866</td>
+<td>0.874</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2025-01-14</th>
+<td>0.896</td>
+<td>0.909</td>
+<td>0.928</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">2025-01-15</th>
+<td>0.905</td>
+<td>0.896</td>
+<td>0.933</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<div style="background:#EAF3FA;border-left:5px solid #0369A1;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-info-circle-fill"></i> Key Concept: Lag features turn time series forecasting into supervised learning</span><br><br> A gradient boosting model does not know what “time” means. It knows column values. Giving it a <code>rate_lag1</code> column is how you communicate “yesterday’s value” in a language the model understands. A model trained on <code>[rate_lag1, rate_lag5, day_of_week]</code> predicting <code>attendance_rate</code> is a supervised regression problem built from a single time series. The NaN rows produced by <code>shift</code> must be dropped or filled before training.</p>
+</div>
+<div id="44" class="cell" data-execution_count="18">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Rolling 5-day average: smooth out day-of-week noise</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>rolling_mean <span class="op">=</span> rate.rolling(window<span class="op">=</span><span class="dv">5</span>).mean()</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>rolling_mean.name <span class="op">=</span> <span class="st">"rate_rolling5"</span></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Rolling 5-day std: flags volatile weeks</span></span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>rolling_std <span class="op">=</span> rate.rolling(window<span class="op">=</span><span class="dv">5</span>).std()</span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>rolling_std.name <span class="op">=</span> <span class="st">"rate_rolling5_std"</span></span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>feature_matrix <span class="op">=</span> pd.concat([rate, lag1, lag5, rolling_mean, rolling_std], axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a>feature_matrix.dropna().head()  <span class="co"># drop NaN rows before modelling</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="18">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">attendance_rate</th>
+<th data-quarto-table-cell-role="th">rate_lag1</th>
+<th data-quarto-table-cell-role="th">rate_lag5</th>
+<th data-quarto-table-cell-role="th">rate_rolling5</th>
+<th data-quarto-table-cell-role="th">rate_rolling5_std</th>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">date</th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2025-01-13</th>
+<td>0.909</td>
+<td>0.866</td>
+<td>0.874</td>
+<td>0.8966</td>
+<td>0.038279</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">2025-01-14</th>
+<td>0.896</td>
+<td>0.909</td>
+<td>0.928</td>
+<td>0.8902</td>
+<td>0.034172</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2025-01-15</th>
+<td>0.905</td>
+<td>0.896</td>
+<td>0.933</td>
+<td>0.8846</td>
+<td>0.026931</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">2025-01-16</th>
+<td>0.880</td>
+<td>0.905</td>
+<td>0.847</td>
+<td>0.8912</td>
+<td>0.017964</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2025-01-17</th>
+<td>0.932</td>
+<td>0.880</td>
+<td>0.866</td>
+<td>0.9044</td>
+<td>0.019034</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<p><code>autocorr(lag)</code> measures how strongly a series correlates with a delayed copy of itself. An autocorrelation close to 1 means yesterday’s value is a strong predictor of today’s: a useful sanity check before building a lag-based model.</p>
+<div id="46" class="cell" data-execution_count="19">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> lag <span class="kw">in</span> [<span class="dv">1</span>, <span class="dv">5</span>, <span class="dv">10</span>]:</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>    ac <span class="op">=</span> rate.autocorr(lag<span class="op">=</span>lag)</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"autocorr(lag=</span><span class="sc">{</span>lag<span class="sc">:&gt;2}</span><span class="ss">): </span><span class="sc">{</span>ac<span class="sc">:.3f}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>autocorr(lag= 1): 0.321
+autocorr(lag= 5): 0.396
+autocorr(lag=10): 0.313</code></pre>
+</div>
+</div>
+<div style="background:#EAF7F0;border-left:5px solid #059669;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#059669;font-weight:bold"><i class="bi bi-journal-code"></i> Example: Reading autocorrelation results</span><br><br> A lag-1 autocorrelation of ~0.4 to 0.7 is typical for daily attendance data: yesterday’s rate is a moderate predictor of today’s but not a perfect one. A value near 0 means the series is essentially random from day to day. A value near 1 means it barely changes at all. The lag-5 value reflects the weekly pattern: a Monday is most similar to the previous Monday, not to last Friday.</p>
+</div>
+<div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 6 - Build a Lag Feature Matrix</span><br><br></p>
+<b>Goal:</b> For <code>school_302</code>, create a feature matrix with columns: the original <code>attendance_rate</code>, a lag-1 column, a lag-5 column, and a 3-day rolling mean. Drop NaN rows, then print the autocorrelation at lag 1 and lag 5. What do the values tell you about how predictable attendance is at school 302?
+<pre style="background:#FFF8E1;padding:10px;border-radius:4px;font-size:0.9em">rate_302 = attendance[attendance["school_id"]==302].set_index("date")["attendance_rate"]
+fm_302 = pd.concat([
+    rate_302,
+    rate_302.shift(1).rename("lag1"),
+    rate_302.shift(5).rename("lag5"),
+    rate_302.rolling(3).mean().rename("rolling3"),
+], axis=1).dropna()
+print(fm_302.head())
+print("autocorr lag1:", rate_302.autocorr(lag=1).round(3))
+print("autocorr lag5:", rate_302.autocorr(lag=5).round(3))</pre>
+</div>
+<div id="49" class="cell" data-execution_count="20">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: build lag feature matrix for school_302 and check autocorrelations</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="capstone-term-end-attendance-report" class="level2">
@@ -667,9 +1006,9 @@ last_week = weekly.loc[:, "2025-03-24":"2025-03-28"]
 drop_per_school = first_week.groupby("school_id").mean() - last_week.groupby("school_id").mean()
 drop_per_school.sort_values(ascending=False)</pre>
 </div>
-<div id="35" class="cell" data-execution_count="14">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: build the term-end attendance report described above</span></span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="52" class="cell" data-execution_count="21">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: build the term-end attendance report described above</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="further-reading" class="level2">
@@ -687,16 +1026,20 @@ drop_per_school.sort_values(ascending=False)</pre>
 <td>Chapter 11 (time series) is the most complete treatment of <code>DatetimeIndex</code>, <code>resample</code>, and <code>rolling</code> with pandas</td>
 </tr>
 <tr class="even">
-<td><a href="https://pandas.pydata.org/docs/user_guide/timeseries.html">pandas documentation — Time series / date functionality</a></td>
+<td><a href="https://pandas.pydata.org/docs/user_guide/timeseries.html">pandas documentation: Time series / date functionality</a></td>
 <td>The authoritative reference for <code>pd.date_range</code>, offset aliases, time zones, and <code>Period</code></td>
 </tr>
 <tr class="odd">
+<td><a href="https://pandas.pydata.org/docs/user_guide/timeseries.html#time-zone-handling">pandas documentation: Time zone handling</a></td>
+<td><code>tz_localize</code>, <code>tz_convert</code>, and the ambiguous-times edge cases</td>
+</tr>
+<tr class="even">
 <td>McKinney, W. (2011). <a href="https://conference.scipy.org/proceedings/scipy2011/pdfs/wes_mckinney.pdf">Time series analysis in Python with pandas</a>. <em>SciPy 2011</em>.</td>
 <td>The original paper describing pandas’ time series design; short and still accurate</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>Hyndman, R.J. &amp; Athanasopoulos, G. (2021). <em>Forecasting: Principles and Practice</em>, 3rd ed.</td>
-<td>Free at <a href="https://otexts.com/fpp3">otexts.com/fpp3</a> — the next step after understanding how to <em>store</em> time series data is learning how to <em>model</em> it</td>
+<td>Free at <a href="https://otexts.com/fpp3">otexts.com/fpp3</a>: the next step after understanding how to <em>store</em> time series data is learning how to <em>model</em> it</td>
 </tr>
 </tbody>
 </table>
@@ -747,9 +1090,33 @@ drop_per_school.sort_values(ascending=False)</pre>
 <td><code>groupby(...).resample(...)</code></td>
 <td>Resample each entity’s series independently in one chained call</td>
 </tr>
+<tr class="odd">
+<td><code>tz_localize(tz)</code></td>
+<td>Stamps a naive timestamp with a timezone; values do not shift</td>
+</tr>
+<tr class="even">
+<td><code>tz_convert(tz)</code></td>
+<td>Shifts a timezone-aware timestamp to a different zone; values change</td>
+</tr>
+<tr class="odd">
+<td>Store UTC</td>
+<td>Localize to UTC at ingestion, convert to local time only for display</td>
+</tr>
+<tr class="even">
+<td><code>shift(n)</code></td>
+<td>Creates lag (positive n) or lead (negative n) features; first n rows become NaN</td>
+</tr>
+<tr class="odd">
+<td><code>rolling(n).mean()</code></td>
+<td>Rolling window average; smooths noise and is a useful feature in its own right</td>
+</tr>
+<tr class="even">
+<td><code>autocorr(lag=n)</code></td>
+<td>Measures how strongly a series predicts itself n steps ahead; guides lag feature selection</td>
+</tr>
 </tbody>
 </table>
-<p><strong>Next:</strong> <code>11-polars.ipynb</code>, covering Polars’ DataFrame, expression API, and lazy evaluation.</p>
+<p><strong>Next:</strong> <code>11-polars.ipynb</code>, covering Polars’ DataFrame, expression API, lazy evaluation, and streaming.</p>
 
 
 </section>

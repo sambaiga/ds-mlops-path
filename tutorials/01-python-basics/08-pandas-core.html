@@ -79,7 +79,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../../site_libs/quarto-html/quarto-syntax-highlighting-de63f62b328812d8e578a4d74e282472.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-25d02d6ee2c20d6bcb3e5ee92e71e791.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-0f3842b63b3a17d781c7303dc189e804.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -253,6 +253,52 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
       </ul>
   </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false">
+ <span class="menu-text">Part 3: Dev Tools</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/02-dev-tools/01-uv-project-setup.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 13: Project Setup with uv</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/02-dev-tools/02-code-quality-ruff.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 14: Code Quality with ruff</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/02-dev-tools/03-type-annotations.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 15: Type Annotations</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/02-dev-tools/04-git-github.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 16: Git and GitHub for Data Science</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/02-dev-tools/05-pytest-testing.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 17: Testing DS Code with pytest</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/02-dev-tools/06-pre-commit-automation.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 18: Automation with pre-commit</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/02-dev-tools/07-pydantic-validation.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 19: Data Validation with Pydantic</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
     </ul>
     </div>
 </nav>
@@ -272,6 +318,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#adding-modifying-and-dropping-columns" id="toc-adding-modifying-and-dropping-columns" class="nav-link" data-scroll-target="#adding-modifying-and-dropping-columns">5. Adding, Modifying, and Dropping Columns</a></li>
   <li><a href="#sorting" id="toc-sorting" class="nav-link" data-scroll-target="#sorting">6. Sorting</a></li>
   <li><a href="#handling-missing-data" id="toc-handling-missing-data" class="nav-link" data-scroll-target="#handling-missing-data">7. Handling Missing Data</a></li>
+  <li><a href="#memory-usage-and-the-categorical-dtype" id="toc-memory-usage-and-the-categorical-dtype" class="nav-link" data-scroll-target="#memory-usage-and-the-categorical-dtype">8. Memory Usage and the Categorical Dtype</a></li>
   <li><a href="#capstone-top-schools-report" id="toc-capstone-top-schools-report" class="nav-link" data-scroll-target="#capstone-top-schools-report">Capstone: Top Schools Report</a></li>
   <li><a href="#further-reading" id="toc-further-reading" class="nav-link" data-scroll-target="#further-reading">Further Reading</a></li>
   <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary">Summary</a></li>
@@ -340,6 +387,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td><strong>Missing data</strong></td>
 <td>Real datasets have gaps; pandas gives you tools to see and handle them, not ignore them</td>
 </tr>
+<tr class="even">
+<td><strong>Memory and categorical dtype</strong></td>
+<td>Profile what a DataFrame costs in RAM; reduce it for columns with few distinct values</td>
+</tr>
 </tbody>
 </table>
 <blockquote class="blockquote">
@@ -397,6 +448,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td>7</td>
 <td>Find, count, and handle missing values</td>
 <td>Sec. 7</td>
+</tr>
+<tr class="even">
+<td>8</td>
+<td>Profile memory usage and reduce it with the categorical dtype</td>
+<td>Sec. 8</td>
 </tr>
 </tbody>
 </table>
@@ -1317,6 +1373,92 @@ df["total_toilets"].isna().sum()  # -&gt; 0</pre>
 <span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
+<section id="memory-usage-and-the-categorical-dtype" class="level2">
+<h2 class="anchored" data-anchor-id="memory-usage-and-the-categorical-dtype">8. Memory Usage and the Categorical Dtype</h2>
+<p>A 2,400-row dataset fits in memory with ease, but the patterns here scale to millions of rows where they matter. Understanding what pandas keeps in memory and how to reduce it is a practical skill, not an optimization curiosity.</p>
+<p><code>df.memory_usage(deep=True)</code> shows how many bytes each column occupies. <code>deep=True</code> is required for string columns: without it, pandas reports only the object pointer size, not the actual string bytes.</p>
+<div id="50" class="cell" data-execution_count="22">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>mem <span class="op">=</span> df.memory_usage(deep<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>mem_mb <span class="op">=</span> (mem <span class="op">/</span> <span class="dv">1024</span><span class="op">**</span><span class="dv">2</span>).<span class="bu">round</span>(<span class="dv">3</span>)</span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(mem_mb.sort_values(ascending<span class="op">=</span><span class="va">False</span>))</span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">Total: </span><span class="sc">{</span>mem_mb<span class="sc">.</span><span class="bu">sum</span>()<span class="sc">:.3f}</span><span class="ss"> MB"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>program            0.053
+course             0.050
+semester           0.041
+enrollment_date    0.041
+guardian           0.032
+region             0.030
+student_id         0.030
+course_id          0.025
+gender             0.021
+final_grade        0.021
+final_score        0.018
+cohort             0.018
+average_marks      0.018
+study_hours        0.018
+midterm_score      0.018
+attendance_pct     0.018
+project_score      0.018
+has_internet       0.002
+passed             0.002
+Index              0.000
+dtype: float64
+
+Total: 0.474 MB</code></pre>
+</div>
+</div>
+<div style="background:#EAF3FA;border-left:5px solid #0369A1;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-info-circle-fill"></i> Key Concept: String columns dominate memory in most DataFrames</span><br><br> An <code>object</code> or <code>str</code> column stores a Python string object per row: the string plus Python object overhead. A numeric column stores a flat NumPy array: 8 bytes per row for <code>float64</code>, 4 for <code>float32</code>. A column like <code>program</code> with only 4 distinct values across 2,400 rows wastes most of that memory repeating the same strings. The categorical dtype solves this by storing each unique string once and keeping only a compact integer code per row.</p>
+</div>
+<div id="52" class="cell" data-execution_count="23">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Compare memory: str dtype vs category dtype</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>before <span class="op">=</span> df[<span class="st">"program"</span>].memory_usage(deep<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"program"</span>] <span class="op">=</span> df[<span class="st">"program"</span>].astype(<span class="st">"category"</span>)</span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>after <span class="op">=</span> df[<span class="st">"program"</span>].memory_usage(deep<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"str dtype    : </span><span class="sc">{</span>before<span class="sc">:,}</span><span class="ss"> bytes"</span>)</span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"category     : </span><span class="sc">{</span>after<span class="sc">:,}</span><span class="ss"> bytes"</span>)</span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"reduction    : </span><span class="sc">{</span>(<span class="dv">1</span> <span class="op">-</span> after <span class="op">/</span> before) <span class="op">*</span> <span class="dv">100</span><span class="sc">:.1f}</span><span class="ss">%"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>str dtype    : 55,998 bytes
+category     : 2,626 bytes
+reduction    : 95.3%</code></pre>
+</div>
+</div>
+<div id="53" class="cell" data-execution_count="24">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Any low-cardinality string column is a candidate for category dtype</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>low_cardinality <span class="op">=</span> [c <span class="cf">for</span> c <span class="kw">in</span> df.select_dtypes(<span class="st">"object"</span>).columns <span class="cf">if</span> df[c].nunique() <span class="op">&lt;</span> <span class="dv">50</span>]</span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Low-cardinality columns:"</span>, low_cardinality)</span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> col <span class="kw">in</span> low_cardinality:</span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>    df[col] <span class="op">=</span> df[col].astype(<span class="st">"category"</span>)</span>
+<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Memory after converting all: </span><span class="sc">{</span>df<span class="sc">.</span>memory_usage(deep<span class="op">=</span><span class="va">True</span>)<span class="sc">.</span><span class="bu">sum</span>() <span class="op">/</span> <span class="dv">1024</span><span class="op">**</span><span class="dv">2</span><span class="sc">:.3f}</span><span class="ss"> MB"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Low-cardinality columns: ['gender', 'region', 'guardian', 'course_id', 'course', 'semester', 'enrollment_date', 'final_grade']
+Memory after converting all: 0.184 MB</code></pre>
+</div>
+</div>
+<div style="background:#F5F3FF;border-left:5px solid #7C3AED;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#5B21B6;font-weight:bold"><i class="bi bi-lightbulb-fill"></i> Pro Tip: Use category dtype early; undo it before one-hot encoding</span><br><br> Convert low-cardinality string columns to <code>category</code> dtype right after loading, before any analysis. It speeds up <code>groupby</code> and <code>value_counts</code> and reduces memory. The one time to undo it: <code>pd.get_dummies()</code> (Part 9) works on category columns but produces the same output, so it is not strictly required, just worth knowing the pattern.</p>
+</div>
+<div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 6 - Measure and Reduce Memory</span><br><br></p>
+<b>Goal:</b> Load the dataset fresh, print its total memory usage in MB with <code>memory_usage(deep=True).sum()</code>, convert the <code>gender</code> and <code>guardian</code> columns to <code>category</code> dtype, and print the new total. What percentage of memory did you save?
+<pre style="background:#FFF8E1;padding:10px;border-radius:4px;font-size:0.9em">df_fresh = pd.read_csv("data/university_analytics.csv")
+before_mb = df_fresh.memory_usage(deep=True).sum() / 1024**2
+df_fresh["gender"] = df_fresh["gender"].astype("category")
+df_fresh["guardian"] = df_fresh["guardian"].astype("category")
+after_mb = df_fresh.memory_usage(deep=True).sum() / 1024**2
+print(f"Before: {before_mb:.3f} MB, After: {after_mb:.3f} MB")
+print(f"Saving: {(1 - after_mb/before_mb)*100:.1f}%")</pre>
+</div>
+<div id="56" class="cell" data-execution_count="25">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: measure and reduce memory as described above</span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
 <section id="capstone-top-schools-report" class="level2">
 <h2 class="anchored" data-anchor-id="capstone-top-schools-report">Capstone: Top Schools Report</h2>
 <p>Combine everything from this notebook: select, filter, add a column, sort, and handle missing data, to answer one question. Which schools have the highest average student performance, among schools with reasonable internet access?</p>
@@ -1341,9 +1483,9 @@ Sort the result descending and show the top 5 school IDs
 school_means = with_internet.groupby("school_id")["average_marks"].mean()
 school_means.sort_values(ascending=False).head(5)</pre>
 </div>
-<div id="51" class="cell" data-execution_count="22">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: build the top-5-schools report described above</span></span>
-<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="59" class="cell" data-execution_count="26">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: build the top-5-schools report described above</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="further-reading" class="level2">
@@ -1432,6 +1574,18 @@ school_means.sort_values(ascending=False).head(5)</pre>
 <tr class="odd">
 <td>Missing data</td>
 <td><code>.isna()</code> to find it, <code>.dropna()</code>/<code>.fillna()</code> to handle it, decide what missing means first</td>
+</tr>
+<tr class="even">
+<td><code>memory_usage(deep=True)</code></td>
+<td>Shows true memory cost per column, including string bytes; use before optimising</td>
+</tr>
+<tr class="odd">
+<td><code>.astype("category")</code></td>
+<td>Stores each unique value once + an integer code per row; cuts memory for low-cardinality columns</td>
+</tr>
+<tr class="even">
+<td>Low-cardinality threshold</td>
+<td>A rule of thumb: columns with fewer than 50 distinct values are worth converting</td>
 </tr>
 </tbody>
 </table>
