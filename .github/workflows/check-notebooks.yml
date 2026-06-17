@@ -1,0 +1,51 @@
+name: Check Notebooks
+
+on:
+  push:
+    paths:
+      - "tutorials/**/*.ipynb"
+      - "tutorials/**/data/**"
+      - "ark/**"
+      - "pyproject.toml"
+      - "uv.lock"
+      - ".github/workflows/check-notebooks.yml"
+  pull_request:
+    paths:
+      - "tutorials/**/*.ipynb"
+      - "tutorials/**/data/**"
+      - "ark/**"
+      - "pyproject.toml"
+      - "uv.lock"
+      - ".github/workflows/check-notebooks.yml"
+  workflow_dispatch:
+
+jobs:
+  execute-notebooks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          version: "latest"
+
+      - name: Install dependencies
+        run: uv sync --extra dev --extra test
+
+      - name: Execute notebooks
+        run: |
+          uv run --with nbmake pytest --nbmake \
+            --nbmake-timeout=300 \
+            --no-header \
+            -v \
+            --override-ini=addopts= \
+            tutorials/01-python-basics/ \
+            --ignore=tutorials/01-python-basics/01-python-core.ipynb \
+            --ignore=tutorials/01-python-basics/03-python-patterns.ipynb \
+            --ignore=tutorials/01-python-basics/04-numpy.ipynb
+        env:
+          PYTHONWARNINGS: ignore
