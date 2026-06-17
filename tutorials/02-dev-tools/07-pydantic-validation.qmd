@@ -1,0 +1,414 @@
+---
+title: "Part 19: Data Validation with Pydantic"
+---
+
+**DS-MLOps Dev Tools**
+
+**Python 3.12+ | Author: Anthony Faustine**
+
+## Before you begin
+
+This chapter assumes you have completed [Part 15: Type Annotations](03-type-annotations.ipynb). Pydantic is type annotations put to work: the type hints you write in Part 15 become runtime validators that reject wrong inputs before they corrupt a pipeline.
+
+The `grade-predictor` project continues here: a `GradeConfig` model replaces the ad-hoc defaults in `compute_grade`, and a `StudentRecord` model validates incoming data before it ever reaches a computation function.
+
+> Callout markers used throughout this chapter are explained on the [book cover page](../../index.qmd#callout-guide).
+
+## Learning Objectives
+
+By the end of Part 19 you will be able to:
+
+| # | Skill | Covered in |
+|---|---|---|
+| 1 | Define Pydantic models and understand how they differ from dataclasses | Sec. 1 |
+| 2 | Validate input data and handle `ValidationError` cleanly | Sec. 2 |
+| 3 | Write field validators and cross-field validators | Sec. 3 |
+| 4 | Use `BaseSettings` to manage configuration from environment variables | Sec. 4 |
+| 5 | Build a typed config object for a DS pipeline | Sec. 5 |
+| 6 | Validate a batch of student records and collect all errors at once | Sec. 6 |
+
+## 1. Models: Type Annotations That Bite
+
+A Python dataclass accepts any value for any field, regardless of what the annotation says. The annotation is a hint to the reader and the type checker, but it does not stop wrong values from entering the object at runtime.
+
+A Pydantic model validates on construction. Pass the wrong type and it raises an error immediately, before the value reaches any computation:
+
+```python
+from dataclasses import dataclass
+from pydantic import BaseModel
+
+@dataclass
+class DataclassStudent:
+    student_id: str
+    midterm_score: float
+
+class PydanticStudent(BaseModel):
+    student_id: str
+    midterm_score: float
+
+# Dataclass: accepts "eighty" silently
+dc = DataclassStudent(student_id="S0001", midterm_score="eighty")
+print(dc.midterm_score)  # "eighty" -- no error
+
+# Pydantic: raises ValidationError immediately
+ps = PydanticStudent(student_id="S0001", midterm_score="eighty")
+# pydantic.ValidationError: 1 validation error for PydanticStudent
+# midterm_score: Input should be a valid number [type=float_parsing]
+```
+
+Pydantic also coerces where the conversion is unambiguous. `"85"` becomes `85.0` for a `float` field; `"true"` becomes `True` for a `bool` field. This makes it practical for inputs from CSV files, APIs, or environment variables, where everything arrives as a string.
+
+<div class='ark-concept'>
+<span class='ark-concept-title'><i class="bi bi-info-circle-fill"></i> Key Concept: Validate at the boundary, not inside the pipeline</span><br><br>
+A pipeline that validates its inputs at the entry point can trust every value it works with from that point on. A pipeline that validates inside individual functions repeats the same checks everywhere and still misses values that enter through unexpected paths. Pydantic at the boundary is the architectural principle; the model is the mechanism.
+</div>
+
+## 2. `StudentRecord`: Validating Incoming Data
+
+Define a model for a student record coming in from a CSV or API. The `model_config` attribute controls Pydantic v2's behaviour:
+
+```python
+from pydantic import BaseModel, Field, field_validator, model_validator
+from typing import Annotated
+
+class StudentRecord(BaseModel):
+    model_config = {"str_strip_whitespace": True, "validate_assignment": True}
+
+    student_id: str
+    midterm_score: Annotated[float, Field(ge=0.0, le=100.0)]
+    final_score: Annotated[float, Field(ge=0.0, le=100.0)]
+    project_score: Annotated[float, Field(ge=0.0, le=100.0)]
+    program: str
+    has_internet: bool = True
+
+    @field_validator("student_id")
+    @classmethod
+    def student_id_format(cls, v: str) -> str:
+        import re
+        if not re.match(r"^S\d{4}$", v):
+            raise ValueError(f"student_id must match S followed by 4 digits, got '{v}'")
+        return v
+```
+
+`Field(ge=0.0, le=100.0)` means "greater than or equal to 0, less than or equal to 100". Pydantic v2 uses `Annotated` with `Field` for constraints; the old `validator` decorator is replaced by `field_validator`.
+
+Try it:
+
+```python
+# Valid record: succeeds
+record = StudentRecord(
+    student_id="S0042",
+    midterm_score=78.5,
+    final_score=82.0,
+    project_score="91.0",  # string coerced to float
+    program="CS",
+)
+print(record.model_dump())
+
+# Invalid: midterm over 100
+try:
+    bad = StudentRecord(
+        student_id="S0042",
+        midterm_score=150.0,  # violates le=100.0
+        final_score=80.0,
+        project_score=75.0,
+        program="CS",
+    )
+except ValidationError as e:
+    print(e)
+```
+
+<div class='ark-activity'>
+<span class='ark-activity-title'><i class="bi bi-puzzle-fill"></i> Activity 1 - Extend StudentRecord</span><br><br>
+<b>Goal:</b> Add a <code>semester</code> field to <code>StudentRecord</code> that must be one of <code>"Fall"</code>, <code>"Spring"</code>, <code>"Summer"</code>. Use <code>Literal["Fall", "Spring", "Summer"]</code> as the type annotation. Try creating a record with <code>semester="Winter"</code> and confirm it raises a <code>ValidationError</code>.
+<pre>from typing import Literal
+
+class StudentRecord(BaseModel):
+    ...
+    semester: Literal["Fall", "Spring", "Summer"]
+
+StudentRecord(..., semester="Winter")  # should raise ValidationError</pre>
+</div>
+
+## 3. Field Validators and Cross-Field Validators
+
+A `@field_validator` runs on a single field after type coercion. Use it for business rules that go beyond a simple range check: ID format, domain-specific constraints, normalization.
+
+A `@model_validator` runs after all fields are set and has access to the complete model. Use it for cross-field constraints: "if `final_score` is provided, `midterm_score` must also be present":
+
+```python
+from pydantic import BaseModel, field_validator, model_validator, Field
+from typing import Annotated
+
+class GradeConfig(BaseModel):
+    """Configuration for grade computation weights."""
+
+    midterm_weight: Annotated[float, Field(gt=0.0, lt=1.0)] = 0.30
+    final_weight: Annotated[float, Field(gt=0.0, lt=1.0)] = 0.45
+    project_weight: Annotated[float, Field(gt=0.0, lt=1.0)] = 0.25
+    pass_threshold: Annotated[float, Field(ge=50.0, le=80.0)] = 60.0
+
+    @model_validator(mode="after")
+    def weights_must_sum_to_one(self) -> "GradeConfig":
+        total = self.midterm_weight + self.final_weight + self.project_weight
+        if abs(total - 1.0) > 1e-6:
+            raise ValueError(
+                f"Weights must sum to 1.0, got {total:.6f}. "
+                f"Adjust midterm ({self.midterm_weight}), "
+                f"final ({self.final_weight}), or project ({self.project_weight})."
+            )
+        return self
+```
+
+The `mode="after"` argument means the validator runs after Pydantic has already validated and coerced every individual field. Use `mode="before"` when you need to transform raw input before type coercion.
+
+```python
+# Valid: weights sum to 1.0
+cfg = GradeConfig(midterm_weight=0.3, final_weight=0.5, project_weight=0.2)
+
+# Invalid: weights sum to 1.05
+try:
+    bad_cfg = GradeConfig(midterm_weight=0.4, final_weight=0.45, project_weight=0.2)
+except ValidationError as e:
+    print(e)
+```
+
+<div class='ark-tip'>
+<span class='ark-tip-title'><i class="bi bi-lightbulb-fill"></i> Pro Tip: Use <code>model_dump()</code> and <code>model_validate()</code> to round-trip through dicts and JSON</span><br><br>
+<code>config.model_dump()</code> converts a Pydantic model to a plain Python dict, ready for JSON serialisation or pandas. <code>GradeConfig.model_validate(some_dict)</code> validates and constructs a model from a dict. <code>GradeConfig.model_validate_json(json_string)</code> parses and validates from a JSON string. These three methods cover the most common I/O patterns for config files, API payloads, and database rows.
+</div>
+
+<div class='ark-activity'>
+<span class='ark-activity-title'><i class="bi bi-puzzle-fill"></i> Activity 2 - Config from a Dict</span><br><br>
+<b>Goal:</b> Create a <code>GradeConfig</code> from a Python dict using <code>model_validate()</code>. Then call <code>model_dump()</code> to get a plain dict back. Confirm the two dicts have the same values. Also confirm that a dict with weights that do not sum to 1.0 raises a <code>ValidationError</code>.
+<pre>raw = {"midterm_weight": 0.3, "final_weight": 0.45, "project_weight": 0.25}
+cfg = GradeConfig.model_validate(raw)
+assert cfg.model_dump() == {**raw, "pass_threshold": 60.0}</pre>
+</div>
+
+## 4. `BaseSettings`: Config from Environment Variables
+
+`pydantic-settings` extends Pydantic with a `BaseSettings` class that reads values from environment variables, `.env` files, and secrets. This replaces the manual `os.getenv` pattern from Part 13 with a typed, validated config object.
+
+```bash
+uv add pydantic-settings
+```
+
+```python
+# grade_predictor/config.py
+from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic import Field
+from typing import Annotated
+
+class GradeSettings(BaseSettings):
+    """Application settings, loaded from environment variables or .env file."""
+
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        env_prefix="GRADE_",   # GRADE_API_KEY maps to api_key
+        case_sensitive=False,
+    )
+
+    api_key: str = Field(description="API key for the university data service")
+    data_path: str = Field(default="data/university_analytics.csv")
+    pass_threshold: Annotated[float, Field(ge=50.0, le=80.0)] = 60.0
+    debug: bool = False
+```
+
+With a `.env` file:
+
+```bash
+GRADE_API_KEY=secret-key-here
+GRADE_DATA_PATH=data/production.csv
+GRADE_PASS_THRESHOLD=65.0
+```
+
+Load settings anywhere in the application:
+
+```python
+settings = GradeSettings()   # reads .env and environment
+print(settings.data_path)    # "data/production.csv"
+print(settings.pass_threshold)  # 65.0 (float, not string)
+```
+
+<div class='ark-concept'>
+<span class='ark-concept-title'><i class="bi bi-info-circle-fill"></i> Key Concept: Settings validation catches misconfiguration at startup, not mid-run</span><br><br>
+Without validation, a missing or malformed environment variable is discovered when the code first uses it: halfway through a pipeline run, after 20 minutes of processing. <code>BaseSettings</code> validates all settings at construction time: the application fails fast at startup with a clear error listing every missing or invalid variable, before any work starts.
+</div>
+
+<div class='ark-mistake'>
+<span class='ark-mistake-title'><i class="bi bi-bug-fill"></i> Common Mistake: Constructing settings inside a function that runs in a loop</span><br><br>
+<code>GradeSettings()</code> reads the <code>.env</code> file and environment on every call. Calling it inside a loop that processes thousands of rows reads and validates the config thousands of times. Construct settings once at the module or application level and pass the object through. In FastAPI this is a <code>@lru_cache</code> on a factory function; in a batch pipeline it is a module-level singleton.
+</div>
+
+<div class='ark-activity'>
+<span class='ark-activity-title'><i class="bi bi-puzzle-fill"></i> Activity 3 - Settings with a Test Override</span><br><br>
+<b>Goal:</b> Create a <code>GradeSettings</code> class. In a test, override individual settings without modifying the <code>.env</code> file by passing values directly to the constructor: <code>GradeSettings(api_key="test-key", pass_threshold=70.0)</code>. Confirm the values are set correctly and that an invalid <code>pass_threshold</code> (e.g., 95.0) raises a <code>ValidationError</code>.
+<pre>test_settings = GradeSettings(api_key="test-key", pass_threshold=70.0)
+assert test_settings.pass_threshold == 70.0
+
+GradeSettings(api_key="test-key", pass_threshold=95.0)  # should raise</pre>
+</div>
+
+## 5. Typing a DS Pipeline Config
+
+A real DS pipeline has more than one config object. The pattern is to compose small focused models into a root config that is loaded once:
+
+```python
+# grade_predictor/config.py
+from pydantic import BaseModel, Field, model_validator
+from pydantic_settings import BaseSettings, SettingsConfigDict
+from typing import Annotated
+
+class WeightConfig(BaseModel):
+    """Grade component weights; must sum to 1.0."""
+    midterm: Annotated[float, Field(gt=0.0, lt=1.0)] = 0.30
+    final: Annotated[float, Field(gt=0.0, lt=1.0)]   = 0.45
+    project: Annotated[float, Field(gt=0.0, lt=1.0)] = 0.25
+
+    @model_validator(mode="after")
+    def weights_sum_to_one(self) -> "WeightConfig":
+        total = self.midterm + self.final + self.project
+        if abs(total - 1.0) > 1e-6:
+            raise ValueError(f"Weights must sum to 1.0, got {total:.4f}")
+        return self
+
+
+class PipelineConfig(BaseSettings):
+    """Root pipeline configuration: weights, thresholds, and paths."""
+    model_config = SettingsConfigDict(env_file=".env", env_prefix="GRADE_")
+
+    weights: WeightConfig = WeightConfig()
+    pass_threshold: Annotated[float, Field(ge=50.0, le=80.0)] = 60.0
+    data_path: str = "data/university_analytics.csv"
+    output_path: str = "data/results.parquet"
+    debug: bool = False
+```
+
+The nested `WeightConfig` validates itself. `PipelineConfig` composes it and adds the environment-variable loading. Usage:
+
+```python
+config = PipelineConfig()
+
+# In compute_grade: use config instead of hardcoded defaults
+def compute_grade(midterm: float, final: float, project: float, cfg: PipelineConfig) -> float:
+    w = cfg.weights
+    return midterm * w.midterm + final * w.final + project * w.project
+```
+
+<div class='ark-activity'>
+<span class='ark-activity-title'><i class="bi bi-puzzle-fill"></i> Activity 4 - Nested Config</span><br><br>
+<b>Goal:</b> Create a <code>PipelineConfig</code> object. Confirm that accessing <code>config.weights.midterm</code> returns the expected default value. Then create one with custom weights <code>WeightConfig(midterm=0.25, final=0.50, project=0.25)</code> and confirm it validates correctly. Finally, confirm that invalid nested weights (sum != 1.0) raise a <code>ValidationError</code> on the nested model.
+</div>
+
+## 6. Validating a Batch of Records
+
+In DS, data comes in batches: a CSV with thousands of rows, an API response with hundreds of records. Pydantic validates each record independently; the question is how to handle errors without stopping on the first failure.
+
+The `model_validate` call on a single dict either succeeds or raises `ValidationError`. For a batch, collect errors without stopping:
+
+```python
+from pydantic import ValidationError
+import pandas as pd
+
+def validate_batch(
+    records: list[dict],
+) -> tuple[list[StudentRecord], list[dict]]:
+    """Validate a list of raw record dicts.
+
+    Returns:
+        A tuple of (valid_records, error_records). error_records include the
+        original dict plus an 'errors' key with Pydantic's error list.
+    """
+    valid: list[StudentRecord] = []
+    errors: list[dict] = []
+
+    for raw in records:
+        try:
+            valid.append(StudentRecord.model_validate(raw))
+        except ValidationError as e:
+            errors.append({**raw, "errors": e.errors()})
+
+    return valid, errors
+
+
+# Use it on a DataFrame
+df = pd.read_csv("data/university_analytics.csv")
+records = df.to_dict(orient="records")
+
+valid_records, error_records = validate_batch(records)
+print(f"Valid: {len(valid_records)}, Errors: {len(error_records)}")
+
+if error_records:
+    # Show the first error
+    print(error_records[0]["errors"])
+```
+
+<div class='ark-tip'>
+<span class='ark-tip-title'><i class="bi bi-lightbulb-fill"></i> Pro Tip: Use <code>TypeAdapter</code> to validate a list without a wrapper model</span><br><br>
+Pydantic v2's <code>TypeAdapter</code> validates arbitrary types, including <code>list[StudentRecord]</code>, without defining a wrapper model:
+<pre style='background:#F4F5F6;padding:10px;border-radius:4px;font-size:0.9em'>from pydantic import TypeAdapter
+
+adapter = TypeAdapter(list[StudentRecord])
+
+# Raises ValidationError for the first invalid record
+all_records = adapter.validate_python(df.to_dict(orient="records"))
+
+# Use model_json_schema() to generate a JSON Schema for documentation
+print(adapter.json_schema())</pre>
+This is cleaner than wrapping in a container model when you only need batch validation.
+</div>
+
+<div class='ark-activity'>
+<span class='ark-activity-title'><i class="bi bi-puzzle-fill"></i> Activity 5 - Batch Validation Report</span><br><br>
+<b>Goal:</b> Load <code>university_analytics.csv</code>. Introduce two invalid rows: one with <code>midterm_score=150.0</code> (over the maximum) and one with <code>student_id="INVALID"</code> (wrong format). Run <code>validate_batch()</code> on all rows. Print how many valid and invalid records there are, and print the error details for the two invalid rows.
+<pre>df_with_errors = df.copy()
+df_with_errors.loc[0, "midterm_score"] = 150.0
+df_with_errors.loc[1, "student_id"] = "INVALID"
+
+valid, errors = validate_batch(df_with_errors.to_dict(orient="records"))
+print(f"Valid: {len(valid)}, Errors: {len(errors)}")</pre>
+</div>
+
+## Capstone - Typed grade-predictor Pipeline
+
+Bring Pydantic into the `grade-predictor` project end to end.
+
+<div class='ark-activity'>
+<span class='ark-activity-title'><i class="bi bi-puzzle-fill"></i> Capstone - A Validated Pipeline</span><br><br>
+<ol>
+<li>Define <code>StudentRecord</code> in <code>grade_predictor/models.py</code> with all fields from the CSV, appropriate constraints, and an <code>student_id</code> format validator</li>
+<li>Define <code>PipelineConfig</code> in <code>grade_predictor/config.py</code> with <code>WeightConfig</code>, <code>pass_threshold</code>, and <code>data_path</code></li>
+<li>Update <code>compute_grade</code> in <code>core.py</code> to accept a <code>PipelineConfig</code> instead of separate weight arguments</li>
+<li>Write a <code>load_and_validate(path: str) -> tuple[list[StudentRecord], list[dict]]</code> function that reads the CSV and validates every row</li>
+<li>Write two tests: one that confirms a valid <code>StudentRecord</code> is constructed correctly, and one that confirms an invalid record raises <code>ValidationError</code> with the right field name in the error</li>
+</ol>
+</div>
+
+## Further Reading
+
+| Resource | Why it matters |
+|---|---|
+| [Pydantic v2 documentation](https://docs.pydantic.dev/latest/) | The primary reference; the migration guide from v1 is worth reading if you encounter older Pydantic code |
+| [pydantic-settings documentation](https://docs.pydantic.dev/latest/concepts/pydantic_settings/) | `BaseSettings`, env file loading, nested settings, and secrets |
+| [Pydantic v2 validators](https://docs.pydantic.dev/latest/concepts/validators/) | `field_validator`, `model_validator`, `Annotated` constraints |
+| [FastAPI + Pydantic](https://fastapi.tiangolo.com/tutorial/body/) | FastAPI uses Pydantic models for request/response bodies; the same `BaseModel` patterns apply directly |
+| [pandera](https://pandera.readthedocs.io/) | Schema-level DataFrame validation: the DataFrame equivalent of `StudentRecord` for column dtypes and constraints |
+
+## Summary
+
+| Concept | Key rule |
+|---|---|
+| `BaseModel` | Validates on construction; coerces compatible types; rejects the rest with `ValidationError` |
+| `Field(ge=0, le=100)` | Inline constraints via `Annotated`; replaces manual range checks inside functions |
+| `@field_validator` | Single-field business rules; runs after type coercion by default |
+| `@model_validator(mode="after")` | Cross-field rules; has access to the fully constructed model |
+| `model_dump()` | Convert model to dict for JSON serialisation or pandas |
+| `model_validate(dict)` | Construct and validate from a plain dict or JSON string |
+| `BaseSettings` | Reads from env vars and `.env` files; validates at construction time |
+| `env_prefix` | Namespaces all env vars for a settings class |
+| Batch validation | Loop with `try/except ValidationError`; collect errors without stopping |
+| `TypeAdapter` | Validate arbitrary types including `list[Model]` without a wrapper model |
+| Validate at the boundary | One validation point at entry; all downstream code trusts the types |
+
+**Next:** Part 20 covers Classical Machine Learning: building, evaluating, and comparing models on the validated, typed `grade-predictor` dataset built throughout Part 3.

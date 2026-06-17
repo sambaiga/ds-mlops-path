@@ -1,0 +1,337 @@
+---
+title: "Part 13: Project Setup with uv"
+---
+
+[![Download as PDF](https://img.shields.io/badge/Download-PDF-blue.svg?logo=adobeacrobat&logoColor=white)](https://sambaiga.github.io/ds-mlops-path/tutorials/02-dev-tools/01-uv-project-setup.pdf)
+
+**DS-MLOps Dev Tools**
+
+**Python 3.12+ | Author: Anthony Faustine**
+
+## Before you begin
+
+This chapter assumes you have completed Parts 1 and 2. No prior experience with virtual environments is required. If you have used `pip` and `venv` before, every concept here maps directly onto what you already know.
+
+You will build a project called `grade-predictor`, a small Python package that computes and analyses student grades from `university_analytics.csv`. This project thread continues through all six Dev Tools chapters, giving every tool a real codebase to act on.
+
+> Callout markers used throughout this notebook are explained on the [book cover page](../../index.qmd#callout-guide).
+
+## Learning Objectives
+
+By the end of Part 13 you will be able to:
+
+| # | Skill | Covered in |
+|---|---|---|
+| 1 | Explain why isolated environments and lockfiles matter for reproducible DS work | Sec. 1 |
+| 2 | Initialize a packaged Python project with `uv init --package` | Sec. 2 |
+| 3 | Read and write the `[project]` and `[project.optional-dependencies]` sections of `pyproject.toml` | Sec. 3 |
+| 4 | Add, remove, and sync dependencies with `uv add`, `uv remove`, and `uv sync` | Sec. 4 |
+| 5 | Separate heavy ML dependencies into optional groups so CI stays fast | Sec. 5 |
+| 6 | Manage secrets with a `.env` file and keep them out of version control | Sec. 6 |
+| 7 | Run any command inside the project environment with `uv run` | Sec. 7 |
+
+## 1. The Reproducibility Problem
+
+Two colleagues share the same script. One gets a clean result; the other gets a `FutureWarning` and a different output. The script has not changed. The problem is the environment: `pandas 1.5` and `pandas 2.0` handle missing values and certain default arguments differently. Without a record of exact package versions, "it works on my machine" is the only guarantee on offer.
+
+The standard Python answer has been to pair a virtual environment (an isolated Python interpreter with its own packages) with a `requirements.txt` file pinning direct dependencies. This solves part of the problem. It does not pin transitive dependencies: the packages that your packages depend on. A project frozen at `pandas==2.1.0` will still install whichever version of `pytz` pip resolves on the day of installation, and that version may differ between colleagues or CI runs.
+
+A lockfile solves this. It records the exact version of every package in the dependency tree, direct and transitive, so that two different machines installing from the same lockfile get byte-for-byte identical environments. `uv` provides both the virtual environment and the lockfile in a single fast tool.
+
+<div class='ark-concept'>
+<span class='ark-concept-title'><i class="bi bi-info-circle-fill"></i> Key Concept: A lockfile is a snapshot of the environment that worked</span><br><br>
+<code>uv.lock</code> pins the exact version of every dependency, including transitive ones. Commit it alongside your code. Anyone who clones the repo and runs <code>uv sync</code> gets the identical environment, on any machine, at any time.
+</div>
+
+## 2. Initializing a Project
+
+Create the `grade-predictor` project with the `--package` flag, which generates the `src/` layout:
+
+```bash
+uv init grade-predictor --package
+cd grade-predictor
+```
+
+The generated structure:
+
+```text
+grade-predictor/
+├── src/
+│   └── grade_predictor/
+│       └── __init__.py
+├── .python-version
+├── pyproject.toml
+└── README.md
+```
+
+The `--package` flag matters. Without it, `uv init` creates a simple script project. With it, it creates a proper Python package with the `src/` layout. In the `src/` layout, the package lives inside `src/` rather than at the project root. This means you cannot accidentally import from the development copy of the code when running scripts from the project root: Python will only find the installed package, which is the version that tests and CI will see.
+
+Run `uv sync` to create the virtual environment and generate `uv.lock`:
+
+```bash
+uv sync
+```
+
+The `.venv/` directory appears at the project root. You do not activate it manually. `uv run` handles activation automatically.
+
+<div class='ark-activity'>
+<span class='ark-activity-title'><i class="bi bi-puzzle-fill"></i> Activity 1 - Initialize and Inspect</span><br><br>
+<b>Goal:</b> Run <code>uv init grade-predictor --package</code> in a temporary directory, then open <code>pyproject.toml</code> and identify the <code>[project]</code> section. List the three files whose purpose you cannot immediately guess and look each one up.
+</div>
+
+## 3. `pyproject.toml` Anatomy
+
+`pyproject.toml` is the single source of truth for a Python project. It replaces four files that older projects split across: `setup.py`, `setup.cfg`, `requirements.txt`, and `pytest.ini`. Every modern Python tool reads it.
+
+Here is a complete `pyproject.toml` for `grade-predictor` with annotations:
+
+```toml
+[project]
+name = "grade-predictor"
+version = "0.1.0"
+description = "Grade computation and risk analysis for university_analytics.csv"
+authors = [{ name = "Anthony Faustine", email = "sambaiga@gmail.com" }]
+requires-python = ">=3.12"               # minimum Python version; 3.12 adds better error messages
+dependencies = [
+    "pandas>=2.1",
+    "numpy>=1.26",
+]
+
+[project.optional-dependencies]          # groups; installed only when requested
+modelling = [
+    "scikit-learn>=1.7",
+    "xgboost>=3.0",
+]
+test = [
+    "pytest>=8.0",
+    "pytest-cov>=6.0",
+]
+dev = [
+    "ruff>=0.5",
+    "pre-commit>=4.0",
+    "python-dotenv>=1.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/grade_predictor"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "--cov=grade_predictor --cov-report=term-missing --cov-fail-under=80"
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+```
+
+<div class='ark-concept'>
+<span class='ark-concept-title'><i class="bi bi-info-circle-fill"></i> Key Concept: <code>pyproject.toml</code> is the single source of truth</span><br><br>
+It replaces <code>setup.py</code>, <code>requirements.txt</code>, <code>setup.cfg</code>, and <code>pytest.ini</code>. Read it and you can understand any modern Python project in under five minutes: what it does, what it depends on, how to test it, and how to build it.
+</div>
+
+<div class='ark-activity'>
+<span class='ark-activity-title'><i class="bi bi-puzzle-fill"></i> Activity 2 - Edit pyproject.toml</span><br><br>
+<b>Goal:</b> Open the <code>pyproject.toml</code> from Activity 1. Change <code>requires-python</code> to <code>>=3.12</code>, add <code>polars>=1.0</code> to <code>dependencies</code>, and add a <code>dev</code> optional group containing <code>jupyter>=1.0</code>. Then run <code>uv sync</code> and confirm no errors.
+</div>
+
+## 4. Adding and Syncing Dependencies
+
+`uv add` is the correct way to add a dependency. It updates `pyproject.toml`, resolves the full dependency graph, and writes a new `uv.lock` in one step:
+
+```bash
+uv add pandas numpy
+uv add --optional dev ruff pytest
+uv sync
+```
+
+Compare this to `pip install pandas`: pip installs the package into whatever environment is currently active but writes nothing permanent. Next week, on a different machine, there is no record of which version was installed.
+
+Useful commands:
+
+```bash
+uv add <package>                      # add to core dependencies
+uv add --optional dev <package>       # add to the dev group
+uv remove <package>                   # remove from dependencies
+uv sync                               # install everything in uv.lock
+uv sync --extra test                  # install core + test group
+uv sync --all-extras                  # install all groups
+uv lock --upgrade-package pandas      # upgrade one package and update lock
+```
+
+After `uv sync`, confirm the environment works:
+
+```bash
+uv run python -c "import pandas; print(pandas.__version__)"
+```
+
+<div class='ark-tip'>
+<span class='ark-tip-title'><i class="bi bi-lightbulb-fill"></i> Pro Tip: Commit <code>uv.lock</code>, not <code>requirements.txt</code></span><br><br>
+<code>uv.lock</code> records every transitive dependency. A <code>requirements.txt</code> generated from it records only what you asked for, not what was actually resolved. When you pin with <code>requirements.txt</code>, a colleague installing a week later may get different transitive versions. Commit <code>uv.lock</code> and delete any <code>requirements.txt</code> workflow.
+</div>
+
+<div class='ark-activity'>
+<span class='ark-activity-title'><i class="bi bi-puzzle-fill"></i> Activity 3 - Add and Verify a Dependency</span><br><br>
+<b>Goal:</b> Add <code>polars>=1.0</code> as a core dependency with <code>uv add</code>. Then add <code>great-tables>=0.20</code> to the <code>dev</code> group. Run <code>uv sync</code> and confirm both packages import: <code>uv run python -c "import polars, great_tables; print('ok')"</code>.
+</div>
+
+## 5. Optional Dependency Groups for ML Projects
+
+Heavy ML dependencies are the single biggest cause of slow CI pipelines. A cold install of PyTorch takes three to four minutes. A cold install of scikit-learn and pytest takes under 20 seconds. Separating them into optional groups makes CI run only what it needs.
+
+```toml
+[project.optional-dependencies]
+modelling = [
+    "scikit-learn>=1.7",
+    "xgboost>=3.0",
+    "torch>=2.0",          # ~800MB; only needed for deep learning experiments
+]
+test = [
+    "pytest>=8.0",
+    "pytest-cov>=6.0",
+]
+dev = [
+    "ruff>=0.5",
+    "pre-commit>=4.0",
+    "jupyter>=1.0",
+]
+```
+
+Three installation profiles:
+
+| Command | Who uses it | What gets installed |
+|---|---|---|
+| `uv sync` | CI (fast path), Docker prod image | Core dependencies only |
+| `uv sync --extra test` | CI (test path) | Core + test group |
+| `uv sync --all-extras` | Local development | Everything |
+
+The GitHub Actions workflow from [Ch04](04-git-github.qmd) uses `uv sync --extra test`. Your local environment uses `uv sync --all-extras`. The production Docker image uses `uv sync` with no extras.
+
+<div class='ark-tip'>
+<span class='ark-tip-title'><i class="bi bi-lightbulb-fill"></i> Pro Tip: Keep torch in an optional group</span><br><br>
+A CI run that installs PyTorch takes 3 to 4 minutes on a cold cache. One that installs only <code>pandas</code> and <code>pytest</code> takes under 30 seconds. Multiply by 20 pushes per day and that is two hours of CI time saved weekly, for free.
+</div>
+
+<div class='ark-activity'>
+<span class='ark-activity-title'><i class="bi bi-puzzle-fill"></i> Activity 4 - Verify Group Isolation</span><br><br>
+<b>Goal:</b> Add <code>scikit-learn>=1.7</code> to a <code>modelling</code> group. Run <code>uv sync</code> (no extras) and confirm scikit-learn is NOT importable: <code>uv run python -c "import sklearn"</code> should raise <code>ModuleNotFoundError</code>. Then run <code>uv sync --extra modelling</code> and confirm it imports.
+</div>
+
+## 6. Secret Management with `.env`
+
+A database password or API key committed to a public GitHub repository is searchable, permanent (even after deletion from history via `git rm`), and a real security incident. The correct pattern is to never put secrets in version-controlled files.
+
+Create `.env` at the project root:
+
+```bash
+# .env  -- never commit this file
+DATABASE_URL=postgresql://user:password@localhost/grades
+OPENAI_API_KEY=sk-...
+REPORT_TITLE=Grade Predictor Report
+```
+
+Add to `.gitignore` immediately:
+
+```bash
+echo ".env" >> .gitignore
+echo "*.env" >> .gitignore
+```
+
+Load in Python with `python-dotenv`:
+
+```python
+from dotenv import load_dotenv
+import os
+
+load_dotenv()                              # reads .env into os.environ
+db_url = os.getenv("DATABASE_URL")
+report_title = os.getenv("REPORT_TITLE", "Default Title")  # second arg is fallback
+```
+
+Commit an `.env.example` with placeholder values so collaborators know which variables to set:
+
+```bash
+# .env.example  -- commit this file
+DATABASE_URL=postgresql://user:password@localhost/grades
+OPENAI_API_KEY=sk-your-key-here
+REPORT_TITLE=My Report
+```
+
+<div class='ark-mistake'>
+<span class='ark-mistake-title'><i class="bi bi-bug-fill"></i> Common Mistake: Defaults that are real values</span><br><br>
+Never put a real secret as a default value in code: <code>os.getenv("API_KEY", "sk-prod-abc123")</code>. The moment that file is committed, the key is in git history permanently. A placeholder default like <code>"your-key-here"</code> is safe; a real credential is not. If a key is committed by accident, rotate it immediately.
+</div>
+
+<div class='ark-activity'>
+<span class='ark-activity-title'><i class="bi bi-puzzle-fill"></i> Activity 5 - Load a Secret from .env</span><br><br>
+<b>Goal:</b> Create <code>.env</code> with <code>REPORT_TITLE="Grade Predictor"</code>. Add <code>python-dotenv</code> to the <code>dev</code> group. Write a script <code>scripts/report.py</code> that loads the title and prints it. Confirm <code>.env</code> is in <code>.gitignore</code> before running <code>git status</code>.
+</div>
+
+## 7. `uv run`: The Universal Entry Point
+
+`uv run` executes any command inside the project environment without requiring manual activation of `.venv`:
+
+```bash
+uv run python scripts/report.py           # run a script
+uv run pytest                              # run tests
+uv run ruff check .                        # lint
+uv run jupyter lab                         # open Jupyter
+uv run --with httpx python -c "import httpx; print(httpx.__version__)"  # one-off tool
+```
+
+The `--with` flag installs a package into the run environment for that command only, without adding it to `pyproject.toml`. This is the correct way to use tools you reach for occasionally (`nbmake`, `httpx`, a formatter you are evaluating) without polluting the project's dependency list.
+
+`uv run` always uses the project environment defined by `uv.lock`. Shell state (which `conda` environment is active, whether you ran `source .venv/bin/activate` in another terminal) never leaks in.
+
+<div class='ark-concept'>
+<span class='ark-concept-title'><i class="bi bi-info-circle-fill"></i> Key Concept: <code>uv run</code> replaces manual venv activation</span><br><br>
+<code>source .venv/bin/activate</code> changes your shell state. Forget to run it and you install into the wrong Python. <code>uv run</code> needs no shell state: it always resolves the project environment from <code>uv.lock</code>. Use it for every command in a project, and activation errors disappear entirely.
+</div>
+
+## Capstone - Build `grade-predictor` from Scratch
+
+Build the complete initial structure of the `grade-predictor` project. By the end of this exercise, you will have a runnable Python package with a proper environment.
+
+<div class='ark-activity'>
+<span class='ark-activity-title'><i class="bi bi-puzzle-fill"></i> Capstone: grade-predictor initial setup</span><br><br>
+
+<ol>
+<li>Run <code>uv init grade-predictor --package</code> and <code>cd grade-predictor</code></li>
+<li>Add core dependencies: <code>pandas>=2.1</code>, <code>numpy>=1.26</code></li>
+<li>Add optional groups: <code>test</code> with <code>pytest>=8.0</code> and <code>pytest-cov>=6.0</code>; <code>dev</code> with <code>ruff>=0.5</code> and <code>python-dotenv>=1.0</code></li>
+<li>Write <code>src/grade_predictor/core.py</code> with this function:<br>
+<pre>
+def compute_grade(midterm: float, final: float, project: float) -> float:
+    return midterm * 0.30 + final * 0.45 + project * 0.25
+</pre>
+</li>
+<li>Confirm it runs: <code>uv run python -c "from grade_predictor.core import compute_grade; print(compute_grade(80, 85, 90))"</code></li>
+<li>Create <code>.env</code> with <code>REPORT_TITLE=Grade Predictor</code> and add <code>.env</code> to <code>.gitignore</code></li>
+</ol>
+</div>
+
+## Further Reading
+
+| Resource | Why it matters |
+|---|---|
+| [uv documentation: Projects](https://docs.astral.sh/uv/concepts/projects/) | Authoritative reference for every `uv` command and concept |
+| fmind MLOps course, [1.2 uv](https://mlops-coding-course.fmind.dev/1.%20Initializing/1.2.%20uv.html) | MLOps-specific framing of uv in CI and Docker |
+| pybit.es, [Developing packages with uv](https://pybit.es/articles/developing-and-testing-python-packages-with-uv/) | Src layout and editable installs explained |
+| [python-dotenv documentation](https://saurabh-kumar.com/python-dotenv/) | Standard library for `.env` loading |
+| PEP 518, [pyproject.toml specification](https://peps.python.org/pep-0518/) | The spec behind every `pyproject.toml` field |
+
+## Summary
+
+| Concept | Key rule |
+|---|---|
+| Virtual environment | One per project. Never install into the system Python. |
+| `uv init --package` | Src layout prevents accidental imports from the wrong place. |
+| `uv.lock` | Commit it. It pins the exact environment that worked. |
+| Optional dependency groups | Heavy ML deps in `modelling` or `gpu` groups. CI syncs core and test only. |
+| `.env` | Never commit it. Commit `.env.example` instead. |
+| `uv run` | Use it for everything. No manual venv activation required. |
+
+**Next:** [Part 14: Code Quality with ruff](02-code-quality-ruff.qmd) runs `ruff check` and `ruff format` on the `grade-predictor` codebase you just created.
