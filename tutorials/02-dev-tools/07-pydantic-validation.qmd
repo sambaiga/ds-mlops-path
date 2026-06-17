@@ -29,6 +29,20 @@ By the end of Part 19 you will be able to:
 
 ## 1. Models: Type Annotations That Bite
 
+```{mermaid}
+flowchart LR
+    A["raw input\ndict / JSON / env vars"] --> B["Pydantic model\nconstructor"]
+    B --> C["field validators\ntype coercion + constraints"]
+    C -->|"type error or\nconstraint violated"| E["ValidationError\nfield path + message"]
+    C -->|"all fields valid"| D["model validators\ncross-field checks"]
+    D -->|"invariant violated"| E
+    D -->|"all pass"| F["model instance\ntype-safe, immutable"]
+
+    style F fill:#EBF5F0,stroke:#059669,color:#065F46
+    style E fill:#FEF2F2,stroke:#DC2626,color:#991B1B
+    style B fill:#EAF3FA,stroke:#0369A1,color:#0C4A6E
+```
+
 A Python dataclass accepts any value for any field, regardless of what the annotation says. The annotation is a hint to the reader and the type checker, but it does not stop wrong values from entering the object at runtime.
 
 A Pydantic model validates on construction. Pass the wrong type and it raises an error immediately, before the value reaches any computation:

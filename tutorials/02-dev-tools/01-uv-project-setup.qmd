@@ -35,9 +35,18 @@ By the end of Part 13 you will be able to:
 
 `uv` is a Python package and project manager written in Rust, built by [Astral](https://astral.sh), the same team behind `ruff`. It replaces a stack of tools that most Python developers use separately: `pip`, `venv`, `pip-tools`, and parts of `Poetry` or `conda`. One binary, one configuration file, one command prefix (`uv run`).
 
-![uv architecture: a single tool replacing the traditional pip + venv + pip-tools stack](https://docs.astral.sh/uv/assets/uv-lockfile.png)
+```{mermaid}
+flowchart LR
+    A["uv init --package\nproject-name"] --> B["pyproject.toml\n[project] metadata"]
+    B --> C["uv add pandas\nuv add --optional dev ruff"]
+    C --> D["uv.lock\nfull dependency tree\npinned & reproducible"]
+    D --> E["uv sync\n.venv created"]
+    E --> F["uv run script.py\nno activation needed"]
 
-> Source: [Astral uv documentation](https://docs.astral.sh/uv/)
+    style D fill:#EBF5F0,stroke:#059669,color:#065F46
+    style E fill:#EAF3FA,stroke:#0369A1,color:#0C4A6E
+    style F fill:#EAF3FA,stroke:#0369A1,color:#0C4A6E
+```
 
 ### How uv compares to the alternatives
 

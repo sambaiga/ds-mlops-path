@@ -35,6 +35,20 @@ A normalization function applied after the train/test split instead of before. A
 
 In DS, silent bugs are the hard ones. A test suite converts "I think this is right" into "this is verifiably correct, and stays correct when the code changes."
 
+```{mermaid}
+flowchart LR
+    A["pytest discovers\ntest_*.py files"] --> B["run @pytest.fixture\nsetup phase"]
+    B --> C["execute test body\nassert statements"]
+    C --> D{assert passes?}
+    D -->|yes| E["PASSED"]
+    D -->|no| F["FAILED\nfull traceback"]
+    E & F --> G["teardown\n(yield fixtures)"]
+    G --> H["next test"]
+
+    style E fill:#EBF5F0,stroke:#059669,color:#065F46
+    style F fill:#FEF2F2,stroke:#DC2626,color:#991B1B
+```
+
 Here is the simplest possible test for `compute_grade`:
 
 ```python
@@ -265,6 +279,22 @@ A missing line on a trivial <code>return self._name</code> property is not worth
 </div>
 
 ## 7. Organizing a DS Test Suite
+
+The standard structure for a DS project follows the test pyramid: many fast unit tests at the base, fewer integration tests in the middle, and a small number of end-to-end tests at the top.
+
+```{mermaid}
+flowchart TD
+    E2E["End-to-End\nfull pipeline: CSV in, report out\nfew, slow, run in CI only"]
+    INT["Integration\nmodule boundaries: pipeline + io\nsome, seconds, run pre-push"]
+    UNIT["Unit\nsingle functions: compute_grade, flag_at_risk\nmany, milliseconds, run on every save"]
+
+    UNIT -->|"build confidence"| INT
+    INT -->|"build confidence"| E2E
+
+    style E2E fill:#FEF2F2,stroke:#DC2626,color:#991B1B
+    style INT fill:#EAF3FA,stroke:#0369A1,color:#0C4A6E
+    style UNIT fill:#EBF5F0,stroke:#059669,color:#065F46
+```
 
 ```text
 tests/
