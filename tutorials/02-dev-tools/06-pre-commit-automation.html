@@ -79,7 +79,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../../site_libs/quarto-html/quarto-syntax-highlighting-de63f62b328812d8e578a4d74e282472.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-0f3842b63b3a17d781c7303dc189e804.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-369035fd49b832c5f4f2d78fcf1b6dcb.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -261,6 +261,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="../../tutorials/02-dev-tools/00-vscode-setup.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 12: IDE Setup with VS Code</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="../../tutorials/02-dev-tools/01-uv-project-setup.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 13: Project Setup with uv</span></a>
   </div>
 </li>
@@ -308,6 +313,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <ul>
   <li><a href="#before-you-begin" id="toc-before-you-begin" class="nav-link active" data-scroll-target="#before-you-begin">Before you begin</a></li>
   <li><a href="#learning-objectives" id="toc-learning-objectives" class="nav-link" data-scroll-target="#learning-objectives">Learning Objectives</a></li>
+  <li><a href="#what-is-pre-commit-and-how-to-install-it" id="toc-what-is-pre-commit-and-how-to-install-it" class="nav-link" data-scroll-target="#what-is-pre-commit-and-how-to-install-it">0. What is pre-commit and How to Install It</a>
+  <ul class="collapse">
+  <li><a href="#install-pre-commit" id="toc-install-pre-commit" class="nav-link" data-scroll-target="#install-pre-commit">Install pre-commit</a></li>
+  </ul></li>
   <li><a href="#git-hooks-and-why-pre-commit-manages-them" id="toc-git-hooks-and-why-pre-commit-manages-them" class="nav-link" data-scroll-target="#git-hooks-and-why-pre-commit-manages-them">1. Git Hooks and Why pre-commit Manages Them</a></li>
   <li><a href="#the-essential-ds-hooks" id="toc-the-essential-ds-hooks" class="nav-link" data-scroll-target="#the-essential-ds-hooks">2. The Essential DS Hooks</a></li>
   <li><a href="#nbstripout-keeping-notebooks-clean" id="toc-nbstripout-keeping-notebooks-clean" class="nav-link" data-scroll-target="#nbstripout-keeping-notebooks-clean">3. nbstripout: Keeping Notebooks Clean</a></li>
@@ -370,31 +379,36 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </thead>
 <tbody>
 <tr class="odd">
+<td>0</td>
+<td>Explain what pre-commit is and install it</td>
+<td>Sec. 0</td>
+</tr>
+<tr class="even">
 <td>1</td>
 <td>Explain what a git hook is and why pre-commit manages them</td>
 <td>Sec. 1</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>2</td>
 <td>Write a <code>.pre-commit-config.yaml</code> with the essential DS hooks</td>
 <td>Sec. 2</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>3</td>
 <td>Use <code>nbstripout</code> to keep notebook outputs out of git history</td>
 <td>Sec. 3</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>4</td>
 <td>Configure commitizen to enforce conventional commits automatically</td>
 <td>Sec. 4</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>5</td>
 <td>Assign hooks to the right stage: <code>pre-commit</code> vs <code>pre-push</code></td>
 <td>Sec. 5</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>6</td>
 <td>Debug a hook failure and use the <code>SKIP</code> escape hatch correctly</td>
 <td>Sec. 6</td>
@@ -402,13 +416,51 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </tbody>
 </table>
 </section>
+<section id="what-is-pre-commit-and-how-to-install-it" class="level2">
+<h2 class="anchored" data-anchor-id="what-is-pre-commit-and-how-to-install-it">0. What is pre-commit and How to Install It</h2>
+<p><code>pre-commit</code> is a framework for managing git hooks. It lets you define a set of automated checks in a single YAML file (<code>.pre-commit-config.yaml</code>) that is committed with your code. Anyone who clones the repository and runs <code>pre-commit install</code> gets the identical set of checks running on their machine, each in its own isolated environment with pinned tool versions.</p>
+<p>Without pre-commit, quality checks are optional. With pre-commit, they are automatic: the checks run before every commit and block it if they fail. You cannot forget to run ruff, and your colleagues cannot skip it.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://pre-commit.com/images/logo.png" class="img-fluid figure-img"></p>
+<figcaption>The pre-commit hook lifecycle: hook runs before the commit is sealed</figcaption>
+</figure>
+</div>
+<blockquote class="blockquote">
+<p>Source: <a href="https://pre-commit.com">pre-commit.com</a></p>
+</blockquote>
+<section id="install-pre-commit" class="level3">
+<h3 class="anchored" data-anchor-id="install-pre-commit">Install pre-commit</h3>
+<p>In the <code>grade-predictor</code> project, pre-commit is already listed as a dev dependency and is installed with <code>uv sync</code>:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Already included if you ran: uv sync --extra dev</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> add <span class="at">--optional</span> dev pre-commit</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Activate the hooks for this repository (run once after every fresh clone)</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run pre-commit install</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>For use outside a uv project, or as a system-wide tool:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># via pipx (recommended for standalone use)</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="ex">pipx</span> install pre-commit</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># via pip (in any active environment)</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install pre-commit</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co"># macOS via Homebrew</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="ex">brew</span> install pre-commit</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Verify</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="ex">pre-commit</span> <span class="at">--version</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="ark-concept">
+<p><span class="ark-concept-title"><i class="bi bi-info-circle-fill"></i> Key Concept: pre-commit install wires the hooks; it must run after every clone</span><br><br> The <code>.pre-commit-config.yaml</code> file describes <i>what</i> to run. <code>pre-commit install</code> writes the actual hook scripts into <code>.git/hooks/</code>. This second step is local-only and not version-controlled, so every developer who clones the repo must run it once. A good project README always lists it as a setup step.</p>
+</div>
+</section>
+</section>
 <section id="git-hooks-and-why-pre-commit-manages-them" class="level2">
 <h2 class="anchored" data-anchor-id="git-hooks-and-why-pre-commit-manages-them">1. Git Hooks and Why pre-commit Manages Them</h2>
 <p>A git hook is a script that runs at a specific point in the git workflow. <code>pre-commit</code> runs before <code>git commit</code> seals the commit; <code>commit-msg</code> runs after you write the message; <code>pre-push</code> runs before <code>git push</code> sends to the remote. Hooks can block the operation if they exit with a non-zero code.</p>
 <p>Without pre-commit, hooks are raw shell scripts in <code>.git/hooks/</code>. They are not version-controlled, so every clone starts with no hooks. Each developer installs them differently. Enforcement is inconsistent.</p>
 <p>Pre-commit solves this by managing hooks as configuration: <code>.pre-commit-config.yaml</code> is committed to the repository. Anyone who clones it and runs <code>pre-commit install</code> gets the identical set of hooks, each running in an isolated environment with pinned tool versions.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> add <span class="at">--optional</span> dev pre-commit</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run pre-commit install          <span class="co"># install hooks into .git/hooks/</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> add <span class="at">--optional</span> dev pre-commit</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run pre-commit install          <span class="co"># install hooks into .git/hooks/</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>This two-step setup must happen once after every clone.</p>
 <div class="ark-concept">
 <p><span class="ark-concept-title"><i class="bi bi-info-circle-fill"></i> Key Concept: <code>pre-commit install</code> must run after every clone</span><br><br> The hooks live in <code>.pre-commit-config.yaml</code> (versioned, shared), not in <code>.git/hooks/</code> (not versioned, local only). <code>pre-commit install</code> writes the actual hook scripts into <code>.git/hooks/</code> based on the config. Without running it, no hooks execute. Add it to your project README under “Getting started”.</p>
@@ -417,44 +469,44 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="the-essential-ds-hooks" class="level2">
 <h2 class="anchored" data-anchor-id="the-essential-ds-hooks">2. The Essential DS Hooks</h2>
 <p>A complete <code>.pre-commit-config.yaml</code> for a DS project:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">default_language_version</span><span class="kw">:</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">python</span><span class="kw">:</span><span class="at"> python3.12</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="fu">exclude</span><span class="kw">:</span><span class="at"> </span><span class="st">'(\.venv/|__pycache__/|\.pytest_cache/|_freeze/)'</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="fu">repos</span><span class="kw">:</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">repo</span><span class="kw">:</span><span class="at"> https://github.com/pre-commit/pre-commit-hooks</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">rev</span><span class="kw">:</span><span class="at"> v4.6.0</span></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">hooks</span><span class="kw">:</span></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">id</span><span class="kw">:</span><span class="at"> check-yaml</span></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">id</span><span class="kw">:</span><span class="at"> check-json</span></span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">id</span><span class="kw">:</span><span class="at"> check-toml</span></span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">id</span><span class="kw">:</span><span class="at"> end-of-file-fixer</span></span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">id</span><span class="kw">:</span><span class="at"> trailing-whitespace</span></span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">id</span><span class="kw">:</span><span class="at"> check-added-large-files</span></span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">args</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="at">--maxkb=</span><span class="dv">1200</span><span class="kw">]</span><span class="co">       # block files larger than 1.2MB</span></span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">id</span><span class="kw">:</span><span class="at"> detect-private-key</span><span class="co">     # catch secrets before they leave the machine</span></span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">id</span><span class="kw">:</span><span class="at"> check-merge-conflict</span></span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">id</span><span class="kw">:</span><span class="at"> no-commit-to-branch</span><span class="co">    # prevent direct commits to main</span></span>
-<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">repo</span><span class="kw">:</span><span class="at"> https://github.com/astral-sh/ruff-pre-commit</span></span>
-<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">rev</span><span class="kw">:</span><span class="at"> v0.5.0</span></span>
-<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">hooks</span><span class="kw">:</span></span>
-<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">id</span><span class="kw">:</span><span class="at"> ruff</span></span>
-<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">args</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="at">--fix</span><span class="kw">,</span><span class="at"> --exit-non-zero-on-fix</span><span class="kw">]</span></span>
-<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">types_or</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="at">python</span><span class="kw">,</span><span class="at"> pyi</span><span class="kw">,</span><span class="at"> jupyter</span><span class="kw">]</span></span>
-<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">id</span><span class="kw">:</span><span class="at"> ruff-format</span></span>
-<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">types_or</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="at">python</span><span class="kw">,</span><span class="at"> pyi</span><span class="kw">,</span><span class="at"> jupyter</span><span class="kw">]</span></span>
-<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">repo</span><span class="kw">:</span><span class="at"> local</span></span>
-<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">hooks</span><span class="kw">:</span></span>
-<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">id</span><span class="kw">:</span><span class="at"> nbstripout-dev</span></span>
-<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">name</span><span class="kw">:</span><span class="at"> nbstripout (dev)</span></span>
-<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">entry</span><span class="kw">:</span><span class="at"> nbstripout --keep-output</span></span>
-<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">language</span><span class="kw">:</span><span class="at"> python</span></span>
-<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">types</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="at">jupyter</span><span class="kw">]</span></span>
-<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">additional_dependencies</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="at">nbstripout</span><span class="kw">]</span></span>
-<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">stages</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="at">pre-commit</span><span class="kw">]</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">default_language_version</span><span class="kw">:</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">python</span><span class="kw">:</span><span class="at"> python3.12</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="fu">exclude</span><span class="kw">:</span><span class="at"> </span><span class="st">'(\.venv/|__pycache__/|\.pytest_cache/|_freeze/)'</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="fu">repos</span><span class="kw">:</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">repo</span><span class="kw">:</span><span class="at"> https://github.com/pre-commit/pre-commit-hooks</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">rev</span><span class="kw">:</span><span class="at"> v4.6.0</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">hooks</span><span class="kw">:</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">id</span><span class="kw">:</span><span class="at"> check-yaml</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">id</span><span class="kw">:</span><span class="at"> check-json</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">id</span><span class="kw">:</span><span class="at"> check-toml</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">id</span><span class="kw">:</span><span class="at"> end-of-file-fixer</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">id</span><span class="kw">:</span><span class="at"> trailing-whitespace</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">id</span><span class="kw">:</span><span class="at"> check-added-large-files</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">args</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="at">--maxkb=</span><span class="dv">1200</span><span class="kw">]</span><span class="co">       # block files larger than 1.2MB</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">id</span><span class="kw">:</span><span class="at"> detect-private-key</span><span class="co">     # catch secrets before they leave the machine</span></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">id</span><span class="kw">:</span><span class="at"> check-merge-conflict</span></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">id</span><span class="kw">:</span><span class="at"> no-commit-to-branch</span><span class="co">    # prevent direct commits to main</span></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">repo</span><span class="kw">:</span><span class="at"> https://github.com/astral-sh/ruff-pre-commit</span></span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">rev</span><span class="kw">:</span><span class="at"> v0.5.0</span></span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">hooks</span><span class="kw">:</span></span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">id</span><span class="kw">:</span><span class="at"> ruff</span></span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">args</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="at">--fix</span><span class="kw">,</span><span class="at"> --exit-non-zero-on-fix</span><span class="kw">]</span></span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">types_or</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="at">python</span><span class="kw">,</span><span class="at"> pyi</span><span class="kw">,</span><span class="at"> jupyter</span><span class="kw">]</span></span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">id</span><span class="kw">:</span><span class="at"> ruff-format</span></span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">types_or</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="at">python</span><span class="kw">,</span><span class="at"> pyi</span><span class="kw">,</span><span class="at"> jupyter</span><span class="kw">]</span></span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">repo</span><span class="kw">:</span><span class="at"> local</span></span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">hooks</span><span class="kw">:</span></span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">id</span><span class="kw">:</span><span class="at"> nbstripout-dev</span></span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">name</span><span class="kw">:</span><span class="at"> nbstripout (dev)</span></span>
+<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">entry</span><span class="kw">:</span><span class="at"> nbstripout --keep-output</span></span>
+<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">language</span><span class="kw">:</span><span class="at"> python</span></span>
+<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">types</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="at">jupyter</span><span class="kw">]</span></span>
+<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">additional_dependencies</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="at">nbstripout</span><span class="kw">]</span></span>
+<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">stages</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="at">pre-commit</span><span class="kw">]</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Walking through the important ones:</p>
 <ul>
 <li><code>check-added-large-files</code>: blocks data files committed accidentally. 1.2MB catches most CSVs.</li>
@@ -478,23 +530,23 @@ git commit -m "style: ruff auto-fixed unused import"</pre>
 <p>This is the one hook that almost no standard pre-commit tutorial covers, but it is essential for any DS project with Jupyter notebooks.</p>
 <p>Jupyter saves cell outputs, plots, and printed values inside the <code>.ipynb</code> JSON file. Without stripping them, every re-run of a notebook produces a diff of hundreds of lines even when the code itself has not changed. <code>git diff</code> becomes unreadable. <code>git blame</code> becomes useless. PRs accumulate thousands of lines of changed JSON that nobody reviews.</p>
 <p>Two modes, two stages:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">-</span><span class="at"> </span><span class="fu">repo</span><span class="kw">:</span><span class="at"> local</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">hooks</span><span class="kw">:</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> </span><span class="fu">id</span><span class="kw">:</span><span class="at"> nbstripout-dev</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">name</span><span class="kw">:</span><span class="at"> nbstripout (dev)</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">entry</span><span class="kw">:</span><span class="at"> nbstripout --keep-output</span><span class="co">     # strip metadata, keep outputs for review</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">language</span><span class="kw">:</span><span class="at"> python</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">types</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="at">jupyter</span><span class="kw">]</span></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">additional_dependencies</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="at">nbstripout</span><span class="kw">]</span></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">stages</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="at">pre-commit</span><span class="kw">]</span></span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> </span><span class="fu">id</span><span class="kw">:</span><span class="at"> nbstripout-ci</span></span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">name</span><span class="kw">:</span><span class="at"> nbstripout (ci)</span></span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">entry</span><span class="kw">:</span><span class="at"> nbstripout --drop-empty-cells</span><span class="co">  # strip everything before pushing</span></span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">language</span><span class="kw">:</span><span class="at"> python</span></span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">types</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="at">jupyter</span><span class="kw">]</span></span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">additional_dependencies</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="at">nbstripout</span><span class="kw">]</span></span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">stages</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="at">pre-push</span><span class="kw">]</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">-</span><span class="at"> </span><span class="fu">repo</span><span class="kw">:</span><span class="at"> local</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">hooks</span><span class="kw">:</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> </span><span class="fu">id</span><span class="kw">:</span><span class="at"> nbstripout-dev</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">name</span><span class="kw">:</span><span class="at"> nbstripout (dev)</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">entry</span><span class="kw">:</span><span class="at"> nbstripout --keep-output</span><span class="co">     # strip metadata, keep outputs for review</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">language</span><span class="kw">:</span><span class="at"> python</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">types</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="at">jupyter</span><span class="kw">]</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">additional_dependencies</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="at">nbstripout</span><span class="kw">]</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">stages</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="at">pre-commit</span><span class="kw">]</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> </span><span class="fu">id</span><span class="kw">:</span><span class="at"> nbstripout-ci</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">name</span><span class="kw">:</span><span class="at"> nbstripout (ci)</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">entry</span><span class="kw">:</span><span class="at"> nbstripout --drop-empty-cells</span><span class="co">  # strip everything before pushing</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">language</span><span class="kw">:</span><span class="at"> python</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">types</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="at">jupyter</span><span class="kw">]</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">additional_dependencies</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="at">nbstripout</span><span class="kw">]</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">stages</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="at">pre-push</span><span class="kw">]</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>The <code>--keep-output</code> version keeps outputs in the committed file so reviewers can see what a cell produces without running it. The <code>--drop-empty-cells</code> version at push time ensures the remote branch has clean JSON that CI can read without noise.</p>
 <div class="ark-example">
 <span class="ark-example-title"><i class="bi bi-journal-code"></i> Example: Before and after nbstripout</span><br><br> Without nbstripout, a notebook <code>git diff</code> after re-running a cell with a matplotlib plot looks like:<br>
@@ -512,31 +564,31 @@ git diff --staged     # should show code, not output JSON</pre>
 <h2 class="anchored" data-anchor-id="commitizen-enforcing-conventional-commits">4. commitizen: Enforcing Conventional Commits</h2>
 <p>In <a href="../../tutorials/02-dev-tools/04-git-github.html">Part 16</a>, you wrote conventional commit messages by hand. Commitizen enforces the format automatically via a <code>commit-msg</code> hook, and provides <code>cz commit</code> as an interactive alternative to <code>git commit -m</code>.</p>
 <p>Add to <code>pyproject.toml</code>:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode toml code-with-copy"><code class="sourceCode toml"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">[tool.commitizen]</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="dt">bump_message</span> <span class="op">=</span> <span class="st">"bump: v$current_version to v$new_version"</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="dt">tag_format</span> <span class="op">=</span> <span class="st">"v$version"</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="dt">update_changelog_on_bump</span> <span class="op">=</span> <span class="cn">true</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="dt">version_provider</span> <span class="op">=</span> <span class="st">"pep621"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode toml code-with-copy"><code class="sourceCode toml"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">[tool.commitizen]</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="dt">bump_message</span> <span class="op">=</span> <span class="st">"bump: v$current_version to v$new_version"</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="dt">tag_format</span> <span class="op">=</span> <span class="st">"v$version"</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="dt">update_changelog_on_bump</span> <span class="op">=</span> <span class="cn">true</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="dt">version_provider</span> <span class="op">=</span> <span class="st">"pep621"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Add to <code>.pre-commit-config.yaml</code>:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">repo</span><span class="kw">:</span><span class="at"> local</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">hooks</span><span class="kw">:</span></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">id</span><span class="kw">:</span><span class="at"> commitizen</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">name</span><span class="kw">:</span><span class="at"> commitizen</span></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">entry</span><span class="kw">:</span><span class="at"> cz check</span></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">args</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="at">--commit-msg-file</span><span class="kw">]</span></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">require_serial</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">language</span><span class="kw">:</span><span class="at"> system</span></span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">stages</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="at">commit-msg</span><span class="kw">]</span></span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">repo</span><span class="kw">:</span><span class="at"> https://github.com/commitizen-tools/commitizen</span></span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">rev</span><span class="kw">:</span><span class="at"> v4.9.1</span></span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">hooks</span><span class="kw">:</span></span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">id</span><span class="kw">:</span><span class="at"> commitizen-branch</span></span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">stages</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="at">pre-push</span><span class="kw">]</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">repo</span><span class="kw">:</span><span class="at"> local</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">hooks</span><span class="kw">:</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">id</span><span class="kw">:</span><span class="at"> commitizen</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">name</span><span class="kw">:</span><span class="at"> commitizen</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">entry</span><span class="kw">:</span><span class="at"> cz check</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">args</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="at">--commit-msg-file</span><span class="kw">]</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">require_serial</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">language</span><span class="kw">:</span><span class="at"> system</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">stages</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="at">commit-msg</span><span class="kw">]</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">repo</span><span class="kw">:</span><span class="at"> https://github.com/commitizen-tools/commitizen</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">rev</span><span class="kw">:</span><span class="at"> v4.9.1</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">hooks</span><span class="kw">:</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">id</span><span class="kw">:</span><span class="at"> commitizen-branch</span></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">stages</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="at">pre-push</span><span class="kw">]</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>With this in place, <code>git commit -m "update stuff"</code> is blocked. <code>git commit -m "fix(core): correct weight normalization"</code> passes. <code>cz commit</code> walks you through the format interactively.</p>
 <p>Two more commitizen commands that pay for themselves:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">cz</span> bump           <span class="co"># reads commit history, bumps version automatically</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="ex">cz</span> changelog      <span class="co"># generates CHANGELOG.md from commit history</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="ex">cz</span> bump           <span class="co"># reads commit history, bumps version automatically</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="ex">cz</span> changelog      <span class="co"># generates CHANGELOG.md from commit history</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><code>feat</code> commits bump the minor version. <code>fix</code> commits bump the patch. With <code>update_changelog_on_bump = true</code>, the changelog writes itself.</p>
 <div class="ark-tip">
 <p><span class="ark-tip-title"><i class="bi bi-lightbulb-fill"></i> Pro Tip: <code>cz bump</code> replaces manual version management</span><br><br> Without commitizen, bumping a version means editing <code>pyproject.toml</code>, updating <code>CHANGELOG.md</code>, tagging the commit, and pushing the tag. With commitizen: <code>cz bump</code> does all four in one command, reading the commit history to determine whether this is a major, minor, or patch release.</p>
@@ -585,26 +637,26 @@ uv run cz changelog</pre>
 <p>A slow <code>pre-commit</code> hook runs on every commit, including small work-in-progress commits on a personal branch. A slow <code>pre-push</code> hook runs less often and tolerates more latency, because pushing is a deliberate action.</p>
 <p>The rule: if a check takes more than 5 seconds, move it to <code>pre-push</code>. If it breaks CI anyway, move it there. Keep <code>pre-commit</code> fast so that committing often stays frictionless.</p>
 <p>Assign a hook to a stage with <code>stages: [pre-push]</code>:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">repo</span><span class="kw">:</span><span class="at"> local</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">hooks</span><span class="kw">:</span></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">id</span><span class="kw">:</span><span class="at"> ty-check</span></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">name</span><span class="kw">:</span><span class="at"> ty (type check)</span></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">entry</span><span class="kw">:</span><span class="at"> uv run ty check src/</span></span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">language</span><span class="kw">:</span><span class="at"> system</span></span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">pass_filenames</span><span class="kw">:</span><span class="at"> </span><span class="ch">false</span></span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">stages</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="at">pre-push</span><span class="kw">]</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">repo</span><span class="kw">:</span><span class="at"> local</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">hooks</span><span class="kw">:</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">id</span><span class="kw">:</span><span class="at"> ty-check</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">name</span><span class="kw">:</span><span class="at"> ty (type check)</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">entry</span><span class="kw">:</span><span class="at"> uv run ty check src/</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">language</span><span class="kw">:</span><span class="at"> system</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">pass_filenames</span><span class="kw">:</span><span class="at"> </span><span class="ch">false</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">stages</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="at">pre-push</span><span class="kw">]</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="debugging-failures-and-the-skip-escape-hatch" class="level2">
 <h2 class="anchored" data-anchor-id="debugging-failures-and-the-skip-escape-hatch">6. Debugging Failures and the SKIP Escape Hatch</h2>
 <p>When a hook fails, git blocks the commit. The hook output explains why. Read the first line of the failure: it names the hook, the file, and the rule.</p>
 <p>The most common failure pattern: ruff finds an issue, fixes it, and exits non-zero. The file is now changed but not staged. The fix is:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> add src/grade_predictor/core.py   <span class="co"># stage the fix ruff just made</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> commit <span class="at">-m</span> <span class="st">"fix(core): address ruff finding"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> add src/grade_predictor/core.py   <span class="co"># stage the fix ruff just made</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> commit <span class="at">-m</span> <span class="st">"fix(core): address ruff finding"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>The <code>SKIP</code> environment variable bypasses specific hooks for one commit:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="va">SKIP</span><span class="op">=</span>ruff <span class="fu">git</span> commit <span class="at">-m</span> <span class="st">"wip: draft in progress"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="va">SKIP</span><span class="op">=</span>ruff <span class="fu">git</span> commit <span class="at">-m</span> <span class="st">"wip: draft in progress"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><code>SKIP</code> is the right tool for work-in-progress commits on a personal branch where you intend to clean up before merging. It bypasses only the named hook, not all hooks.</p>
 <p><code>pre-commit run --all-files</code> runs all hooks on every file, not just staged ones. Use it as a one-time audit when setting up a new project or after adding a new hook:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run pre-commit run <span class="at">--all-files</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run pre-commit run <span class="at">--all-files</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="ark-mistake">
 <p><span class="ark-mistake-title"><i class="bi bi-bug-fill"></i> Common Mistake: Using <code>–no-verify</code></span><br><br> <code>git commit –no-verify</code> bypasses all hooks at once: commitizen, ruff, detect-private-key, nbstripout, everything. There is almost no legitimate reason for it on a shared branch. Use <code>SKIP=&lt;hook-id&gt;</code> to bypass only the hook that is blocking you. If you find yourself reaching for <code>–no-verify</code> regularly, the hook is probably too slow or misconfigured, and that is the real problem to fix.</p>
 </div>

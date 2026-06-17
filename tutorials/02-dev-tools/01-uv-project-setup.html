@@ -69,7 +69,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../../">
 <link href="../../tutorials/02-dev-tools/02-code-quality-ruff.html" rel="next">
-<link href="../../tutorials/01-python-basics/12-great-tables.html" rel="prev">
+<link href="../../tutorials/02-dev-tools/00-vscode-setup.html" rel="prev">
 <script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="../../site_libs/quarto-html/popper.min.js"></script>
@@ -79,7 +79,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../../site_libs/quarto-html/quarto-syntax-highlighting-de63f62b328812d8e578a4d74e282472.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-0f3842b63b3a17d781c7303dc189e804.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-369035fd49b832c5f4f2d78fcf1b6dcb.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -261,6 +261,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="../../tutorials/02-dev-tools/00-vscode-setup.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 12: IDE Setup with VS Code</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="../../tutorials/02-dev-tools/01-uv-project-setup.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">Part 13: Project Setup with uv</span></a>
   </div>
 </li>
@@ -308,6 +313,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <ul>
   <li><a href="#before-you-begin" id="toc-before-you-begin" class="nav-link active" data-scroll-target="#before-you-begin">Before you begin</a></li>
   <li><a href="#learning-objectives" id="toc-learning-objectives" class="nav-link" data-scroll-target="#learning-objectives">Learning Objectives</a></li>
+  <li><a href="#what-is-uv-and-why-use-it" id="toc-what-is-uv-and-why-use-it" class="nav-link" data-scroll-target="#what-is-uv-and-why-use-it">0. What is uv and Why Use It</a>
+  <ul class="collapse">
+  <li><a href="#how-uv-compares-to-the-alternatives" id="toc-how-uv-compares-to-the-alternatives" class="nav-link" data-scroll-target="#how-uv-compares-to-the-alternatives">How uv compares to the alternatives</a></li>
+  <li><a href="#installing-uv" id="toc-installing-uv" class="nav-link" data-scroll-target="#installing-uv">Installing uv</a></li>
+  </ul></li>
   <li><a href="#the-reproducibility-problem" id="toc-the-reproducibility-problem" class="nav-link" data-scroll-target="#the-reproducibility-problem">1. The Reproducibility Problem</a></li>
   <li><a href="#initializing-a-project" id="toc-initializing-a-project" class="nav-link" data-scroll-target="#initializing-a-project">2. Initializing a Project</a></li>
   <li><a href="#pyproject.toml-anatomy" id="toc-pyproject.toml-anatomy" class="nav-link" data-scroll-target="#pyproject.toml-anatomy">3. <code>pyproject.toml</code> Anatomy</a></li>
@@ -377,42 +387,145 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </thead>
 <tbody>
 <tr class="odd">
+<td>0</td>
+<td>Explain what uv is, how it compares to pip and Poetry, and install it</td>
+<td>Sec. 0</td>
+</tr>
+<tr class="even">
 <td>1</td>
 <td>Explain why isolated environments and lockfiles matter for reproducible DS work</td>
 <td>Sec. 1</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>2</td>
 <td>Initialize a packaged Python project with <code>uv init --package</code></td>
 <td>Sec. 2</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>3</td>
 <td>Read and write the <code>[project]</code> and <code>[project.optional-dependencies]</code> sections of <code>pyproject.toml</code></td>
 <td>Sec. 3</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>4</td>
 <td>Add, remove, and sync dependencies with <code>uv add</code>, <code>uv remove</code>, and <code>uv sync</code></td>
 <td>Sec. 4</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>5</td>
 <td>Separate heavy ML dependencies into optional groups so CI stays fast</td>
 <td>Sec. 5</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>6</td>
 <td>Manage secrets with a <code>.env</code> file and keep them out of version control</td>
 <td>Sec. 6</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>7</td>
 <td>Run any command inside the project environment with <code>uv run</code></td>
 <td>Sec. 7</td>
 </tr>
 </tbody>
 </table>
+</section>
+<section id="what-is-uv-and-why-use-it" class="level2">
+<h2 class="anchored" data-anchor-id="what-is-uv-and-why-use-it">0. What is uv and Why Use It</h2>
+<p><code>uv</code> is a Python package and project manager written in Rust, built by <a href="https://astral.sh">Astral</a>, the same team behind <code>ruff</code>. It replaces a stack of tools that most Python developers use separately: <code>pip</code>, <code>venv</code>, <code>pip-tools</code>, and parts of <code>Poetry</code> or <code>conda</code>. One binary, one configuration file, one command prefix (<code>uv run</code>).</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://docs.astral.sh/uv/assets/uv-lockfile.png" class="img-fluid figure-img"></p>
+<figcaption>uv architecture: a single tool replacing the traditional pip + venv + pip-tools stack</figcaption>
+</figure>
+</div>
+<blockquote class="blockquote">
+<p>Source: <a href="https://docs.astral.sh/uv/">Astral uv documentation</a></p>
+</blockquote>
+<section id="how-uv-compares-to-the-alternatives" class="level3">
+<h3 class="anchored" data-anchor-id="how-uv-compares-to-the-alternatives">How uv compares to the alternatives</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Tool</th>
+<th>Virtual env</th>
+<th>Dependency resolution</th>
+<th>Lockfile</th>
+<th>Speed</th>
+<th>pyproject.toml native</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>pip</code> + <code>venv</code></td>
+<td>Manual</td>
+<td>Basic (no SAT solver)</td>
+<td>Only with pip-tools</td>
+<td>Slow</td>
+<td>No</td>
+</tr>
+<tr class="even">
+<td><code>pip-tools</code></td>
+<td>Manual</td>
+<td>Full resolution</td>
+<td>Yes (<code>requirements.txt</code>)</td>
+<td>Slow</td>
+<td>No</td>
+</tr>
+<tr class="odd">
+<td><code>Poetry</code></td>
+<td>Built-in</td>
+<td>Full resolution</td>
+<td>Yes (<code>poetry.lock</code>)</td>
+<td>Medium</td>
+<td>Yes</td>
+</tr>
+<tr class="even">
+<td><code>conda</code></td>
+<td>Built-in</td>
+<td>Full (cross-language)</td>
+<td>Yes</td>
+<td>Slow</td>
+<td>No</td>
+</tr>
+<tr class="odd">
+<td><strong><code>uv</code></strong></td>
+<td><strong>Built-in</strong></td>
+<td><strong>Full (Rust SAT solver)</strong></td>
+<td><strong>Yes (<code>uv.lock</code>)</strong></td>
+<td><strong>10-100x faster</strong></td>
+<td><strong>Yes</strong></td>
+</tr>
+</tbody>
+</table>
+<p>The decisive advantages for DS work: uv is fast enough that <code>uv sync</code> after a fresh clone takes seconds, not minutes; and <code>uv.lock</code> pins every transitive dependency so two machines always get identical environments.</p>
+</section>
+<section id="installing-uv" class="level3">
+<h3 class="anchored" data-anchor-id="installing-uv">Installing uv</h3>
+<p>uv is a single binary with no Python dependency. Install it once per machine:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># macOS and Linux</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> <span class="at">-LsSf</span> https://astral.sh/uv/install.sh <span class="kw">|</span> <span class="fu">sh</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Windows (PowerShell)</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="ex">powershell</span> <span class="at">-ExecutionPolicy</span> ByPass <span class="at">-c</span> <span class="st">"irm https://astral.sh/uv/install.ps1 | iex"</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co"># If you already have Python and prefer pipx</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="ex">pipx</span> install uv</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Verify</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> <span class="at">--version</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>After installation, <code>uv</code> is available system-wide. You do not need to activate any environment to use it.</p>
+<div class="ark-tip">
+<p><span class="ark-tip-title"><i class="bi bi-lightbulb-fill"></i> Pro Tip: Keep uv up to date</span><br><br> uv releases frequently. Run <code>uv self update</code> to upgrade to the latest version. The resolver improves with every release.</p>
+</div>
+</section>
 </section>
 <section id="the-reproducibility-problem" class="level2">
 <h2 class="anchored" data-anchor-id="the-reproducibility-problem">1. The Reproducibility Problem</h2>
@@ -426,8 +539,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="initializing-a-project" class="level2">
 <h2 class="anchored" data-anchor-id="initializing-a-project">2. Initializing a Project</h2>
 <p>Create the <code>grade-predictor</code> project with the <code>--package</code> flag, which generates the <code>src/</code> layout:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> init grade-predictor <span class="at">--package</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> grade-predictor</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> init grade-predictor <span class="at">--package</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> grade-predictor</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>The generated structure:</p>
 <pre class="text"><code>grade-predictor/
 ├── src/
@@ -438,7 +551,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 └── README.md</code></pre>
 <p>The <code>--package</code> flag matters. Without it, <code>uv init</code> creates a simple script project. With it, it creates a proper Python package with the <code>src/</code> layout. In the <code>src/</code> layout, the package lives inside <code>src/</code> rather than at the project root. This means you cannot accidentally import from the development copy of the code when running scripts from the project root: Python will only find the installed package, which is the version that tests and CI will see.</p>
 <p>Run <code>uv sync</code> to create the virtual environment and generate <code>uv.lock</code>:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> sync</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> sync</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>The <code>.venv/</code> directory appears at the project root. You do not activate it manually. <code>uv run</code> handles activation automatically.</p>
 <div class="ark-activity">
 <p><span class="ark-activity-title"><i class="bi bi-puzzle-fill"></i> Activity 1 - Initialize and Inspect</span><br><br> <b>Goal:</b> Run <code>uv init grade-predictor –package</code> in a temporary directory, then open <code>pyproject.toml</code> and identify the <code>[project]</code> section. List the three files whose purpose you cannot immediately guess and look each one up.</p>
@@ -448,46 +561,46 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 class="anchored" data-anchor-id="pyproject.toml-anatomy">3. <code>pyproject.toml</code> Anatomy</h2>
 <p><code>pyproject.toml</code> is the single source of truth for a Python project. It replaces four files that older projects split across: <code>setup.py</code>, <code>setup.cfg</code>, <code>requirements.txt</code>, and <code>pytest.ini</code>. Every modern Python tool reads it.</p>
 <p>Here is a complete <code>pyproject.toml</code> for <code>grade-predictor</code> with annotations:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode toml code-with-copy"><code class="sourceCode toml"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">[project]</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="dt">name</span> <span class="op">=</span> <span class="st">"grade-predictor"</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="dt">version</span> <span class="op">=</span> <span class="st">"0.1.0"</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="dt">description</span> <span class="op">=</span> <span class="st">"Grade computation and risk analysis for university_analytics.csv"</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="dt">authors</span> <span class="op">=</span> <span class="op">[{ </span><span class="dt">name</span><span class="op"> =</span> <span class="st">"Anthony Faustine"</span><span class="op">, </span><span class="dt">email</span><span class="op"> =</span> <span class="st">"sambaiga@gmail.com"</span><span class="op"> }]</span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="dt">requires-python</span> <span class="op">=</span> <span class="st">"&gt;=3.12"</span>               <span class="co"># minimum Python version; 3.12 adds better error messages</span></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="dt">dependencies</span> <span class="op">=</span> <span class="op">[</span></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">"pandas&gt;=2.1"</span><span class="op">,</span></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">"numpy&gt;=1.26"</span><span class="op">,</span></span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="op">]</span></span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="kw">[project.optional-dependencies]</span>          <span class="co"># groups; installed only when requested</span></span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="dt">modelling</span> <span class="op">=</span> <span class="op">[</span></span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>    <span class="st">"scikit-learn&gt;=1.7"</span><span class="op">,</span></span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>    <span class="st">"xgboost&gt;=3.0"</span><span class="op">,</span></span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="op">]</span></span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="dt">test</span> <span class="op">=</span> <span class="op">[</span></span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>    <span class="st">"pytest&gt;=8.0"</span><span class="op">,</span></span>
-<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>    <span class="st">"pytest-cov&gt;=6.0"</span><span class="op">,</span></span>
-<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a><span class="op">]</span></span>
-<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a><span class="dt">dev</span> <span class="op">=</span> <span class="op">[</span></span>
-<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>    <span class="st">"ruff&gt;=0.5"</span><span class="op">,</span></span>
-<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>    <span class="st">"pre-commit&gt;=4.0"</span><span class="op">,</span></span>
-<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>    <span class="st">"python-dotenv&gt;=1.0"</span><span class="op">,</span></span>
-<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a><span class="op">]</span></span>
-<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a><span class="kw">[build-system]</span></span>
-<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a><span class="dt">requires</span> <span class="op">=</span> <span class="op">[</span><span class="st">"hatchling"</span><span class="op">]</span></span>
-<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a><span class="dt">build-backend</span> <span class="op">=</span> <span class="st">"hatchling.build"</span></span>
-<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a><span class="kw">[tool.hatch.build.targets.wheel]</span></span>
-<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a><span class="dt">packages</span> <span class="op">=</span> <span class="op">[</span><span class="st">"src/grade_predictor"</span><span class="op">]</span></span>
-<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a><span class="kw">[tool.pytest.ini_options]</span></span>
-<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a><span class="dt">testpaths</span> <span class="op">=</span> <span class="op">[</span><span class="st">"tests"</span><span class="op">]</span></span>
-<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a><span class="dt">addopts</span> <span class="op">=</span> <span class="st">"--cov=grade_predictor --cov-report=term-missing --cov-fail-under=80"</span></span>
-<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a><span class="kw">[tool.ruff]</span></span>
-<span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a><span class="dt">target-version</span> <span class="op">=</span> <span class="st">"py312"</span></span>
-<span id="cb4-40"><a href="#cb4-40" aria-hidden="true" tabindex="-1"></a><span class="dt">line-length</span> <span class="op">=</span> <span class="dv">100</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode toml code-with-copy"><code class="sourceCode toml"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">[project]</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="dt">name</span> <span class="op">=</span> <span class="st">"grade-predictor"</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="dt">version</span> <span class="op">=</span> <span class="st">"0.1.0"</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="dt">description</span> <span class="op">=</span> <span class="st">"Grade computation and risk analysis for university_analytics.csv"</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="dt">authors</span> <span class="op">=</span> <span class="op">[{ </span><span class="dt">name</span><span class="op"> =</span> <span class="st">"Anthony Faustine"</span><span class="op">, </span><span class="dt">email</span><span class="op"> =</span> <span class="st">"sambaiga@gmail.com"</span><span class="op"> }]</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="dt">requires-python</span> <span class="op">=</span> <span class="st">"&gt;=3.12"</span>               <span class="co"># minimum Python version; 3.12 adds better error messages</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="dt">dependencies</span> <span class="op">=</span> <span class="op">[</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">"pandas&gt;=2.1"</span><span class="op">,</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">"numpy&gt;=1.26"</span><span class="op">,</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="op">]</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="kw">[project.optional-dependencies]</span>          <span class="co"># groups; installed only when requested</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="dt">modelling</span> <span class="op">=</span> <span class="op">[</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>    <span class="st">"scikit-learn&gt;=1.7"</span><span class="op">,</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>    <span class="st">"xgboost&gt;=3.0"</span><span class="op">,</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="op">]</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a><span class="dt">test</span> <span class="op">=</span> <span class="op">[</span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>    <span class="st">"pytest&gt;=8.0"</span><span class="op">,</span></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>    <span class="st">"pytest-cov&gt;=6.0"</span><span class="op">,</span></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a><span class="op">]</span></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a><span class="dt">dev</span> <span class="op">=</span> <span class="op">[</span></span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>    <span class="st">"ruff&gt;=0.5"</span><span class="op">,</span></span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>    <span class="st">"pre-commit&gt;=4.0"</span><span class="op">,</span></span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>    <span class="st">"python-dotenv&gt;=1.0"</span><span class="op">,</span></span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a><span class="op">]</span></span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a><span class="kw">[build-system]</span></span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a><span class="dt">requires</span> <span class="op">=</span> <span class="op">[</span><span class="st">"hatchling"</span><span class="op">]</span></span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a><span class="dt">build-backend</span> <span class="op">=</span> <span class="st">"hatchling.build"</span></span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a><span class="kw">[tool.hatch.build.targets.wheel]</span></span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a><span class="dt">packages</span> <span class="op">=</span> <span class="op">[</span><span class="st">"src/grade_predictor"</span><span class="op">]</span></span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a><span class="kw">[tool.pytest.ini_options]</span></span>
+<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a><span class="dt">testpaths</span> <span class="op">=</span> <span class="op">[</span><span class="st">"tests"</span><span class="op">]</span></span>
+<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a><span class="dt">addopts</span> <span class="op">=</span> <span class="st">"--cov=grade_predictor --cov-report=term-missing --cov-fail-under=80"</span></span>
+<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a><span class="kw">[tool.ruff]</span></span>
+<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a><span class="dt">target-version</span> <span class="op">=</span> <span class="st">"py312"</span></span>
+<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a><span class="dt">line-length</span> <span class="op">=</span> <span class="dv">100</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="ark-concept">
 <p><span class="ark-concept-title"><i class="bi bi-info-circle-fill"></i> Key Concept: <code>pyproject.toml</code> is the single source of truth</span><br><br> It replaces <code>setup.py</code>, <code>requirements.txt</code>, <code>setup.cfg</code>, and <code>pytest.ini</code>. Read it and you can understand any modern Python project in under five minutes: what it does, what it depends on, how to test it, and how to build it.</p>
 </div>
@@ -498,20 +611,20 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="adding-and-syncing-dependencies" class="level2">
 <h2 class="anchored" data-anchor-id="adding-and-syncing-dependencies">4. Adding and Syncing Dependencies</h2>
 <p><code>uv add</code> is the correct way to add a dependency. It updates <code>pyproject.toml</code>, resolves the full dependency graph, and writes a new <code>uv.lock</code> in one step:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> add pandas numpy</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> add <span class="at">--optional</span> dev ruff pytest</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> sync</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> add pandas numpy</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> add <span class="at">--optional</span> dev ruff pytest</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> sync</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Compare this to <code>pip install pandas</code>: pip installs the package into whatever environment is currently active but writes nothing permanent. Next week, on a different machine, there is no record of which version was installed.</p>
 <p>Useful commands:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> add <span class="op">&lt;</span>package<span class="op">&gt;</span>                      <span class="co"># add to core dependencies</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> add <span class="at">--optional</span> dev <span class="op">&lt;</span>package<span class="op">&gt;</span>       <span class="co"># add to the dev group</span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> remove <span class="op">&lt;</span>package<span class="op">&gt;</span>                   <span class="co"># remove from dependencies</span></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> sync                               <span class="co"># install everything in uv.lock</span></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> sync <span class="at">--extra</span> test                  <span class="co"># install core + test group</span></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> sync <span class="at">--all-extras</span>                  <span class="co"># install all groups</span></span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> lock <span class="at">--upgrade-package</span> pandas      <span class="co"># upgrade one package and update lock</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> add <span class="op">&lt;</span>package<span class="op">&gt;</span>                      <span class="co"># add to core dependencies</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> add <span class="at">--optional</span> dev <span class="op">&lt;</span>package<span class="op">&gt;</span>       <span class="co"># add to the dev group</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> remove <span class="op">&lt;</span>package<span class="op">&gt;</span>                   <span class="co"># remove from dependencies</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> sync                               <span class="co"># install everything in uv.lock</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> sync <span class="at">--extra</span> test                  <span class="co"># install core + test group</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> sync <span class="at">--all-extras</span>                  <span class="co"># install all groups</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> lock <span class="at">--upgrade-package</span> pandas      <span class="co"># upgrade one package and update lock</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>After <code>uv sync</code>, confirm the environment works:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run python <span class="at">-c</span> <span class="st">"import pandas; print(pandas.__version__)"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run python <span class="at">-c</span> <span class="st">"import pandas; print(pandas.__version__)"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="ark-tip">
 <p><span class="ark-tip-title"><i class="bi bi-lightbulb-fill"></i> Pro Tip: Commit <code>uv.lock</code>, not <code>requirements.txt</code></span><br><br> <code>uv.lock</code> records every transitive dependency. A <code>requirements.txt</code> generated from it records only what you asked for, not what was actually resolved. When you pin with <code>requirements.txt</code>, a colleague installing a week later may get different transitive versions. Commit <code>uv.lock</code> and delete any <code>requirements.txt</code> workflow.</p>
 </div>
@@ -522,21 +635,21 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="optional-dependency-groups-for-ml-projects" class="level2">
 <h2 class="anchored" data-anchor-id="optional-dependency-groups-for-ml-projects">5. Optional Dependency Groups for ML Projects</h2>
 <p>Heavy ML dependencies are the single biggest cause of slow CI pipelines. A cold install of PyTorch takes three to four minutes. A cold install of scikit-learn and pytest takes under 20 seconds. Separating them into optional groups makes CI run only what it needs.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode toml code-with-copy"><code class="sourceCode toml"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">[project.optional-dependencies]</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="dt">modelling</span> <span class="op">=</span> <span class="op">[</span></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"scikit-learn&gt;=1.7"</span><span class="op">,</span></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"xgboost&gt;=3.0"</span><span class="op">,</span></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">"torch&gt;=2.0"</span><span class="op">,</span>          <span class="co"># ~800MB; only needed for deep learning experiments</span></span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="op">]</span></span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="dt">test</span> <span class="op">=</span> <span class="op">[</span></span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">"pytest&gt;=8.0"</span><span class="op">,</span></span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">"pytest-cov&gt;=6.0"</span><span class="op">,</span></span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="op">]</span></span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="dt">dev</span> <span class="op">=</span> <span class="op">[</span></span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>    <span class="st">"ruff&gt;=0.5"</span><span class="op">,</span></span>
-<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>    <span class="st">"pre-commit&gt;=4.0"</span><span class="op">,</span></span>
-<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>    <span class="st">"jupyter&gt;=1.0"</span><span class="op">,</span></span>
-<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a><span class="op">]</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode toml code-with-copy"><code class="sourceCode toml"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">[project.optional-dependencies]</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="dt">modelling</span> <span class="op">=</span> <span class="op">[</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"scikit-learn&gt;=1.7"</span><span class="op">,</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"xgboost&gt;=3.0"</span><span class="op">,</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">"torch&gt;=2.0"</span><span class="op">,</span>          <span class="co"># ~800MB; only needed for deep learning experiments</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="op">]</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="dt">test</span> <span class="op">=</span> <span class="op">[</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">"pytest&gt;=8.0"</span><span class="op">,</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">"pytest-cov&gt;=6.0"</span><span class="op">,</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="op">]</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="dt">dev</span> <span class="op">=</span> <span class="op">[</span></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>    <span class="st">"ruff&gt;=0.5"</span><span class="op">,</span></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>    <span class="st">"pre-commit&gt;=4.0"</span><span class="op">,</span></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>    <span class="st">"jupyter&gt;=1.0"</span><span class="op">,</span></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a><span class="op">]</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Three installation profiles:</p>
 <table class="caption-top table">
 <colgroup>
@@ -581,25 +694,25 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 class="anchored" data-anchor-id="secret-management-with-.env">6. Secret Management with <code>.env</code></h2>
 <p>A database password or API key committed to a public GitHub repository is searchable, permanent (even after deletion from history via <code>git rm</code>), and a real security incident. The correct pattern is to never put secrets in version-controlled files.</p>
 <p>Create <code>.env</code> at the project root:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># .env  -- never commit this file</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="va">DATABASE_URL</span><span class="op">=</span>postgresql://user:password@localhost/grades</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="va">OPENAI_API_KEY</span><span class="op">=</span>sk-...</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="va">REPORT_TITLE</span><span class="op">=</span>Grade <span class="ex">Predictor</span> Report</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># .env  -- never commit this file</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="va">DATABASE_URL</span><span class="op">=</span>postgresql://user:password@localhost/grades</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="va">OPENAI_API_KEY</span><span class="op">=</span>sk-...</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="va">REPORT_TITLE</span><span class="op">=</span>Grade <span class="ex">Predictor</span> Report</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Add to <code>.gitignore</code> immediately:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">".env"</span> <span class="op">&gt;&gt;</span> .gitignore</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">"*.env"</span> <span class="op">&gt;&gt;</span> .gitignore</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">".env"</span> <span class="op">&gt;&gt;</span> .gitignore</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">"*.env"</span> <span class="op">&gt;&gt;</span> .gitignore</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Load in Python with <code>python-dotenv</code>:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> dotenv <span class="im">import</span> load_dotenv</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>load_dotenv()                              <span class="co"># reads .env into os.environ</span></span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>db_url <span class="op">=</span> os.getenv(<span class="st">"DATABASE_URL"</span>)</span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>report_title <span class="op">=</span> os.getenv(<span class="st">"REPORT_TITLE"</span>, <span class="st">"Default Title"</span>)  <span class="co"># second arg is fallback</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> dotenv <span class="im">import</span> load_dotenv</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>load_dotenv()                              <span class="co"># reads .env into os.environ</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>db_url <span class="op">=</span> os.getenv(<span class="st">"DATABASE_URL"</span>)</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>report_title <span class="op">=</span> os.getenv(<span class="st">"REPORT_TITLE"</span>, <span class="st">"Default Title"</span>)  <span class="co"># second arg is fallback</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Commit an <code>.env.example</code> with placeholder values so collaborators know which variables to set:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># .env.example  -- commit this file</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="va">DATABASE_URL</span><span class="op">=</span>postgresql://user:password@localhost/grades</span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="va">OPENAI_API_KEY</span><span class="op">=</span>sk-your-key-here</span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="va">REPORT_TITLE</span><span class="op">=</span>My <span class="ex">Report</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># .env.example  -- commit this file</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="va">DATABASE_URL</span><span class="op">=</span>postgresql://user:password@localhost/grades</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="va">OPENAI_API_KEY</span><span class="op">=</span>sk-your-key-here</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="va">REPORT_TITLE</span><span class="op">=</span>My <span class="ex">Report</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="ark-mistake">
 <p><span class="ark-mistake-title"><i class="bi bi-bug-fill"></i> Common Mistake: Defaults that are real values</span><br><br> Never put a real secret as a default value in code: <code>os.getenv(“API_KEY”, “sk-prod-abc123”)</code>. The moment that file is committed, the key is in git history permanently. A placeholder default like <code>“your-key-here”</code> is safe; a real credential is not. If a key is committed by accident, rotate it immediately.</p>
 </div>
@@ -610,11 +723,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="uv-run-the-universal-entry-point" class="level2">
 <h2 class="anchored" data-anchor-id="uv-run-the-universal-entry-point">7. <code>uv run</code>: The Universal Entry Point</h2>
 <p><code>uv run</code> executes any command inside the project environment without requiring manual activation of <code>.venv</code>:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run python scripts/report.py           <span class="co"># run a script</span></span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run pytest                              <span class="co"># run tests</span></span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run ruff check .                        <span class="co"># lint</span></span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run jupyter lab                         <span class="co"># open Jupyter</span></span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run <span class="at">--with</span> httpx python <span class="at">-c</span> <span class="st">"import httpx; print(httpx.__version__)"</span>  <span class="co"># one-off tool</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run python scripts/report.py           <span class="co"># run a script</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run pytest                              <span class="co"># run tests</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run ruff check .                        <span class="co"># lint</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run jupyter lab                         <span class="co"># open Jupyter</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run <span class="at">--with</span> httpx python <span class="at">-c</span> <span class="st">"import httpx; print(httpx.__version__)"</span>  <span class="co"># one-off tool</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>The <code>--with</code> flag installs a package into the run environment for that command only, without adding it to <code>pyproject.toml</code>. This is the correct way to use tools you reach for occasionally (<code>nbmake</code>, <code>httpx</code>, a formatter you are evaluating) without polluting the project’s dependency list.</p>
 <p><code>uv run</code> always uses the project environment defined by <code>uv.lock</code>. Shell state (which <code>conda</code> environment is active, whether you ran <code>source .venv/bin/activate</code> in another terminal) never leaks in.</p>
 <div class="ark-concept">
@@ -1132,8 +1245,8 @@ Create <code>.env</code> with <code>REPORT_TITLE=Grade Predictor</code> and add 
   </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="../../tutorials/01-python-basics/12-great-tables.html" class="pagination-link" aria-label="Part 12: Presenting Data with Great Tables">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">Part 12: Presenting Data with Great Tables</span></span>
+      <a href="../../tutorials/02-dev-tools/00-vscode-setup.html" class="pagination-link" aria-label="Part 12: IDE Setup with VS Code">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">Part 12: IDE Setup with VS Code</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
