@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>12&nbsp; Part 11: Polars &amp; the Expression API – DS-MLOps Path</title>
+<title>Part 11: Polars &amp; the Expression API – DS-MLOps Path</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -61,14 +61,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </style>
 
 
-<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js" integrity="sha384-ZvpUoO/+PpLXR1lu4jmpXWu80pZlYUAfxl5NsBMWOEPSjUn/6Z/hRTt8+pR6L4N2" crossorigin="anonymous"></script><script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
 <script src="../../site_libs/quarto-nav/headroom.min.js"></script>
 <script src="../../site_libs/clipboard/clipboard.min.js"></script>
 <script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
 <script src="../../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../../">
-<link href="../../tutorials/01-python-basics/10-combining-reshaping.html" rel="prev">
+<link href="../../tutorials/01-python-basics/11-time-series.html" rel="prev">
 <script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="../../site_libs/quarto-html/popper.min.js"></script>
@@ -106,6 +106,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-label": "Search"
   }
 }</script>
+<style>html{ scroll-behavior: smooth; }</style>
+<script src="https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.min.js" integrity="sha384-c9c+LnTbwQ3aujuU7ULEPVvgLs+Fn6fJUvIGTsuu1ZcCf11fiEubah0ttpca4ntM sha384-6V1/AdqZRWk1KAlWbKBlGhN7VG4iE/yAZcO6NZPMF8od0vukrvr0tg4qY6NSrItx" crossorigin="anonymous"></script>
+
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
 
 
 </head>
@@ -128,7 +132,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item compact">
-    <a class="nav-link" href="https://github.com/sambaiga/ds-mlops-path"> <i class="bi bi-github" role="img">
+    <a class="nav-link" href="https://github.com/sambaiga/ds-mlops-path"> <i class="bi bi-github" role="img" aria-label="View source on GitHub">
 </i> 
 <span class="menu-text"></span></a>
   </li>  
@@ -144,9 +148,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../tutorials/01-python-basics/08-pandas-core.html">Part 2 - Data Analysis</a></li><li class="breadcrumb-item"><a href="../../tutorials/01-python-basics/11-polars.html"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Part 11: Polars &amp; the Expression API</span></a></li></ol></nav>
-        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
-        </a>
+        <a class="flex-grow-1 no-decor" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+          <h1 class="quarto-secondary-nav-title"><span class="chapter-title">Part 11: Polars &amp; the Expression API</span></h1>
+        </a>     
     </div>
   </nav>
 </header>
@@ -158,59 +162,51 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../index.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Welcome</span></span></a>
+  <a href="../../index.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Welcome</span></a>
   </div>
 </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
- <span class="menu-text">Part 1 - Python Basics</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false">
+ <span class="menu-text">Part 1 — Python Basics</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../tutorials/01-python-basics/01-python-core.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Part 1: Language Core (Data &amp; Types)</span></span></a>
+  <a href="../../tutorials/01-python-basics/01-python-core.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 1: Language Core (Data &amp; Types)</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../tutorials/01-python-basics/02-control-flow.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Part 2: Language Core (Control Flow &amp; Comprehensions)</span></span></a>
+  <a href="../../tutorials/01-python-basics/02-control-flow.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 2: Language Core (Control Flow &amp; Comprehensions)</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../tutorials/01-python-basics/03-python-patterns.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Part 3: Patterns for Data Science &amp; ML</span></span></a>
+  <a href="../../tutorials/01-python-basics/03-python-patterns.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 3: Patterns for Data Science &amp; ML</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../tutorials/01-python-basics/04-numpy.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Part 4: NumPy for Data &amp; ML</span></span></a>
+  <a href="../../tutorials/01-python-basics/04-numpy.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 4: NumPy for Data &amp; ML</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../tutorials/01-python-basics/05-matplotlib.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Part 5: Matplotlib and Its Ecosystem</span></span></a>
+  <a href="../../tutorials/01-python-basics/05-matplotlib.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 5: Matplotlib and Its Ecosystem</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../tutorials/01-python-basics/06-lets-plot.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Part 6: Grammar of Graphics with Lets-Plot</span></span></a>
+  <a href="../../tutorials/01-python-basics/06-lets-plot.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 6: Grammar of Graphics with Lets-Plot</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../tutorials/01-python-basics/07-data-storytelling.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Part 7: Data Storytelling and House Style</span></span></a>
+  <a href="../../tutorials/01-python-basics/07-data-storytelling.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 7: Data Storytelling and House Style</span></a>
   </div>
 </li>
       </ul>
@@ -218,7 +214,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
- <span class="menu-text">Part 2 - Data Analysis</span></a>
+ <span class="menu-text">Part 2 — Data Analysis</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -226,26 +222,27 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../tutorials/01-python-basics/08-pandas-core.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Part 8: Pandas Core</span></span></a>
+  <a href="../../tutorials/01-python-basics/08-pandas-core.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 8: Pandas Core</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../tutorials/01-python-basics/09-pandas-operations.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Part 9: Pandas Operations</span></span></a>
+  <a href="../../tutorials/01-python-basics/09-pandas-operations.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 9: Pandas Operations</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../tutorials/01-python-basics/10-combining-reshaping.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Part 10: Combining, Reshaping &amp; Time Series</span></span></a>
+  <a href="../../tutorials/01-python-basics/10-combining-reshaping.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 10: Combining, Reshaping &amp; Time Series</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../tutorials/01-python-basics/11-polars.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Part 11: Polars &amp; the Expression API</span></span></a>
+  <a href="../../tutorials/01-python-basics/11-time-series.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 11: Time Series</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/11-polars.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">Part 11: Polars &amp; the Expression API</span></a>
   </div>
 </li>
       </ul>
@@ -257,29 +254,30 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">Table of contents</h2>
+    <h2 id="toc-title">In this chapter</h2>
    
   <ul>
-  <li><a href="#before-you-begin" id="toc-before-you-begin" class="nav-link active" data-scroll-target="#before-you-begin"><span class="header-section-number">12.1</span> Before you begin</a></li>
-  <li><a href="#callout-guide" id="toc-callout-guide" class="nav-link" data-scroll-target="#callout-guide"><span class="header-section-number">12.2</span> Callout guide</a></li>
-  <li><a href="#learning-objectives" id="toc-learning-objectives" class="nav-link" data-scroll-target="#learning-objectives"><span class="header-section-number">12.3</span> Learning Objectives</a></li>
-  <li><a href="#dataframe-construction" id="toc-dataframe-construction" class="nav-link" data-scroll-target="#dataframe-construction"><span class="header-section-number">12.4</span> 1. DataFrame Construction</a></li>
-  <li><a href="#the-expression-api-select-filter-with_columns" id="toc-the-expression-api-select-filter-with_columns" class="nav-link" data-scroll-target="#the-expression-api-select-filter-with_columns"><span class="header-section-number">12.5</span> 2. The Expression API: <code>select</code>, <code>filter</code>, <code>with_columns</code></a></li>
-  <li><a href="#groupby-and-aggregation" id="toc-groupby-and-aggregation" class="nav-link" data-scroll-target="#groupby-and-aggregation"><span class="header-section-number">12.6</span> 3. GroupBy and Aggregation</a></li>
-  <li><a href="#lazyframe-and-lazy-evaluation" id="toc-lazyframe-and-lazy-evaluation" class="nav-link" data-scroll-target="#lazyframe-and-lazy-evaluation"><span class="header-section-number">12.7</span> 4. LazyFrame and Lazy Evaluation</a></li>
-  <li><a href="#datetime-in-polars" id="toc-datetime-in-polars" class="nav-link" data-scroll-target="#datetime-in-polars"><span class="header-section-number">12.8</span> 5. Date/Time in Polars</a></li>
-  <li><a href="#migration-patterns-pandas-to-polars" id="toc-migration-patterns-pandas-to-polars" class="nav-link" data-scroll-target="#migration-patterns-pandas-to-polars"><span class="header-section-number">12.9</span> 6. Migration Patterns: pandas to Polars</a></li>
-  <li><a href="#capstone-reproduce-the-pandas-capstone-exercises-in-polars" id="toc-capstone-reproduce-the-pandas-capstone-exercises-in-polars" class="nav-link" data-scroll-target="#capstone-reproduce-the-pandas-capstone-exercises-in-polars"><span class="header-section-number">12.10</span> Capstone: Reproduce the pandas Capstone Exercises in Polars</a></li>
-  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary"><span class="header-section-number">12.11</span> Summary</a></li>
+  <li><a href="#before-you-begin" id="toc-before-you-begin" class="nav-link active" data-scroll-target="#before-you-begin">Before you begin</a></li>
+  <li><a href="#callout-guide" id="toc-callout-guide" class="nav-link" data-scroll-target="#callout-guide">Callout guide</a></li>
+  <li><a href="#learning-objectives" id="toc-learning-objectives" class="nav-link" data-scroll-target="#learning-objectives">Learning Objectives</a></li>
+  <li><a href="#dataframe-construction" id="toc-dataframe-construction" class="nav-link" data-scroll-target="#dataframe-construction">1. DataFrame Construction</a></li>
+  <li><a href="#the-expression-api-select-filter-with_columns" id="toc-the-expression-api-select-filter-with_columns" class="nav-link" data-scroll-target="#the-expression-api-select-filter-with_columns">2. The Expression API: <code>select</code>, <code>filter</code>, <code>with_columns</code></a></li>
+  <li><a href="#groupby-and-aggregation" id="toc-groupby-and-aggregation" class="nav-link" data-scroll-target="#groupby-and-aggregation">3. GroupBy and Aggregation</a></li>
+  <li><a href="#lazyframe-and-lazy-evaluation" id="toc-lazyframe-and-lazy-evaluation" class="nav-link" data-scroll-target="#lazyframe-and-lazy-evaluation">4. LazyFrame and Lazy Evaluation</a></li>
+  <li><a href="#sql-interface" id="toc-sql-interface" class="nav-link" data-scroll-target="#sql-interface">4.5 SQL Interface</a></li>
+  <li><a href="#datetime-in-polars" id="toc-datetime-in-polars" class="nav-link" data-scroll-target="#datetime-in-polars">5. Date/Time in Polars</a></li>
+  <li><a href="#migration-patterns-pandas-to-polars" id="toc-migration-patterns-pandas-to-polars" class="nav-link" data-scroll-target="#migration-patterns-pandas-to-polars">6. Migration Patterns: pandas to Polars</a></li>
+  <li><a href="#capstone-reproduce-the-pandas-capstone-exercises-in-polars" id="toc-capstone-reproduce-the-pandas-capstone-exercises-in-polars" class="nav-link" data-scroll-target="#capstone-reproduce-the-pandas-capstone-exercises-in-polars">Capstone: Reproduce the pandas Capstone Exercises in Polars</a></li>
+  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary">Summary</a></li>
   </ul>
-<div class="toc-actions"><ul><li><a href="https://github.dev/sambaiga/ds-mlops-path/blob/main/tutorials/01-python-basics/11-polars.ipynb" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/sambaiga/ds-mlops-path/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+<div class="toc-actions"><ul><li><a href="https://github.dev/sambaiga/ds-mlops-path/blob/main/tutorials/01-python-basics/11-polars.ipynb" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/sambaiga/ds-mlops-path/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li><li><a href="https://github.com/sambaiga/ds-mlops-path/blob/main/tutorials/01-python-basics/11-polars.ipynb" class="toc-action"><i class="bi empty"></i>View source</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../tutorials/01-python-basics/08-pandas-core.html">Part 2 - Data Analysis</a></li><li class="breadcrumb-item"><a href="../../tutorials/01-python-basics/11-polars.html"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Part 11: Polars &amp; the Expression API</span></a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Part 11: Polars &amp; the Expression API</span></h1>
+<h1 class="title d-none d-lg-block"><span class="chapter-title">Part 11: Polars &amp; the Expression API</span></h1>
 </div>
 
 
@@ -299,8 +297,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p><a href="https://colab.research.google.com/github/sambaiga/ds-mlops-path/blob/main/tutorials/01-python-basics/11-polars.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open In Colab"></a> <a href="https://raw.githubusercontent.com/sambaiga/ds-mlops-path/main/tutorials/01-python-basics/11-polars.ipynb"><img src="https://img.shields.io/badge/Download-Notebook-blue.svg?logo=jupyter&amp;logoColor=white" class="img-fluid" alt="Download Notebook"></a></p>
 <p><strong>DS-MLOps Data Analysis</strong></p>
 <p><strong>Python 3.12+ | Author: Anthony Faustine</strong></p>
-<section id="before-you-begin" class="level2" data-number="12.1">
-<h2 data-number="12.1" class="anchored" data-anchor-id="before-you-begin"><span class="header-section-number">12.1</span> Before you begin</h2>
+<section id="before-you-begin" class="level2">
+<h2 class="anchored" data-anchor-id="before-you-begin">Before you begin</h2>
 <p>This notebook continues from Part 10 (<code>10-combining-reshaping.ipynb</code>). You should be comfortable with pandas DataFrames, <code>groupby</code>, merging, and time-indexed data before starting here.</p>
 <p>Polars is a modern DataFrame library written in Rust. It uses an expression-based API and a lazy evaluation model that lets it optimize queries before running them. The same two datasets from Parts 8-10 are used here so you can compare pandas and Polars syntax on familiar ground.</p>
 <table class="caption-top table">
@@ -342,8 +340,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </tbody>
 </table>
 </section>
-<section id="callout-guide" class="level2" data-number="12.2">
-<h2 data-number="12.2" class="anchored" data-anchor-id="callout-guide"><span class="header-section-number">12.2</span> Callout guide</h2>
+<section id="callout-guide" class="level2">
+<h2 class="anchored" data-anchor-id="callout-guide">Callout guide</h2>
 <table style="border-collapse:collapse;width:60%">
 <tbody><tr>
 <td style="padding:6px 12px;background:#EAF3FA;border-left:4px solid #0369A1">
@@ -387,8 +385,8 @@ Production-grade habit
 </tr>
 </tbody></table>
 </section>
-<section id="learning-objectives" class="level2" data-number="12.3">
-<h2 data-number="12.3" class="anchored" data-anchor-id="learning-objectives"><span class="header-section-number">12.3</span> Learning Objectives</h2>
+<section id="learning-objectives" class="level2">
+<h2 class="anchored" data-anchor-id="learning-objectives">Learning Objectives</h2>
 <p>By the end of Part 11 you will be able to:</p>
 <table class="caption-top table">
 <colgroup>
@@ -447,20 +445,123 @@ Production-grade habit
 <div class="cell-output cell-output-error">
 <div class="ansi-escaped-output">
 <pre><span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">ModuleNotFoundError</span>                       Traceback (most recent call last)
-<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[1]</span><span class="ansi-green-fg">, line 2</span>
-<span class="ansi-green-fg">      1</span> <span style="font-weight:bold;color:rgb(0,135,0)">import</span><span style="color:rgb(188,188,188)"> </span><span class="ansi-blue-fg ansi-bold">numpy</span><span style="color:rgb(188,188,188)"> </span><span style="font-weight:bold;color:rgb(0,135,0)">as</span><span style="color:rgb(188,188,188)"> </span><span class="ansi-blue-fg ansi-bold">np</span>
-<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">2</span> <span style="font-weight:bold;color:rgb(0,135,0)">import</span><span style="color:rgb(188,188,188)"> </span><span class="ansi-blue-fg ansi-bold">polars</span><span style="color:rgb(188,188,188)"> </span><span style="font-weight:bold;color:rgb(0,135,0)">as</span><span style="color:rgb(188,188,188)"> </span><span class="ansi-blue-fg ansi-bold">pl</span>
+<span class="ansi-red-fg">FileNotFoundError</span>                         Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[1]</span><span class="ansi-green-fg">, line 5</span>
+<span class="ansi-green-fg">      2</span> <span style="font-weight:bold;color:rgb(0,135,0)">import</span><span style="color:rgb(188,188,188)"> </span><span class="ansi-blue-fg ansi-bold">polars</span><span style="color:rgb(188,188,188)"> </span><span style="font-weight:bold;color:rgb(0,135,0)">as</span><span style="color:rgb(188,188,188)"> </span><span class="ansi-blue-fg ansi-bold">pl</span>
 <span class="ansi-green-fg">      4</span> <span style="font-style:italic;color:rgb(95,135,135)"># Polars reads CSV directly; no separate parse step needed for standard columns</span>
-<span class="ansi-green-fg">      5</span> df = pl.read_csv(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">data/students_exams_results.csv</span><span class="ansi-yellow-fg">"</span>)
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">5</span> df = <span class="ansi-yellow-bg">pl</span><span class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">read_csv</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-fg ansi-yellow-bg">"</span><span class="ansi-yellow-fg ansi-yellow-bg">data/students_exams_results.csv</span><span class="ansi-yellow-fg ansi-yellow-bg">"</span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">      6</span> <span style="color:rgb(0,135,0)">print</span>(<span class="ansi-yellow-fg">f</span><span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">shape : </span><span style="font-weight:bold;color:rgb(175,95,135)">{</span>df.shape<span style="font-weight:bold;color:rgb(175,95,135)">}</span><span class="ansi-yellow-fg">"</span>)
+<span class="ansi-green-fg">      7</span> df.head()
 
-<span class="ansi-red-fg">ModuleNotFoundError</span>: No module named 'polars'</pre>
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/ds-mlops-path/ds-mlops-path/.venv/lib/python3.12/site-packages/polars/_utils/deprecation.py:128</span>, in <span class="ansi-cyan-fg">deprecate_renamed_parameter.&lt;locals&gt;.decorate.&lt;locals&gt;.wrapper</span><span class="ansi-blue-fg">(*args, **kwargs)</span>
+<span class="ansi-green-fg">    123</span> <span style="color:rgb(175,0,255)">@wraps</span>(function)
+<span class="ansi-green-fg">    124</span> <span style="font-weight:bold;color:rgb(0,135,0)">def</span><span style="color:rgb(188,188,188)"> </span><span class="ansi-blue-fg">wrapper</span>(*args: P.args, **kwargs: P.kwargs) -&gt; T:
+<span class="ansi-green-fg">    125</span>     _rename_keyword_argument(
+<span class="ansi-green-fg">    126</span>         old_name, new_name, kwargs, function.<span class="ansi-blue-fg">__qualname__</span>, version
+<span class="ansi-green-fg">    127</span>     )
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">128</span>     <span style="font-weight:bold;color:rgb(0,135,0)">return</span> <span class="ansi-yellow-bg">function</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">*</span><span class="ansi-yellow-bg">args</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">*</span><span class="ansi-yellow-bg">*</span><span class="ansi-yellow-bg">kwargs</span><span class="ansi-yellow-bg">)</span>
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/ds-mlops-path/ds-mlops-path/.venv/lib/python3.12/site-packages/polars/_utils/deprecation.py:128</span>, in <span class="ansi-cyan-fg">deprecate_renamed_parameter.&lt;locals&gt;.decorate.&lt;locals&gt;.wrapper</span><span class="ansi-blue-fg">(*args, **kwargs)</span>
+<span class="ansi-green-fg">    123</span> <span style="color:rgb(175,0,255)">@wraps</span>(function)
+<span class="ansi-green-fg">    124</span> <span style="font-weight:bold;color:rgb(0,135,0)">def</span><span style="color:rgb(188,188,188)"> </span><span class="ansi-blue-fg">wrapper</span>(*args: P.args, **kwargs: P.kwargs) -&gt; T:
+<span class="ansi-green-fg">    125</span>     _rename_keyword_argument(
+<span class="ansi-green-fg">    126</span>         old_name, new_name, kwargs, function.<span class="ansi-blue-fg">__qualname__</span>, version
+<span class="ansi-green-fg">    127</span>     )
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">128</span>     <span style="font-weight:bold;color:rgb(0,135,0)">return</span> <span class="ansi-yellow-bg">function</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">*</span><span class="ansi-yellow-bg">args</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">*</span><span class="ansi-yellow-bg">*</span><span class="ansi-yellow-bg">kwargs</span><span class="ansi-yellow-bg">)</span>
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/ds-mlops-path/ds-mlops-path/.venv/lib/python3.12/site-packages/polars/_utils/deprecation.py:128</span>, in <span class="ansi-cyan-fg">deprecate_renamed_parameter.&lt;locals&gt;.decorate.&lt;locals&gt;.wrapper</span><span class="ansi-blue-fg">(*args, **kwargs)</span>
+<span class="ansi-green-fg">    123</span> <span style="color:rgb(175,0,255)">@wraps</span>(function)
+<span class="ansi-green-fg">    124</span> <span style="font-weight:bold;color:rgb(0,135,0)">def</span><span style="color:rgb(188,188,188)"> </span><span class="ansi-blue-fg">wrapper</span>(*args: P.args, **kwargs: P.kwargs) -&gt; T:
+<span class="ansi-green-fg">    125</span>     _rename_keyword_argument(
+<span class="ansi-green-fg">    126</span>         old_name, new_name, kwargs, function.<span class="ansi-blue-fg">__qualname__</span>, version
+<span class="ansi-green-fg">    127</span>     )
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">128</span>     <span style="font-weight:bold;color:rgb(0,135,0)">return</span> <span class="ansi-yellow-bg">function</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">*</span><span class="ansi-yellow-bg">args</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">*</span><span class="ansi-yellow-bg">*</span><span class="ansi-yellow-bg">kwargs</span><span class="ansi-yellow-bg">)</span>
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/ds-mlops-path/ds-mlops-path/.venv/lib/python3.12/site-packages/polars/io/csv/functions.py:578</span>, in <span class="ansi-cyan-fg">read_csv</span><span class="ansi-blue-fg">(source, has_header, columns, new_columns, separator, comment_prefix, quote_char, skip_rows, skip_lines, schema, schema_overrides, null_values, missing_utf8_is_empty_string, ignore_errors, try_parse_dates, n_threads, infer_schema, infer_schema_length, batch_size, n_rows, encoding, low_memory, rechunk, use_pyarrow, storage_options, skip_rows_after_header, row_index_name, row_index_offset, sample_size, eol_char, raise_if_empty, truncate_ragged_lines, decimal_comma, glob)</span>
+<span class="ansi-green-fg">    570</span> <span style="font-weight:bold;color:rgb(0,135,0)">else</span>:
+<span class="ansi-green-fg">    571</span>     <span style="font-weight:bold;color:rgb(0,135,0)">with</span> prepare_file_arg(
+<span class="ansi-green-fg">    572</span>         source,
+<span class="ansi-green-fg">    573</span>         encoding=encoding,
+<span class="ansi-green-fg">   (...)</span><span class="ansi-green-fg">    576</span>         storage_options=storage_options,
+<span class="ansi-green-fg">    577</span>     ) <span style="font-weight:bold;color:rgb(0,135,0)">as</span> data:
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">578</span>         df = <span class="ansi-yellow-bg">_read_csv_impl</span><span class="ansi-yellow-bg">(</span>
+<span class="ansi-green-fg">    579</span> <span class="ansi-yellow-bg">            </span><span class="ansi-yellow-bg">data</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    580</span> <span class="ansi-yellow-bg">            </span><span class="ansi-yellow-bg">has_header</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">has_header</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    581</span> <span class="ansi-yellow-bg">            </span><span class="ansi-yellow-bg">columns</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">columns</span><span class="ansi-yellow-bg"> </span><span style="font-weight:bold;color:rgb(0,135,0)" class="ansi-yellow-bg">if</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">columns</span><span class="ansi-yellow-bg"> </span><span style="font-weight:bold;color:rgb(0,135,0)" class="ansi-yellow-bg">else</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">projection</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    582</span> <span class="ansi-yellow-bg">            </span><span class="ansi-yellow-bg">separator</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">separator</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    583</span> <span class="ansi-yellow-bg">            </span><span class="ansi-yellow-bg">comment_prefix</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">comment_prefix</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    584</span> <span class="ansi-yellow-bg">            </span><span class="ansi-yellow-bg">quote_char</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">quote_char</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    585</span> <span class="ansi-yellow-bg">            </span><span class="ansi-yellow-bg">skip_rows</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">skip_rows</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    586</span> <span class="ansi-yellow-bg">            </span><span class="ansi-yellow-bg">skip_lines</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">skip_lines</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    587</span> <span class="ansi-yellow-bg">            </span><span class="ansi-yellow-bg">schema_overrides</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">schema_overrides</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    588</span> <span class="ansi-yellow-bg">            </span><span class="ansi-yellow-bg">schema</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">schema</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    589</span> <span class="ansi-yellow-bg">            </span><span class="ansi-yellow-bg">null_values</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">null_values</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    590</span> <span class="ansi-yellow-bg">            </span><span class="ansi-yellow-bg">missing_utf8_is_empty_string</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">missing_utf8_is_empty_string</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    591</span> <span class="ansi-yellow-bg">            </span><span class="ansi-yellow-bg">ignore_errors</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">ignore_errors</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    592</span> <span class="ansi-yellow-bg">            </span><span class="ansi-yellow-bg">try_parse_dates</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">try_parse_dates</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    593</span> <span class="ansi-yellow-bg">            </span><span class="ansi-yellow-bg">n_threads</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">n_threads</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    594</span> <span class="ansi-yellow-bg">            </span><span class="ansi-yellow-bg">infer_schema_length</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">infer_schema_length</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    595</span> <span class="ansi-yellow-bg">            </span><span class="ansi-yellow-bg">batch_size</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">batch_size</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    596</span> <span class="ansi-yellow-bg">            </span><span class="ansi-yellow-bg">n_rows</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">n_rows</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    597</span> <span class="ansi-yellow-bg">            </span><span class="ansi-yellow-bg">encoding</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">encoding</span><span class="ansi-yellow-bg"> </span><span style="font-weight:bold;color:rgb(0,135,0)" class="ansi-yellow-bg">if</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">encoding</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">==</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-fg ansi-yellow-bg">"</span><span class="ansi-yellow-fg ansi-yellow-bg">utf8-lossy</span><span class="ansi-yellow-fg ansi-yellow-bg">"</span><span class="ansi-yellow-bg"> </span><span style="font-weight:bold;color:rgb(0,135,0)" class="ansi-yellow-bg">else</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-fg ansi-yellow-bg">"</span><span class="ansi-yellow-fg ansi-yellow-bg">utf8</span><span class="ansi-yellow-fg ansi-yellow-bg">"</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    598</span> <span class="ansi-yellow-bg">            </span><span class="ansi-yellow-bg">low_memory</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">low_memory</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    599</span> <span class="ansi-yellow-bg">            </span><span class="ansi-yellow-bg">rechunk</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">rechunk</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    600</span> <span class="ansi-yellow-bg">            </span><span class="ansi-yellow-bg">skip_rows_after_header</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">skip_rows_after_header</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    601</span> <span class="ansi-yellow-bg">            </span><span class="ansi-yellow-bg">row_index_name</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">row_index_name</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    602</span> <span class="ansi-yellow-bg">            </span><span class="ansi-yellow-bg">row_index_offset</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">row_index_offset</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    603</span> <span class="ansi-yellow-bg">            </span><span class="ansi-yellow-bg">eol_char</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">eol_char</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    604</span> <span class="ansi-yellow-bg">            </span><span class="ansi-yellow-bg">raise_if_empty</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">raise_if_empty</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    605</span> <span class="ansi-yellow-bg">            </span><span class="ansi-yellow-bg">truncate_ragged_lines</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">truncate_ragged_lines</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    606</span> <span class="ansi-yellow-bg">            </span><span class="ansi-yellow-bg">decimal_comma</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">decimal_comma</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    607</span> <span class="ansi-yellow-bg">            </span><span class="ansi-yellow-bg">glob</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">glob</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    608</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">    610</span> <span style="font-weight:bold;color:rgb(0,135,0)">if</span> new_columns:
+<span class="ansi-green-fg">    611</span>     <span style="font-weight:bold;color:rgb(0,135,0)">return</span> _update_columns(df, new_columns)
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/ds-mlops-path/ds-mlops-path/.venv/lib/python3.12/site-packages/polars/io/csv/functions.py:730</span>, in <span class="ansi-cyan-fg">_read_csv_impl</span><span class="ansi-blue-fg">(source, has_header, columns, separator, comment_prefix, quote_char, skip_rows, skip_lines, schema, schema_overrides, null_values, missing_utf8_is_empty_string, ignore_errors, try_parse_dates, n_threads, infer_schema_length, batch_size, n_rows, encoding, low_memory, rechunk, skip_rows_after_header, row_index_name, row_index_offset, sample_size, eol_char, raise_if_empty, truncate_ragged_lines, decimal_comma, glob)</span>
+<span class="ansi-green-fg">    726</span>         <span style="font-weight:bold;color:rgb(0,135,0)">raise</span> <span style="font-weight:bold;color:rgb(215,95,95)">ValueError</span>(msg)
+<span class="ansi-green-fg">    728</span> projection, columns = parse_columns_arg(columns)
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">730</span> pydf = <span class="ansi-yellow-bg">PyDataFrame</span><span class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">read_csv</span><span class="ansi-yellow-bg">(</span>
+<span class="ansi-green-fg">    731</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">source</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    732</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">infer_schema_length</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    733</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">batch_size</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    734</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">has_header</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    735</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">ignore_errors</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    736</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">n_rows</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    737</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">skip_rows</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    738</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">skip_lines</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    739</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">projection</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    740</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">separator</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    741</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">rechunk</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    742</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">columns</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    743</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">encoding</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    744</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">n_threads</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    745</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">path</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    746</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">dtype_list</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    747</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">dtype_slice</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    748</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">low_memory</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    749</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">comment_prefix</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    750</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">quote_char</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    751</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">processed_null_values</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    752</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">missing_utf8_is_empty_string</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    753</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">try_parse_dates</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    754</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">skip_rows_after_header</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    755</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">parse_row_index_args</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">row_index_name</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">row_index_offset</span><span class="ansi-yellow-bg">)</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    756</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">eol_char</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">eol_char</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    757</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">raise_if_empty</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">raise_if_empty</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    758</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">truncate_ragged_lines</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">truncate_ragged_lines</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    759</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">decimal_comma</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">decimal_comma</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    760</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">schema</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">schema</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    761</span> <span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">    762</span> <span style="font-weight:bold;color:rgb(0,135,0)">return</span> wrap_df(pydf)
+
+<span class="ansi-red-fg">FileNotFoundError</span>: No such file or directory (os error 2): data/students_exams_results.csv</pre>
 </div>
 </div>
 </div>
 </section>
-<section id="dataframe-construction" class="level2" data-number="12.4">
-<h2 data-number="12.4" class="anchored" data-anchor-id="dataframe-construction"><span class="header-section-number">12.4</span> 1. DataFrame Construction</h2>
+<section id="dataframe-construction" class="level2">
+<h2 class="anchored" data-anchor-id="dataframe-construction">1. DataFrame Construction</h2>
 <p>Building a Polars DataFrame from a Python dict looks almost identical to pandas. The difference shows up in the schema: Polars always knows the dtype of every column, and it tells you explicitly:</p>
 <div id="7" class="cell" data-execution_count="2">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> polars <span class="im">as</span> pl</span>
@@ -474,20 +575,49 @@ Production-grade habit
 <span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(sample.schema)</span>
 <span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>sample</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-error">
-<div class="ansi-escaped-output">
-<pre><span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">ModuleNotFoundError</span>                       Traceback (most recent call last)
-<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[2]</span><span class="ansi-green-fg">, line 1</span>
-<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">1</span> <span style="font-weight:bold;color:rgb(0,135,0)">import</span><span style="color:rgb(188,188,188)"> </span><span class="ansi-blue-fg ansi-bold">polars</span><span style="color:rgb(188,188,188)"> </span><span style="font-weight:bold;color:rgb(0,135,0)">as</span><span style="color:rgb(188,188,188)"> </span><span class="ansi-blue-fg ansi-bold">pl</span>
-<span class="ansi-green-fg">      3</span> sample = pl.DataFrame(
-<span class="ansi-green-fg">      4</span>     {
-<span class="ansi-green-fg">      5</span>         <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">student_id</span><span class="ansi-yellow-fg">"</span>: [<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">s001</span><span class="ansi-yellow-fg">"</span>, <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">s002</span><span class="ansi-yellow-fg">"</span>, <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">s003</span><span class="ansi-yellow-fg">"</span>],
-<span class="ansi-green-fg">   (...)</span><span class="ansi-green-fg">      8</span>     }
-<span class="ansi-green-fg">      9</span> )
-<span class="ansi-green-fg">     10</span> <span style="color:rgb(0,135,0)">print</span>(sample.schema)
-
-<span class="ansi-red-fg">ModuleNotFoundError</span>: No module named 'polars'</pre>
+<div class="cell-output cell-output-stdout">
+<pre><code>Schema({'student_id': String, 'mathematics_marks': Float64, 'gender': String})</code></pre>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="2">
+<div><style>
+.dataframe > thead > tr,
+.dataframe > tbody > tr {
+  text-align: right;
+  white-space: pre-wrap;
+}
+</style>
+<small>shape: (3, 3)</small>
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">student_id</th>
+<th data-quarto-table-cell-role="th">mathematics_marks</th>
+<th data-quarto-table-cell-role="th">gender</th>
+</tr>
+<tr class="even">
+<td>str</td>
+<td>f64</td>
+<td>str</td>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>"s001"</td>
+<td>0.62</td>
+<td>"F"</td>
+</tr>
+<tr class="even">
+<td>"s002"</td>
+<td>0.78</td>
+<td>"M"</td>
+</tr>
+<tr class="odd">
+<td>"s003"</td>
+<td>0.91</td>
+<td>"F"</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 </div>
@@ -496,9 +626,9 @@ Production-grade habit
 </div>
 <p>The first checks after loading data are the same in Polars as in pandas, but the method names differ slightly:</p>
 <div id="10" class="cell" data-execution_count="3">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"shape      : </span><span class="sc">{</span>df<span class="sc">.</span>shape<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"dtypes     :</span><span class="ch">\n</span><span class="sc">{</span>df<span class="sc">.</span>dtypes<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>df.describe()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"shape      : </span><span class="sc">{</span>df<span class="sc">.</span>shape<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"dtypes     :</span><span class="ch">\n</span><span class="sc">{</span>df<span class="sc">.</span>dtypes<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>df.describe()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-error">
 <div class="ansi-escaped-output">
 <pre><span class="ansi-red-fg">---------------------------------------------------------------------------</span>
@@ -521,16 +651,16 @@ Production-grade habit
 df.describe()</pre>
 </div>
 <div id="13" class="cell" data-execution_count="4">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: print schema, then call df.describe()</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: print schema, then call df.describe()</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
-<section id="the-expression-api-select-filter-with_columns" class="level2" data-number="12.5">
-<h2 data-number="12.5" class="anchored" data-anchor-id="the-expression-api-select-filter-with_columns"><span class="header-section-number">12.5</span> 2. The Expression API: <code>select</code>, <code>filter</code>, <code>with_columns</code></h2>
+<section id="the-expression-api-select-filter-with_columns" class="level2">
+<h2 class="anchored" data-anchor-id="the-expression-api-select-filter-with_columns">2. The Expression API: <code>select</code>, <code>filter</code>, <code>with_columns</code></h2>
 <p>The biggest difference from pandas is that Polars does not use bracket indexing for column selection or boolean filtering. Instead, every operation goes through <code>pl.col()</code> expressions, which describe what to compute without computing it immediately.</p>
 <div id="16" class="cell" data-execution_count="5">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Select specific columns -- equivalent to df[["col_a", "col_b"]] in pandas</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>df.select([<span class="st">"student_id"</span>, <span class="st">"mathematics_marks"</span>, <span class="st">"english_marks"</span>]).head(<span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Select specific columns -- equivalent to df[["col_a", "col_b"]] in pandas</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>df.select([<span class="st">"student_id"</span>, <span class="st">"mathematics_marks"</span>, <span class="st">"english_marks"</span>]).head(<span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-error">
 <div class="ansi-escaped-output">
 <pre><span class="ansi-red-fg">---------------------------------------------------------------------------</span>
@@ -548,10 +678,10 @@ df.describe()</pre>
 </div>
 <p><code>filter</code> is the Polars equivalent of boolean indexing:</p>
 <div id="19" class="cell" data-execution_count="6">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># filter -- equivalent to df[df["mathematics_marks"] &gt; 0.9] in pandas</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>high_scorers <span class="op">=</span> df.<span class="bu">filter</span>(pl.col(<span class="st">"mathematics_marks"</span>) <span class="op">&gt;</span> <span class="fl">0.9</span>)</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"high scorers: </span><span class="sc">{</span><span class="bu">len</span>(high_scorers)<span class="sc">}</span><span class="ss"> of </span><span class="sc">{</span><span class="bu">len</span>(df)<span class="sc">}</span><span class="ss"> students"</span>)</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>high_scorers.head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># filter -- equivalent to df[df["mathematics_marks"] &gt; 0.9] in pandas</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>high_scorers <span class="op">=</span> df.<span class="bu">filter</span>(pl.col(<span class="st">"mathematics_marks"</span>) <span class="op">&gt;</span> <span class="fl">0.9</span>)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"high scorers: </span><span class="sc">{</span><span class="bu">len</span>(high_scorers)<span class="sc">}</span><span class="ss"> of </span><span class="sc">{</span><span class="bu">len</span>(df)<span class="sc">}</span><span class="ss"> students"</span>)</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>high_scorers.head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-error">
 <div class="ansi-escaped-output">
 <pre><span class="ansi-red-fg">---------------------------------------------------------------------------</span>
@@ -568,8 +698,8 @@ df.describe()</pre>
 </div>
 <p>Combine conditions with <code>&amp;</code> and <code>|</code>, same as pandas, but directly inside <code>filter</code> with <code>pl.col()</code> expressions:</p>
 <div id="21" class="cell" data-execution_count="7">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>dropped_with_internet <span class="op">=</span> df.<span class="bu">filter</span>((pl.col(<span class="st">"continue_drop"</span>) <span class="op">==</span> <span class="st">"drop"</span>) <span class="op">&amp;</span> (pl.col(<span class="st">"internet"</span>) <span class="op">==</span> <span class="dv">1</span>))</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"dropped with internet: </span><span class="sc">{</span><span class="bu">len</span>(dropped_with_internet)<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>dropped_with_internet <span class="op">=</span> df.<span class="bu">filter</span>((pl.col(<span class="st">"continue_drop"</span>) <span class="op">==</span> <span class="st">"drop"</span>) <span class="op">&amp;</span> (pl.col(<span class="st">"internet"</span>) <span class="op">==</span> <span class="dv">1</span>))</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"dropped with internet: </span><span class="sc">{</span><span class="bu">len</span>(dropped_with_internet)<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-error">
 <div class="ansi-escaped-output">
 <pre><span class="ansi-red-fg">---------------------------------------------------------------------------</span>
@@ -584,11 +714,11 @@ df.describe()</pre>
 </div>
 <p><code>with_columns</code> adds or replaces columns. The result is always a new DataFrame; the original is never modified:</p>
 <div id="23" class="cell" data-execution_count="8">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Add average_marks -- equivalent to df["average_marks"] = ... in pandas</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> df.with_columns(</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    average_marks<span class="op">=</span>((pl.col(<span class="st">"mathematics_marks"</span>) <span class="op">+</span> pl.col(<span class="st">"english_marks"</span>) <span class="op">+</span> pl.col(<span class="st">"science_marks"</span>)) <span class="op">/</span> <span class="dv">3</span>)</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>df.select([<span class="st">"student_id"</span>, <span class="st">"average_marks"</span>]).head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Add average_marks -- equivalent to df["average_marks"] = ... in pandas</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> df.with_columns(</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    average_marks<span class="op">=</span>((pl.col(<span class="st">"mathematics_marks"</span>) <span class="op">+</span> pl.col(<span class="st">"english_marks"</span>) <span class="op">+</span> pl.col(<span class="st">"science_marks"</span>)) <span class="op">/</span> <span class="dv">3</span>)</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>df.select([<span class="st">"student_id"</span>, <span class="st">"average_marks"</span>]).head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-error">
 <div class="ansi-escaped-output">
 <pre><span class="ansi-red-fg">---------------------------------------------------------------------------</span>
@@ -615,19 +745,32 @@ df.describe()</pre>
 df.filter(pl.col("passed")).shape[0]</pre>
 </div>
 <div id="26" class="cell" data-execution_count="9">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: add "passed" column, filter to passing students, print count</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: add "passed" column, filter to passing students, print count</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div style="background:#F4F5F6;border-left:5px solid #6B7280;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#6B7280;font-weight:bold"><i class="bi bi-lightbulb-fill"></i> Pro Tip: Use <code>polars.selectors</code> to select columns by type, not by name</span><br><br> <code>polars.selectors</code> (aliased as <code>cs</code>) provides type-based column selectors, so you can write expressions like “all numeric columns” or “all string columns” without listing names:</p>
+<pre style="background:#F4F5F6;padding:10px;border-radius:4px;font-size:0.9em">import polars.selectors as cs
+
+# Normalise every numeric column in one expression
+df.with_columns(
+    (cs.numeric() - cs.numeric().mean()) / cs.numeric().std()
+)
+
+# Select only string columns
+df.select(cs.string())</pre>
+<p>Common selectors: <code>cs.numeric()</code>, <code>cs.string()</code>, <code>cs.boolean()</code>, <code>cs.temporal()</code>, <code>cs.by_dtype(pl.Float64)</code>. Combine them with <code>|</code> (union) or <code>&amp;</code> (intersection): <code>cs.numeric() | cs.boolean()</code>. This is especially useful in feature engineering pipelines where the set of columns may change between runs.</p>
 </div>
 </section>
-<section id="groupby-and-aggregation" class="level2" data-number="12.6">
-<h2 data-number="12.6" class="anchored" data-anchor-id="groupby-and-aggregation"><span class="header-section-number">12.6</span> 3. GroupBy and Aggregation</h2>
+<section id="groupby-and-aggregation" class="level2">
+<h2 class="anchored" data-anchor-id="groupby-and-aggregation">3. GroupBy and Aggregation</h2>
 <p>Polars <code>group_by</code> uses the same split-apply-combine concept as pandas, but the aggregation is specified as a list of expressions inside <code>.agg()</code>, not as a method chained after <code>.mean()</code> or <code>.sum()</code>:</p>
-<div id="29" class="cell" data-execution_count="10">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>df.group_by(<span class="st">"caste"</span>).agg(</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    pl.col(<span class="st">"average_marks"</span>).mean().alias(<span class="st">"mean_marks"</span>),</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    pl.col(<span class="st">"average_marks"</span>).std().alias(<span class="st">"std_marks"</span>),</span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    pl.<span class="bu">len</span>().alias(<span class="st">"count"</span>),</span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>).sort(<span class="st">"caste"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="30" class="cell" data-execution_count="10">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>df.group_by(<span class="st">"caste"</span>).agg(</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    pl.col(<span class="st">"average_marks"</span>).mean().alias(<span class="st">"mean_marks"</span>),</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    pl.col(<span class="st">"average_marks"</span>).std().alias(<span class="st">"std_marks"</span>),</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    pl.<span class="bu">len</span>().alias(<span class="st">"count"</span>),</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>).sort(<span class="st">"caste"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-error">
 <div class="ansi-escaped-output">
 <pre><span class="ansi-red-fg">---------------------------------------------------------------------------</span>
@@ -647,10 +790,10 @@ df.filter(pl.col("passed")).shape[0]</pre>
 <p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-info-circle-fill"></i> Key Concept: <code>.agg()</code> takes a list of expressions, each producing one output column</span><br><br> In pandas, <code>groupby(“caste”)[“average_marks”].agg([“mean”, “std”, “count”])</code> returns a DataFrame with the stats as columns. In Polars the same result comes from passing named expressions to <code>.agg()</code>: <code>pl.col(“average_marks”).mean().alias(“mean_marks”)</code>. The explicit <code>.alias()</code> is required when the default auto-generated name would be ambiguous.</p>
 </div>
 <p>Grouping by more than one column works the same way:</p>
-<div id="32" class="cell" data-execution_count="11">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>df.group_by([<span class="st">"caste"</span>, <span class="st">"gender"</span>]).agg(</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    pl.col(<span class="st">"average_marks"</span>).mean().alias(<span class="st">"mean_marks"</span>),</span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>).sort([<span class="st">"caste"</span>, <span class="st">"gender"</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="33" class="cell" data-execution_count="11">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>df.group_by([<span class="st">"caste"</span>, <span class="st">"gender"</span>]).agg(</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    pl.col(<span class="st">"average_marks"</span>).mean().alias(<span class="st">"mean_marks"</span>),</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>).sort([<span class="st">"caste"</span>, <span class="st">"gender"</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-error">
 <div class="ansi-escaped-output">
 <pre><span class="ansi-red-fg">---------------------------------------------------------------------------</span>
@@ -673,26 +816,26 @@ df.filter(pl.col("passed")).shape[0]</pre>
     drop_fraction=(pl.col("continue_drop") == "drop").mean()
 ).sort("caste")</pre>
 </div>
-<div id="35" class="cell" data-execution_count="12">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: group by caste, compute drop fraction per group, sort by caste</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="36" class="cell" data-execution_count="12">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: group by caste, compute drop fraction per group, sort by caste</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
-<section id="lazyframe-and-lazy-evaluation" class="level2" data-number="12.7">
-<h2 data-number="12.7" class="anchored" data-anchor-id="lazyframe-and-lazy-evaluation"><span class="header-section-number">12.7</span> 4. LazyFrame and Lazy Evaluation</h2>
+<section id="lazyframe-and-lazy-evaluation" class="level2">
+<h2 class="anchored" data-anchor-id="lazyframe-and-lazy-evaluation">4. LazyFrame and Lazy Evaluation</h2>
 <p>Every Polars operation above ran eagerly: it computed the result immediately and returned a new DataFrame. <code>df.lazy()</code> switches to lazy mode. In lazy mode, operations build a <em>query plan</em> instead of executing immediately. <code>.collect()</code> runs the optimized plan.</p>
-<div id="38" class="cell" data-execution_count="13">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Build a query plan -- nothing executes yet</span></span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>lazy_query <span class="op">=</span> (</span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    df.lazy()</span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    .<span class="bu">filter</span>(pl.col(<span class="st">"internet"</span>) <span class="op">==</span> <span class="dv">1</span>)</span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    .group_by(<span class="st">"caste"</span>)</span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>    .agg(pl.col(<span class="st">"average_marks"</span>).mean().alias(<span class="st">"mean_marks"</span>))</span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>    .sort(<span class="st">"mean_marks"</span>, descending<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Inspect the query plan before running</span></span>
-<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(lazy_query.explain())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="39" class="cell" data-execution_count="13">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Build a query plan -- nothing executes yet</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>lazy_query <span class="op">=</span> (</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    df.lazy()</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    .<span class="bu">filter</span>(pl.col(<span class="st">"internet"</span>) <span class="op">==</span> <span class="dv">1</span>)</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>    .group_by(<span class="st">"caste"</span>)</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>    .agg(pl.col(<span class="st">"average_marks"</span>).mean().alias(<span class="st">"mean_marks"</span>))</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>    .sort(<span class="st">"mean_marks"</span>, descending<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Inspect the query plan before running</span></span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(lazy_query.explain())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-error">
 <div class="ansi-escaped-output">
 <pre><span class="ansi-red-fg">---------------------------------------------------------------------------</span>
@@ -713,9 +856,9 @@ df.filter(pl.col("passed")).shape[0]</pre>
 </div>
 </div>
 </div>
-<div id="39" class="cell" data-execution_count="14">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Execute the plan and get the result</span></span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>lazy_query.collect()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="40" class="cell" data-execution_count="14">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Execute the plan and get the result</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>lazy_query.collect()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-error">
 <div class="ansi-escaped-output">
 <pre><span class="ansi-red-fg">---------------------------------------------------------------------------</span>
@@ -747,28 +890,183 @@ df.filter(pl.col("passed")).shape[0]</pre>
 )
 top_schools</pre>
 </div>
-<div id="43" class="cell" data-execution_count="15">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: lazy top-schools query</span></span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="44" class="cell" data-execution_count="15">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: lazy top-schools query</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
-<section id="datetime-in-polars" class="level2" data-number="12.8">
-<h2 data-number="12.8" class="anchored" data-anchor-id="datetime-in-polars"><span class="header-section-number">12.8</span> 5. Date/Time in Polars</h2>
-<p>Polars can parse dates directly at read time with <code>try_parse_dates=True</code>. There is no separate <code>to_datetime</code> step for standard ISO-format date strings:</p>
+<section id="sql-interface" class="level2">
+<h2 class="anchored" data-anchor-id="sql-interface">4.5 SQL Interface</h2>
+<p>Polars 1.x ships a built-in SQL interface. <code>pl.SQLContext</code> registers one or more DataFrames under names and lets you query them with standard SQL. This is useful for teams comfortable with SQL, for migrating existing SQL queries to Polars, and for ad-hoc exploration without learning the full expression API:</p>
+<div style="background:#EAF3FA;border-left:5px solid #0369A1;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-info-circle-fill"></i> Key Concept: SQL queries run on lazy DataFrames and benefit from the same query optimization</span><br><br> <code>pl.SQLContext</code> compiles SQL into Polars’ lazy query plan. The optimizer applies the same predicate pushdown and projection pushdown as a hand-written <code>.lazy().filter().select()</code> chain. You get SQL’s readability and Polars’ performance for free.</p>
+</div>
 <div id="46" class="cell" data-execution_count="16">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>attendance <span class="op">=</span> pl.read_csv(<span class="st">"data/daily_attendance.csv"</span>, try_parse_dates<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(attendance.dtypes)</span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>attendance.head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> polars <span class="im">as</span> pl</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Register DataFrames under SQL table names</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>ctx <span class="op">=</span> pl.SQLContext(students<span class="op">=</span>df, eager<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Query 1: top-performing castes — pure SQL</span></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>result <span class="op">=</span> ctx.execute(<span class="st">"""</span></span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a><span class="st">    SELECT</span></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a><span class="st">        caste,</span></span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a><span class="st">        AVG(average_marks)  AS mean_marks,</span></span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a><span class="st">        COUNT(*)            AS n_students</span></span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a><span class="st">    FROM students</span></span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a><span class="st">    GROUP BY caste</span></span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a><span class="st">    ORDER BY mean_marks DESC</span></span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a><span class="st">"""</span>)</span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(result)</span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Query 2: filter + select — same as df.filter().select() but SQL syntax</span></span>
+<span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a>high_scorers_sql <span class="op">=</span> ctx.execute(<span class="st">"""</span></span>
+<span id="cb17-20"><a href="#cb17-20" aria-hidden="true" tabindex="-1"></a><span class="st">    SELECT student_id, average_marks</span></span>
+<span id="cb17-21"><a href="#cb17-21" aria-hidden="true" tabindex="-1"></a><span class="st">    FROM students</span></span>
+<span id="cb17-22"><a href="#cb17-22" aria-hidden="true" tabindex="-1"></a><span class="st">    WHERE average_marks &gt; 0.9</span></span>
+<span id="cb17-23"><a href="#cb17-23" aria-hidden="true" tabindex="-1"></a><span class="st">    ORDER BY average_marks DESC</span></span>
+<span id="cb17-24"><a href="#cb17-24" aria-hidden="true" tabindex="-1"></a><span class="st">    LIMIT 5</span></span>
+<span id="cb17-25"><a href="#cb17-25" aria-hidden="true" tabindex="-1"></a><span class="st">"""</span>)</span>
+<span id="cb17-26"><a href="#cb17-26" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(high_scorers_sql)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-error">
 <div class="ansi-escaped-output">
 <pre><span class="ansi-red-fg">---------------------------------------------------------------------------</span>
 <span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
-<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[16]</span><span class="ansi-green-fg">, line 1</span>
-<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">1</span> attendance = <span class="ansi-yellow-bg">pl</span>.read_csv(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">data/daily_attendance.csv</span><span class="ansi-yellow-fg">"</span>, try_parse_dates=<span style="font-weight:bold;color:rgb(0,135,0)">True</span>)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[16]</span><span class="ansi-green-fg">, line 4</span>
+<span class="ansi-green-fg">      1</span> <span style="font-weight:bold;color:rgb(0,135,0)">import</span><span style="color:rgb(188,188,188)"> </span><span class="ansi-blue-fg ansi-bold">polars</span><span style="color:rgb(188,188,188)"> </span><span style="font-weight:bold;color:rgb(0,135,0)">as</span><span style="color:rgb(188,188,188)"> </span><span class="ansi-blue-fg ansi-bold">pl</span>
+<span class="ansi-green-fg">      3</span> <span style="font-style:italic;color:rgb(95,135,135)"># Register DataFrames under SQL table names</span>
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">4</span> ctx = pl.SQLContext(students=<span class="ansi-yellow-bg">df</span>, eager=<span style="font-weight:bold;color:rgb(0,135,0)">True</span>)
+<span class="ansi-green-fg">      6</span> <span style="font-style:italic;color:rgb(95,135,135)"># Query 1: top-performing castes — pure SQL</span>
+<span class="ansi-green-fg">      7</span> result = ctx.execute(<span class="ansi-yellow-fg">"""</span>
+<span class="ansi-green-fg">      8</span> <span class="ansi-yellow-fg">    SELECT</span>
+<span class="ansi-green-fg">      9</span> <span class="ansi-yellow-fg">        caste,</span>
+<span class="ansi-green-fg">   (...)</span><span class="ansi-green-fg">     14</span> <span class="ansi-yellow-fg">    ORDER BY mean_marks DESC</span>
+<span class="ansi-green-fg">     15</span> <span class="ansi-yellow-fg">"""</span>)
+
+<span class="ansi-red-fg">NameError</span>: name 'df' is not defined</pre>
+</div>
+</div>
+</div>
+</section>
+<section id="datetime-in-polars" class="level2">
+<h2 class="anchored" data-anchor-id="datetime-in-polars">5. Date/Time in Polars</h2>
+<p>Polars can parse dates directly at read time with <code>try_parse_dates=True</code>. There is no separate <code>to_datetime</code> step for standard ISO-format date strings:</p>
+<div id="49" class="cell" data-execution_count="17">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>attendance <span class="op">=</span> pl.read_csv(<span class="st">"data/daily_attendance.csv"</span>, try_parse_dates<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(attendance.dtypes)</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>attendance.head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-error">
+<div class="ansi-escaped-output">
+<pre><span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">FileNotFoundError</span>                         Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[17]</span><span class="ansi-green-fg">, line 1</span>
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">1</span> attendance = <span class="ansi-yellow-bg">pl</span><span class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">read_csv</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-fg ansi-yellow-bg">"</span><span class="ansi-yellow-fg ansi-yellow-bg">data/daily_attendance.csv</span><span class="ansi-yellow-fg ansi-yellow-bg">"</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">try_parse_dates</span><span class="ansi-yellow-bg">=</span><span style="font-weight:bold;color:rgb(0,135,0)" class="ansi-yellow-bg">True</span><span class="ansi-yellow-bg">)</span>
 <span class="ansi-green-fg">      2</span> <span style="color:rgb(0,135,0)">print</span>(attendance.dtypes)
 <span class="ansi-green-fg">      3</span> attendance.head()
 
-<span class="ansi-red-fg">NameError</span>: name 'pl' is not defined</pre>
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/ds-mlops-path/ds-mlops-path/.venv/lib/python3.12/site-packages/polars/_utils/deprecation.py:128</span>, in <span class="ansi-cyan-fg">deprecate_renamed_parameter.&lt;locals&gt;.decorate.&lt;locals&gt;.wrapper</span><span class="ansi-blue-fg">(*args, **kwargs)</span>
+<span class="ansi-green-fg">    123</span> <span style="color:rgb(175,0,255)">@wraps</span>(function)
+<span class="ansi-green-fg">    124</span> <span style="font-weight:bold;color:rgb(0,135,0)">def</span><span style="color:rgb(188,188,188)"> </span><span class="ansi-blue-fg">wrapper</span>(*args: P.args, **kwargs: P.kwargs) -&gt; T:
+<span class="ansi-green-fg">    125</span>     _rename_keyword_argument(
+<span class="ansi-green-fg">    126</span>         old_name, new_name, kwargs, function.<span class="ansi-blue-fg">__qualname__</span>, version
+<span class="ansi-green-fg">    127</span>     )
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">128</span>     <span style="font-weight:bold;color:rgb(0,135,0)">return</span> <span class="ansi-yellow-bg">function</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">*</span><span class="ansi-yellow-bg">args</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">*</span><span class="ansi-yellow-bg">*</span><span class="ansi-yellow-bg">kwargs</span><span class="ansi-yellow-bg">)</span>
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/ds-mlops-path/ds-mlops-path/.venv/lib/python3.12/site-packages/polars/_utils/deprecation.py:128</span>, in <span class="ansi-cyan-fg">deprecate_renamed_parameter.&lt;locals&gt;.decorate.&lt;locals&gt;.wrapper</span><span class="ansi-blue-fg">(*args, **kwargs)</span>
+<span class="ansi-green-fg">    123</span> <span style="color:rgb(175,0,255)">@wraps</span>(function)
+<span class="ansi-green-fg">    124</span> <span style="font-weight:bold;color:rgb(0,135,0)">def</span><span style="color:rgb(188,188,188)"> </span><span class="ansi-blue-fg">wrapper</span>(*args: P.args, **kwargs: P.kwargs) -&gt; T:
+<span class="ansi-green-fg">    125</span>     _rename_keyword_argument(
+<span class="ansi-green-fg">    126</span>         old_name, new_name, kwargs, function.<span class="ansi-blue-fg">__qualname__</span>, version
+<span class="ansi-green-fg">    127</span>     )
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">128</span>     <span style="font-weight:bold;color:rgb(0,135,0)">return</span> <span class="ansi-yellow-bg">function</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">*</span><span class="ansi-yellow-bg">args</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">*</span><span class="ansi-yellow-bg">*</span><span class="ansi-yellow-bg">kwargs</span><span class="ansi-yellow-bg">)</span>
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/ds-mlops-path/ds-mlops-path/.venv/lib/python3.12/site-packages/polars/_utils/deprecation.py:128</span>, in <span class="ansi-cyan-fg">deprecate_renamed_parameter.&lt;locals&gt;.decorate.&lt;locals&gt;.wrapper</span><span class="ansi-blue-fg">(*args, **kwargs)</span>
+<span class="ansi-green-fg">    123</span> <span style="color:rgb(175,0,255)">@wraps</span>(function)
+<span class="ansi-green-fg">    124</span> <span style="font-weight:bold;color:rgb(0,135,0)">def</span><span style="color:rgb(188,188,188)"> </span><span class="ansi-blue-fg">wrapper</span>(*args: P.args, **kwargs: P.kwargs) -&gt; T:
+<span class="ansi-green-fg">    125</span>     _rename_keyword_argument(
+<span class="ansi-green-fg">    126</span>         old_name, new_name, kwargs, function.<span class="ansi-blue-fg">__qualname__</span>, version
+<span class="ansi-green-fg">    127</span>     )
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">128</span>     <span style="font-weight:bold;color:rgb(0,135,0)">return</span> <span class="ansi-yellow-bg">function</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">*</span><span class="ansi-yellow-bg">args</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">*</span><span class="ansi-yellow-bg">*</span><span class="ansi-yellow-bg">kwargs</span><span class="ansi-yellow-bg">)</span>
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/ds-mlops-path/ds-mlops-path/.venv/lib/python3.12/site-packages/polars/io/csv/functions.py:578</span>, in <span class="ansi-cyan-fg">read_csv</span><span class="ansi-blue-fg">(source, has_header, columns, new_columns, separator, comment_prefix, quote_char, skip_rows, skip_lines, schema, schema_overrides, null_values, missing_utf8_is_empty_string, ignore_errors, try_parse_dates, n_threads, infer_schema, infer_schema_length, batch_size, n_rows, encoding, low_memory, rechunk, use_pyarrow, storage_options, skip_rows_after_header, row_index_name, row_index_offset, sample_size, eol_char, raise_if_empty, truncate_ragged_lines, decimal_comma, glob)</span>
+<span class="ansi-green-fg">    570</span> <span style="font-weight:bold;color:rgb(0,135,0)">else</span>:
+<span class="ansi-green-fg">    571</span>     <span style="font-weight:bold;color:rgb(0,135,0)">with</span> prepare_file_arg(
+<span class="ansi-green-fg">    572</span>         source,
+<span class="ansi-green-fg">    573</span>         encoding=encoding,
+<span class="ansi-green-fg">   (...)</span><span class="ansi-green-fg">    576</span>         storage_options=storage_options,
+<span class="ansi-green-fg">    577</span>     ) <span style="font-weight:bold;color:rgb(0,135,0)">as</span> data:
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">578</span>         df = <span class="ansi-yellow-bg">_read_csv_impl</span><span class="ansi-yellow-bg">(</span>
+<span class="ansi-green-fg">    579</span> <span class="ansi-yellow-bg">            </span><span class="ansi-yellow-bg">data</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    580</span> <span class="ansi-yellow-bg">            </span><span class="ansi-yellow-bg">has_header</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">has_header</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    581</span> <span class="ansi-yellow-bg">            </span><span class="ansi-yellow-bg">columns</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">columns</span><span class="ansi-yellow-bg"> </span><span style="font-weight:bold;color:rgb(0,135,0)" class="ansi-yellow-bg">if</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">columns</span><span class="ansi-yellow-bg"> </span><span style="font-weight:bold;color:rgb(0,135,0)" class="ansi-yellow-bg">else</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">projection</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    582</span> <span class="ansi-yellow-bg">            </span><span class="ansi-yellow-bg">separator</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">separator</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    583</span> <span class="ansi-yellow-bg">            </span><span class="ansi-yellow-bg">comment_prefix</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">comment_prefix</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    584</span> <span class="ansi-yellow-bg">            </span><span class="ansi-yellow-bg">quote_char</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">quote_char</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    585</span> <span class="ansi-yellow-bg">            </span><span class="ansi-yellow-bg">skip_rows</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">skip_rows</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    586</span> <span class="ansi-yellow-bg">            </span><span class="ansi-yellow-bg">skip_lines</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">skip_lines</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    587</span> <span class="ansi-yellow-bg">            </span><span class="ansi-yellow-bg">schema_overrides</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">schema_overrides</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    588</span> <span class="ansi-yellow-bg">            </span><span class="ansi-yellow-bg">schema</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">schema</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    589</span> <span class="ansi-yellow-bg">            </span><span class="ansi-yellow-bg">null_values</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">null_values</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    590</span> <span class="ansi-yellow-bg">            </span><span class="ansi-yellow-bg">missing_utf8_is_empty_string</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">missing_utf8_is_empty_string</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    591</span> <span class="ansi-yellow-bg">            </span><span class="ansi-yellow-bg">ignore_errors</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">ignore_errors</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    592</span> <span class="ansi-yellow-bg">            </span><span class="ansi-yellow-bg">try_parse_dates</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">try_parse_dates</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    593</span> <span class="ansi-yellow-bg">            </span><span class="ansi-yellow-bg">n_threads</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">n_threads</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    594</span> <span class="ansi-yellow-bg">            </span><span class="ansi-yellow-bg">infer_schema_length</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">infer_schema_length</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    595</span> <span class="ansi-yellow-bg">            </span><span class="ansi-yellow-bg">batch_size</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">batch_size</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    596</span> <span class="ansi-yellow-bg">            </span><span class="ansi-yellow-bg">n_rows</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">n_rows</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    597</span> <span class="ansi-yellow-bg">            </span><span class="ansi-yellow-bg">encoding</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">encoding</span><span class="ansi-yellow-bg"> </span><span style="font-weight:bold;color:rgb(0,135,0)" class="ansi-yellow-bg">if</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">encoding</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">==</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-fg ansi-yellow-bg">"</span><span class="ansi-yellow-fg ansi-yellow-bg">utf8-lossy</span><span class="ansi-yellow-fg ansi-yellow-bg">"</span><span class="ansi-yellow-bg"> </span><span style="font-weight:bold;color:rgb(0,135,0)" class="ansi-yellow-bg">else</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-fg ansi-yellow-bg">"</span><span class="ansi-yellow-fg ansi-yellow-bg">utf8</span><span class="ansi-yellow-fg ansi-yellow-bg">"</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    598</span> <span class="ansi-yellow-bg">            </span><span class="ansi-yellow-bg">low_memory</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">low_memory</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    599</span> <span class="ansi-yellow-bg">            </span><span class="ansi-yellow-bg">rechunk</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">rechunk</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    600</span> <span class="ansi-yellow-bg">            </span><span class="ansi-yellow-bg">skip_rows_after_header</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">skip_rows_after_header</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    601</span> <span class="ansi-yellow-bg">            </span><span class="ansi-yellow-bg">row_index_name</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">row_index_name</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    602</span> <span class="ansi-yellow-bg">            </span><span class="ansi-yellow-bg">row_index_offset</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">row_index_offset</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    603</span> <span class="ansi-yellow-bg">            </span><span class="ansi-yellow-bg">eol_char</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">eol_char</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    604</span> <span class="ansi-yellow-bg">            </span><span class="ansi-yellow-bg">raise_if_empty</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">raise_if_empty</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    605</span> <span class="ansi-yellow-bg">            </span><span class="ansi-yellow-bg">truncate_ragged_lines</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">truncate_ragged_lines</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    606</span> <span class="ansi-yellow-bg">            </span><span class="ansi-yellow-bg">decimal_comma</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">decimal_comma</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    607</span> <span class="ansi-yellow-bg">            </span><span class="ansi-yellow-bg">glob</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">glob</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    608</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">    610</span> <span style="font-weight:bold;color:rgb(0,135,0)">if</span> new_columns:
+<span class="ansi-green-fg">    611</span>     <span style="font-weight:bold;color:rgb(0,135,0)">return</span> _update_columns(df, new_columns)
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/ds-mlops-path/ds-mlops-path/.venv/lib/python3.12/site-packages/polars/io/csv/functions.py:730</span>, in <span class="ansi-cyan-fg">_read_csv_impl</span><span class="ansi-blue-fg">(source, has_header, columns, separator, comment_prefix, quote_char, skip_rows, skip_lines, schema, schema_overrides, null_values, missing_utf8_is_empty_string, ignore_errors, try_parse_dates, n_threads, infer_schema_length, batch_size, n_rows, encoding, low_memory, rechunk, skip_rows_after_header, row_index_name, row_index_offset, sample_size, eol_char, raise_if_empty, truncate_ragged_lines, decimal_comma, glob)</span>
+<span class="ansi-green-fg">    726</span>         <span style="font-weight:bold;color:rgb(0,135,0)">raise</span> <span style="font-weight:bold;color:rgb(215,95,95)">ValueError</span>(msg)
+<span class="ansi-green-fg">    728</span> projection, columns = parse_columns_arg(columns)
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">730</span> pydf = <span class="ansi-yellow-bg">PyDataFrame</span><span class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">read_csv</span><span class="ansi-yellow-bg">(</span>
+<span class="ansi-green-fg">    731</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">source</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    732</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">infer_schema_length</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    733</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">batch_size</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    734</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">has_header</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    735</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">ignore_errors</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    736</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">n_rows</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    737</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">skip_rows</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    738</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">skip_lines</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    739</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">projection</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    740</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">separator</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    741</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">rechunk</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    742</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">columns</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    743</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">encoding</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    744</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">n_threads</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    745</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">path</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    746</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">dtype_list</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    747</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">dtype_slice</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    748</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">low_memory</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    749</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">comment_prefix</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    750</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">quote_char</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    751</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">processed_null_values</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    752</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">missing_utf8_is_empty_string</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    753</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">try_parse_dates</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    754</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">skip_rows_after_header</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    755</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">parse_row_index_args</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">row_index_name</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">row_index_offset</span><span class="ansi-yellow-bg">)</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    756</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">eol_char</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">eol_char</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    757</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">raise_if_empty</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">raise_if_empty</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    758</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">truncate_ragged_lines</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">truncate_ragged_lines</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    759</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">decimal_comma</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">decimal_comma</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    760</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">schema</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">schema</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    761</span> <span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">    762</span> <span style="font-weight:bold;color:rgb(0,135,0)">return</span> wrap_df(pydf)
+
+<span class="ansi-red-fg">FileNotFoundError</span>: No such file or directory (os error 2): data/daily_attendance.csv</pre>
 </div>
 </div>
 </div>
@@ -776,21 +1074,21 @@ top_schools</pre>
 <p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-info-circle-fill"></i> Key Concept: Polars parses dates at load time; pandas requires an explicit conversion step</span><br><br> In pandas, date columns read as <code>str</code> dtype until you call <code>pd.to_datetime()</code>. Polars with <code>try_parse_dates=True</code> infers and parses ISO-format dates automatically during <code>read_csv</code>, producing a <code>pl.Date</code> or <code>pl.Datetime</code> column. This means filtering and arithmetic work on dates immediately, without a conversion step.</p>
 </div>
 <p>Date-component extraction uses the <code>.dt</code> namespace, similar to pandas:</p>
-<div id="49" class="cell" data-execution_count="17">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract year, month, and weekday from the date column</span></span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>attendance.select(</span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>    [</span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>        <span class="st">"date"</span>,</span>
-<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>        pl.col(<span class="st">"date"</span>).dt.year().alias(<span class="st">"year"</span>),</span>
-<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>        pl.col(<span class="st">"date"</span>).dt.month().alias(<span class="st">"month"</span>),</span>
-<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>        pl.col(<span class="st">"date"</span>).dt.weekday().alias(<span class="st">"weekday"</span>),  <span class="co"># Mon=1 ... Sun=7</span></span>
-<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>    ]</span>
-<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>).head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="52" class="cell" data-execution_count="18">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract year, month, and weekday from the date column</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>attendance.select(</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>    [</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>        <span class="st">"date"</span>,</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>        pl.col(<span class="st">"date"</span>).dt.year().alias(<span class="st">"year"</span>),</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>        pl.col(<span class="st">"date"</span>).dt.month().alias(<span class="st">"month"</span>),</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>        pl.col(<span class="st">"date"</span>).dt.weekday().alias(<span class="st">"weekday"</span>),  <span class="co"># Mon=1 ... Sun=7</span></span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>    ]</span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>).head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-error">
 <div class="ansi-escaped-output">
 <pre><span class="ansi-red-fg">---------------------------------------------------------------------------</span>
 <span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
-<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[17]</span><span class="ansi-green-fg">, line 2</span>
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[18]</span><span class="ansi-green-fg">, line 2</span>
 <span class="ansi-green-fg">      1</span> <span style="font-style:italic;color:rgb(95,135,135)"># Extract year, month, and weekday from the date column</span>
 <span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">2</span> <span class="ansi-yellow-bg">attendance</span>.select(
 <span class="ansi-green-fg">      3</span>     [
@@ -806,18 +1104,18 @@ top_schools</pre>
 </div>
 </div>
 <p>Resampling to weekly or monthly means uses <code>group_by_dynamic</code> instead of pandas’ <code>resample</code>:</p>
-<div id="51" class="cell" data-execution_count="18">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Monthly mean attendance rate per school using group_by_dynamic</span></span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>school_300 <span class="op">=</span> attendance.<span class="bu">filter</span>(pl.col(<span class="st">"school_id"</span>) <span class="op">==</span> <span class="dv">300</span>)</span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>school_300.sort(<span class="st">"date"</span>).group_by_dynamic(<span class="st">"date"</span>, every<span class="op">=</span><span class="st">"1mo"</span>, group_by<span class="op">=</span><span class="st">"school_id"</span>).agg(</span>
-<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>    pl.col(<span class="st">"attendance_rate"</span>).mean().alias(<span class="st">"monthly_mean"</span>)</span>
-<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="54" class="cell" data-execution_count="19">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Monthly mean attendance rate per school using group_by_dynamic</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>school_300 <span class="op">=</span> attendance.<span class="bu">filter</span>(pl.col(<span class="st">"school_id"</span>) <span class="op">==</span> <span class="dv">300</span>)</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>school_300.sort(<span class="st">"date"</span>).group_by_dynamic(<span class="st">"date"</span>, every<span class="op">=</span><span class="st">"1mo"</span>, group_by<span class="op">=</span><span class="st">"school_id"</span>).agg(</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>    pl.col(<span class="st">"attendance_rate"</span>).mean().alias(<span class="st">"monthly_mean"</span>)</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-error">
 <div class="ansi-escaped-output">
 <pre><span class="ansi-red-fg">---------------------------------------------------------------------------</span>
 <span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
-<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[18]</span><span class="ansi-green-fg">, line 2</span>
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[19]</span><span class="ansi-green-fg">, line 2</span>
 <span class="ansi-green-fg">      1</span> <span style="font-style:italic;color:rgb(95,135,135)"># Monthly mean attendance rate per school using group_by_dynamic</span>
 <span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">2</span> school_300 = <span class="ansi-yellow-bg">attendance</span>.filter(pl.col(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">school_id</span><span class="ansi-yellow-fg">"</span>) == <span class="ansi-green-fg">300</span>)
 <span class="ansi-green-fg">      4</span> school_300.sort(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">date</span><span class="ansi-yellow-fg">"</span>).group_by_dynamic(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">date</span><span class="ansi-yellow-fg">"</span>, every=<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">1mo</span><span class="ansi-yellow-fg">"</span>, group_by=<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">school_id</span><span class="ansi-yellow-fg">"</span>).agg(
@@ -839,13 +1137,13 @@ top_schools</pre>
     pl.col("attendance_rate").mean().alias("monthly_mean")
 ).sort(["school_id", "date"])</pre>
 </div>
-<div id="54" class="cell" data-execution_count="19">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: monthly mean attendance per school using group_by_dynamic</span></span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="57" class="cell" data-execution_count="20">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: monthly mean attendance per school using group_by_dynamic</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
-<section id="migration-patterns-pandas-to-polars" class="level2" data-number="12.9">
-<h2 data-number="12.9" class="anchored" data-anchor-id="migration-patterns-pandas-to-polars"><span class="header-section-number">12.9</span> 6. Migration Patterns: pandas to Polars</h2>
+<section id="migration-patterns-pandas-to-polars" class="level2">
+<h2 class="anchored" data-anchor-id="migration-patterns-pandas-to-polars">6. Migration Patterns: pandas to Polars</h2>
 <p>The table below maps the most common pandas operations from Parts 8-10 to their Polars equivalents. The concepts are the same; the API surface is different:</p>
 <table class="caption-top table">
 <colgroup>
@@ -932,8 +1230,8 @@ top_schools</pre>
 <p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-info-circle-fill"></i> Key Concept: Polars is strict; pandas is permissive</span><br><br> Polars raises errors early: wrong dtype in a column, missing <code>.collect()</code> on a LazyFrame, unsorted data before <code>group_by_dynamic</code>. Pandas absorbs most of these quietly, sometimes silently producing a wrong result. The Polars errors feel strict at first but save time in larger pipelines where a wrong-but-valid pandas result would surface much later.</p>
 </div>
 </section>
-<section id="capstone-reproduce-the-pandas-capstone-exercises-in-polars" class="level2" data-number="12.10">
-<h2 data-number="12.10" class="anchored" data-anchor-id="capstone-reproduce-the-pandas-capstone-exercises-in-polars"><span class="header-section-number">12.10</span> Capstone: Reproduce the pandas Capstone Exercises in Polars</h2>
+<section id="capstone-reproduce-the-pandas-capstone-exercises-in-polars" class="level2">
+<h2 class="anchored" data-anchor-id="capstone-reproduce-the-pandas-capstone-exercises-in-polars">Capstone: Reproduce the pandas Capstone Exercises in Polars</h2>
 <div style="background:#FFF1E6;border-left:5px solid #EA580C;padding:14px 18px;border-radius:6px;margin:16px 0">
 <span style="color:#9A3412;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Capstone Exercise - Top Schools, Risk Report, and Regional Summary</span><br><br> <b>Goal:</b> Reproduce three capstones from earlier parts using Polars:
 <ol>
@@ -980,13 +1278,13 @@ regional_summary = merged.group_by("region").agg(
     pl.col("average_marks").mean().alias("mean_marks")
 ).sort("region")</pre>
 </div>
-<div id="61" class="cell" data-execution_count="20">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: reproduce top schools, risk report, and regional summary in Polars</span></span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="64" class="cell" data-execution_count="21">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: reproduce top schools, risk report, and regional summary in Polars</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
-<section id="summary" class="level2" data-number="12.11">
-<h2 data-number="12.11" class="anchored" data-anchor-id="summary"><span class="header-section-number">12.11</span> Summary</h2>
+<section id="summary" class="level2">
+<h2 class="anchored" data-anchor-id="summary">Summary</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 50%">
@@ -1464,16 +1762,30 @@ regional_summary = merged.group_by("region").agg(
   </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="../../tutorials/01-python-basics/10-combining-reshaping.html" class="pagination-link" aria-label="Part 10: Combining, Reshaping &amp; Time Series">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Part 10: Combining, Reshaping &amp; Time Series</span></span>
+      <a href="../../tutorials/01-python-basics/11-time-series.html" class="pagination-link" aria-label="Part 11: Time Series">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">Part 11: Time Series</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
   </div>
 </nav>
 </div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>© 2025 <a href="https://github.com/sambaiga">Anthony Faustine</a> · Apache 2.0 License</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.dev/sambaiga/ds-mlops-path/blob/main/tutorials/01-python-basics/11-polars.ipynb" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/sambaiga/ds-mlops-path/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li><li><a href="https://github.com/sambaiga/ds-mlops-path/blob/main/tutorials/01-python-basics/11-polars.ipynb" class="toc-action"><i class="bi empty"></i>View source</a></li></ul></div></div>
+    <div class="nav-footer-right">
+<p>Built with <a href="https://quarto.org">Quarto</a> · <a href="https://github.com/sambaiga/ds-mlops-path">Source on GitHub</a></p>
+</div>
+  </div>
+</footer>
 
 
 
 
-<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.dev/sambaiga/ds-mlops-path/blob/main/tutorials/01-python-basics/11-polars.ipynb" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/sambaiga/ds-mlops-path/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>
+<script src="../../site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>

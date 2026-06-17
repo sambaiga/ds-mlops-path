@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>11&nbsp; Part 10: Combining, Reshaping &amp; Time Series – DS-MLOps Path</title>
+<title>Part 10: Combining, Reshaping &amp; Time Series – DS-MLOps Path</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -68,7 +68,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../../">
-<link href="../../tutorials/01-python-basics/11-polars.html" rel="next">
+<link href="../../tutorials/01-python-basics/11-time-series.html" rel="next">
 <link href="../../tutorials/01-python-basics/09-pandas-operations.html" rel="prev">
 <script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
@@ -107,6 +107,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-label": "Search"
   }
 }</script>
+<style>html{ scroll-behavior: smooth; }</style>
 
 
 </head>
@@ -129,7 +130,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item compact">
-    <a class="nav-link" href="https://github.com/sambaiga/ds-mlops-path"> <i class="bi bi-github" role="img">
+    <a class="nav-link" href="https://github.com/sambaiga/ds-mlops-path"> <i class="bi bi-github" role="img" aria-label="View source on GitHub">
 </i> 
 <span class="menu-text"></span></a>
   </li>  
@@ -145,9 +146,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../tutorials/01-python-basics/08-pandas-core.html">Part 2 - Data Analysis</a></li><li class="breadcrumb-item"><a href="../../tutorials/01-python-basics/10-combining-reshaping.html"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Part 10: Combining, Reshaping &amp; Time Series</span></a></li></ol></nav>
-        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
-        </a>
+        <a class="flex-grow-1 no-decor" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+          <h1 class="quarto-secondary-nav-title"><span class="chapter-title">Part 10: Combining, Reshaping &amp; Time Series</span></h1>
+        </a>     
     </div>
   </nav>
 </header>
@@ -159,59 +160,51 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../index.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Welcome</span></span></a>
+  <a href="../../index.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Welcome</span></a>
   </div>
 </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
- <span class="menu-text">Part 1 - Python Basics</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false">
+ <span class="menu-text">Part 1 — Python Basics</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../tutorials/01-python-basics/01-python-core.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Part 1: Language Core (Data &amp; Types)</span></span></a>
+  <a href="../../tutorials/01-python-basics/01-python-core.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 1: Language Core (Data &amp; Types)</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../tutorials/01-python-basics/02-control-flow.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Part 2: Language Core (Control Flow &amp; Comprehensions)</span></span></a>
+  <a href="../../tutorials/01-python-basics/02-control-flow.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 2: Language Core (Control Flow &amp; Comprehensions)</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../tutorials/01-python-basics/03-python-patterns.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Part 3: Patterns for Data Science &amp; ML</span></span></a>
+  <a href="../../tutorials/01-python-basics/03-python-patterns.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 3: Patterns for Data Science &amp; ML</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../tutorials/01-python-basics/04-numpy.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Part 4: NumPy for Data &amp; ML</span></span></a>
+  <a href="../../tutorials/01-python-basics/04-numpy.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 4: NumPy for Data &amp; ML</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../tutorials/01-python-basics/05-matplotlib.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Part 5: Matplotlib and Its Ecosystem</span></span></a>
+  <a href="../../tutorials/01-python-basics/05-matplotlib.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 5: Matplotlib and Its Ecosystem</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../tutorials/01-python-basics/06-lets-plot.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Part 6: Grammar of Graphics with Lets-Plot</span></span></a>
+  <a href="../../tutorials/01-python-basics/06-lets-plot.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 6: Grammar of Graphics with Lets-Plot</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../tutorials/01-python-basics/07-data-storytelling.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Part 7: Data Storytelling and House Style</span></span></a>
+  <a href="../../tutorials/01-python-basics/07-data-storytelling.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 7: Data Storytelling and House Style</span></a>
   </div>
 </li>
       </ul>
@@ -219,7 +212,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
- <span class="menu-text">Part 2 - Data Analysis</span></a>
+ <span class="menu-text">Part 2 — Data Analysis</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -227,26 +220,27 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../tutorials/01-python-basics/08-pandas-core.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Part 8: Pandas Core</span></span></a>
+  <a href="../../tutorials/01-python-basics/08-pandas-core.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 8: Pandas Core</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../tutorials/01-python-basics/09-pandas-operations.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Part 9: Pandas Operations</span></span></a>
+  <a href="../../tutorials/01-python-basics/09-pandas-operations.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 9: Pandas Operations</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../tutorials/01-python-basics/10-combining-reshaping.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Part 10: Combining, Reshaping &amp; Time Series</span></span></a>
+  <a href="../../tutorials/01-python-basics/10-combining-reshaping.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">Part 10: Combining, Reshaping &amp; Time Series</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../tutorials/01-python-basics/11-polars.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Part 11: Polars &amp; the Expression API</span></span></a>
+  <a href="../../tutorials/01-python-basics/11-time-series.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 11: Time Series</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/11-polars.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 11: Polars &amp; the Expression API</span></a>
   </div>
 </li>
       </ul>
@@ -258,33 +252,33 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">Table of contents</h2>
+    <h2 id="toc-title">In this chapter</h2>
    
   <ul>
-  <li><a href="#before-you-begin" id="toc-before-you-begin" class="nav-link active" data-scroll-target="#before-you-begin"><span class="header-section-number">11.1</span> Before you begin</a></li>
-  <li><a href="#callout-guide" id="toc-callout-guide" class="nav-link" data-scroll-target="#callout-guide"><span class="header-section-number">11.2</span> Callout guide</a></li>
-  <li><a href="#learning-objectives" id="toc-learning-objectives" class="nav-link" data-scroll-target="#learning-objectives"><span class="header-section-number">11.3</span> Learning Objectives</a></li>
-  <li><a href="#concatenating-dataframes-with-pd.concat" id="toc-concatenating-dataframes-with-pd.concat" class="nav-link" data-scroll-target="#concatenating-dataframes-with-pd.concat"><span class="header-section-number">11.4</span> 1. Concatenating DataFrames with <code>pd.concat</code></a></li>
-  <li><a href="#joining-data-with-pd.merge" id="toc-joining-data-with-pd.merge" class="nav-link" data-scroll-target="#joining-data-with-pd.merge"><span class="header-section-number">11.5</span> 2. Joining Data with <code>pd.merge</code></a></li>
-  <li><a href="#group-by-operations" id="toc-group-by-operations" class="nav-link" data-scroll-target="#group-by-operations"><span class="header-section-number">11.6</span> 3. Group By Operations</a></li>
-  <li><a href="#pivoting-data" id="toc-pivoting-data" class="nav-link" data-scroll-target="#pivoting-data"><span class="header-section-number">11.7</span> 4. Pivoting Data</a></li>
-  <li><a href="#capstone-regional-performance-report" id="toc-capstone-regional-performance-report" class="nav-link" data-scroll-target="#capstone-regional-performance-report"><span class="header-section-number">11.8</span> Capstone: Regional Performance Report</a></li>
-  <li><a href="#time-series-data" id="toc-time-series-data" class="nav-link" data-scroll-target="#time-series-data"><span class="header-section-number">11.9</span> 5. Time Series Data</a></li>
-  <li><a href="#date-and-time-data-types" id="toc-date-and-time-data-types" class="nav-link" data-scroll-target="#date-and-time-data-types"><span class="header-section-number">11.10</span> 5. Date and Time Data Types</a></li>
-  <li><a href="#the-datetimeindex" id="toc-the-datetimeindex" class="nav-link" data-scroll-target="#the-datetimeindex"><span class="header-section-number">11.11</span> 6. The <code>DatetimeIndex</code></a></li>
-  <li><a href="#selecting-data-from-a-time-series" id="toc-selecting-data-from-a-time-series" class="nav-link" data-scroll-target="#selecting-data-from-a-time-series"><span class="header-section-number">11.12</span> 7. Selecting Data from a Time Series</a></li>
-  <li><a href="#the-power-of-pandas-resample" id="toc-the-power-of-pandas-resample" class="nav-link" data-scroll-target="#the-power-of-pandas-resample"><span class="header-section-number">11.13</span> 8. The Power of Pandas: <code>resample</code></a></li>
-  <li><a href="#capstone-term-end-attendance-report" id="toc-capstone-term-end-attendance-report" class="nav-link" data-scroll-target="#capstone-term-end-attendance-report"><span class="header-section-number">11.14</span> Capstone: Term-End Attendance Report</a></li>
-  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary"><span class="header-section-number">11.15</span> Summary</a></li>
+  <li><a href="#before-you-begin" id="toc-before-you-begin" class="nav-link active" data-scroll-target="#before-you-begin">Before you begin</a></li>
+  <li><a href="#callout-guide" id="toc-callout-guide" class="nav-link" data-scroll-target="#callout-guide">Callout guide</a></li>
+  <li><a href="#learning-objectives" id="toc-learning-objectives" class="nav-link" data-scroll-target="#learning-objectives">Learning Objectives</a></li>
+  <li><a href="#concatenating-dataframes-with-pd.concat" id="toc-concatenating-dataframes-with-pd.concat" class="nav-link" data-scroll-target="#concatenating-dataframes-with-pd.concat">1. Concatenating DataFrames with <code>pd.concat</code></a></li>
+  <li><a href="#joining-data-with-pd.merge" id="toc-joining-data-with-pd.merge" class="nav-link" data-scroll-target="#joining-data-with-pd.merge">2. Joining Data with <code>pd.merge</code></a></li>
+  <li><a href="#group-by-operations" id="toc-group-by-operations" class="nav-link" data-scroll-target="#group-by-operations">3. Group By Operations</a></li>
+  <li><a href="#pivoting-data" id="toc-pivoting-data" class="nav-link" data-scroll-target="#pivoting-data">4. Pivoting Data</a></li>
+  <li><a href="#capstone-regional-performance-report" id="toc-capstone-regional-performance-report" class="nav-link" data-scroll-target="#capstone-regional-performance-report">Capstone: Regional Performance Report</a></li>
+  <li><a href="#time-series-data" id="toc-time-series-data" class="nav-link" data-scroll-target="#time-series-data">5. Time Series Data</a></li>
+  <li><a href="#date-and-time-data-types" id="toc-date-and-time-data-types" class="nav-link" data-scroll-target="#date-and-time-data-types">5. Date and Time Data Types</a></li>
+  <li><a href="#the-datetimeindex" id="toc-the-datetimeindex" class="nav-link" data-scroll-target="#the-datetimeindex">6. The <code>DatetimeIndex</code></a></li>
+  <li><a href="#selecting-data-from-a-time-series" id="toc-selecting-data-from-a-time-series" class="nav-link" data-scroll-target="#selecting-data-from-a-time-series">7. Selecting Data from a Time Series</a></li>
+  <li><a href="#the-power-of-pandas-resample" id="toc-the-power-of-pandas-resample" class="nav-link" data-scroll-target="#the-power-of-pandas-resample">8. The Power of Pandas: <code>resample</code></a></li>
+  <li><a href="#capstone-term-end-attendance-report" id="toc-capstone-term-end-attendance-report" class="nav-link" data-scroll-target="#capstone-term-end-attendance-report">Capstone: Term-End Attendance Report</a></li>
+  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary">Summary</a></li>
   </ul>
-<div class="toc-actions"><ul><li><a href="https://github.dev/sambaiga/ds-mlops-path/blob/main/tutorials/01-python-basics/10-combining-reshaping.ipynb" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/sambaiga/ds-mlops-path/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+<div class="toc-actions"><ul><li><a href="https://github.dev/sambaiga/ds-mlops-path/blob/main/tutorials/01-python-basics/10-combining-reshaping.ipynb" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/sambaiga/ds-mlops-path/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li><li><a href="https://github.com/sambaiga/ds-mlops-path/blob/main/tutorials/01-python-basics/10-combining-reshaping.ipynb" class="toc-action"><i class="bi empty"></i>View source</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../tutorials/01-python-basics/08-pandas-core.html">Part 2 - Data Analysis</a></li><li class="breadcrumb-item"><a href="../../tutorials/01-python-basics/10-combining-reshaping.html"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Part 10: Combining, Reshaping &amp; Time Series</span></a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Part 10: Combining, Reshaping &amp; Time Series</span></h1>
+<h1 class="title d-none d-lg-block"><span class="chapter-title">Part 10: Combining, Reshaping &amp; Time Series</span></h1>
 </div>
 
 
@@ -304,8 +298,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p><a href="https://colab.research.google.com/github/sambaiga/ds-mlops-path/blob/main/tutorials/01-python-basics/10-combining-reshaping.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open In Colab"></a> <a href="https://raw.githubusercontent.com/sambaiga/ds-mlops-path/main/tutorials/01-python-basics/10-combining-reshaping.ipynb"><img src="https://img.shields.io/badge/Download-Notebook-blue.svg?logo=jupyter&amp;logoColor=white" class="img-fluid" alt="Download Notebook"></a></p>
 <p><strong>DS-MLOps Data Analysis</strong></p>
 <p><strong>Python 3.12+ | Author: Anthony Faustine</strong></p>
-<section id="before-you-begin" class="level2" data-number="11.1">
-<h2 data-number="11.1" class="anchored" data-anchor-id="before-you-begin"><span class="header-section-number">11.1</span> Before you begin</h2>
+<section id="before-you-begin" class="level2">
+<h2 class="anchored" data-anchor-id="before-you-begin">Before you begin</h2>
 <p>This notebook continues from Part 9 (<code>09-pandas-operations.ipynb</code>). Real analyses rarely live in one table: a second file with reference data shows up, a result needs splitting by category, and a wide summary table is easier to read than a long one. This part covers four multi-table operations and adds time-indexed data as a fifth theme: concatenation, merging, <code>groupby</code>, pivoting, and working with dates and <code>resample</code>.</p>
 <p>Alongside the student exam results, we use a small synthetic table mapping each <code>school_id</code> to a region, and a second dataset of daily attendance records covering five schools over a full school term.</p>
 <p>Part 11 (<code>11-polars.ipynb</code>) continues with Polars and the expression API.</p>
@@ -352,8 +346,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </tbody>
 </table>
 </section>
-<section id="callout-guide" class="level2" data-number="11.2">
-<h2 data-number="11.2" class="anchored" data-anchor-id="callout-guide"><span class="header-section-number">11.2</span> Callout guide</h2>
+<section id="callout-guide" class="level2">
+<h2 class="anchored" data-anchor-id="callout-guide">Callout guide</h2>
 <table style="border-collapse:collapse;width:60%">
 <tbody><tr>
 <td style="padding:6px 12px;background:#EAF3FA;border-left:4px solid #0369A1">
@@ -397,8 +391,8 @@ Production-grade habit
 </tr>
 </tbody></table>
 </section>
-<section id="learning-objectives" class="level2" data-number="11.3">
-<h2 data-number="11.3" class="anchored" data-anchor-id="learning-objectives"><span class="header-section-number">11.3</span> Learning Objectives</h2>
+<section id="learning-objectives" class="level2">
+<h2 class="anchored" data-anchor-id="learning-objectives">Learning Objectives</h2>
 <p>By the end of Part 10 you will be able to:</p>
 <table class="caption-top table">
 <colgroup>
@@ -537,8 +531,8 @@ Production-grade habit
 </div>
 </div>
 </section>
-<section id="concatenating-dataframes-with-pd.concat" class="level2" data-number="11.4">
-<h2 data-number="11.4" class="anchored" data-anchor-id="concatenating-dataframes-with-pd.concat"><span class="header-section-number">11.4</span> 1. Concatenating DataFrames with <code>pd.concat</code></h2>
+<section id="concatenating-dataframes-with-pd.concat" class="level2">
+<h2 class="anchored" data-anchor-id="concatenating-dataframes-with-pd.concat">1. Concatenating DataFrames with <code>pd.concat</code></h2>
 <p><code>pd.concat</code> stacks DataFrames together. By default it stacks rows on top of each other (<code>axis=0</code>), the operation you need when the same columns show up in two separate files or two separate batches:</p>
 <div id="6" class="cell" data-execution_count="2">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>male_students <span class="op">=</span> df[df[<span class="st">"gender"</span>] <span class="op">==</span> <span class="st">"M"</span>]</span>
@@ -593,8 +587,8 @@ len(recombined) == len(df)</pre>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
-<section id="joining-data-with-pd.merge" class="level2" data-number="11.5">
-<h2 data-number="11.5" class="anchored" data-anchor-id="joining-data-with-pd.merge"><span class="header-section-number">11.5</span> 2. Joining Data with <code>pd.merge</code></h2>
+<section id="joining-data-with-pd.merge" class="level2">
+<h2 class="anchored" data-anchor-id="joining-data-with-pd.merge">2. Joining Data with <code>pd.merge</code></h2>
 <p><code>pd.merge</code> combines two tables on a shared key, the same idea as a SQL join. The <code>schools</code> table built above has one row per <code>school_id</code>; merging it onto <code>df</code> attaches a <code>region</code> to every student’s row:</p>
 <div id="13" class="cell" data-execution_count="5">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>df_with_region <span class="op">=</span> pd.merge(df, schools, on<span class="op">=</span><span class="st">"school_id"</span>, how<span class="op">=</span><span class="st">"left"</span>)</span>
@@ -662,8 +656,8 @@ merged["region"].value_counts()</pre>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
-<section id="group-by-operations" class="level2" data-number="11.6">
-<h2 data-number="11.6" class="anchored" data-anchor-id="group-by-operations"><span class="header-section-number">11.6</span> 3. Group By Operations</h2>
+<section id="group-by-operations" class="level2">
+<h2 class="anchored" data-anchor-id="group-by-operations">3. Group By Operations</h2>
 <p><code>groupby</code> splits a dataset into groups by a key, applies a function to each group independently, and combines the results back into one table, one row per group:</p>
 <div id="23" class="cell" data-execution_count="9">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> ark.plot.diagrams <span class="im">import</span> groupby_split_apply_combine_diagram</span>
@@ -734,8 +728,8 @@ merged["region"].value_counts()</pre>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
-<section id="pivoting-data" class="level2" data-number="11.7">
-<h2 data-number="11.7" class="anchored" data-anchor-id="pivoting-data"><span class="header-section-number">11.7</span> 4. Pivoting Data</h2>
+<section id="pivoting-data" class="level2">
+<h2 class="anchored" data-anchor-id="pivoting-data">4. Pivoting Data</h2>
 <p><code>pivot_table</code> is <code>groupby</code> plus a reshape, in one call: it groups by one column, splits further by another, and lays the second grouping out as columns instead of stacking it into more rows, much easier to scan as a summary:</p>
 <div id="34" class="cell" data-execution_count="14">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>pd.pivot_table(df, index<span class="op">=</span><span class="st">"caste"</span>, columns<span class="op">=</span><span class="st">"gender"</span>, values<span class="op">=</span><span class="st">"average_marks"</span>, aggfunc<span class="op">=</span><span class="st">"mean"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -778,8 +772,8 @@ pd.pivot_table(merged, index="region", columns="caste", values="average_marks", 
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
-<section id="capstone-regional-performance-report" class="level2" data-number="11.8">
-<h2 data-number="11.8" class="anchored" data-anchor-id="capstone-regional-performance-report"><span class="header-section-number">11.8</span> Capstone: Regional Performance Report</h2>
+<section id="capstone-regional-performance-report" class="level2">
+<h2 class="anchored" data-anchor-id="capstone-regional-performance-report">Capstone: Regional Performance Report</h2>
 <p>Combine every operation from this notebook into one report: a merge to bring in region, a groupby to summarize, and a pivot to lay the summary out for reading.</p>
 <div style="background:#FFF1E6;border-left:5px solid #EA580C;padding:14px 18px;border-radius:6px;margin:16px 0">
 <p><span style="color:#9A3412;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Capstone Exercise - Regional Performance Report</span><br><br></p>
@@ -809,8 +803,8 @@ region_caste_pivot = pd.pivot_table(merged, index="region", columns="caste", val
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
-<section id="time-series-data" class="level2" data-number="11.9">
-<h2 data-number="11.9" class="anchored" data-anchor-id="time-series-data"><span class="header-section-number">11.9</span> 5. Time Series Data</h2>
+<section id="time-series-data" class="level2">
+<h2 class="anchored" data-anchor-id="time-series-data">5. Time Series Data</h2>
 <p>The student exam results dataset has no date column. The attendance dataset does: daily records for five schools across a full school term. Loading it alongside the exam data gives Part 10 two tables to work with and shows how the same pandas idioms scale to a new problem shape.</p>
 <div id="44" class="cell" data-execution_count="18">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>attendance <span class="op">=</span> pd.read_csv(<span class="st">"data/daily_attendance.csv"</span>)</span>
@@ -882,8 +876,8 @@ region_caste_pivot = pd.pivot_table(merged, index="region", columns="caste", val
 </div>
 </div>
 </section>
-<section id="date-and-time-data-types" class="level2" data-number="11.10">
-<h2 data-number="11.10" class="anchored" data-anchor-id="date-and-time-data-types"><span class="header-section-number">11.10</span> 5. Date and Time Data Types</h2>
+<section id="date-and-time-data-types" class="level2">
+<h2 class="anchored" data-anchor-id="date-and-time-data-types">5. Date and Time Data Types</h2>
 <p>The <code>date</code> column above read in as plain text, <code>str</code> dtype, not a date pandas can do arithmetic on. <code>pd.to_datetime</code> converts it to pandas’ dedicated datetime dtype, <code>datetime64</code>:</p>
 <div id="46" class="cell" data-execution_count="19">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>attendance[<span class="st">"date"</span>] <span class="op">=</span> pd.to_datetime(attendance[<span class="st">"date"</span>])</span>
@@ -933,8 +927,8 @@ for d in dates:
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
-<section id="the-datetimeindex" class="level2" data-number="11.11">
-<h2 data-number="11.11" class="anchored" data-anchor-id="the-datetimeindex"><span class="header-section-number">11.11</span> 6. The <code>DatetimeIndex</code></h2>
+<section id="the-datetimeindex" class="level2">
+<h2 class="anchored" data-anchor-id="the-datetimeindex">6. The <code>DatetimeIndex</code></h2>
 <p>Setting a datetime column as the index turns it into a <code>DatetimeIndex</code>, which unlocks date-based slicing instead of only position-based or exact-label lookups. Each school’s rows are pulled out first, since a <code>DatetimeIndex</code> only makes sense for one time series at a time:</p>
 <div id="53" class="cell" data-execution_count="22">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>school_300 <span class="op">=</span> attendance[attendance[<span class="st">"school_id"</span>] <span class="op">==</span> <span class="dv">300</span>].set_index(<span class="st">"date"</span>)</span>
@@ -965,8 +959,8 @@ isinstance(school_302.index, pd.DatetimeIndex)</pre>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
-<section id="selecting-data-from-a-time-series" class="level2" data-number="11.12">
-<h2 data-number="11.12" class="anchored" data-anchor-id="selecting-data-from-a-time-series"><span class="header-section-number">11.12</span> 7. Selecting Data from a Time Series</h2>
+<section id="selecting-data-from-a-time-series" class="level2">
+<h2 class="anchored" data-anchor-id="selecting-data-from-a-time-series">7. Selecting Data from a Time Series</h2>
 <p>A <code>DatetimeIndex</code> accepts a partial date string in <code>.loc</code>, matching every row that falls inside it. <code>"2025-02"</code> selects the whole month without spelling out the first and last day:</p>
 <div id="58" class="cell" data-execution_count="24">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>school_300.loc[<span class="st">"2025-02"</span>].head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -1024,8 +1018,8 @@ last_two_weeks["attendance_rate"].mean()</pre>
 <span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
-<section id="the-power-of-pandas-resample" class="level2" data-number="11.13">
-<h2 data-number="11.13" class="anchored" data-anchor-id="the-power-of-pandas-resample"><span class="header-section-number">11.13</span> 8. The Power of Pandas: <code>resample</code></h2>
+<section id="the-power-of-pandas-resample" class="level2">
+<h2 class="anchored" data-anchor-id="the-power-of-pandas-resample">8. The Power of Pandas: <code>resample</code></h2>
 <p><code>resample</code> changes the time granularity of a series: daily data summarized into weekly or monthly figures, the same split-apply-combine idea from Part 3’s <code>groupby</code>, except the groups are time intervals instead of category values:</p>
 <div id="66" class="cell" data-execution_count="28">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>weekly_attendance <span class="op">=</span> school_300[<span class="st">"attendance_rate"</span>].resample(<span class="st">"W"</span>).mean()</span>
@@ -1045,16 +1039,16 @@ last_two_weeks["attendance_rate"].mean()</pre>
 <div style="background:#EAF3FA;border-left:5px solid #0369A1;padding:14px 18px;border-radius:6px;margin:16px 0">
 <p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-info-circle-fill"></i> Key Concept: <code>resample</code> groups by time interval, <code>groupby</code> groups by value</span><br><br> <code>df.groupby(“caste”)</code> (Part 3) splits rows by whatever value is already in the <code>caste</code> column. <code>series.resample(“W”)</code> splits rows by which week their <code>DatetimeIndex</code> label falls into, intervals that did not exist as a column at all until <code>resample</code> created them. Both still end with an aggregation like <code>.mean()</code> to combine each group into one number.</p>
 </div>
-<p>Monthly resampling on the same series needs only a different frequency string, <code>"M"</code> instead of <code>"W"</code>:</p>
+<p>Monthly resampling on the same series needs only a different frequency string. In pandas 3 the old <code>"M"</code> alias was removed; the replacement is <code>"ME"</code> (month-end), which anchors each bucket to the last calendar day of the month:</p>
 <div id="69" class="cell" data-execution_count="29">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>monthly_attendance <span class="op">=</span> school_300[<span class="st">"attendance_rate"</span>].resample(<span class="st">"M"</span>).mean()</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>monthly_attendance <span class="op">=</span> school_300[<span class="st">"attendance_rate"</span>].resample(<span class="st">"ME"</span>).mean()</span>
 <span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>monthly_attendance</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-error">
 <div class="ansi-escaped-output">
 <pre><span class="ansi-red-fg">---------------------------------------------------------------------------</span>
 <span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
 <span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[29]</span><span class="ansi-green-fg">, line 1</span>
-<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">1</span> monthly_attendance = <span class="ansi-yellow-bg">school_300</span>[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">attendance_rate</span><span class="ansi-yellow-fg">"</span>].resample(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">M</span><span class="ansi-yellow-fg">"</span>).mean()
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">1</span> monthly_attendance = <span class="ansi-yellow-bg">school_300</span>[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">attendance_rate</span><span class="ansi-yellow-fg">"</span>].resample(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">ME</span><span class="ansi-yellow-fg">"</span>).mean()
 <span class="ansi-green-fg">      2</span> monthly_attendance
 
 <span class="ansi-red-fg">NameError</span>: name 'school_300' is not defined</pre>
@@ -1066,16 +1060,16 @@ last_two_weeks["attendance_rate"].mean()</pre>
 </div>
 <div style="background:#FFF1E6;border-left:5px solid #EA580C;padding:14px 18px;border-radius:6px;margin:16px 0">
 <p><span style="color:#9A3412;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 8 - Monthly Comparison Across Schools</span><br><br></p>
-<b>Goal:</b> Set <code>date</code> as the index on the full <code>attendance</code> table, group by <code>school_id</code>, and resample to monthly means in one chained call.
-<pre style="background:#FFF8E1;padding:10px;border-radius:4px;font-size:0.9em">attendance.set_index("date").groupby("school_id")["attendance_rate"].resample("M").mean()</pre>
+<b>Goal:</b> Set <code>date</code> as the index on the full <code>attendance</code> table, group by <code>school_id</code>, and resample to monthly means in one chained call. Use <code>“ME”</code> (month-end) — the pandas 3 replacement for the old <code>“M”</code> alias.
+<pre style="background:#FFF8E1;padding:10px;border-radius:4px;font-size:0.9em">attendance.set_index("date").groupby("school_id")["attendance_rate"].resample("ME").mean()</pre>
 </div>
 <div id="72" class="cell" data-execution_count="30">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: set date as index, group by school_id, resample monthly, take the mean</span></span>
 <span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
-<section id="capstone-term-end-attendance-report" class="level2" data-number="11.14">
-<h2 data-number="11.14" class="anchored" data-anchor-id="capstone-term-end-attendance-report"><span class="header-section-number">11.14</span> Capstone: Term-End Attendance Report</h2>
+<section id="capstone-term-end-attendance-report" class="level2">
+<h2 class="anchored" data-anchor-id="capstone-term-end-attendance-report">Capstone: Term-End Attendance Report</h2>
 <p>Combine every operation from this notebook: parsing dates, building a per-school time series, slicing by date, and resampling, into one short report comparing the start and end of term.</p>
 <div style="background:#FFF1E6;border-left:5px solid #EA580C;padding:14px 18px;border-radius:6px;margin:16px 0">
 <p><span style="color:#9A3412;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Capstone Exercise - Term-End Attendance Report</span><br><br></p>
@@ -1106,8 +1100,8 @@ drop_per_school.sort_values(ascending=False)</pre>
 <span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
-<section id="summary" class="level2" data-number="11.15">
-<h2 data-number="11.15" class="anchored" data-anchor-id="summary"><span class="header-section-number">11.15</span> Summary</h2>
+<section id="summary" class="level2">
+<h2 class="anchored" data-anchor-id="summary">Summary</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 50%">
@@ -1595,18 +1589,32 @@ drop_per_school.sort_values(ascending=False)</pre>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
       <a href="../../tutorials/01-python-basics/09-pandas-operations.html" class="pagination-link" aria-label="Part 9: Pandas Operations">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Part 9: Pandas Operations</span></span>
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">Part 9: Pandas Operations</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../../tutorials/01-python-basics/11-polars.html" class="pagination-link" aria-label="Part 11: Polars &amp; the Expression API">
-        <span class="nav-page-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Part 11: Polars &amp; the Expression API</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="../../tutorials/01-python-basics/11-time-series.html" class="pagination-link" aria-label="Part 11: Time Series">
+        <span class="nav-page-text"><span class="chapter-title">Part 11: Time Series</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
 </div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>© 2025 <a href="https://github.com/sambaiga">Anthony Faustine</a> · Apache 2.0 License</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.dev/sambaiga/ds-mlops-path/blob/main/tutorials/01-python-basics/10-combining-reshaping.ipynb" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/sambaiga/ds-mlops-path/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li><li><a href="https://github.com/sambaiga/ds-mlops-path/blob/main/tutorials/01-python-basics/10-combining-reshaping.ipynb" class="toc-action"><i class="bi empty"></i>View source</a></li></ul></div></div>
+    <div class="nav-footer-right">
+<p>Built with <a href="https://quarto.org">Quarto</a> · <a href="https://github.com/sambaiga/ds-mlops-path">Source on GitHub</a></p>
+</div>
+  </div>
+</footer>
 
 
 
 
-<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.dev/sambaiga/ds-mlops-path/blob/main/tutorials/01-python-basics/10-combining-reshaping.ipynb" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/sambaiga/ds-mlops-path/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>
+<script src="../../site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>
