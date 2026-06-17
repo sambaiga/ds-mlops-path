@@ -34,9 +34,20 @@ By the end of Part 18 you will be able to:
 
 Without pre-commit, quality checks are optional. With pre-commit, they are automatic: the checks run before every commit and block it if they fail. You cannot forget to run ruff, and your colleagues cannot skip it.
 
-![The pre-commit hook lifecycle: hook runs before the commit is sealed](https://pre-commit.com/images/logo.png)
+```{mermaid}
+flowchart LR
+    A["git commit -m '...'"] --> B["pre-commit\nhooks run"]
+    B --> C{ruff check}
+    C -->|"auto-fixed"| D["file changed\ngit add + retry"]
+    D --> B
+    C -->|"no findings"| E{commitizen\ncommit-msg}
+    E -->|"invalid format"| F["commit BLOCKED"]
+    E -->|"valid format"| G["commit sealed"]
 
-> Source: [pre-commit.com](https://pre-commit.com)
+    style G fill:#EBF5F0,stroke:#059669,color:#065F46
+    style F fill:#FEF2F2,stroke:#DC2626,color:#991B1B
+    style D fill:#EAF3FA,stroke:#0369A1,color:#0C4A6E
+```
 
 ### Install pre-commit
 

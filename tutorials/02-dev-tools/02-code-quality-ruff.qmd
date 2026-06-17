@@ -36,6 +36,21 @@ A **linter** reads the code and flags patterns that are wrong, suspicious, or li
 
 Ruff handles both. They are separate commands with separate jobs: `ruff format` for layout, `ruff check` for correctness. Running format first is the usual order: get the code looking clean, then read what the linter flags.
 
+```{mermaid}
+flowchart LR
+    A[source code] --> B["ruff format\nindentation, quotes,\nline length"]
+    B --> C[formatted code]
+    C --> D["ruff check\nAST rules: unused imports,\nmutable defaults, etc."]
+    D --> E{findings?}
+    E -->|"--fix: auto-fixable"| F["ruff applies fix\nre-stage the file"]
+    F --> D
+    E -->|"none"| G["ready to commit"]
+
+    style G fill:#EBF5F0,stroke:#059669,color:#065F46
+    style B fill:#F5F3FF,stroke:#7C3AED,color:#3B0764
+    style D fill:#EAF3FA,stroke:#0369A1,color:#0C4A6E
+```
+
 <div class='ark-concept'>
 <span class='ark-concept-title'><i class="bi bi-info-circle-fill"></i> Key Concept: Formatting is about style. Linting is about correctness.</span><br><br>
 A formatter can never catch <code>df.drop("column")</code> without <code>inplace=True</code> silently doing nothing. A linter can. Use both: format automatically on every save, run the linter before every commit.

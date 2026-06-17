@@ -199,6 +199,18 @@ git commit -m "feat(core): add compute_grade function"
 git log --oneline                                  # inspect history
 ```
 
+```{mermaid}
+flowchart LR
+    W["Working Tree\non disk"] -->|"git add file"| S["Staging Area\n(index)"]
+    S -->|"git commit -m '...'"| H["Commit History\n(permanent)"]
+    H -->|"git restore file"| W
+    S -->|"git restore --staged file"| W
+
+    style H fill:#EBF5F0,stroke:#059669,color:#065F46
+    style S fill:#EAF3FA,stroke:#0369A1,color:#0C4A6E
+    style W fill:#F5F3FF,stroke:#7C3AED,color:#3B0764
+```
+
 The flow: make changes in the working tree, select which changes belong in this commit with `git add`, then seal them into history with `git commit`. Changes left unstaged are visible in the working tree but invisible to the next commit.
 
 `git diff` shows what is in the working tree but not yet staged. `git diff --staged` shows what is staged but not yet committed. Running both before committing is a habit worth building.
@@ -269,6 +281,18 @@ git commit -m "feat(model): ridge regression baseline, RMSE=9.2"
 git checkout main
 git merge experiment/ridge-regression
 git branch -d experiment/ridge-regression      # clean up after merging
+```
+
+```{mermaid}
+gitGraph
+    commit id: "feat: initial setup"
+    branch experiment/ridge
+    checkout experiment/ridge
+    commit id: "feat: ridge baseline"
+    commit id: "test: parametrize"
+    checkout main
+    merge experiment/ridge id: "merge: ridge (RMSE=9.2)"
+    commit id: "chore: update deps"
 ```
 
 Naming conventions that work well for DS projects:
