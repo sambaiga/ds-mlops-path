@@ -180,7 +180,7 @@ def groupby_split_apply_combine_diagram() -> plt.Figure:
     """
     fig, ax = plt.subplots(figsize=(9, 4))
     group_colors = [INFO, WARNING, SUCCESS]
-    group_labels = ["caste = BC", "caste = SC", "caste = OC"]
+    group_labels = ["program = CS", "program = DS", "program = IT"]
 
     # Stage 1: split - one small stack of rows per group.
     split_x = 0.5
@@ -233,7 +233,7 @@ def groupby_split_apply_combine_diagram() -> plt.Figure:
     ax.set_ylim(-1.3, 4.5)
     ax.axis("off")
     ax.set_title(
-        'df.groupby("caste")["average_marks"].mean() - one function, run once per group',
+        'df.groupby("program")["final_score"].mean() - one function, run once per group',
         fontsize=10.5,
         color=PRIMARY,
     )
