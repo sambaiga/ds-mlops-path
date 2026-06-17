@@ -22,6 +22,7 @@ By the end of Part 13 you will be able to:
 
 | # | Skill | Covered in |
 |---|---|---|
+| 0 | Explain what uv is, how it compares to pip and Poetry, and install it | Sec. 0 |
 | 1 | Explain why isolated environments and lockfiles matter for reproducible DS work | Sec. 1 |
 | 2 | Initialize a packaged Python project with `uv init --package` | Sec. 2 |
 | 3 | Read and write the `[project]` and `[project.optional-dependencies]` sections of `pyproject.toml` | Sec. 3 |
@@ -29,6 +30,51 @@ By the end of Part 13 you will be able to:
 | 5 | Separate heavy ML dependencies into optional groups so CI stays fast | Sec. 5 |
 | 6 | Manage secrets with a `.env` file and keep them out of version control | Sec. 6 |
 | 7 | Run any command inside the project environment with `uv run` | Sec. 7 |
+
+## 0. What is uv and Why Use It
+
+`uv` is a Python package and project manager written in Rust, built by [Astral](https://astral.sh), the same team behind `ruff`. It replaces a stack of tools that most Python developers use separately: `pip`, `venv`, `pip-tools`, and parts of `Poetry` or `conda`. One binary, one configuration file, one command prefix (`uv run`).
+
+![uv architecture: a single tool replacing the traditional pip + venv + pip-tools stack](https://docs.astral.sh/uv/assets/uv-lockfile.png)
+
+> Source: [Astral uv documentation](https://docs.astral.sh/uv/)
+
+### How uv compares to the alternatives
+
+| Tool | Virtual env | Dependency resolution | Lockfile | Speed | pyproject.toml native |
+|---|---|---|---|---|---|
+| `pip` + `venv` | Manual | Basic (no SAT solver) | Only with pip-tools | Slow | No |
+| `pip-tools` | Manual | Full resolution | Yes (`requirements.txt`) | Slow | No |
+| `Poetry` | Built-in | Full resolution | Yes (`poetry.lock`) | Medium | Yes |
+| `conda` | Built-in | Full (cross-language) | Yes | Slow | No |
+| **`uv`** | **Built-in** | **Full (Rust SAT solver)** | **Yes (`uv.lock`)** | **10-100x faster** | **Yes** |
+
+The decisive advantages for DS work: uv is fast enough that `uv sync` after a fresh clone takes seconds, not minutes; and `uv.lock` pins every transitive dependency so two machines always get identical environments.
+
+### Installing uv
+
+uv is a single binary with no Python dependency. Install it once per machine:
+
+```bash
+# macOS and Linux
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# Windows (PowerShell)
+powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+
+# If you already have Python and prefer pipx
+pipx install uv
+
+# Verify
+uv --version
+```
+
+After installation, `uv` is available system-wide. You do not need to activate any environment to use it.
+
+<div class='ark-tip'>
+<span class='ark-tip-title'><i class="bi bi-lightbulb-fill"></i> Pro Tip: Keep uv up to date</span><br><br>
+uv releases frequently. Run <code>uv self update</code> to upgrade to the latest version. The resolver improves with every release.
+</div>
 
 ## 1. The Reproducibility Problem
 
