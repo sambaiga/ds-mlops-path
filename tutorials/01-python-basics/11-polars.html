@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Part 11: Polars &amp; the Expression API – DS-MLOps Path</title>
+<title>Part 11: Polars &amp; the Expression API – From Data to Impact</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -79,7 +79,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../../site_libs/quarto-html/quarto-syntax-highlighting-de63f62b328812d8e578a4d74e282472.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-212e973001e6594fb07bce043cc2f62c.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-2bbe8175f3a6986c517e4bd766e779ba.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -126,7 +126,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
     <a class="navbar-brand" href="../../index.html">
-    <span class="navbar-title">DS-MLOps Path</span>
+    <span class="navbar-title">From Data to Impact</span>
     </a>
   </div>
             <div id="quarto-search" class="" title="Search"></div>
@@ -179,10 +179,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <a href="../../index.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Welcome</span></a>
   </div>
 </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../preface.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Why This Book Exists</span></a>
+  </div>
+</li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false">
- <span class="menu-text">Part 1: Python Basics</span></a>
+ <span class="menu-text">Part 1: Foundations</span></a>
           <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -315,8 +320,46 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <a href="../../tutorials/02-dev-tools/07-pydantic-validation.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 19: Data Validation with Pydantic</span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/02-dev-tools/08-pandera-schema-validation.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 20: DataFrame Schema Validation with Pandera</span></a>
+  </div>
+</li>
       </ul>
   </li>
+        <li class="sidebar-item sidebar-item-section">
+      <span class="sidebar-item-text sidebar-link text-start">
+ <span class="menu-text">Part 4: Classical ML</span></span>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <span class="sidebar-item-text sidebar-link text-start">
+ <span class="menu-text">Part 5: Deep Learning</span></span>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <span class="sidebar-item-text sidebar-link text-start">
+ <span class="menu-text">Part 6: LLMs</span></span>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <span class="sidebar-item-text sidebar-link text-start">
+ <span class="menu-text">Part 7: MLOps</span></span>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <span class="sidebar-item-text sidebar-link text-start">
+ <span class="menu-text">Part 8: Production Monitoring</span></span>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <span class="sidebar-item-text sidebar-link text-start">
+ <span class="menu-text">Part 9: ML System Design</span></span>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <span class="sidebar-item-text sidebar-link text-start">
+ <span class="menu-text">Part 10: Value-driven AI</span></span>
+  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../about.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">About the Author</span></a>
+  </div>
+</li>
     </ul>
     </div>
 </nav>
@@ -329,6 +372,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <ul>
   <li><a href="#before-you-begin" id="toc-before-you-begin" class="nav-link active" data-scroll-target="#before-you-begin">Before you begin</a></li>
   <li><a href="#learning-objectives" id="toc-learning-objectives" class="nav-link" data-scroll-target="#learning-objectives">Learning Objectives</a></li>
+  <li><a href="#when-pandas-is-not-enough" id="toc-when-pandas-is-not-enough" class="nav-link" data-scroll-target="#when-pandas-is-not-enough">0. When pandas Is Not Enough</a>
+  <ul class="collapse">
+  <li><a href="#how-it-compares" id="toc-how-it-compares" class="nav-link" data-scroll-target="#how-it-compares">How it compares</a></li>
+  <li><a href="#already-in-your-environment" id="toc-already-in-your-environment" class="nav-link" data-scroll-target="#already-in-your-environment">Already in your environment</a></li>
+  </ul></li>
   <li><a href="#dataframe-construction" id="toc-dataframe-construction" class="nav-link" data-scroll-target="#dataframe-construction">1. DataFrame Construction</a></li>
   <li><a href="#the-expression-api-select-filter-with_columns" id="toc-the-expression-api-select-filter-with_columns" class="nav-link" data-scroll-target="#the-expression-api-select-filter-with_columns">2. The Expression API: <code>select</code>, <code>filter</code>, <code>with_columns</code></a></li>
   <li><a href="#groupby-and-aggregation" id="toc-groupby-and-aggregation" class="nav-link" data-scroll-target="#groupby-and-aggregation">3. GroupBy and Aggregation</a></li>
@@ -646,21 +694,87 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </section>
+<section id="when-pandas-is-not-enough" class="level2">
+<h2 class="anchored" data-anchor-id="when-pandas-is-not-enough">0. When pandas Is Not Enough</h2>
+<p>Your pandas pipeline works perfectly at 50,000 rows. The <code>groupby</code> runs in a second, the merge finishes before you blink, and everything fits in memory with room to spare. Then someone drops a 10-million-row export on your desk. The same pipeline now takes three minutes, swaps to disk halfway through, and your laptop fan starts spinning like it is trying to take off.</p>
+<p>This is not a pandas bug. It is a design trade-off. pandas processes one column at a time on a single CPU thread, using a Python object model that was designed for flexibility rather than throughput. For most interactive data science that trade-off is exactly right. But when data gets large enough to feel slow, you need a different tool.</p>
+<p><strong>Polars</strong> (<a href="https://pola.rs">pola.rs</a>) was written from scratch in Rust by Ritchie Vink in 2020. It stores data in Apache Arrow format, executes operations across all CPU cores in parallel, and evaluates expressions <em>lazily</em> — building a query plan and optimising it before touching a single row. The same operations that take minutes in pandas can take seconds in Polars, without changing what the code looks like.</p>
+<section id="how-it-compares" class="level3">
+<h3 class="anchored" data-anchor-id="how-it-compares">How it compares</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th>pandas</th>
+<th>Polars</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Core language</td>
+<td>Python / C</td>
+<td>Rust</td>
+</tr>
+<tr class="even">
+<td>Execution</td>
+<td>Single-threaded</td>
+<td>Multi-threaded</td>
+</tr>
+<tr class="odd">
+<td>Memory model</td>
+<td>NumPy / Python objects</td>
+<td>Apache Arrow</td>
+</tr>
+<tr class="even">
+<td>Evaluation</td>
+<td>Eager (runs immediately)</td>
+<td>Lazy by default (<code>scan_*</code> → <code>.collect()</code>)</td>
+</tr>
+<tr class="odd">
+<td>API style</td>
+<td>Index-based, many methods</td>
+<td>Expression-based, composable</td>
+</tr>
+<tr class="even">
+<td>Ecosystem maturity</td>
+<td>Very mature (2008)</td>
+<td>Fast-growing (2020)</td>
+</tr>
+<tr class="odd">
+<td>When to use</td>
+<td>Up to ~5M rows; default choice</td>
+<td>Large files, performance-critical pipelines</td>
+</tr>
+</tbody>
+</table>
+<p>You do not have to choose one forever. Many production pipelines read and clean with Polars for speed, then convert to pandas for the parts of the ML ecosystem that expect it.</p>
+</section>
+<section id="already-in-your-environment" class="level3">
+<h3 class="anchored" data-anchor-id="already-in-your-environment">Already in your environment</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> add polars          <span class="co"># for a standalone project</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Official docs and user guide: <a href="https://docs.pola.rs/">docs.pola.rs</a></p>
+</section>
+</section>
 <section id="dataframe-construction" class="level2">
 <h2 class="anchored" data-anchor-id="dataframe-construction">1. DataFrame Construction</h2>
 <p>Building a Polars DataFrame from a Python dict looks almost identical to pandas. The difference shows up in the schema: Polars always knows the dtype of every column, and it tells you explicitly:</p>
-<div id="7" class="cell" data-execution_count="2">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> polars <span class="im">as</span> pl</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>sample <span class="op">=</span> pl.DataFrame(</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    {</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>        <span class="st">"student_id"</span>: [<span class="st">"s001"</span>, <span class="st">"s002"</span>, <span class="st">"s003"</span>],</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>        <span class="st">"midterm_score"</span>: [<span class="fl">0.62</span>, <span class="fl">0.78</span>, <span class="fl">0.91</span>],</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>        <span class="st">"gender"</span>: [<span class="st">"F"</span>, <span class="st">"M"</span>, <span class="st">"F"</span>],</span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(sample.schema)</span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>sample</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="8" class="cell" data-execution_count="2">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> polars <span class="im">as</span> pl</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>sample <span class="op">=</span> pl.DataFrame(</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    {</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>        <span class="st">"student_id"</span>: [<span class="st">"s001"</span>, <span class="st">"s002"</span>, <span class="st">"s003"</span>],</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>        <span class="st">"midterm_score"</span>: [<span class="fl">0.62</span>, <span class="fl">0.78</span>, <span class="fl">0.91</span>],</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>        <span class="st">"gender"</span>: [<span class="st">"F"</span>, <span class="st">"M"</span>, <span class="st">"F"</span>],</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(sample.schema)</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>sample</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Schema({'student_id': String, 'midterm_score': Float64, 'gender': String})</code></pre>
 </div>
@@ -711,10 +825,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-info-circle-fill"></i> Key Concept: Polars enforces strict dtypes; pandas 3 infers them</span><br><br> Every Polars column has a fixed dtype from creation: <code>pl.Utf8</code> for strings, <code>pl.Float64</code> for floats, <code>pl.Int64</code> for integers. Polars raises an error if you try to mix types within a column. Pandas 3’s <code>str</code> dtype is conceptually similar but more permissive: it silently allows <code>None</code> values in a string column. Polars is stricter, which makes bugs surface earlier.</p>
 </div>
 <p>The first checks after loading data are the same in Polars as in pandas, but the method names differ slightly:</p>
-<div id="10" class="cell" data-execution_count="3">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"shape      : </span><span class="sc">{</span>df<span class="sc">.</span>shape<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"dtypes     :</span><span class="ch">\n</span><span class="sc">{</span>df<span class="sc">.</span>dtypes<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>df.describe()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="11" class="cell" data-execution_count="3">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"shape      : </span><span class="sc">{</span>df<span class="sc">.</span>shape<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"dtypes     :</span><span class="ch">\n</span><span class="sc">{</span>df<span class="sc">.</span>dtypes<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>df.describe()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>shape      : (2400, 18)
 dtypes     :
@@ -977,17 +1091,17 @@ dtypes     :
 <pre style="background:#FFF8E1;padding:10px;border-radius:4px;font-size:0.9em">print(df.schema)
 df.describe()</pre>
 </div>
-<div id="13" class="cell" data-execution_count="4">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: print schema, then call df.describe()</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="14" class="cell" data-execution_count="4">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: print schema, then call df.describe()</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="the-expression-api-select-filter-with_columns" class="level2">
 <h2 class="anchored" data-anchor-id="the-expression-api-select-filter-with_columns">2. The Expression API: <code>select</code>, <code>filter</code>, <code>with_columns</code></h2>
 <p>The biggest difference from pandas is that Polars does not use bracket indexing for column selection or boolean filtering. Instead, every operation goes through <code>pl.col()</code> expressions, which describe what to compute without computing it immediately.</p>
-<div id="16" class="cell" data-execution_count="5">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Select specific columns -- equivalent to df[["col_a", "col_b"]] in pandas</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>df.select([<span class="st">"student_id"</span>, <span class="st">"midterm_score"</span>, <span class="st">"final_score"</span>]).head(<span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="17" class="cell" data-execution_count="5">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Select specific columns -- equivalent to df[["col_a", "col_b"]] in pandas</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>df.select([<span class="st">"student_id"</span>, <span class="st">"midterm_score"</span>, <span class="st">"final_score"</span>]).head(<span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="5">
 <div><style>
 .dataframe > thead > tr,
@@ -1035,11 +1149,11 @@ df.describe()</pre>
 <p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-info-circle-fill"></i> Key Concept: <code>pl.col()</code> is an expression, not a value</span><br><br> <code>pl.col(“midterm_score”)</code> describes a column reference, not the column itself. Expressions compose: <code>pl.col(“a”) + pl.col(“b”)</code> describes an addition without performing it. Polars evaluates all expressions in a <code>.select()</code> or <code>.with_columns()</code> call together, which is what lets it parallelize across columns automatically.</p>
 </div>
 <p><code>filter</code> is the Polars equivalent of boolean indexing:</p>
-<div id="19" class="cell" data-execution_count="6">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># filter -- equivalent to df[df["midterm_score"] &gt; 90] in pandas</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>high_scorers <span class="op">=</span> df.<span class="bu">filter</span>(pl.col(<span class="st">"midterm_score"</span>) <span class="op">&gt;</span> <span class="dv">90</span>)</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"high scorers: </span><span class="sc">{</span><span class="bu">len</span>(high_scorers)<span class="sc">}</span><span class="ss"> of </span><span class="sc">{</span><span class="bu">len</span>(df)<span class="sc">}</span><span class="ss"> students"</span>)</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>high_scorers.head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="20" class="cell" data-execution_count="6">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># filter -- equivalent to df[df["midterm_score"] &gt; 90] in pandas</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>high_scorers <span class="op">=</span> df.<span class="bu">filter</span>(pl.col(<span class="st">"midterm_score"</span>) <span class="op">&gt;</span> <span class="dv">90</span>)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"high scorers: </span><span class="sc">{</span><span class="bu">len</span>(high_scorers)<span class="sc">}</span><span class="ss"> of </span><span class="sc">{</span><span class="bu">len</span>(df)<span class="sc">}</span><span class="ss"> students"</span>)</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>high_scorers.head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>high scorers: 31 of 2400 students</code></pre>
 </div>
@@ -1202,21 +1316,21 @@ df.describe()</pre>
 </div>
 </div>
 <p>Combine conditions with <code>&amp;</code> and <code>|</code>, same as pandas, but directly inside <code>filter</code> with <code>pl.col()</code> expressions:</p>
-<div id="21" class="cell" data-execution_count="7">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># combine conditions: failed AND no internet access</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>failed_no_internet <span class="op">=</span> df.<span class="bu">filter</span>(</span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    (pl.col(<span class="st">"final_grade"</span>) <span class="op">==</span> <span class="st">"F"</span>) <span class="op">&amp;</span> (pl.col(<span class="st">"has_internet"</span>) <span class="op">==</span> <span class="va">False</span>)  <span class="co"># noqa: E712</span></span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"failed with no internet: </span><span class="sc">{</span><span class="bu">len</span>(failed_no_internet)<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="22" class="cell" data-execution_count="7">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># combine conditions: failed AND no internet access</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>failed_no_internet <span class="op">=</span> df.<span class="bu">filter</span>(</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    (pl.col(<span class="st">"final_grade"</span>) <span class="op">==</span> <span class="st">"F"</span>) <span class="op">&amp;</span> (pl.col(<span class="st">"has_internet"</span>) <span class="op">==</span> <span class="va">False</span>)  <span class="co"># noqa: E712</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"failed with no internet: </span><span class="sc">{</span><span class="bu">len</span>(failed_no_internet)<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>failed with no internet: 60</code></pre>
 </div>
 </div>
 <p><code>with_columns</code> adds or replaces columns. The result is always a new DataFrame; the original is never modified:</p>
-<div id="23" class="cell" data-execution_count="8">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Add average_marks -- equivalent to df["average_marks"] = ... in pandas</span></span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> df.with_columns(average_marks<span class="op">=</span>((pl.col(<span class="st">"midterm_score"</span>) <span class="op">+</span> pl.col(<span class="st">"final_score"</span>) <span class="op">+</span> pl.col(<span class="st">"project_score"</span>)) <span class="op">/</span> <span class="dv">3</span>))</span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>df.select([<span class="st">"student_id"</span>, <span class="st">"average_marks"</span>]).head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="24" class="cell" data-execution_count="8">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Add average_marks -- equivalent to df["average_marks"] = ... in pandas</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> df.with_columns(average_marks<span class="op">=</span>((pl.col(<span class="st">"midterm_score"</span>) <span class="op">+</span> pl.col(<span class="st">"final_score"</span>) <span class="op">+</span> pl.col(<span class="st">"project_score"</span>)) <span class="op">/</span> <span class="dv">3</span>))</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>df.select([<span class="st">"student_id"</span>, <span class="st">"average_marks"</span>]).head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="8">
 <div><style>
 .dataframe > thead > tr,
@@ -1273,9 +1387,9 @@ df.describe()</pre>
 )
 df.filter(pl.col("passed")).shape[0]</pre>
 </div>
-<div id="26" class="cell" data-execution_count="9">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: add "passed" column, filter to passing students, print count</span></span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="27" class="cell" data-execution_count="9">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: add "passed" column, filter to passing students, print count</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div style="background:#F5F3FF;border-left:5px solid #7C3AED;padding:14px 18px;border-radius:6px;margin:16px 0">
 <p><span style="color:#5B21B6;font-weight:bold"><i class="bi bi-lightbulb-fill"></i> Pro Tip: Use <code>polars.selectors</code> to select columns by type, not by name</span><br><br> <code>polars.selectors</code> (aliased as <code>cs</code>) provides type-based column selectors, so you can write expressions like “all numeric columns” or “all string columns” without listing names:</p>
@@ -1294,12 +1408,12 @@ df.select(cs.string())</pre>
 <section id="groupby-and-aggregation" class="level2">
 <h2 class="anchored" data-anchor-id="groupby-and-aggregation">3. GroupBy and Aggregation</h2>
 <p>Polars <code>group_by</code> uses the same split-apply-combine concept as pandas, but the aggregation is specified as a list of expressions inside <code>.agg()</code>, not as a method chained after <code>.mean()</code> or <code>.sum()</code>:</p>
-<div id="30" class="cell" data-execution_count="10">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>df.group_by(<span class="st">"program"</span>).agg(</span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    pl.col(<span class="st">"average_marks"</span>).mean().alias(<span class="st">"mean_marks"</span>),</span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    pl.col(<span class="st">"average_marks"</span>).std().alias(<span class="st">"std_marks"</span>),</span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    pl.<span class="bu">len</span>().alias(<span class="st">"count"</span>),</span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>).sort(<span class="st">"program"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="31" class="cell" data-execution_count="10">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>df.group_by(<span class="st">"program"</span>).agg(</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>    pl.col(<span class="st">"average_marks"</span>).mean().alias(<span class="st">"mean_marks"</span>),</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    pl.col(<span class="st">"average_marks"</span>).std().alias(<span class="st">"std_marks"</span>),</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    pl.<span class="bu">len</span>().alias(<span class="st">"count"</span>),</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>).sort(<span class="st">"program"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="10">
 <div><style>
 .dataframe > thead > tr,
@@ -1358,10 +1472,10 @@ df.select(cs.string())</pre>
 <p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-info-circle-fill"></i> Key Concept: <code>.agg()</code> takes a list of expressions, each producing one output column</span><br><br> In pandas, <code>groupby(“program”)[“average_marks”].agg([“mean”, “std”, “count”])</code> returns a DataFrame with the stats as columns. In Polars the same result comes from passing named expressions to <code>.agg()</code>: <code>pl.col(“average_marks”).mean().alias(“mean_marks”)</code>. The explicit <code>.alias()</code> is required when the default auto-generated name would be ambiguous.</p>
 </div>
 <p>Grouping by more than one column works the same way:</p>
-<div id="33" class="cell" data-execution_count="11">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>df.group_by([<span class="st">"program"</span>, <span class="st">"gender"</span>]).agg(</span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>    pl.col(<span class="st">"average_marks"</span>).mean().alias(<span class="st">"mean_marks"</span>),</span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>).sort([<span class="st">"program"</span>, <span class="st">"gender"</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="34" class="cell" data-execution_count="11">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>df.group_by([<span class="st">"program"</span>, <span class="st">"gender"</span>]).agg(</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>    pl.col(<span class="st">"average_marks"</span>).mean().alias(<span class="st">"mean_marks"</span>),</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>).sort([<span class="st">"program"</span>, <span class="st">"gender"</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="11">
 <div><style>
 .dataframe > thead > tr,
@@ -1454,9 +1568,9 @@ df.select(cs.string())</pre>
     drop_fraction=(pl.col("continue_drop") == False).mean()
 ).sort("program")</pre>
 </div>
-<div id="36" class="cell" data-execution_count="12">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: group by program, compute pass fraction per program, sort by program</span></span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="37" class="cell" data-execution_count="12">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: group by program, compute pass fraction per program, sort by program</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="lazyframe-and-lazy-evaluation" class="level2">
@@ -1494,18 +1608,18 @@ only now in memory"]
 </div>
 </div>
 </div>
-<div id="40" class="cell" data-execution_count="13">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Build a query plan -- nothing executes yet</span></span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>lazy_query <span class="op">=</span> (</span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    df.lazy()</span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>    .<span class="bu">filter</span>(pl.col(<span class="st">"has_internet"</span>) <span class="op">==</span> <span class="dv">1</span>)</span>
-<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>    .group_by(<span class="st">"program"</span>)</span>
-<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>    .agg(pl.col(<span class="st">"average_marks"</span>).mean().alias(<span class="st">"mean_marks"</span>))</span>
-<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>    .sort(<span class="st">"mean_marks"</span>, descending<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Inspect the query plan before running</span></span>
-<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(lazy_query.explain())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="41" class="cell" data-execution_count="13">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Build a query plan -- nothing executes yet</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>lazy_query <span class="op">=</span> (</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>    df.lazy()</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>    .<span class="bu">filter</span>(pl.col(<span class="st">"has_internet"</span>) <span class="op">==</span> <span class="dv">1</span>)</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>    .group_by(<span class="st">"program"</span>)</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>    .agg(pl.col(<span class="st">"average_marks"</span>).mean().alias(<span class="st">"mean_marks"</span>))</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>    .sort(<span class="st">"mean_marks"</span>, descending<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Inspect the query plan before running</span></span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(lazy_query.explain())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>SORT BY [descending: [true]] [col("mean_marks")]
   AGGREGATE[maintain_order: false]
@@ -1517,9 +1631,9 @@ only now in memory"]
         DF ["student_id", "cohort", "program", "gender", ...]; PROJECT["program", "average_marks", "has_internet"] 3/19 COLUMNS</code></pre>
 </div>
 </div>
-<div id="41" class="cell" data-execution_count="14">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Execute the plan and get the result</span></span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>lazy_query.collect()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="42" class="cell" data-execution_count="14">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Execute the plan and get the result</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>lazy_query.collect()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="14">
 <div><style>
 .dataframe > thead > tr,
@@ -1581,9 +1695,9 @@ only now in memory"]
 )
 top_schools</pre>
 </div>
-<div id="45" class="cell" data-execution_count="15">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: lazy top-schools query</span></span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="46" class="cell" data-execution_count="15">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: lazy top-schools query</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="sql-interface" class="level2">
@@ -1592,33 +1706,33 @@ top_schools</pre>
 <div style="background:#EAF3FA;border-left:5px solid #0369A1;padding:14px 18px;border-radius:6px;margin:16px 0">
 <p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-info-circle-fill"></i> Key Concept: SQL queries run on lazy DataFrames and benefit from the same query optimization</span><br><br> <code>pl.SQLContext</code> compiles SQL into Polars’ lazy query plan. The optimizer applies the same predicate pushdown and projection pushdown as a hand-written <code>.lazy().filter().select()</code> chain. You get SQL’s readability and Polars’ performance for free.</p>
 </div>
-<div id="47" class="cell" data-execution_count="16">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> polars <span class="im">as</span> pl</span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Register DataFrames under SQL table names</span></span>
-<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>ctx <span class="op">=</span> pl.SQLContext(students<span class="op">=</span>df, eager<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Query 1: top-performing programs — pure SQL</span></span>
-<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>result <span class="op">=</span> ctx.execute(<span class="st">"""</span></span>
-<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a><span class="st">    SELECT</span></span>
-<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a><span class="st">        program,</span></span>
-<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a><span class="st">        AVG(final_score)    AS mean_score,</span></span>
-<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a><span class="st">        COUNT(*)            AS n_students</span></span>
-<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a><span class="st">    FROM students</span></span>
-<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a><span class="st">    GROUP BY program</span></span>
-<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a><span class="st">    ORDER BY mean_score DESC</span></span>
-<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a><span class="st">"""</span>)</span>
-<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(result)</span>
-<span id="cb22-17"><a href="#cb22-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-18"><a href="#cb22-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Query 2: filter + select — same as df.filter().select() but SQL syntax</span></span>
-<span id="cb22-19"><a href="#cb22-19" aria-hidden="true" tabindex="-1"></a>high_scorers_sql <span class="op">=</span> ctx.execute(<span class="st">"""</span></span>
-<span id="cb22-20"><a href="#cb22-20" aria-hidden="true" tabindex="-1"></a><span class="st">    SELECT student_id, final_score</span></span>
-<span id="cb22-21"><a href="#cb22-21" aria-hidden="true" tabindex="-1"></a><span class="st">    FROM students</span></span>
-<span id="cb22-22"><a href="#cb22-22" aria-hidden="true" tabindex="-1"></a><span class="st">    WHERE final_score &gt; 0.9</span></span>
-<span id="cb22-23"><a href="#cb22-23" aria-hidden="true" tabindex="-1"></a><span class="st">    ORDER BY final_score DESC</span></span>
-<span id="cb22-24"><a href="#cb22-24" aria-hidden="true" tabindex="-1"></a><span class="st">    LIMIT 5</span></span>
-<span id="cb22-25"><a href="#cb22-25" aria-hidden="true" tabindex="-1"></a><span class="st">"""</span>)</span>
-<span id="cb22-26"><a href="#cb22-26" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(high_scorers_sql)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="48" class="cell" data-execution_count="16">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> polars <span class="im">as</span> pl</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Register DataFrames under SQL table names</span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>ctx <span class="op">=</span> pl.SQLContext(students<span class="op">=</span>df, eager<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Query 1: top-performing programs — pure SQL</span></span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>result <span class="op">=</span> ctx.execute(<span class="st">"""</span></span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a><span class="st">    SELECT</span></span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a><span class="st">        program,</span></span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a><span class="st">        AVG(final_score)    AS mean_score,</span></span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a><span class="st">        COUNT(*)            AS n_students</span></span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a><span class="st">    FROM students</span></span>
+<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a><span class="st">    GROUP BY program</span></span>
+<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a><span class="st">    ORDER BY mean_score DESC</span></span>
+<span id="cb23-15"><a href="#cb23-15" aria-hidden="true" tabindex="-1"></a><span class="st">"""</span>)</span>
+<span id="cb23-16"><a href="#cb23-16" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(result)</span>
+<span id="cb23-17"><a href="#cb23-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-18"><a href="#cb23-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Query 2: filter + select — same as df.filter().select() but SQL syntax</span></span>
+<span id="cb23-19"><a href="#cb23-19" aria-hidden="true" tabindex="-1"></a>high_scorers_sql <span class="op">=</span> ctx.execute(<span class="st">"""</span></span>
+<span id="cb23-20"><a href="#cb23-20" aria-hidden="true" tabindex="-1"></a><span class="st">    SELECT student_id, final_score</span></span>
+<span id="cb23-21"><a href="#cb23-21" aria-hidden="true" tabindex="-1"></a><span class="st">    FROM students</span></span>
+<span id="cb23-22"><a href="#cb23-22" aria-hidden="true" tabindex="-1"></a><span class="st">    WHERE final_score &gt; 0.9</span></span>
+<span id="cb23-23"><a href="#cb23-23" aria-hidden="true" tabindex="-1"></a><span class="st">    ORDER BY final_score DESC</span></span>
+<span id="cb23-24"><a href="#cb23-24" aria-hidden="true" tabindex="-1"></a><span class="st">    LIMIT 5</span></span>
+<span id="cb23-25"><a href="#cb23-25" aria-hidden="true" tabindex="-1"></a><span class="st">"""</span>)</span>
+<span id="cb23-26"><a href="#cb23-26" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(high_scorers_sql)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>shape: (4, 3)
 ┌────────────────────────┬────────────┬────────────┐
@@ -1649,10 +1763,10 @@ shape: (5, 2)
 <section id="datetime-in-polars" class="level2">
 <h2 class="anchored" data-anchor-id="datetime-in-polars">5. Date/Time in Polars</h2>
 <p>Polars can parse dates directly at read time with <code>try_parse_dates=True</code>. There is no separate <code>to_datetime</code> step for standard ISO-format date strings:</p>
-<div id="50" class="cell" data-execution_count="17">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>attendance <span class="op">=</span> pl.read_csv(<span class="st">"data/daily_attendance.csv"</span>, try_parse_dates<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(attendance.dtypes)</span>
-<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>attendance.head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="51" class="cell" data-execution_count="17">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>attendance <span class="op">=</span> pl.read_csv(<span class="st">"data/daily_attendance.csv"</span>, try_parse_dates<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(attendance.dtypes)</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>attendance.head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[Date, Int64, Float64]</code></pre>
 </div>
@@ -1713,16 +1827,16 @@ shape: (5, 2)
 <p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-info-circle-fill"></i> Key Concept: Polars parses dates at load time; pandas requires an explicit conversion step</span><br><br> In pandas, date columns read as <code>str</code> dtype until you call <code>pd.to_datetime()</code>. Polars with <code>try_parse_dates=True</code> infers and parses ISO-format dates automatically during <code>read_csv</code>, producing a <code>pl.Date</code> or <code>pl.Datetime</code> column. This means filtering and arithmetic work on dates immediately, without a conversion step.</p>
 </div>
 <p>Date-component extraction uses the <code>.dt</code> namespace, similar to pandas:</p>
-<div id="53" class="cell" data-execution_count="18">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract year, month, and weekday from the date column</span></span>
-<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>attendance.select(</span>
-<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>    [</span>
-<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>        <span class="st">"date"</span>,</span>
-<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>        pl.col(<span class="st">"date"</span>).dt.year().alias(<span class="st">"year"</span>),</span>
-<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>        pl.col(<span class="st">"date"</span>).dt.month().alias(<span class="st">"month"</span>),</span>
-<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>        pl.col(<span class="st">"date"</span>).dt.weekday().alias(<span class="st">"weekday"</span>),  <span class="co"># Mon=1 ... Sun=7</span></span>
-<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>    ]</span>
-<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>).head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="54" class="cell" data-execution_count="18">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract year, month, and weekday from the date column</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>attendance.select(</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>    [</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>        <span class="st">"date"</span>,</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>        pl.col(<span class="st">"date"</span>).dt.year().alias(<span class="st">"year"</span>),</span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>        pl.col(<span class="st">"date"</span>).dt.month().alias(<span class="st">"month"</span>),</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>        pl.col(<span class="st">"date"</span>).dt.weekday().alias(<span class="st">"weekday"</span>),  <span class="co"># Mon=1 ... Sun=7</span></span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>    ]</span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>).head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="18">
 <div><style>
 .dataframe > thead > tr,
@@ -1784,13 +1898,13 @@ shape: (5, 2)
 </div>
 </div>
 <p>Resampling to weekly or monthly means uses <code>group_by_dynamic</code> instead of pandas’ <code>resample</code>:</p>
-<div id="55" class="cell" data-execution_count="19">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Monthly mean attendance rate per school using group_by_dynamic</span></span>
-<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>school_300 <span class="op">=</span> attendance.<span class="bu">filter</span>(pl.col(<span class="st">"school_id"</span>) <span class="op">==</span> <span class="dv">300</span>)</span>
-<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>school_300.sort(<span class="st">"date"</span>).group_by_dynamic(<span class="st">"date"</span>, every<span class="op">=</span><span class="st">"1mo"</span>, group_by<span class="op">=</span><span class="st">"school_id"</span>).agg(</span>
-<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>    pl.col(<span class="st">"attendance_rate"</span>).mean().alias(<span class="st">"monthly_mean"</span>)</span>
-<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="56" class="cell" data-execution_count="19">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Monthly mean attendance rate per school using group_by_dynamic</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>school_300 <span class="op">=</span> attendance.<span class="bu">filter</span>(pl.col(<span class="st">"school_id"</span>) <span class="op">==</span> <span class="dv">300</span>)</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>school_300.sort(<span class="st">"date"</span>).group_by_dynamic(<span class="st">"date"</span>, every<span class="op">=</span><span class="st">"1mo"</span>, group_by<span class="op">=</span><span class="st">"school_id"</span>).agg(</span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>    pl.col(<span class="st">"attendance_rate"</span>).mean().alias(<span class="st">"monthly_mean"</span>)</span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="19">
 <div><style>
 .dataframe > thead > tr,
@@ -1845,9 +1959,9 @@ shape: (5, 2)
     pl.col("attendance_rate").mean().alias("monthly_mean")
 ).sort(["school_id", "date"])</pre>
 </div>
-<div id="58" class="cell" data-execution_count="20">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: monthly mean attendance per school using group_by_dynamic</span></span>
-<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="59" class="cell" data-execution_count="20">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: monthly mean attendance per school using group_by_dynamic</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="migration-patterns-pandas-to-polars" class="level2">
@@ -1944,17 +2058,17 @@ shape: (5, 2)
 <section id="a.-the-over-expression" class="level3">
 <h3 class="anchored" data-anchor-id="a.-the-over-expression">7a. The <code>over()</code> Expression</h3>
 <p>In pandas, adding a per-group statistic back to the original rows requires <code>groupby().transform()</code>. In Polars, <code>pl.col("x").mean().over("group")</code> does the same thing inside a single <code>with_columns()</code> call. It computes the aggregation per group and broadcasts the result back to every row, aligned to the original index automatically.</p>
-<div id="65" class="cell" data-execution_count="21">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Add the per-program mean and std to every student row, in one expression</span></span>
-<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> df.with_columns(</span>
-<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>    program_mean<span class="op">=</span>pl.col(<span class="st">"average_marks"</span>).mean().over(<span class="st">"program"</span>),</span>
-<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>    program_std<span class="op">=</span>pl.col(<span class="st">"average_marks"</span>).std().over(<span class="st">"program"</span>),</span>
-<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Z-score: how many standard deviations from the program mean?</span></span>
-<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> df.with_columns(marks_zscore<span class="op">=</span>(pl.col(<span class="st">"average_marks"</span>) <span class="op">-</span> pl.col(<span class="st">"program_mean"</span>)) <span class="op">/</span> pl.col(<span class="st">"program_std"</span>))</span>
-<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a>df.select([<span class="st">"student_id"</span>, <span class="st">"program"</span>, <span class="st">"average_marks"</span>, <span class="st">"program_mean"</span>, <span class="st">"marks_zscore"</span>]).head(<span class="dv">6</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="66" class="cell" data-execution_count="21">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Add the per-program mean and std to every student row, in one expression</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> df.with_columns(</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>    program_mean<span class="op">=</span>pl.col(<span class="st">"average_marks"</span>).mean().over(<span class="st">"program"</span>),</span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>    program_std<span class="op">=</span>pl.col(<span class="st">"average_marks"</span>).std().over(<span class="st">"program"</span>),</span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Z-score: how many standard deviations from the program mean?</span></span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> df.with_columns(marks_zscore<span class="op">=</span>(pl.col(<span class="st">"average_marks"</span>) <span class="op">-</span> pl.col(<span class="st">"program_mean"</span>)) <span class="op">/</span> pl.col(<span class="st">"program_std"</span>))</span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a>df.select([<span class="st">"student_id"</span>, <span class="st">"program"</span>, <span class="st">"average_marks"</span>, <span class="st">"program_mean"</span>, <span class="st">"marks_zscore"</span>]).head(<span class="dv">6</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="21">
 <div><style>
 .dataframe > thead > tr,
@@ -2032,17 +2146,17 @@ shape: (5, 2)
 <div style="background:#EAF3FA;border-left:5px solid #0369A1;padding:14px 18px;border-radius:6px;margin:16px 0">
 <p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-info-circle-fill"></i> Key Concept: <code>over()</code> computes group stats without reducing rows</span><br><br> <code>group_by().agg()</code> produces one row per group: the result has as many rows as there are unique group values. <code>.over(“group”)</code> inside <code>with_columns()</code> keeps all original rows and attaches the group stat to each one. This is the right tool for feature engineering: every student in the <code>“Engineering”</code> program gets the engineering mean attached to their row, ready for modelling without a join.</p>
 </div>
-<div id="67" class="cell" data-execution_count="22">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Rolling mean per school using over() -- group-aware rolling window</span></span>
-<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> polars <span class="im">as</span> pl</span>
-<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>attendance <span class="op">=</span> pl.read_csv(<span class="st">"data/daily_attendance.csv"</span>, try_parse_dates<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>attendance_with_rolling <span class="op">=</span> attendance.sort([<span class="st">"school_id"</span>, <span class="st">"date"</span>]).with_columns(</span>
-<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>    rolling_avg<span class="op">=</span>pl.col(<span class="st">"attendance_rate"</span>).rolling_mean(window_size<span class="op">=</span><span class="dv">5</span>, min_periods<span class="op">=</span><span class="dv">3</span>).over(<span class="st">"school_id"</span>)</span>
-<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a>attendance_with_rolling.<span class="bu">filter</span>(pl.col(<span class="st">"school_id"</span>) <span class="op">==</span> <span class="dv">300</span>).head(<span class="dv">8</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="68" class="cell" data-execution_count="22">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Rolling mean per school using over() -- group-aware rolling window</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> polars <span class="im">as</span> pl</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>attendance <span class="op">=</span> pl.read_csv(<span class="st">"data/daily_attendance.csv"</span>, try_parse_dates<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>attendance_with_rolling <span class="op">=</span> attendance.sort([<span class="st">"school_id"</span>, <span class="st">"date"</span>]).with_columns(</span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>    rolling_avg<span class="op">=</span>pl.col(<span class="st">"attendance_rate"</span>).rolling_mean(window_size<span class="op">=</span><span class="dv">5</span>, min_periods<span class="op">=</span><span class="dv">3</span>).over(<span class="st">"school_id"</span>)</span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a>attendance_with_rolling.<span class="bu">filter</span>(pl.col(<span class="st">"school_id"</span>) <span class="op">==</span> <span class="dv">300</span>).head(<span class="dv">8</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="22">
 <div><style>
 .dataframe > thead > tr,
@@ -2132,28 +2246,28 @@ shape: (5, 2)
 )
 df_z.sort("gender_zscore", descending=True).select(["student_id", "gender", "average_marks", "gender_zscore"]).head(6)</pre>
 </div>
-<div id="69" class="cell" data-execution_count="23">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: per-gender z-score using over()</span></span>
-<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="70" class="cell" data-execution_count="23">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: per-gender z-score using over()</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="b.-streaming-processing-files-larger-than-memory" class="level3">
 <h3 class="anchored" data-anchor-id="b.-streaming-processing-files-larger-than-memory">7b. Streaming: Processing Files Larger Than Memory</h3>
 <p><code>pl.scan_csv()</code> and <code>pl.scan_parquet()</code> read a file lazily: no data loads until <code>.collect()</code> is called. Combined with Polars’ streaming engine, filters and projections execute in chunks, so the working memory never exceeds what the query actually needs, even if the source file is larger than RAM.</p>
 <p>The API is identical to eager reads; the difference is <code>scan_</code> instead of <code>read_</code>.</p>
-<div id="71" class="cell" data-execution_count="24">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># scan_csv: no data loads here, only a query plan is built</span></span>
-<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>lazy_scan <span class="op">=</span> (</span>
-<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>    pl.scan_csv(<span class="st">"data/university_analytics.csv"</span>)</span>
-<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>    .<span class="bu">filter</span>(pl.col(<span class="st">"final_score"</span>) <span class="op">&gt;</span> <span class="dv">80</span>)</span>
-<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>    .select([<span class="st">"student_id"</span>, <span class="st">"program"</span>, <span class="st">"final_score"</span>])</span>
-<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>    .sort(<span class="st">"final_score"</span>, descending<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a><span class="co"># .collect() executes with streaming (chunks through the file)</span></span>
-<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a>result <span class="op">=</span> lazy_scan.collect(streaming<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Rows matching filter: </span><span class="sc">{</span><span class="bu">len</span>(result)<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb32-12"><a href="#cb32-12" aria-hidden="true" tabindex="-1"></a>result.head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="72" class="cell" data-execution_count="24">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="co"># scan_csv: no data loads here, only a query plan is built</span></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>lazy_scan <span class="op">=</span> (</span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>    pl.scan_csv(<span class="st">"data/university_analytics.csv"</span>)</span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>    .<span class="bu">filter</span>(pl.col(<span class="st">"final_score"</span>) <span class="op">&gt;</span> <span class="dv">80</span>)</span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>    .select([<span class="st">"student_id"</span>, <span class="st">"program"</span>, <span class="st">"final_score"</span>])</span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>    .sort(<span class="st">"final_score"</span>, descending<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a><span class="co"># .collect() executes with streaming (chunks through the file)</span></span>
+<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a>result <span class="op">=</span> lazy_scan.collect(streaming<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb33-11"><a href="#cb33-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Rows matching filter: </span><span class="sc">{</span><span class="bu">len</span>(result)<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb33-12"><a href="#cb33-12" aria-hidden="true" tabindex="-1"></a>result.head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Rows matching filter: 197</code></pre>
 </div>
@@ -2271,9 +2385,9 @@ regional_summary = merged.group_by("region").agg(
     pl.col("average_marks").mean().alias("mean_marks")
 ).sort("region")</pre>
 </div>
-<div id="76" class="cell" data-execution_count="25">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: reproduce top schools, risk report, and regional summary in Polars</span></span>
-<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="77" class="cell" data-execution_count="25">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: reproduce top schools, risk report, and regional summary in Polars</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="further-reading" class="level2">

@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Part 19: Data Validation with Pydantic – DS-MLOps Path</title>
+<title>Part 19: Data Validation with Pydantic – From Data to Impact</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -68,6 +68,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../../">
+<link href="../../tutorials/02-dev-tools/08-pandera-schema-validation.html" rel="next">
 <link href="../../tutorials/02-dev-tools/06-pre-commit-automation.html" rel="prev">
 <script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
@@ -78,7 +79,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../../site_libs/quarto-html/quarto-syntax-highlighting-de63f62b328812d8e578a4d74e282472.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-212e973001e6594fb07bce043cc2f62c.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-2bbe8175f3a6986c517e4bd766e779ba.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -122,7 +123,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
     <a class="navbar-brand" href="../../index.html">
-    <span class="navbar-title">DS-MLOps Path</span>
+    <span class="navbar-title">From Data to Impact</span>
     </a>
   </div>
             <div id="quarto-search" class="" title="Search"></div>
@@ -175,10 +176,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <a href="../../index.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Welcome</span></a>
   </div>
 </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../preface.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Why This Book Exists</span></a>
+  </div>
+</li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false">
- <span class="menu-text">Part 1: Python Basics</span></a>
+ <span class="menu-text">Part 1: Foundations</span></a>
           <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -311,8 +317,46 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <a href="../../tutorials/02-dev-tools/07-pydantic-validation.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">Part 19: Data Validation with Pydantic</span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/02-dev-tools/08-pandera-schema-validation.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 20: DataFrame Schema Validation with Pandera</span></a>
+  </div>
+</li>
       </ul>
   </li>
+        <li class="sidebar-item sidebar-item-section">
+      <span class="sidebar-item-text sidebar-link text-start">
+ <span class="menu-text">Part 4: Classical ML</span></span>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <span class="sidebar-item-text sidebar-link text-start">
+ <span class="menu-text">Part 5: Deep Learning</span></span>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <span class="sidebar-item-text sidebar-link text-start">
+ <span class="menu-text">Part 6: LLMs</span></span>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <span class="sidebar-item-text sidebar-link text-start">
+ <span class="menu-text">Part 7: MLOps</span></span>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <span class="sidebar-item-text sidebar-link text-start">
+ <span class="menu-text">Part 8: Production Monitoring</span></span>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <span class="sidebar-item-text sidebar-link text-start">
+ <span class="menu-text">Part 9: ML System Design</span></span>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <span class="sidebar-item-text sidebar-link text-start">
+ <span class="menu-text">Part 10: Value-driven AI</span></span>
+  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../about.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">About the Author</span></a>
+  </div>
+</li>
     </ul>
     </div>
 </nav>
@@ -325,17 +369,27 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <ul>
   <li><a href="#before-you-begin" id="toc-before-you-begin" class="nav-link active" data-scroll-target="#before-you-begin">Before you begin</a></li>
   <li><a href="#learning-objectives" id="toc-learning-objectives" class="nav-link" data-scroll-target="#learning-objectives">Learning Objectives</a></li>
+  <li><a href="#the-bug-that-type-annotations-cannot-catch" id="toc-the-bug-that-type-annotations-cannot-catch" class="nav-link" data-scroll-target="#the-bug-that-type-annotations-cannot-catch">0. The Bug That Type Annotations Cannot Catch</a>
+  <ul class="collapse">
+  <li><a href="#install" id="toc-install" class="nav-link" data-scroll-target="#install">Install</a></li>
+  </ul></li>
   <li><a href="#models-type-annotations-that-bite" id="toc-models-type-annotations-that-bite" class="nav-link" data-scroll-target="#models-type-annotations-that-bite">1. Models: Type Annotations That Bite</a></li>
   <li><a href="#studentrecord-validating-incoming-data" id="toc-studentrecord-validating-incoming-data" class="nav-link" data-scroll-target="#studentrecord-validating-incoming-data">2. <code>StudentRecord</code>: Validating Incoming Data</a></li>
   <li><a href="#field-validators-and-cross-field-validators" id="toc-field-validators-and-cross-field-validators" class="nav-link" data-scroll-target="#field-validators-and-cross-field-validators">3. Field Validators and Cross-Field Validators</a></li>
-  <li><a href="#basesettings-config-from-environment-variables" id="toc-basesettings-config-from-environment-variables" class="nav-link" data-scroll-target="#basesettings-config-from-environment-variables">4. <code>BaseSettings</code>: Config from Environment Variables</a></li>
-  <li><a href="#typing-a-ds-pipeline-config" id="toc-typing-a-ds-pipeline-config" class="nav-link" data-scroll-target="#typing-a-ds-pipeline-config">5. Typing a DS Pipeline Config</a></li>
-  <li><a href="#validating-a-batch-of-records" id="toc-validating-a-batch-of-records" class="nav-link" data-scroll-target="#validating-a-batch-of-records">6. Validating a Batch of Records</a></li>
-  <li><a href="#capstone---typed-grade-predictor-pipeline" id="toc-capstone---typed-grade-predictor-pipeline" class="nav-link" data-scroll-target="#capstone---typed-grade-predictor-pipeline">Capstone - Typed grade-predictor Pipeline</a></li>
+  <li><a href="#cli-interfaces-argparse-and-typer" id="toc-cli-interfaces-argparse-and-typer" class="nav-link" data-scroll-target="#cli-interfaces-argparse-and-typer">4. CLI Interfaces: argparse and typer</a>
+  <ul class="collapse">
+  <li><a href="#argparse-the-baseline" id="toc-argparse-the-baseline" class="nav-link" data-scroll-target="#argparse-the-baseline">argparse: the baseline</a></li>
+  <li><a href="#typer-annotations-as-the-cli-spec" id="toc-typer-annotations-as-the-cli-spec" class="nav-link" data-scroll-target="#typer-annotations-as-the-cli-spec">typer: annotations as the CLI spec</a></li>
+  <li><a href="#typer-pydantic-settings-the-dsmlops-pattern" id="toc-typer-pydantic-settings-the-dsmlops-pattern" class="nav-link" data-scroll-target="#typer-pydantic-settings-the-dsmlops-pattern">typer + pydantic-settings: the DS/MLOps pattern</a></li>
+  </ul></li>
+  <li><a href="#basesettings-config-from-environment-variables" id="toc-basesettings-config-from-environment-variables" class="nav-link" data-scroll-target="#basesettings-config-from-environment-variables">5. <code>BaseSettings</code>: Config from Environment Variables</a></li>
+  <li><a href="#typing-a-ds-pipeline-config" id="toc-typing-a-ds-pipeline-config" class="nav-link" data-scroll-target="#typing-a-ds-pipeline-config">6. Typing a DS Pipeline Config</a></li>
+  <li><a href="#validating-a-batch-of-records" id="toc-validating-a-batch-of-records" class="nav-link" data-scroll-target="#validating-a-batch-of-records">7. Validating a Batch of Records</a></li>
+  <li><a href="#capstone-typed-grade-predictor-pipeline" id="toc-capstone-typed-grade-predictor-pipeline" class="nav-link" data-scroll-target="#capstone-typed-grade-predictor-pipeline">Capstone: Typed grade-predictor Pipeline</a></li>
   <li><a href="#further-reading" id="toc-further-reading" class="nav-link" data-scroll-target="#further-reading">Further Reading</a></li>
   <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary">Summary</a></li>
   </ul>
-<div class="toc-actions"><ul><li><a href="https://github.com/sambaiga/ds-mlops-path/edit/main/tutorials/02-dev-tools/07-pydantic-validation.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/sambaiga/ds-mlops-path/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li><li><a href="https://github.com/sambaiga/ds-mlops-path/blob/main/tutorials/02-dev-tools/07-pydantic-validation.qmd" class="toc-action"><i class="bi empty"></i>View source</a></li></ul></div></nav>
+<div class="toc-actions"><ul><li><a href="https://github.dev/sambaiga/ds-mlops-path/blob/main/tutorials/02-dev-tools/07-pydantic-validation.ipynb" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/sambaiga/ds-mlops-path/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li><li><a href="https://github.com/sambaiga/ds-mlops-path/blob/main/tutorials/02-dev-tools/07-pydantic-validation.ipynb" class="toc-action"><i class="bi empty"></i>View source</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -359,14 +413,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
+<p><a href="https://colab.research.google.com/github/sambaiga/ds-mlops-path/blob/main/tutorials/02-dev-tools/07-pydantic-validation.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open In Colab"></a> <a href="https://raw.githubusercontent.com/sambaiga/ds-mlops-path/main/tutorials/02-dev-tools/07-pydantic-validation.ipynb"><img src="https://img.shields.io/badge/Download-Notebook-blue.svg?logo=jupyter&amp;logoColor=white" class="img-fluid" alt="Download Notebook"></a></p>
 <p><strong>DS-MLOps Dev Tools</strong></p>
 <p><strong>Python 3.12+ | Author: Anthony Faustine</strong></p>
 <section id="before-you-begin" class="level2">
 <h2 class="anchored" data-anchor-id="before-you-begin">Before you begin</h2>
-<p>This chapter assumes you have completed <a href="../../tutorials/02-dev-tools/03-type-annotations.html">Part 15: Type Annotations</a>. Pydantic is type annotations put to work: the type hints you write in Part 15 become runtime validators that reject wrong inputs before they corrupt a pipeline.</p>
+<p>This notebook assumes you have completed <a href="../../tutorials/02-dev-tools/03-type-annotations.html">Part 15: Type Annotations</a>. Pydantic is type annotations put to work: the type hints you write in Part 15 become runtime validators that reject wrong inputs before they corrupt a pipeline.</p>
 <p>The <code>grade-predictor</code> project continues here: a <code>GradeConfig</code> model replaces the ad-hoc defaults in <code>compute_grade</code>, and a <code>StudentRecord</code> model validates incoming data before it ever reaches a computation function.</p>
 <blockquote class="blockquote">
-<p>Callout markers used throughout this chapter are explained on the <a href="../../index.html#callout-guide">book cover page</a>.</p>
+<p>Callout markers used throughout this notebook are explained on the <a href="../../index.html#callout-guide">book cover page</a>.</p>
 </blockquote>
 </section>
 <section id="learning-objectives" class="level2">
@@ -403,21 +458,38 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </tr>
 <tr class="even">
 <td>4</td>
-<td>Use <code>BaseSettings</code> to manage configuration from environment variables</td>
+<td>Build CLI tools with argparse and typer, and understand when to use each</td>
 <td>Sec. 4</td>
 </tr>
 <tr class="odd">
 <td>5</td>
-<td>Build a typed config object for a DS pipeline</td>
+<td>Use <code>BaseSettings</code> to manage configuration from environment variables</td>
 <td>Sec. 5</td>
 </tr>
 <tr class="even">
 <td>6</td>
-<td>Validate a batch of student records and collect all errors at once</td>
+<td>Build a typed config object for a DS pipeline</td>
 <td>Sec. 6</td>
+</tr>
+<tr class="odd">
+<td>7</td>
+<td>Validate a batch of student records and collect all errors at once</td>
+<td>Sec. 7</td>
 </tr>
 </tbody>
 </table>
+</section>
+<section id="the-bug-that-type-annotations-cannot-catch" class="level2">
+<h2 class="anchored" data-anchor-id="the-bug-that-type-annotations-cannot-catch">0. The Bug That Type Annotations Cannot Catch</h2>
+<p>You have just finished building the <code>grade-predictor</code> pipeline. It reads a CSV, computes weighted scores, applies a pass threshold, and writes results to a file. You add type annotations everywhere. Your type checker passes clean. You deploy.</p>
+<p>Two weeks later, a bug report arrives: the pipeline produced a passing grade for a student whose <code>midterm_score</code> was logged as <code>150.0</code> — which is impossible on a 100-point scale. The pipeline did not crash. The math ran correctly on the wrong number. A downstream report was wrong, and nobody noticed until a student appealed their grade.</p>
+<p>The problem was not the computation. It was that nothing stopped the invalid value from entering the pipeline in the first place. Type annotations say <em>what type a value should be</em>. They do not say <em>whether a value of that type makes sense at runtime</em>. <code>midterm_score: float</code> accepts any float: <code>150.0</code>, <code>-20.0</code>, <code>float("inf")</code>. The annotation is a hint to the reader and the type checker. It is not a gate.</p>
+<p><strong>Pydantic</strong> (<a href="https://docs.pydantic.dev/latest/">pydantic.dev</a>) turns annotations into gates. Define a model, describe the constraints, and Pydantic enforces them on every construction — before the value reaches any computation. One validation point at entry; everything downstream trusts the types.</p>
+<section id="install" class="level3">
+<h3 class="anchored" data-anchor-id="install">Install</h3>
+<p>Pydantic is in <code>pyproject.toml</code>. For a standalone project:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> add pydantic pydantic-settings    <span class="co"># or: pip install pydantic pydantic-settings</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
 </section>
 <section id="models-type-annotations-that-bite" class="level2">
 <h2 class="anchored" data-anchor-id="models-type-annotations-that-bite">1. Models: Type Annotations That Bite</h2>
@@ -443,82 +515,108 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
-<p>A Python dataclass accepts any value for any field, regardless of what the annotation says. The annotation is a hint to the reader and the type checker, but it does not stop wrong values from entering the object at runtime.</p>
-<p>A Pydantic model validates on construction. Pass the wrong type and it raises an error immediately, before the value reaches any computation:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> dataclasses <span class="im">import</span> dataclass</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pydantic <span class="im">import</span> BaseModel</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="at">@dataclass</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> DataclassStudent:</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    student_id: <span class="bu">str</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    midterm_score: <span class="bu">float</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> PydanticStudent(BaseModel):</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    student_id: <span class="bu">str</span></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    midterm_score: <span class="bu">float</span></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Dataclass: accepts "eighty" silently</span></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>dc <span class="op">=</span> DataclassStudent(student_id<span class="op">=</span><span class="st">"S0001"</span>, midterm_score<span class="op">=</span><span class="st">"eighty"</span>)</span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(dc.midterm_score)  <span class="co"># "eighty" -- no error</span></span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Pydantic: raises ValidationError immediately</span></span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>ps <span class="op">=</span> PydanticStudent(student_id<span class="op">=</span><span class="st">"S0001"</span>, midterm_score<span class="op">=</span><span class="st">"eighty"</span>)</span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="co"># pydantic.ValidationError: 1 validation error for PydanticStudent</span></span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="co"># midterm_score: Input should be a valid number [type=float_parsing]</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>A Python dataclass accepts any value for any field, regardless of what the annotation says. A Pydantic model validates on construction. Pass the wrong type and it raises an error immediately, before the value reaches any computation:</p>
+<div id="7" class="cell" data-execution_count="1">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> dataclasses <span class="im">import</span> dataclass</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pydantic <span class="im">import</span> BaseModel</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="at">@dataclass</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> DataclassStudent:</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    student_id: <span class="bu">str</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    midterm_score: <span class="bu">float</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> PydanticStudent(BaseModel):</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    student_id: <span class="bu">str</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    midterm_score: <span class="bu">float</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Dataclass: accepts "eighty" silently</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>dc <span class="op">=</span> DataclassStudent(student_id<span class="op">=</span><span class="st">"S0001"</span>, midterm_score<span class="op">=</span><span class="st">"eighty"</span>)</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(dc.midterm_score)  <span class="co"># "eighty" -- no error</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Pydantic: raises ValidationError immediately</span></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span>:</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>    ps <span class="op">=</span> PydanticStudent(student_id<span class="op">=</span><span class="st">"S0001"</span>, midterm_score<span class="op">=</span><span class="st">"eighty"</span>)</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a><span class="cf">except</span> <span class="pp">Exception</span> <span class="im">as</span> e:</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="bu">type</span>(e).<span class="va">__name__</span>, e)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>eighty
+ValidationError 1 validation error for PydanticStudent
+midterm_score
+  Input should be a valid number, unable to parse string as a number [type=float_parsing, input_value='eighty', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/float_parsing</code></pre>
+</div>
+</div>
 <p>Pydantic also coerces where the conversion is unambiguous. <code>"85"</code> becomes <code>85.0</code> for a <code>float</code> field; <code>"true"</code> becomes <code>True</code> for a <code>bool</code> field. This makes it practical for inputs from CSV files, APIs, or environment variables, where everything arrives as a string.</p>
-<div class="ark-concept">
-<p><span class="ark-concept-title"><i class="bi bi-info-circle-fill"></i> Key Concept: Validate at the boundary, not inside the pipeline</span><br><br> A pipeline that validates its inputs at the entry point can trust every value it works with from that point on. A pipeline that validates inside individual functions repeats the same checks everywhere and still misses values that enter through unexpected paths. Pydantic at the boundary is the architectural principle; the model is the mechanism.</p>
+<div style="background:#EAF3FA;border-left:5px solid #0369A1;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-info-circle-fill"></i> Key Concept: Validate at the boundary, not inside the pipeline</span><br><br> A pipeline that validates its inputs at the entry point can trust every value it works with from that point on. A pipeline that validates inside individual functions repeats the same checks everywhere and still misses values that enter through unexpected paths. Pydantic at the boundary is the architectural principle; the model is the mechanism.</p>
 </div>
 </section>
 <section id="studentrecord-validating-incoming-data" class="level2">
 <h2 class="anchored" data-anchor-id="studentrecord-validating-incoming-data">2. <code>StudentRecord</code>: Validating Incoming Data</h2>
 <p>Define a model for a student record coming in from a CSV or API. The <code>model_config</code> attribute controls Pydantic v2’s behaviour:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pydantic <span class="im">import</span> BaseModel, Field, field_validator, model_validator</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> typing <span class="im">import</span> Annotated</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> StudentRecord(BaseModel):</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    model_config <span class="op">=</span> {<span class="st">"str_strip_whitespace"</span>: <span class="va">True</span>, <span class="st">"validate_assignment"</span>: <span class="va">True</span>}</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    student_id: <span class="bu">str</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    midterm_score: Annotated[<span class="bu">float</span>, Field(ge<span class="op">=</span><span class="fl">0.0</span>, le<span class="op">=</span><span class="fl">100.0</span>)]</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    final_score: Annotated[<span class="bu">float</span>, Field(ge<span class="op">=</span><span class="fl">0.0</span>, le<span class="op">=</span><span class="fl">100.0</span>)]</span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    project_score: Annotated[<span class="bu">float</span>, Field(ge<span class="op">=</span><span class="fl">0.0</span>, le<span class="op">=</span><span class="fl">100.0</span>)]</span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    program: <span class="bu">str</span></span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    has_internet: <span class="bu">bool</span> <span class="op">=</span> <span class="va">True</span></span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">@field_validator</span>(<span class="st">"student_id"</span>)</span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">@classmethod</span></span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> student_id_format(cls, v: <span class="bu">str</span>) <span class="op">-&gt;</span> <span class="bu">str</span>:</span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>        <span class="im">import</span> re</span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="kw">not</span> re.match(<span class="vs">r"</span><span class="dv">^</span><span class="vs">S</span><span class="dv">\d</span><span class="op">{4}</span><span class="dv">$</span><span class="vs">"</span>, v):</span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>            <span class="cf">raise</span> <span class="pp">ValueError</span>(<span class="ss">f"student_id must match S followed by 4 digits, got '</span><span class="sc">{</span>v<span class="sc">}</span><span class="ss">'"</span>)</span>
-<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> v</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="10" class="cell" data-execution_count="2">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> re</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> typing <span class="im">import</span> Annotated</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pydantic <span class="im">import</span> BaseModel, Field, ValidationError, field_validator</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> StudentRecord(BaseModel):</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    model_config <span class="op">=</span> {<span class="st">"str_strip_whitespace"</span>: <span class="va">True</span>, <span class="st">"validate_assignment"</span>: <span class="va">True</span>}</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    student_id: <span class="bu">str</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    midterm_score: Annotated[<span class="bu">float</span>, Field(ge<span class="op">=</span><span class="fl">0.0</span>, le<span class="op">=</span><span class="fl">100.0</span>)]</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    final_score: Annotated[<span class="bu">float</span>, Field(ge<span class="op">=</span><span class="fl">0.0</span>, le<span class="op">=</span><span class="fl">100.0</span>)]</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>    project_score: Annotated[<span class="bu">float</span>, Field(ge<span class="op">=</span><span class="fl">0.0</span>, le<span class="op">=</span><span class="fl">100.0</span>)]</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>    program: <span class="bu">str</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>    has_internet: <span class="bu">bool</span> <span class="op">=</span> <span class="va">True</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">@field_validator</span>(<span class="st">"student_id"</span>)</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">@classmethod</span></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> student_id_format(cls, v: <span class="bu">str</span>) <span class="op">-&gt;</span> <span class="bu">str</span>:</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="kw">not</span> re.match(<span class="vs">r"</span><span class="dv">^</span><span class="vs">S</span><span class="dv">\d</span><span class="op">{4}</span><span class="dv">$</span><span class="vs">"</span>, v):</span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>            <span class="cf">raise</span> <span class="pp">ValueError</span>(<span class="ss">f"student_id must match S followed by 4 digits, got '</span><span class="sc">{</span>v<span class="sc">}</span><span class="ss">'"</span>)</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> v</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
 <p><code>Field(ge=0.0, le=100.0)</code> means “greater than or equal to 0, less than or equal to 100”. Pydantic v2 uses <code>Annotated</code> with <code>Field</code> for constraints; the old <code>validator</code> decorator is replaced by <code>field_validator</code>.</p>
 <p>Try it:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Valid record: succeeds</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>record <span class="op">=</span> StudentRecord(</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    student_id<span class="op">=</span><span class="st">"S0042"</span>,</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    midterm_score<span class="op">=</span><span class="fl">78.5</span>,</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    final_score<span class="op">=</span><span class="fl">82.0</span>,</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    project_score<span class="op">=</span><span class="st">"91.0"</span>,  <span class="co"># string coerced to float</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    program<span class="op">=</span><span class="st">"CS"</span>,</span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(record.model_dump())</span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Invalid: midterm over 100</span></span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span>:</span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    bad <span class="op">=</span> StudentRecord(</span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>        student_id<span class="op">=</span><span class="st">"S0042"</span>,</span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>        midterm_score<span class="op">=</span><span class="fl">150.0</span>,  <span class="co"># violates le=100.0</span></span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>        final_score<span class="op">=</span><span class="fl">80.0</span>,</span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>        project_score<span class="op">=</span><span class="fl">75.0</span>,</span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>        program<span class="op">=</span><span class="st">"CS"</span>,</span>
-<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a><span class="cf">except</span> ValidationError <span class="im">as</span> e:</span>
-<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(e)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="ark-activity">
-<span class="ark-activity-title"><i class="bi bi-puzzle-fill"></i> Activity 1 - Extend StudentRecord</span><br><br> <b>Goal:</b> Add a <code>semester</code> field to <code>StudentRecord</code> that must be one of <code>“Fall”</code>, <code>“Spring”</code>, <code>“Summer”</code>. Use <code>Literal[“Fall”, “Spring”, “Summer”]</code> as the type annotation. Try creating a record with <code>semester=“Winter”</code> and confirm it raises a <code>ValidationError</code>.
-<pre>from typing import Literal
+<div id="12" class="cell" data-execution_count="3">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Valid record: succeeds</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>record <span class="op">=</span> StudentRecord(</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    student_id<span class="op">=</span><span class="st">"S0042"</span>,</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    midterm_score<span class="op">=</span><span class="fl">78.5</span>,</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    final_score<span class="op">=</span><span class="fl">82.0</span>,</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    project_score<span class="op">=</span><span class="st">"91.0"</span>,  <span class="co"># string coerced to float</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    program<span class="op">=</span><span class="st">"CS"</span>,</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(record.model_dump())</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Invalid: midterm over 100</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span>:</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>    bad <span class="op">=</span> StudentRecord(</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>        student_id<span class="op">=</span><span class="st">"S0042"</span>,</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>        midterm_score<span class="op">=</span><span class="fl">150.0</span>,  <span class="co"># violates le=100.0</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>        final_score<span class="op">=</span><span class="fl">80.0</span>,</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>        project_score<span class="op">=</span><span class="fl">75.0</span>,</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>        program<span class="op">=</span><span class="st">"CS"</span>,</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a><span class="cf">except</span> ValidationError <span class="im">as</span> e:</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(e)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>{'student_id': 'S0042', 'midterm_score': 78.5, 'final_score': 82.0, 'project_score': 91.0, 'program': 'CS', 'has_internet': True}
+1 validation error for StudentRecord
+midterm_score
+  Input should be less than or equal to 100 [type=less_than_equal, input_value=150.0, input_type=float]
+    For further information visit https://errors.pydantic.dev/2.12/v/less_than_equal</code></pre>
+</div>
+</div>
+<div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
+<span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 1 - Extend StudentRecord</span><br><br> <b>Goal:</b> Add a <code>semester</code> field to <code>StudentRecord</code> that must be one of <code>“Fall”</code>, <code>“Spring”</code>, <code>“Summer”</code>. Use <code>Literal[“Fall”, “Spring”, “Summer”]</code> as the type annotation. Try creating a record with <code>semester=“Winter”</code> and confirm it raises a <code>ValidationError</code>.
+<pre style="background:#FFF8E1;padding:10px;border-radius:4px;font-size:0.9em">from typing import Literal
 
 class StudentRecord(BaseModel):
     ...
@@ -529,174 +627,290 @@ StudentRecord(..., semester="Winter")  # should raise ValidationError</pre>
 </section>
 <section id="field-validators-and-cross-field-validators" class="level2">
 <h2 class="anchored" data-anchor-id="field-validators-and-cross-field-validators">3. Field Validators and Cross-Field Validators</h2>
-<p>A <code>@field_validator</code> runs on a single field after type coercion. Use it for business rules that go beyond a simple range check: ID format, domain-specific constraints, normalization.</p>
-<p>A <code>@model_validator</code> runs after all fields are set and has access to the complete model. Use it for cross-field constraints: “if <code>final_score</code> is provided, <code>midterm_score</code> must also be present”:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pydantic <span class="im">import</span> BaseModel, field_validator, model_validator, Field</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> typing <span class="im">import</span> Annotated</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> GradeConfig(BaseModel):</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Configuration for grade computation weights."""</span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    midterm_weight: Annotated[<span class="bu">float</span>, Field(gt<span class="op">=</span><span class="fl">0.0</span>, lt<span class="op">=</span><span class="fl">1.0</span>)] <span class="op">=</span> <span class="fl">0.30</span></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    final_weight: Annotated[<span class="bu">float</span>, Field(gt<span class="op">=</span><span class="fl">0.0</span>, lt<span class="op">=</span><span class="fl">1.0</span>)] <span class="op">=</span> <span class="fl">0.45</span></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    project_weight: Annotated[<span class="bu">float</span>, Field(gt<span class="op">=</span><span class="fl">0.0</span>, lt<span class="op">=</span><span class="fl">1.0</span>)] <span class="op">=</span> <span class="fl">0.25</span></span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    pass_threshold: Annotated[<span class="bu">float</span>, Field(ge<span class="op">=</span><span class="fl">50.0</span>, le<span class="op">=</span><span class="fl">80.0</span>)] <span class="op">=</span> <span class="fl">60.0</span></span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">@model_validator</span>(mode<span class="op">=</span><span class="st">"after"</span>)</span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> weights_must_sum_to_one(<span class="va">self</span>) <span class="op">-&gt;</span> <span class="st">"GradeConfig"</span>:</span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>        total <span class="op">=</span> <span class="va">self</span>.midterm_weight <span class="op">+</span> <span class="va">self</span>.final_weight <span class="op">+</span> <span class="va">self</span>.project_weight</span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="bu">abs</span>(total <span class="op">-</span> <span class="fl">1.0</span>) <span class="op">&gt;</span> <span class="fl">1e-6</span>:</span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>            <span class="cf">raise</span> <span class="pp">ValueError</span>(</span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>                <span class="ss">f"Weights must sum to 1.0, got </span><span class="sc">{</span>total<span class="sc">:.6f}</span><span class="ss">. "</span></span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>                <span class="ss">f"Adjust midterm (</span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>midterm_weight<span class="sc">}</span><span class="ss">), "</span></span>
-<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>                <span class="ss">f"final (</span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>final_weight<span class="sc">}</span><span class="ss">), or project (</span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>project_weight<span class="sc">}</span><span class="ss">)."</span></span>
-<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>            )</span>
-<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">self</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>The <code>mode="after"</code> argument means the validator runs after Pydantic has already validated and coerced every individual field. Use <code>mode="before"</code> when you need to transform raw input before type coercion.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Valid: weights sum to 1.0</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>cfg <span class="op">=</span> GradeConfig(midterm_weight<span class="op">=</span><span class="fl">0.3</span>, final_weight<span class="op">=</span><span class="fl">0.5</span>, project_weight<span class="op">=</span><span class="fl">0.2</span>)</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Invalid: weights sum to 1.05</span></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span>:</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    bad_cfg <span class="op">=</span> GradeConfig(midterm_weight<span class="op">=</span><span class="fl">0.4</span>, final_weight<span class="op">=</span><span class="fl">0.45</span>, project_weight<span class="op">=</span><span class="fl">0.2</span>)</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="cf">except</span> ValidationError <span class="im">as</span> e:</span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(e)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="ark-tip">
-<p><span class="ark-tip-title"><i class="bi bi-lightbulb-fill"></i> Pro Tip: Use <code>model_dump()</code> and <code>model_validate()</code> to round-trip through dicts and JSON</span><br><br> <code>config.model_dump()</code> converts a Pydantic model to a plain Python dict, ready for JSON serialisation or pandas. <code>GradeConfig.model_validate(some_dict)</code> validates and constructs a model from a dict. <code>GradeConfig.model_validate_json(json_string)</code> parses and validates from a JSON string. These three methods cover the most common I/O patterns for config files, API payloads, and database rows.</p>
+<p>A <code>@field_validator</code> runs on a single field after type coercion. Use it for business rules that go beyond a simple range check.</p>
+<p>A <code>@model_validator</code> runs after all fields are set and has access to the complete model. Use it for cross-field constraints — “weights must sum to 1.0”:</p>
+<div id="15" class="cell" data-execution_count="4">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> typing <span class="im">import</span> Annotated</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pydantic <span class="im">import</span> BaseModel, Field, ValidationError, field_validator, model_validator</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> GradeConfig(BaseModel):</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    midterm_weight: Annotated[<span class="bu">float</span>, Field(gt<span class="op">=</span><span class="fl">0.0</span>, lt<span class="op">=</span><span class="fl">1.0</span>)] <span class="op">=</span> <span class="fl">0.30</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    final_weight: Annotated[<span class="bu">float</span>, Field(gt<span class="op">=</span><span class="fl">0.0</span>, lt<span class="op">=</span><span class="fl">1.0</span>)] <span class="op">=</span> <span class="fl">0.45</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    project_weight: Annotated[<span class="bu">float</span>, Field(gt<span class="op">=</span><span class="fl">0.0</span>, lt<span class="op">=</span><span class="fl">1.0</span>)] <span class="op">=</span> <span class="fl">0.25</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    pass_threshold: Annotated[<span class="bu">float</span>, Field(ge<span class="op">=</span><span class="fl">50.0</span>, le<span class="op">=</span><span class="fl">80.0</span>)] <span class="op">=</span> <span class="fl">60.0</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">@model_validator</span>(mode<span class="op">=</span><span class="st">"after"</span>)</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> weights_must_sum_to_one(<span class="va">self</span>) <span class="op">-&gt;</span> <span class="st">"GradeConfig"</span>:</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>        total <span class="op">=</span> <span class="va">self</span>.midterm_weight <span class="op">+</span> <span class="va">self</span>.final_weight <span class="op">+</span> <span class="va">self</span>.project_weight</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="bu">abs</span>(total <span class="op">-</span> <span class="fl">1.0</span>) <span class="op">&gt;</span> <span class="fl">1e-6</span>:</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>            <span class="cf">raise</span> <span class="pp">ValueError</span>(</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>                <span class="ss">f"Weights must sum to 1.0, got </span><span class="sc">{</span>total<span class="sc">:.6f}</span><span class="ss">. "</span></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>                <span class="ss">f"Adjust midterm (</span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>midterm_weight<span class="sc">}</span><span class="ss">), "</span></span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>                <span class="ss">f"final (</span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>final_weight<span class="sc">}</span><span class="ss">), or project (</span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>project_weight<span class="sc">}</span><span class="ss">)."</span></span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>            )</span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">self</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div class="ark-activity">
-<span class="ark-activity-title"><i class="bi bi-puzzle-fill"></i> Activity 2 - Config from a Dict</span><br><br> <b>Goal:</b> Create a <code>GradeConfig</code> from a Python dict using <code>model_validate()</code>. Then call <code>model_dump()</code> to get a plain dict back. Confirm the two dicts have the same values. Also confirm that a dict with weights that do not sum to 1.0 raises a <code>ValidationError</code>.
-<pre>raw = {"midterm_weight": 0.3, "final_weight": 0.45, "project_weight": 0.25}
+<p>The <code>mode="after"</code> argument means the validator runs after Pydantic has already validated and coerced every individual field. Use <code>mode="before"</code> when you need to transform raw input before type coercion.</p>
+<div id="17" class="cell" data-execution_count="5">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Valid: weights sum to 1.0</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>cfg <span class="op">=</span> GradeConfig(midterm_weight<span class="op">=</span><span class="fl">0.3</span>, final_weight<span class="op">=</span><span class="fl">0.5</span>, project_weight<span class="op">=</span><span class="fl">0.2</span>)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(cfg)</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Invalid: weights sum to 1.05</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span>:</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    bad_cfg <span class="op">=</span> GradeConfig(midterm_weight<span class="op">=</span><span class="fl">0.4</span>, final_weight<span class="op">=</span><span class="fl">0.45</span>, project_weight<span class="op">=</span><span class="fl">0.2</span>)</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="cf">except</span> ValidationError <span class="im">as</span> e:</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(e)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>midterm_weight=0.3 final_weight=0.5 project_weight=0.2 pass_threshold=60.0
+1 validation error for GradeConfig
+  Value error, Weights must sum to 1.0, got 1.050000. Adjust midterm (0.4), final (0.45), or project (0.2). [type=value_error, input_value={'midterm_weight': 0.4, '..., 'project_weight': 0.2}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/value_error</code></pre>
+</div>
+</div>
+<div style="background:#F5F3FF;border-left:5px solid #7C3AED;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#5B21B6;font-weight:bold"><i class="bi bi-lightbulb-fill"></i> Pro Tip: Use <code>model_dump()</code> and <code>model_validate()</code> to round-trip through dicts and JSON</span><br><br> <code>config.model_dump()</code> converts a Pydantic model to a plain Python dict. <code>GradeConfig.model_validate(some_dict)</code> validates and constructs a model from a dict. <code>GradeConfig.model_validate_json(json_string)</code> parses and validates from a JSON string. These three methods cover the most common I/O patterns for config files, API payloads, and database rows.</p>
+</div>
+<div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
+<span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 2 - Config from a Dict</span><br><br> <b>Goal:</b> Create a <code>GradeConfig</code> from a Python dict using <code>model_validate()</code>. Then call <code>model_dump()</code> to get a plain dict back. Confirm the two dicts have the same values. Also confirm that a dict with weights that do not sum to 1.0 raises a <code>ValidationError</code>.
+<pre style="background:#FFF8E1;padding:10px;border-radius:4px;font-size:0.9em">raw = {"midterm_weight": 0.3, "final_weight": 0.45, "project_weight": 0.25}
 cfg = GradeConfig.model_validate(raw)
 assert cfg.model_dump() == {**raw, "pass_threshold": 60.0}</pre>
 </div>
 </section>
+<section id="cli-interfaces-argparse-and-typer" class="level2">
+<h2 class="anchored" data-anchor-id="cli-interfaces-argparse-and-typer">4. CLI Interfaces: argparse and typer</h2>
+<p>Every ML pipeline eventually needs to be run from the command line: <code>python train.py --data-path data/train.csv --epochs 50 --threshold 0.65</code>. Two tools exist for this: <code>argparse</code> (stdlib, the traditional approach) and <code>typer</code> (modern, annotation-based, by the same author as FastAPI).</p>
+<section id="argparse-the-baseline" class="level3">
+<h3 class="anchored" data-anchor-id="argparse-the-baseline">argparse: the baseline</h3>
+<p><code>argparse</code> requires you to declare each argument manually, convert strings to types yourself, and write help text by hand:</p>
+<div id="20" class="cell" data-execution_count="6">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> argparse</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co"># argparse: explicit, verbose, manual type conversion</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>parser <span class="op">=</span> argparse.ArgumentParser(description<span class="op">=</span><span class="st">"Grade predictor CLI"</span>)</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>parser.add_argument(<span class="st">"--data-path"</span>, <span class="bu">type</span><span class="op">=</span><span class="bu">str</span>, default<span class="op">=</span><span class="st">"data/university_analytics.csv"</span>)</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>parser.add_argument(<span class="st">"--pass-threshold"</span>, <span class="bu">type</span><span class="op">=</span><span class="bu">float</span>, default<span class="op">=</span><span class="fl">60.0</span>)</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>parser.add_argument(<span class="st">"--debug"</span>, action<span class="op">=</span><span class="st">"store_true"</span>, default<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="co"># In a script: args = parser.parse_args()</span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="co"># In a notebook: simulate with a list</span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>args <span class="op">=</span> parser.parse_args([<span class="st">"--data-path"</span>, <span class="st">"data/train.csv"</span>, <span class="st">"--pass-threshold"</span>, <span class="st">"65.0"</span>])</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(args.data_path, args.pass_threshold, args.debug)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>data/train.csv 65.0 False</code></pre>
+</div>
+</div>
+</section>
+<section id="typer-annotations-as-the-cli-spec" class="level3">
+<h3 class="anchored" data-anchor-id="typer-annotations-as-the-cli-spec">typer: annotations as the CLI spec</h3>
+<p><code>typer</code> reads your function’s type annotations and builds the parser for you. The same type hints that describe the function’s signature generate <code>--help</code>, automatic type coercion, and validation:</p>
+<div id="22" class="cell" data-execution_count="7">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># pip install typer  /  uv add typer</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="co"># This is a module-level demo -- run as: python script.py --data-path ... from terminal</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> typer</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>app <span class="op">=</span> typer.Typer()</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="at">@app.command</span>()</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> train(</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>    data_path: <span class="bu">str</span> <span class="op">=</span> typer.Option(<span class="st">"data/university_analytics.csv"</span>, <span class="bu">help</span><span class="op">=</span><span class="st">"Path to CSV"</span>),</span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>    pass_threshold: <span class="bu">float</span> <span class="op">=</span> typer.Option(<span class="fl">60.0</span>, <span class="bu">min</span><span class="op">=</span><span class="fl">50.0</span>, <span class="bu">max</span><span class="op">=</span><span class="fl">80.0</span>, <span class="bu">help</span><span class="op">=</span><span class="st">"Pass threshold"</span>),</span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>    debug: <span class="bu">bool</span> <span class="op">=</span> typer.Option(<span class="va">False</span>, <span class="bu">help</span><span class="op">=</span><span class="st">"Enable debug logging"</span>),</span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>) <span class="op">-&gt;</span> <span class="va">None</span>:</span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>    typer.echo(<span class="ss">f"Loading data from: </span><span class="sc">{</span>data_path<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>    typer.echo(<span class="ss">f"Pass threshold: </span><span class="sc">{</span>pass_threshold<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>    typer.echo(<span class="ss">f"Debug: </span><span class="sc">{</span>debug<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a><span class="co"># In a real script: if __name__ == "__main__": app()</span></span>
+<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Running `python train.py --help` auto-generates full usage docs.</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="typer-pydantic-settings-the-dsmlops-pattern" class="level3">
+<h3 class="anchored" data-anchor-id="typer-pydantic-settings-the-dsmlops-pattern">typer + pydantic-settings: the DS/MLOps pattern</h3>
+<p>In production, you typically want <em>two</em> sources of configuration: environment variables (for secrets, deployment targets) and CLI arguments (for per-run overrides). The pattern is:</p>
+<ul>
+<li><code>pydantic-settings</code> reads from <code>.env</code> and environment — covered in Sec 5</li>
+<li><code>typer</code> provides the CLI surface</li>
+<li>The typer command constructs a <code>PipelineConfig</code> from both sources</li>
+</ul>
+<p>The two tools compose naturally because they share the same type-annotation vocabulary.</p>
+<div style="background:#EAF3FA;border-left:5px solid #0369A1;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-info-circle-fill"></i> Key Concept: argparse vs typer</span><br><br> Use <code>argparse</code> when you want zero dependencies and a simple script. Use <code>typer</code> when you want auto-generated help, validation, subcommands, and code that reads like the function signature it already is. For DS/MLOps tools that are both importable as a library and runnable as a CLI, typer is the better fit.</p>
+</div>
+<div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
+<span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 3 - typer Command</span><br><br> <b>Goal:</b> Write a typer command <code>validate_data</code> that accepts <code>–data-path</code> (str) and <code>–max-errors</code> (int, default 10). The command should print the arguments it received. Confirm that passing <code>–max-errors abc</code> would raise a typer error (type mismatch).
+<pre style="background:#FFF8E1;padding:10px;border-radius:4px;font-size:0.9em">@app.command()
+def validate_data(
+    data_path: str = typer.Option(..., help="Path to CSV to validate"),
+    max_errors: int = typer.Option(10, help="Stop after this many errors"),
+) -&gt; None:
+    typer.echo(f"Validating {data_path} (max errors: {max_errors})")</pre>
+</div>
+</section>
+</section>
 <section id="basesettings-config-from-environment-variables" class="level2">
-<h2 class="anchored" data-anchor-id="basesettings-config-from-environment-variables">4. <code>BaseSettings</code>: Config from Environment Variables</h2>
-<p><code>pydantic-settings</code> extends Pydantic with a <code>BaseSettings</code> class that reads values from environment variables, <code>.env</code> files, and secrets. This replaces the manual <code>os.getenv</code> pattern from Part 13 with a typed, validated config object.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> add pydantic-settings</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># grade_predictor/config.py</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pydantic_settings <span class="im">import</span> BaseSettings, SettingsConfigDict</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pydantic <span class="im">import</span> Field</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> typing <span class="im">import</span> Annotated</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> GradeSettings(BaseSettings):</span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Application settings, loaded from environment variables or .env file."""</span></span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    model_config <span class="op">=</span> SettingsConfigDict(</span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>        env_file<span class="op">=</span><span class="st">".env"</span>,</span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>        env_prefix<span class="op">=</span><span class="st">"GRADE_"</span>,   <span class="co"># GRADE_API_KEY maps to api_key</span></span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>        case_sensitive<span class="op">=</span><span class="va">False</span>,</span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>    api_key: <span class="bu">str</span> <span class="op">=</span> Field(description<span class="op">=</span><span class="st">"API key for the university data service"</span>)</span>
-<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>    data_path: <span class="bu">str</span> <span class="op">=</span> Field(default<span class="op">=</span><span class="st">"data/university_analytics.csv"</span>)</span>
-<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>    pass_threshold: Annotated[<span class="bu">float</span>, Field(ge<span class="op">=</span><span class="fl">50.0</span>, le<span class="op">=</span><span class="fl">80.0</span>)] <span class="op">=</span> <span class="fl">60.0</span></span>
-<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>    debug: <span class="bu">bool</span> <span class="op">=</span> <span class="va">False</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<h2 class="anchored" data-anchor-id="basesettings-config-from-environment-variables">5. <code>BaseSettings</code>: Config from Environment Variables</h2>
+<p><code>pydantic-settings</code> extends Pydantic with a <code>BaseSettings</code> class that reads values from environment variables and <code>.env</code> files. This replaces the manual <code>os.getenv</code> pattern with a typed, validated config object.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> add pydantic-settings</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="25" class="cell" data-execution_count="8">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># grade_predictor/config.py</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> typing <span class="im">import</span> Annotated</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pydantic <span class="im">import</span> Field</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pydantic_settings <span class="im">import</span> BaseSettings, SettingsConfigDict</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> GradeSettings(BaseSettings):</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>    model_config <span class="op">=</span> SettingsConfigDict(</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>        env_file<span class="op">=</span><span class="st">".env"</span>,</span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>        env_prefix<span class="op">=</span><span class="st">"GRADE_"</span>,  <span class="co"># GRADE_API_KEY maps to api_key</span></span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>        case_sensitive<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>    api_key: <span class="bu">str</span> <span class="op">=</span> Field(default<span class="op">=</span><span class="st">"dev-key"</span>, description<span class="op">=</span><span class="st">"API key for the university data service"</span>)</span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>    data_path: <span class="bu">str</span> <span class="op">=</span> Field(default<span class="op">=</span><span class="st">"data/university_analytics.csv"</span>)</span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>    pass_threshold: Annotated[<span class="bu">float</span>, Field(ge<span class="op">=</span><span class="fl">50.0</span>, le<span class="op">=</span><span class="fl">80.0</span>)] <span class="op">=</span> <span class="fl">60.0</span></span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a>    debug: <span class="bu">bool</span> <span class="op">=</span> <span class="va">False</span></span>
+<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Load (reads .env if it exists, otherwise uses defaults)</span></span>
+<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a>settings <span class="op">=</span> GradeSettings()</span>
+<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(settings.data_path)</span>
+<span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(settings.pass_threshold)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>data/university_analytics.csv
+60.0</code></pre>
+</div>
+</div>
 <p>With a <code>.env</code> file:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="va">GRADE_API_KEY</span><span class="op">=</span>secret-key-here</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="va">GRADE_DATA_PATH</span><span class="op">=</span>data/production.csv</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="va">GRADE_PASS_THRESHOLD</span><span class="op">=</span>65.0</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Load settings anywhere in the application:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>settings <span class="op">=</span> GradeSettings()   <span class="co"># reads .env and environment</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(settings.data_path)    <span class="co"># "data/production.csv"</span></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(settings.pass_threshold)  <span class="co"># 65.0 (float, not string)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="ark-concept">
-<p><span class="ark-concept-title"><i class="bi bi-info-circle-fill"></i> Key Concept: Settings validation catches misconfiguration at startup, not mid-run</span><br><br> Without validation, a missing or malformed environment variable is discovered when the code first uses it: halfway through a pipeline run, after 20 minutes of processing. <code>BaseSettings</code> validates all settings at construction time: the application fails fast at startup with a clear error listing every missing or invalid variable, before any work starts.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="va">GRADE_API_KEY</span><span class="op">=</span>secret-key-here</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="va">GRADE_DATA_PATH</span><span class="op">=</span>data/production.csv</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="va">GRADE_PASS_THRESHOLD</span><span class="op">=</span>65.0</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Values from the <code>.env</code> file override defaults; environment variables override both.</p>
+<div style="background:#EAF3FA;border-left:5px solid #0369A1;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-info-circle-fill"></i> Key Concept: Settings validation catches misconfiguration at startup, not mid-run</span><br><br> Without validation, a missing or malformed environment variable is discovered when the code first uses it: halfway through a pipeline run, after 20 minutes of processing. <code>BaseSettings</code> validates all settings at construction time, failing fast at startup with a clear error that lists every missing or invalid variable.</p>
 </div>
-<div class="ark-mistake">
-<p><span class="ark-mistake-title"><i class="bi bi-bug-fill"></i> Common Mistake: Constructing settings inside a function that runs in a loop</span><br><br> <code>GradeSettings()</code> reads the <code>.env</code> file and environment on every call. Calling it inside a loop that processes thousands of rows reads and validates the config thousands of times. Construct settings once at the module or application level and pass the object through. In FastAPI this is a <code><span class="citation" data-cites="lru_cache">@lru_cache</span></code> on a factory function; in a batch pipeline it is a module-level singleton.</p>
+<div style="background:#FEF2F2;border-left:5px solid #DC2626;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#991B1B;font-weight:bold"><i class="bi bi-bug-fill"></i> Common Mistake: Constructing settings inside a function that runs in a loop</span><br><br> <code>GradeSettings()</code> reads the <code>.env</code> file and environment on every call. Calling it inside a loop that processes thousands of rows reads and validates the config thousands of times. Construct settings once at module or application level and pass the object through.</p>
 </div>
-<div class="ark-activity">
-<span class="ark-activity-title"><i class="bi bi-puzzle-fill"></i> Activity 3 - Settings with a Test Override</span><br><br> <b>Goal:</b> Create a <code>GradeSettings</code> class. In a test, override individual settings without modifying the <code>.env</code> file by passing values directly to the constructor: <code>GradeSettings(api_key=“test-key”, pass_threshold=70.0)</code>. Confirm the values are set correctly and that an invalid <code>pass_threshold</code> (e.g., 95.0) raises a <code>ValidationError</code>.
-<pre>test_settings = GradeSettings(api_key="test-key", pass_threshold=70.0)
+<div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
+<span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 4 - Settings with a Test Override</span><br><br> <b>Goal:</b> Create a <code>GradeSettings</code> instance, overriding individual settings without a <code>.env</code> file by passing values directly to the constructor: <code>GradeSettings(api_key=“test-key”, pass_threshold=70.0)</code>. Confirm the values are set correctly and that an invalid <code>pass_threshold</code> (e.g., <code>95.0</code>) raises a <code>ValidationError</code>.
+<pre style="background:#FFF8E1;padding:10px;border-radius:4px;font-size:0.9em">test_settings = GradeSettings(api_key="test-key", pass_threshold=70.0)
 assert test_settings.pass_threshold == 70.0
 
 GradeSettings(api_key="test-key", pass_threshold=95.0)  # should raise</pre>
 </div>
 </section>
 <section id="typing-a-ds-pipeline-config" class="level2">
-<h2 class="anchored" data-anchor-id="typing-a-ds-pipeline-config">5. Typing a DS Pipeline Config</h2>
+<h2 class="anchored" data-anchor-id="typing-a-ds-pipeline-config">6. Typing a DS Pipeline Config</h2>
 <p>A real DS pipeline has more than one config object. The pattern is to compose small focused models into a root config that is loaded once:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># grade_predictor/config.py</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pydantic <span class="im">import</span> BaseModel, Field, model_validator</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pydantic_settings <span class="im">import</span> BaseSettings, SettingsConfigDict</span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> typing <span class="im">import</span> Annotated</span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> WeightConfig(BaseModel):</span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Grade component weights; must sum to 1.0."""</span></span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>    midterm: Annotated[<span class="bu">float</span>, Field(gt<span class="op">=</span><span class="fl">0.0</span>, lt<span class="op">=</span><span class="fl">1.0</span>)] <span class="op">=</span> <span class="fl">0.30</span></span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>    final: Annotated[<span class="bu">float</span>, Field(gt<span class="op">=</span><span class="fl">0.0</span>, lt<span class="op">=</span><span class="fl">1.0</span>)]   <span class="op">=</span> <span class="fl">0.45</span></span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>    project: Annotated[<span class="bu">float</span>, Field(gt<span class="op">=</span><span class="fl">0.0</span>, lt<span class="op">=</span><span class="fl">1.0</span>)] <span class="op">=</span> <span class="fl">0.25</span></span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">@model_validator</span>(mode<span class="op">=</span><span class="st">"after"</span>)</span>
-<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> weights_sum_to_one(<span class="va">self</span>) <span class="op">-&gt;</span> <span class="st">"WeightConfig"</span>:</span>
-<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>        total <span class="op">=</span> <span class="va">self</span>.midterm <span class="op">+</span> <span class="va">self</span>.final <span class="op">+</span> <span class="va">self</span>.project</span>
-<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="bu">abs</span>(total <span class="op">-</span> <span class="fl">1.0</span>) <span class="op">&gt;</span> <span class="fl">1e-6</span>:</span>
-<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>            <span class="cf">raise</span> <span class="pp">ValueError</span>(<span class="ss">f"Weights must sum to 1.0, got </span><span class="sc">{</span>total<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
-<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">self</span></span>
-<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> PipelineConfig(BaseSettings):</span>
-<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Root pipeline configuration: weights, thresholds, and paths."""</span></span>
-<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a>    model_config <span class="op">=</span> SettingsConfigDict(env_file<span class="op">=</span><span class="st">".env"</span>, env_prefix<span class="op">=</span><span class="st">"GRADE_"</span>)</span>
-<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a>    weights: WeightConfig <span class="op">=</span> WeightConfig()</span>
-<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a>    pass_threshold: Annotated[<span class="bu">float</span>, Field(ge<span class="op">=</span><span class="fl">50.0</span>, le<span class="op">=</span><span class="fl">80.0</span>)] <span class="op">=</span> <span class="fl">60.0</span></span>
-<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a>    data_path: <span class="bu">str</span> <span class="op">=</span> <span class="st">"data/university_analytics.csv"</span></span>
-<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a>    output_path: <span class="bu">str</span> <span class="op">=</span> <span class="st">"data/results.parquet"</span></span>
-<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a>    debug: <span class="bu">bool</span> <span class="op">=</span> <span class="va">False</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>The nested <code>WeightConfig</code> validates itself. <code>PipelineConfig</code> composes it and adds the environment-variable loading. Usage:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>config <span class="op">=</span> PipelineConfig()</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="co"># In compute_grade: use config instead of hardcoded defaults</span></span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> compute_grade(midterm: <span class="bu">float</span>, final: <span class="bu">float</span>, project: <span class="bu">float</span>, cfg: PipelineConfig) <span class="op">-&gt;</span> <span class="bu">float</span>:</span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    w <span class="op">=</span> cfg.weights</span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> midterm <span class="op">*</span> w.midterm <span class="op">+</span> final <span class="op">*</span> w.final <span class="op">+</span> project <span class="op">*</span> w.project</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="ark-activity">
-<p><span class="ark-activity-title"><i class="bi bi-puzzle-fill"></i> Activity 4 - Nested Config</span><br><br> <b>Goal:</b> Create a <code>PipelineConfig</code> object. Confirm that accessing <code>config.weights.midterm</code> returns the expected default value. Then create one with custom weights <code>WeightConfig(midterm=0.25, final=0.50, project=0.25)</code> and confirm it validates correctly. Finally, confirm that invalid nested weights (sum != 1.0) raise a <code>ValidationError</code> on the nested model.</p>
+<div id="28" class="cell" data-execution_count="9">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> typing <span class="im">import</span> Annotated</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pydantic <span class="im">import</span> BaseModel, Field, model_validator</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pydantic_settings <span class="im">import</span> BaseSettings, SettingsConfigDict</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> WeightConfig(BaseModel):</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>    midterm: Annotated[<span class="bu">float</span>, Field(gt<span class="op">=</span><span class="fl">0.0</span>, lt<span class="op">=</span><span class="fl">1.0</span>)] <span class="op">=</span> <span class="fl">0.30</span></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>    final: Annotated[<span class="bu">float</span>, Field(gt<span class="op">=</span><span class="fl">0.0</span>, lt<span class="op">=</span><span class="fl">1.0</span>)] <span class="op">=</span> <span class="fl">0.45</span></span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>    project: Annotated[<span class="bu">float</span>, Field(gt<span class="op">=</span><span class="fl">0.0</span>, lt<span class="op">=</span><span class="fl">1.0</span>)] <span class="op">=</span> <span class="fl">0.25</span></span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">@model_validator</span>(mode<span class="op">=</span><span class="st">"after"</span>)</span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> weights_sum_to_one(<span class="va">self</span>) <span class="op">-&gt;</span> <span class="st">"WeightConfig"</span>:</span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>        total <span class="op">=</span> <span class="va">self</span>.midterm <span class="op">+</span> <span class="va">self</span>.final <span class="op">+</span> <span class="va">self</span>.project</span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="bu">abs</span>(total <span class="op">-</span> <span class="fl">1.0</span>) <span class="op">&gt;</span> <span class="fl">1e-6</span>:</span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a>            <span class="cf">raise</span> <span class="pp">ValueError</span>(<span class="ss">f"Weights must sum to 1.0, got </span><span class="sc">{</span>total<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">self</span></span>
+<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-20"><a href="#cb17-20" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> PipelineConfig(BaseSettings):</span>
+<span id="cb17-21"><a href="#cb17-21" aria-hidden="true" tabindex="-1"></a>    model_config <span class="op">=</span> SettingsConfigDict(env_file<span class="op">=</span><span class="st">".env"</span>, env_prefix<span class="op">=</span><span class="st">"GRADE_"</span>)</span>
+<span id="cb17-22"><a href="#cb17-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-23"><a href="#cb17-23" aria-hidden="true" tabindex="-1"></a>    weights: WeightConfig <span class="op">=</span> WeightConfig()</span>
+<span id="cb17-24"><a href="#cb17-24" aria-hidden="true" tabindex="-1"></a>    pass_threshold: Annotated[<span class="bu">float</span>, Field(ge<span class="op">=</span><span class="fl">50.0</span>, le<span class="op">=</span><span class="fl">80.0</span>)] <span class="op">=</span> <span class="fl">60.0</span></span>
+<span id="cb17-25"><a href="#cb17-25" aria-hidden="true" tabindex="-1"></a>    data_path: <span class="bu">str</span> <span class="op">=</span> <span class="st">"data/university_analytics.csv"</span></span>
+<span id="cb17-26"><a href="#cb17-26" aria-hidden="true" tabindex="-1"></a>    output_path: <span class="bu">str</span> <span class="op">=</span> <span class="st">"data/results.parquet"</span></span>
+<span id="cb17-27"><a href="#cb17-27" aria-hidden="true" tabindex="-1"></a>    debug: <span class="bu">bool</span> <span class="op">=</span> <span class="va">False</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="29" class="cell" data-execution_count="10">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>config <span class="op">=</span> PipelineConfig()</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> compute_grade(midterm: <span class="bu">float</span>, final: <span class="bu">float</span>, project: <span class="bu">float</span>, cfg: PipelineConfig) <span class="op">-&gt;</span> <span class="bu">float</span>:</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>    w <span class="op">=</span> cfg.weights</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> midterm <span class="op">*</span> w.midterm <span class="op">+</span> final <span class="op">*</span> w.final <span class="op">+</span> project <span class="op">*</span> w.project</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(compute_grade(<span class="fl">78.0</span>, <span class="fl">82.0</span>, <span class="fl">91.0</span>, config))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>83.05</code></pre>
+</div>
+</div>
+<div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 5 - Nested Config</span><br><br> <b>Goal:</b> Create a <code>PipelineConfig</code> object. Confirm that <code>config.weights.midterm</code> returns the expected default. Then create one with custom weights <code>WeightConfig(midterm=0.25, final=0.50, project=0.25)</code> and confirm it validates correctly. Finally confirm that invalid nested weights (sum != 1.0) raise a <code>ValidationError</code> on the nested model.</p>
 </div>
 </section>
 <section id="validating-a-batch-of-records" class="level2">
-<h2 class="anchored" data-anchor-id="validating-a-batch-of-records">6. Validating a Batch of Records</h2>
-<p>In DS, data comes in batches: a CSV with thousands of rows, an API response with hundreds of records. Pydantic validates each record independently; the question is how to handle errors without stopping on the first failure.</p>
-<p>The <code>model_validate</code> call on a single dict either succeeds or raises <code>ValidationError</code>. For a batch, collect errors without stopping:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pydantic <span class="im">import</span> ValidationError</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> validate_batch(</span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    records: <span class="bu">list</span>[<span class="bu">dict</span>],</span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>) <span class="op">-&gt;</span> <span class="bu">tuple</span>[<span class="bu">list</span>[StudentRecord], <span class="bu">list</span>[<span class="bu">dict</span>]]:</span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Validate a list of raw record dicts.</span></span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="co">    Returns:</span></span>
-<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a><span class="co">        A tuple of (valid_records, error_records). error_records include the</span></span>
-<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a><span class="co">        original dict plus an 'errors' key with Pydantic's error list.</span></span>
-<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
-<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>    valid: <span class="bu">list</span>[StudentRecord] <span class="op">=</span> []</span>
-<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>    errors: <span class="bu">list</span>[<span class="bu">dict</span>] <span class="op">=</span> []</span>
-<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> raw <span class="kw">in</span> records:</span>
-<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>        <span class="cf">try</span>:</span>
-<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>            valid.append(StudentRecord.model_validate(raw))</span>
-<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a>        <span class="cf">except</span> ValidationError <span class="im">as</span> e:</span>
-<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a>            errors.append({<span class="op">**</span>raw, <span class="st">"errors"</span>: e.errors()})</span>
-<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> valid, errors</span>
-<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a><span class="co"># Use it on a DataFrame</span></span>
-<span id="cb12-26"><a href="#cb12-26" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.read_csv(<span class="st">"data/university_analytics.csv"</span>)</span>
-<span id="cb12-27"><a href="#cb12-27" aria-hidden="true" tabindex="-1"></a>records <span class="op">=</span> df.to_dict(orient<span class="op">=</span><span class="st">"records"</span>)</span>
-<span id="cb12-28"><a href="#cb12-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-29"><a href="#cb12-29" aria-hidden="true" tabindex="-1"></a>valid_records, error_records <span class="op">=</span> validate_batch(records)</span>
-<span id="cb12-30"><a href="#cb12-30" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Valid: </span><span class="sc">{</span><span class="bu">len</span>(valid_records)<span class="sc">}</span><span class="ss">, Errors: </span><span class="sc">{</span><span class="bu">len</span>(error_records)<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb12-31"><a href="#cb12-31" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-32"><a href="#cb12-32" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> error_records:</span>
-<span id="cb12-33"><a href="#cb12-33" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Show the first error</span></span>
-<span id="cb12-34"><a href="#cb12-34" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(error_records[<span class="dv">0</span>][<span class="st">"errors"</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="ark-tip">
-<span class="ark-tip-title"><i class="bi bi-lightbulb-fill"></i> Pro Tip: Use <code>TypeAdapter</code> to validate a list without a wrapper model</span><br><br> Pydantic v2’s <code>TypeAdapter</code> validates arbitrary types, including <code>list[StudentRecord]</code>, without defining a wrapper model:
+<h2 class="anchored" data-anchor-id="validating-a-batch-of-records">7. Validating a Batch of Records</h2>
+<p>In DS, data comes in batches. Pydantic validates each record independently; the question is how to handle errors without stopping on the first failure:</p>
+<div id="32" class="cell" data-execution_count="11">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pydantic <span class="im">import</span> ValidationError</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> validate_batch(</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>    records: <span class="bu">list</span>[<span class="bu">dict</span>],</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>) <span class="op">-&gt;</span> <span class="bu">tuple</span>[<span class="bu">list</span>[StudentRecord], <span class="bu">list</span>[<span class="bu">dict</span>]]:</span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>    valid: <span class="bu">list</span>[StudentRecord] <span class="op">=</span> []</span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>    errors: <span class="bu">list</span>[<span class="bu">dict</span>] <span class="op">=</span> []</span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> raw <span class="kw">in</span> records:</span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a>        <span class="cf">try</span>:</span>
+<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a>            valid.append(StudentRecord.model_validate(raw))</span>
+<span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a>        <span class="cf">except</span> ValidationError <span class="im">as</span> e:</span>
+<span id="cb20-15"><a href="#cb20-15" aria-hidden="true" tabindex="-1"></a>            errors.append({<span class="op">**</span>raw, <span class="st">"errors"</span>: e.errors()})</span>
+<span id="cb20-16"><a href="#cb20-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-17"><a href="#cb20-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> valid, errors</span>
+<span id="cb20-18"><a href="#cb20-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-19"><a href="#cb20-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-20"><a href="#cb20-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulate a small batch</span></span>
+<span id="cb20-21"><a href="#cb20-21" aria-hidden="true" tabindex="-1"></a>sample <span class="op">=</span> [</span>
+<span id="cb20-22"><a href="#cb20-22" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"student_id"</span>: <span class="st">"S0001"</span>, <span class="st">"midterm_score"</span>: <span class="fl">78.5</span>, <span class="st">"final_score"</span>: <span class="fl">82.0</span>, <span class="st">"project_score"</span>: <span class="fl">90.0</span>, <span class="st">"program"</span>: <span class="st">"CS"</span>},</span>
+<span id="cb20-23"><a href="#cb20-23" aria-hidden="true" tabindex="-1"></a>    {</span>
+<span id="cb20-24"><a href="#cb20-24" aria-hidden="true" tabindex="-1"></a>        <span class="st">"student_id"</span>: <span class="st">"S0002"</span>,</span>
+<span id="cb20-25"><a href="#cb20-25" aria-hidden="true" tabindex="-1"></a>        <span class="st">"midterm_score"</span>: <span class="fl">150.0</span>,</span>
+<span id="cb20-26"><a href="#cb20-26" aria-hidden="true" tabindex="-1"></a>        <span class="st">"final_score"</span>: <span class="fl">80.0</span>,</span>
+<span id="cb20-27"><a href="#cb20-27" aria-hidden="true" tabindex="-1"></a>        <span class="st">"project_score"</span>: <span class="fl">75.0</span>,</span>
+<span id="cb20-28"><a href="#cb20-28" aria-hidden="true" tabindex="-1"></a>        <span class="st">"program"</span>: <span class="st">"EE"</span>,</span>
+<span id="cb20-29"><a href="#cb20-29" aria-hidden="true" tabindex="-1"></a>    },  <span class="co"># invalid</span></span>
+<span id="cb20-30"><a href="#cb20-30" aria-hidden="true" tabindex="-1"></a>    {</span>
+<span id="cb20-31"><a href="#cb20-31" aria-hidden="true" tabindex="-1"></a>        <span class="st">"student_id"</span>: <span class="st">"INVALID"</span>,</span>
+<span id="cb20-32"><a href="#cb20-32" aria-hidden="true" tabindex="-1"></a>        <span class="st">"midterm_score"</span>: <span class="fl">70.0</span>,</span>
+<span id="cb20-33"><a href="#cb20-33" aria-hidden="true" tabindex="-1"></a>        <span class="st">"final_score"</span>: <span class="fl">68.0</span>,</span>
+<span id="cb20-34"><a href="#cb20-34" aria-hidden="true" tabindex="-1"></a>        <span class="st">"project_score"</span>: <span class="fl">72.0</span>,</span>
+<span id="cb20-35"><a href="#cb20-35" aria-hidden="true" tabindex="-1"></a>        <span class="st">"program"</span>: <span class="st">"CS"</span>,</span>
+<span id="cb20-36"><a href="#cb20-36" aria-hidden="true" tabindex="-1"></a>    },  <span class="co"># invalid</span></span>
+<span id="cb20-37"><a href="#cb20-37" aria-hidden="true" tabindex="-1"></a>]</span>
+<span id="cb20-38"><a href="#cb20-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-39"><a href="#cb20-39" aria-hidden="true" tabindex="-1"></a>valid_records, error_records <span class="op">=</span> validate_batch(sample)</span>
+<span id="cb20-40"><a href="#cb20-40" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Valid: </span><span class="sc">{</span><span class="bu">len</span>(valid_records)<span class="sc">}</span><span class="ss">, Errors: </span><span class="sc">{</span><span class="bu">len</span>(error_records)<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb20-41"><a href="#cb20-41" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> rec <span class="kw">in</span> error_records:</span>
+<span id="cb20-42"><a href="#cb20-42" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(rec[<span class="st">"student_id"</span>], <span class="st">"-&gt;"</span>, rec[<span class="st">"errors"</span>][<span class="dv">0</span>][<span class="st">"msg"</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Valid: 1, Errors: 2
+S0002 -&gt; Input should be less than or equal to 100
+INVALID -&gt; Value error, student_id must match S followed by 4 digits, got 'INVALID'</code></pre>
+</div>
+</div>
+<div style="background:#F5F3FF;border-left:5px solid #7C3AED;padding:14px 18px;border-radius:6px;margin:16px 0">
+<span style="color:#5B21B6;font-weight:bold"><i class="bi bi-lightbulb-fill"></i> Pro Tip: Use <code>TypeAdapter</code> to validate a list without a wrapper model</span><br><br> Pydantic v2’s <code>TypeAdapter</code> validates arbitrary types, including <code>list[StudentRecord]</code>, without defining a wrapper model:
 <pre style="background:#F4F5F6;padding:10px;border-radius:4px;font-size:0.9em">from pydantic import TypeAdapter
 
 adapter = TypeAdapter(list[StudentRecord])
@@ -704,13 +918,13 @@ adapter = TypeAdapter(list[StudentRecord])
 # Raises ValidationError for the first invalid record
 all_records = adapter.validate_python(df.to_dict(orient="records"))
 
-# Use model_json_schema() to generate a JSON Schema for documentation
+# Generate JSON Schema for documentation
 print(adapter.json_schema())</pre>
 <p>This is cleaner than wrapping in a container model when you only need batch validation.</p>
 </div>
-<div class="ark-activity">
-<span class="ark-activity-title"><i class="bi bi-puzzle-fill"></i> Activity 5 - Batch Validation Report</span><br><br> <b>Goal:</b> Load <code>university_analytics.csv</code>. Introduce two invalid rows: one with <code>midterm_score=150.0</code> (over the maximum) and one with <code>student_id=“INVALID”</code> (wrong format). Run <code>validate_batch()</code> on all rows. Print how many valid and invalid records there are, and print the error details for the two invalid rows.
-<pre>df_with_errors = df.copy()
+<div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
+<span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 6 - Batch Validation Report</span><br><br> <b>Goal:</b> Load <code>university_analytics.csv</code>. Introduce two invalid rows: one with <code>midterm_score=150.0</code> and one with <code>student_id=“INVALID”</code>. Run <code>validate_batch()</code> on all rows. Print the count of valid and invalid records, and the error details for the two invalid rows.
+<pre style="background:#FFF8E1;padding:10px;border-radius:4px;font-size:0.9em">df_with_errors = df.copy()
 df_with_errors.loc[0, "midterm_score"] = 150.0
 df_with_errors.loc[1, "student_id"] = "INVALID"
 
@@ -718,14 +932,14 @@ valid, errors = validate_batch(df_with_errors.to_dict(orient="records"))
 print(f"Valid: {len(valid)}, Errors: {len(errors)}")</pre>
 </div>
 </section>
-<section id="capstone---typed-grade-predictor-pipeline" class="level2">
-<h2 class="anchored" data-anchor-id="capstone---typed-grade-predictor-pipeline">Capstone - Typed grade-predictor Pipeline</h2>
-<p>Bring Pydantic into the <code>grade-predictor</code> project end to end.</p>
-<div class="ark-activity">
-<span class="ark-activity-title"><i class="bi bi-puzzle-fill"></i> Capstone - A Validated Pipeline</span><br><br>
+<section id="capstone-typed-grade-predictor-pipeline" class="level2">
+<h2 class="anchored" data-anchor-id="capstone-typed-grade-predictor-pipeline">Capstone: Typed grade-predictor Pipeline</h2>
+<p>Bring Pydantic and typer into the <code>grade-predictor</code> project end to end.</p>
+<div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
+<span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Capstone - A Validated, CLI-Driven Pipeline</span><br><br>
 <ol>
 <li>
-Define <code>StudentRecord</code> in <code>grade_predictor/models.py</code> with all fields from the CSV, appropriate constraints, and an <code>student_id</code> format validator
+Define <code>StudentRecord</code> in <code>grade_predictor/models.py</code> with all CSV fields, appropriate constraints, and a <code>student_id</code> format validator
 </li>
 <li>
 Define <code>PipelineConfig</code> in <code>grade_predictor/config.py</code> with <code>WeightConfig</code>, <code>pass_threshold</code>, and <code>data_path</code>
@@ -737,7 +951,10 @@ Update <code>compute_grade</code> in <code>core.py</code> to accept a <code>Pipe
 Write a <code>load_and_validate(path: str) -&gt; tuple[list[StudentRecord], list[dict]]</code> function that reads the CSV and validates every row
 </li>
 <li>
-Write two tests: one that confirms a valid <code>StudentRecord</code> is constructed correctly, and one that confirms an invalid record raises <code>ValidationError</code> with the right field name in the error
+Add a typer CLI command <code>run</code> that accepts <code>–data-path</code> and <code>–pass-threshold</code>, constructs a <code>PipelineConfig</code>, calls <code>load_and_validate</code>, and prints the valid/error counts
+</li>
+<li>
+Write two tests: one confirming a valid <code>StudentRecord</code> is constructed correctly, and one confirming an invalid record raises <code>ValidationError</code> with the right field name
 </li>
 </ol>
 </div>
@@ -761,16 +978,20 @@ Write two tests: one that confirms a valid <code>StudentRecord</code> is constru
 <td><code>BaseSettings</code>, env file loading, nested settings, and secrets</td>
 </tr>
 <tr class="odd">
+<td><a href="https://typer.tiangolo.com/">typer documentation</a></td>
+<td>Full reference for CLI commands, subcommands, arguments vs options, and testing</td>
+</tr>
+<tr class="even">
 <td><a href="https://docs.pydantic.dev/latest/concepts/validators/">Pydantic v2 validators</a></td>
 <td><code>field_validator</code>, <code>model_validator</code>, <code>Annotated</code> constraints</td>
 </tr>
-<tr class="even">
-<td><a href="https://fastapi.tiangolo.com/tutorial/body/">FastAPI + Pydantic</a></td>
-<td>FastAPI uses Pydantic models for request/response bodies; the same <code>BaseModel</code> patterns apply directly</td>
-</tr>
 <tr class="odd">
+<td><a href="https://fastapi.tiangolo.com/tutorial/body/">FastAPI + Pydantic</a></td>
+<td>FastAPI uses Pydantic models for request/response; the same <code>BaseModel</code> patterns apply directly</td>
+</tr>
+<tr class="even">
 <td><a href="https://pandera.readthedocs.io/">pandera</a></td>
-<td>Schema-level DataFrame validation: the DataFrame equivalent of <code>StudentRecord</code> for column dtypes and constraints</td>
+<td>Schema-level DataFrame validation: the DataFrame equivalent of <code>StudentRecord</code> for column dtypes and constraints. Covered in Part 20.</td>
 </tr>
 </tbody>
 </table>
@@ -814,6 +1035,14 @@ Write two tests: one that confirms a valid <code>StudentRecord</code> is constru
 <td>Construct and validate from a plain dict or JSON string</td>
 </tr>
 <tr class="odd">
+<td><code>argparse</code></td>
+<td>Stdlib CLI parser; verbose but zero-dependency</td>
+</tr>
+<tr class="even">
+<td><code>typer</code></td>
+<td>Type-annotation-driven CLI; auto-generates help; preferred for DS/MLOps tools</td>
+</tr>
+<tr class="odd">
 <td><code>BaseSettings</code></td>
 <td>Reads from env vars and <code>.env</code> files; validates at construction time</td>
 </tr>
@@ -829,13 +1058,9 @@ Write two tests: one that confirms a valid <code>StudentRecord</code> is constru
 <td><code>TypeAdapter</code></td>
 <td>Validate arbitrary types including <code>list[Model]</code> without a wrapper model</td>
 </tr>
-<tr class="odd">
-<td>Validate at the boundary</td>
-<td>One validation point at entry; all downstream code trusts the types</td>
-</tr>
 </tbody>
 </table>
-<p><strong>Next:</strong> Part 20 covers Classical Machine Learning: building, evaluating, and comparing models on the validated, typed <code>grade-predictor</code> dataset built throughout Part 3.</p>
+<p><strong>Next:</strong> Part 20 covers DataFrame schema validation with Pandera: the same “validate at the boundary” principle, applied to tabular data instead of individual records.</p>
 
 
 </section>
@@ -1248,6 +1473,9 @@ Write two tests: one that confirms a valid <code>StudentRecord</code> is constru
       </a>          
   </div>
   <div class="nav-page nav-page-next">
+      <a href="../../tutorials/02-dev-tools/08-pandera-schema-validation.html" class="pagination-link" aria-label="Part 20: DataFrame Schema Validation with Pandera">
+        <span class="nav-page-text"><span class="chapter-title">Part 20: DataFrame Schema Validation with Pandera</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
   </div>
 </nav>
 </div> <!-- /content -->
@@ -1260,7 +1488,7 @@ Write two tests: one that confirms a valid <code>StudentRecord</code> is constru
 <div class="footer-social">
 <p><a href="mailto:sambaiga@gmail.com" title="Email"><i class="bi bi-envelope-at-fill"></i></a> <a href="https://github.com/sambaiga" title="GitHub"><i class="bi bi-github"></i></a> <a href="https://www.linkedin.com/in/sambaiga" title="LinkedIn"><i class="bi bi-linkedin"></i></a></p>
 </div>
-<div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/sambaiga/ds-mlops-path/edit/main/tutorials/02-dev-tools/07-pydantic-validation.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/sambaiga/ds-mlops-path/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li><li><a href="https://github.com/sambaiga/ds-mlops-path/blob/main/tutorials/02-dev-tools/07-pydantic-validation.qmd" class="toc-action"><i class="bi empty"></i>View source</a></li></ul></div></div>
+<div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.dev/sambaiga/ds-mlops-path/blob/main/tutorials/02-dev-tools/07-pydantic-validation.ipynb" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/sambaiga/ds-mlops-path/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li><li><a href="https://github.com/sambaiga/ds-mlops-path/blob/main/tutorials/02-dev-tools/07-pydantic-validation.ipynb" class="toc-action"><i class="bi empty"></i>View source</a></li></ul></div></div>
     <div class="nav-footer-right">
 <p><span class="faux-block">Made with <a href="https://quarto.org">Quarto</a></span> <span class="faux-block"><a href="https://github.com/sambaiga/ds-mlops-path"><i class="bi bi-github"></i> View source</a></span></p>
 </div>

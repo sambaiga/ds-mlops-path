@@ -1,0 +1,1404 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.38">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Part 20: DataFrame Schema Validation with Pandera – From Data to Impact</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<link href="../../about.html" rel="next">
+<link href="../../tutorials/02-dev-tools/07-pydantic-validation.html" rel="prev">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-de63f62b328812d8e578a4d74e282472.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-2bbe8175f3a6986c517e4bd766e779ba.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<style>html{ scroll-behavior: smooth; }</style>
+<script src="../../site_libs/quarto-diagram/mermaid.min.js"></script>
+<script src="../../site_libs/quarto-diagram/mermaid-init.js"></script>
+<link href="../../site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
+
+
+</head>
+
+<body class="nav-sidebar floating nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">From Data to Impact</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="mailto:sambaiga@gmail.com"> <i class="bi bi-envelope-at" role="img" aria-label="Email Anthony Faustine">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://www.linkedin.com/in/sambaiga"> <i class="bi bi-linkedin" role="img" aria-label="LinkedIn">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/sambaiga/ds-mlops-path"> <i class="bi bi-github" role="img" aria-label="View source on GitHub">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+    <a href="https://github.com/sambaiga/ds-mlops-path" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <a class="flex-grow-1 no-decor" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+          <h1 class="quarto-secondary-nav-title"><span class="chapter-title">Part 20: DataFrame Schema Validation with Pandera</span></h1>
+        </a>     
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../index.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Welcome</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../preface.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Why This Book Exists</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false">
+ <span class="menu-text">Part 1: Foundations</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/01-python-core.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 1: Language Core (Data &amp; Types)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/02-control-flow.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 2: Language Core (Control Flow &amp; Comprehensions)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/03-python-patterns.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 3: Patterns for Data Science &amp; ML</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/04-numpy.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 4: NumPy for Data &amp; ML</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/05-matplotlib.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 5: Matplotlib and Its Ecosystem</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/06-lets-plot.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 6: Grammar of Graphics with Lets-Plot</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/07-data-storytelling.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 7: Data Storytelling and House Style</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false">
+ <span class="menu-text">Part 2: Data Analysis</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/08-pandas-core.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 8: Pandas Core</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/09-pandas-operations.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 9: Pandas Operations</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/10-combining-reshaping.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 10: Combining, Reshaping &amp; Time Series</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/11-time-series.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 11: Time Series</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/11-polars.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 11: Polars &amp; the Expression API</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/12-great-tables.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 12: Presenting Data with Great Tables</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Part 3: Dev Tools</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/02-dev-tools/00-vscode-setup.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 12: IDE Setup with VS Code</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/02-dev-tools/01-uv-project-setup.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 13: Project Setup with uv</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/02-dev-tools/02-code-quality-ruff.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 14: Code Quality with ruff</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/02-dev-tools/03-type-annotations.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 15: Type Annotations</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/02-dev-tools/04-git-github.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 16: Git and GitHub for Data Science</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/02-dev-tools/05-pytest-testing.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 17: Testing DS Code with pytest</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/02-dev-tools/06-pre-commit-automation.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 18: Automation with pre-commit</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/02-dev-tools/07-pydantic-validation.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 19: Data Validation with Pydantic</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/02-dev-tools/08-pandera-schema-validation.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">Part 20: DataFrame Schema Validation with Pandera</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <span class="sidebar-item-text sidebar-link text-start">
+ <span class="menu-text">Part 4: Classical ML</span></span>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <span class="sidebar-item-text sidebar-link text-start">
+ <span class="menu-text">Part 5: Deep Learning</span></span>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <span class="sidebar-item-text sidebar-link text-start">
+ <span class="menu-text">Part 6: LLMs</span></span>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <span class="sidebar-item-text sidebar-link text-start">
+ <span class="menu-text">Part 7: MLOps</span></span>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <span class="sidebar-item-text sidebar-link text-start">
+ <span class="menu-text">Part 8: Production Monitoring</span></span>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <span class="sidebar-item-text sidebar-link text-start">
+ <span class="menu-text">Part 9: ML System Design</span></span>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <span class="sidebar-item-text sidebar-link text-start">
+ <span class="menu-text">Part 10: Value-driven AI</span></span>
+  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../about.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">About the Author</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">In this chapter</h2>
+   
+  <ul>
+  <li><a href="#before-you-begin" id="toc-before-you-begin" class="nav-link active" data-scroll-target="#before-you-begin">Before you begin</a></li>
+  <li><a href="#learning-objectives" id="toc-learning-objectives" class="nav-link" data-scroll-target="#learning-objectives">Learning Objectives</a></li>
+  <li><a href="#pydantic-validated-the-row.-who-validates-the-table" id="toc-pydantic-validated-the-row.-who-validates-the-table" class="nav-link" data-scroll-target="#pydantic-validated-the-row.-who-validates-the-table">0. Pydantic Validated the Row. Who Validates the Table?</a>
+  <ul class="collapse">
+  <li><a href="#install" id="toc-install" class="nav-link" data-scroll-target="#install">Install</a></li>
+  </ul></li>
+  <li><a href="#row-validation-vs-schema-validation" id="toc-row-validation-vs-schema-validation" class="nav-link" data-scroll-target="#row-validation-vs-schema-validation">1. Row Validation vs Schema Validation</a></li>
+  <li><a href="#defining-a-dataframeschema" id="toc-defining-a-dataframeschema" class="nav-link" data-scroll-target="#defining-a-dataframeschema">2. Defining a <code>DataFrameSchema</code></a></li>
+  <li><a href="#dataframemodel-the-class-based-api" id="toc-dataframemodel-the-class-based-api" class="nav-link" data-scroll-target="#dataframemodel-the-class-based-api">3. <code>DataFrameModel</code>: The Class-Based API</a></li>
+  <li><a href="#custom-checks" id="toc-custom-checks" class="nav-link" data-scroll-target="#custom-checks">4. Custom Checks</a></li>
+  <li><a href="#validation-in-a-pipeline" id="toc-validation-in-a-pipeline" class="nav-link" data-scroll-target="#validation-in-a-pipeline">5. Validation in a Pipeline</a></li>
+  <li><a href="#schemas-as-data-contracts-in-tests" id="toc-schemas-as-data-contracts-in-tests" class="nav-link" data-scroll-target="#schemas-as-data-contracts-in-tests">6. Schemas as Data Contracts in Tests</a></li>
+  <li><a href="#capstone-data-contract-for-grade-predictor" id="toc-capstone-data-contract-for-grade-predictor" class="nav-link" data-scroll-target="#capstone-data-contract-for-grade-predictor">Capstone: Data Contract for grade-predictor</a></li>
+  <li><a href="#further-reading" id="toc-further-reading" class="nav-link" data-scroll-target="#further-reading">Further Reading</a></li>
+  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary">Summary</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.dev/sambaiga/ds-mlops-path/blob/main/tutorials/02-dev-tools/08-pandera-schema-validation.ipynb" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/sambaiga/ds-mlops-path/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li><li><a href="https://github.com/sambaiga/ds-mlops-path/blob/main/tutorials/02-dev-tools/08-pandera-schema-validation.ipynb" class="toc-action"><i class="bi empty"></i>View source</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block"><span class="chapter-title">Part 20: DataFrame Schema Validation with Pandera</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p><a href="https://colab.research.google.com/github/sambaiga/ds-mlops-path/blob/main/tutorials/02-dev-tools/08-pandera-schema-validation.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open In Colab"></a> <a href="https://raw.githubusercontent.com/sambaiga/ds-mlops-path/main/tutorials/02-dev-tools/08-pandera-schema-validation.ipynb"><img src="https://img.shields.io/badge/Download-Notebook-blue.svg?logo=jupyter&amp;logoColor=white" class="img-fluid" alt="Download Notebook"></a></p>
+<p><strong>DS-MLOps Dev Tools</strong></p>
+<p><strong>Python 3.12+ | Author: Anthony Faustine</strong></p>
+<section id="before-you-begin" class="level2">
+<h2 class="anchored" data-anchor-id="before-you-begin">Before you begin</h2>
+<p>This notebook assumes you have completed <a href="../../tutorials/02-dev-tools/07-pydantic-validation.html">Part 19: Data Validation with Pydantic</a>. Pandera extends the same “validate at the boundary” principle to DataFrames: where Pydantic validates individual records, Pandera validates the schema of an entire table.</p>
+<p>The <code>grade-predictor</code> project continues here: a Pandera schema replaces the implicit assumptions about <code>university_analytics.csv</code> with explicit, testable contracts.</p>
+<blockquote class="blockquote">
+<p>Callout markers used throughout this notebook are explained on the <a href="../../index.html#callout-guide">book cover page</a>.</p>
+</blockquote>
+</section>
+<section id="learning-objectives" class="level2">
+<h2 class="anchored" data-anchor-id="learning-objectives">Learning Objectives</h2>
+<p>By the end of Part 20 you will be able to:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>#</th>
+<th>Skill</th>
+<th>Covered in</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td>Explain the difference between row-level (Pydantic) and schema-level (Pandera) validation</td>
+<td>Sec. 1</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td>Define a Pandera <code>DataFrameSchema</code> with column types and constraints</td>
+<td>Sec. 2</td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td>Use the class-based API with <code>pa.DataFrameModel</code> for typed schemas</td>
+<td>Sec. 3</td>
+</tr>
+<tr class="even">
+<td>4</td>
+<td>Write custom element-wise and series-level checks</td>
+<td>Sec. 4</td>
+</tr>
+<tr class="odd">
+<td>5</td>
+<td>Validate DataFrames in a pipeline and collect errors without stopping</td>
+<td>Sec. 5</td>
+</tr>
+<tr class="even">
+<td>6</td>
+<td>Use Pandera schemas as pytest fixtures to document data contracts</td>
+<td>Sec. 6</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="pydantic-validated-the-row.-who-validates-the-table" class="level2">
+<h2 class="anchored" data-anchor-id="pydantic-validated-the-row.-who-validates-the-table">0. Pydantic Validated the Row. Who Validates the Table?</h2>
+<p>You have a <code>StudentRecord</code> Pydantic model. It validates <code>midterm_score</code> is between 0 and 100, that <code>student_id</code> matches <code>S\d{4}</code>, and that <code>program</code> is a non-empty string. Pydantic runs when a <em>single record</em> enters the system.</p>
+<p>Now you load <code>university_analytics.csv</code> into a DataFrame. There are 2,400 rows. You could loop through them with <code>StudentRecord.model_validate</code>, but that tells you nothing about the <em>table</em>: whether <code>student_id</code> is unique across all rows, whether the distribution of <code>program</code> values matches what you expect, whether the proportion of missing values in <code>has_internet</code> is within an acceptable bound. A row validator answers “is this row correct?”. A schema validator answers “is this table correct?”.</p>
+<p><strong>Pandera</strong> (<a href="https://pandera.readthedocs.io/">pandera.readthedocs.io</a>) is a statistical data validation library for DataFrames. You define a schema — column types, constraints, uniqueness, allowed values, statistical properties — and Pandera checks the whole DataFrame against it in one call. It supports pandas and Polars, integrates with pytest, and can generate synthetic data for testing.</p>
+<section id="install" class="level3">
+<h3 class="anchored" data-anchor-id="install">Install</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> add pandera          <span class="co"># or: pip install pandera</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+</section>
+<section id="row-validation-vs-schema-validation" class="level2">
+<h2 class="anchored" data-anchor-id="row-validation-vs-schema-validation">1. Row Validation vs Schema Validation</h2>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">flowchart LR
+    CSV["university_analytics.csv"] --&gt; DF["pandas DataFrame\n2,400 rows × 10 cols"]
+    DF --&gt; PA["Pandera schema\nColumn types, constraints,\nuniqueness, statistics"]
+    PA --&gt;|"schema violation"| ERR["SchemaError\ncell location + rule"]
+    PA --&gt;|"all checks pass"| OK["validated DataFrame\nsafe to use downstream"]
+
+    style OK fill:#EBF5F0,stroke:#059669,color:#065F46
+    style ERR fill:#FEF2F2,stroke:#DC2626,color:#991B1B
+    style PA fill:#EAF3FA,stroke:#0369A1,color:#0C4A6E
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+<p>Pydantic and Pandera answer different questions:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th>Pydantic <code>BaseModel</code></th>
+<th>Pandera <code>DataFrameSchema</code></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Unit</td>
+<td>One record (row)</td>
+<td>Whole DataFrame</td>
+</tr>
+<tr class="even">
+<td>Checks</td>
+<td>Type coercion, field constraints, cross-field</td>
+<td>Column dtype, nullability, uniqueness, value ranges, statistical bounds</td>
+</tr>
+<tr class="odd">
+<td>Returns</td>
+<td>Validated model instance</td>
+<td>Validated DataFrame</td>
+</tr>
+<tr class="even">
+<td>Error info</td>
+<td>Field path + message</td>
+<td>Row index + column + failed check</td>
+</tr>
+<tr class="odd">
+<td>Best for</td>
+<td>API inputs, config objects</td>
+<td>CSVs, pipeline data, feature tables</td>
+</tr>
+</tbody>
+</table>
+<div style="background:#EAF3FA;border-left:5px solid #0369A1;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-info-circle-fill"></i> Key Concept: Use both, not one</span><br><br> Pydantic and Pandera are not alternatives — they validate at different levels. A production pipeline uses Pydantic to validate records as they arrive (JSON from an API, rows from a queue) and Pandera to validate the assembled DataFrame before it enters a model or a write operation. Together they form a complete contract on the data.</p>
+</div>
+</section>
+<section id="defining-a-dataframeschema" class="level2">
+<h2 class="anchored" data-anchor-id="defining-a-dataframeschema">2. Defining a <code>DataFrameSchema</code></h2>
+<p>The functional API creates a schema by describing each column with <code>pa.Column</code>:</p>
+<div id="8" class="cell" data-execution_count="1">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandera <span class="im">as</span> pa</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>schema <span class="op">=</span> pa.DataFrameSchema(</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    {</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>        <span class="st">"student_id"</span>: pa.Column(<span class="bu">str</span>, pa.Check.str_matches(<span class="vs">r"</span><span class="dv">^</span><span class="vs">S</span><span class="dv">\d</span><span class="op">{4}</span><span class="dv">$</span><span class="vs">"</span>)),</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>        <span class="st">"midterm_score"</span>: pa.Column(<span class="bu">float</span>, [pa.Check.ge(<span class="fl">0.0</span>), pa.Check.le(<span class="fl">100.0</span>)]),</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>        <span class="st">"final_score"</span>: pa.Column(<span class="bu">float</span>, [pa.Check.ge(<span class="fl">0.0</span>), pa.Check.le(<span class="fl">100.0</span>)]),</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>        <span class="st">"project_score"</span>: pa.Column(<span class="bu">float</span>, [pa.Check.ge(<span class="fl">0.0</span>), pa.Check.le(<span class="fl">100.0</span>)]),</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>        <span class="st">"program"</span>: pa.Column(<span class="bu">str</span>, pa.Check.isin([<span class="st">"CS"</span>, <span class="st">"EE"</span>, <span class="st">"Math"</span>, <span class="st">"Physics"</span>, <span class="st">"Biology"</span>])),</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>        <span class="st">"has_internet"</span>: pa.Column(<span class="bu">bool</span>),</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>        <span class="st">"school_id"</span>: pa.Column(<span class="bu">str</span>, nullable<span class="op">=</span><span class="va">True</span>),</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>        <span class="st">"teacher_count"</span>: pa.Column(<span class="bu">int</span>, pa.Check.ge(<span class="dv">1</span>)),</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>        <span class="st">"school_size"</span>: pa.Column(<span class="bu">str</span>, pa.Check.isin([<span class="st">"Small"</span>, <span class="st">"Medium"</span>, <span class="st">"Large"</span>])),</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>        <span class="st">"pass_threshold"</span>: pa.Column(<span class="bu">float</span>, pa.Check.between(<span class="fl">50.0</span>, <span class="fl">80.0</span>), nullable<span class="op">=</span><span class="va">True</span>),</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>    },</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>    checks<span class="op">=</span>[</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>        pa.Check(<span class="kw">lambda</span> df: df[<span class="st">"student_id"</span>].is_unique, error<span class="op">=</span><span class="st">"student_id must be unique"</span>),</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>    ],</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>    <span class="bu">coerce</span><span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Schema created with"</span>, <span class="bu">len</span>(schema.columns), <span class="st">"columns"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Schema created with 10 columns</code></pre>
+</div>
+</div>
+<p><code>coerce=True</code> tells Pandera to attempt type coercion before validation — <code>"78.5"</code> becomes <code>78.5</code> for a <code>float</code> column — mirroring Pydantic’s behaviour at the row level.</p>
+<p>Validate a DataFrame:</p>
+<div id="10" class="cell" data-execution_count="2">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Build a small valid sample</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>sample_df <span class="op">=</span> pd.DataFrame(</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    {</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>        <span class="st">"student_id"</span>: [<span class="st">"S0001"</span>, <span class="st">"S0002"</span>, <span class="st">"S0003"</span>],</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>        <span class="st">"midterm_score"</span>: [<span class="fl">78.5</span>, <span class="fl">65.0</span>, <span class="fl">90.0</span>],</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>        <span class="st">"final_score"</span>: [<span class="fl">82.0</span>, <span class="fl">70.0</span>, <span class="fl">88.0</span>],</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>        <span class="st">"project_score"</span>: [<span class="fl">91.0</span>, <span class="fl">75.0</span>, <span class="fl">85.0</span>],</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>        <span class="st">"program"</span>: [<span class="st">"CS"</span>, <span class="st">"EE"</span>, <span class="st">"Math"</span>],</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>        <span class="st">"has_internet"</span>: [<span class="va">True</span>, <span class="va">False</span>, <span class="va">True</span>],</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>        <span class="st">"school_id"</span>: [<span class="st">"SCH01"</span>, <span class="st">"SCH01"</span>, <span class="st">"SCH02"</span>],</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>        <span class="st">"teacher_count"</span>: [<span class="dv">12</span>, <span class="dv">8</span>, <span class="dv">15</span>],</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>        <span class="st">"school_size"</span>: [<span class="st">"Large"</span>, <span class="st">"Medium"</span>, <span class="st">"Large"</span>],</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>        <span class="st">"pass_threshold"</span>: [<span class="fl">60.0</span>, <span class="fl">60.0</span>, <span class="fl">65.0</span>],</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>validated <span class="op">=</span> schema.validate(sample_df)</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Validation passed:"</span>, validated.shape)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Validation passed: (3, 10)</code></pre>
+</div>
+</div>
+<div id="11" class="cell" data-execution_count="3">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Introduce an invalid row (midterm_score &gt; 100)</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>bad_df <span class="op">=</span> sample_df.copy()</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>bad_df.loc[<span class="dv">0</span>, <span class="st">"midterm_score"</span>] <span class="op">=</span> <span class="fl">150.0</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span>:</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    schema.validate(bad_df)</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="cf">except</span> pa.errors.SchemaError <span class="im">as</span> e:</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="bu">type</span>(e).<span class="va">__name__</span>)</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(e)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>SchemaError
+Column 'midterm_score' failed element-wise validator number 1: less_than_or_equal_to(100.0) failure cases: 150.0</code></pre>
+</div>
+</div>
+<div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
+<span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 1 - Duplicate student_id</span><br><br> <b>Goal:</b> Create a DataFrame where two rows share the same <code>student_id</code>. Run <code>schema.validate(df)</code> and confirm it raises a <code>SchemaError</code> with a message about uniqueness.
+<pre style="background:#FFF8E1;padding:10px;border-radius:4px;font-size:0.9em">dup_df = sample_df.copy()
+dup_df.loc[1, "student_id"] = "S0001"  # duplicate
+schema.validate(dup_df)  # should raise</pre>
+</div>
+</section>
+<section id="dataframemodel-the-class-based-api" class="level2">
+<h2 class="anchored" data-anchor-id="dataframemodel-the-class-based-api">3. <code>DataFrameModel</code>: The Class-Based API</h2>
+<p>The functional <code>DataFrameSchema</code> API is explicit but verbose. Pandera’s class-based API, <code>pa.DataFrameModel</code>, mirrors Pydantic’s <code>BaseModel</code>: define columns as class-level fields with type annotations, and use <code>pa.Field</code> for constraints:</p>
+<div id="14" class="cell" data-execution_count="4">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> typing <span class="im">import</span> Optional</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandera <span class="im">as</span> pa</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pandera.typing <span class="im">import</span> Series</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> StudentDataSchema(pa.DataFrameModel):</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    student_id: Series[<span class="bu">str</span>] <span class="op">=</span> pa.Field(str_matches<span class="op">=</span><span class="vs">r"</span><span class="dv">^</span><span class="vs">S</span><span class="dv">\d</span><span class="op">{4}</span><span class="dv">$</span><span class="vs">"</span>)</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    midterm_score: Series[<span class="bu">float</span>] <span class="op">=</span> pa.Field(ge<span class="op">=</span><span class="fl">0.0</span>, le<span class="op">=</span><span class="fl">100.0</span>)</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>    final_score: Series[<span class="bu">float</span>] <span class="op">=</span> pa.Field(ge<span class="op">=</span><span class="fl">0.0</span>, le<span class="op">=</span><span class="fl">100.0</span>)</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>    project_score: Series[<span class="bu">float</span>] <span class="op">=</span> pa.Field(ge<span class="op">=</span><span class="fl">0.0</span>, le<span class="op">=</span><span class="fl">100.0</span>)</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>    program: Series[<span class="bu">str</span>] <span class="op">=</span> pa.Field(isin<span class="op">=</span>[<span class="st">"CS"</span>, <span class="st">"EE"</span>, <span class="st">"Math"</span>, <span class="st">"Physics"</span>, <span class="st">"Biology"</span>])</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>    has_internet: Series[<span class="bu">bool</span>]</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>    school_id: Series[<span class="bu">str</span>] <span class="op">|</span> <span class="va">None</span> <span class="op">=</span> pa.Field(nullable<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>    teacher_count: Series[<span class="bu">int</span>] <span class="op">=</span> pa.Field(ge<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>    school_size: Series[<span class="bu">str</span>] <span class="op">=</span> pa.Field(isin<span class="op">=</span>[<span class="st">"Small"</span>, <span class="st">"Medium"</span>, <span class="st">"Large"</span>])</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>    <span class="kw">class</span> Config:</span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>        <span class="bu">coerce</span> <span class="op">=</span> <span class="va">True</span></span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">@pa.check</span>(<span class="st">"student_id"</span>)</span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> student_id_unique(cls, series: Series[<span class="bu">str</span>]) <span class="op">-&gt;</span> <span class="bu">bool</span>:  <span class="co"># noqa: N805</span></span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> series.is_unique</span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>validated <span class="op">=</span> StudentDataSchema.validate(sample_df)</span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Class-based validation passed:"</span>, validated.shape)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Class-based validation passed: (3, 10)</code></pre>
+</div>
+</div>
+<p>The <code>@pa.check</code> decorator attaches a column-level check as a classmethod. The check receives the entire <code>Series</code> and must return a boolean (or a boolean Series for element-wise checks).</p>
+<div style="background:#F5F3FF;border-left:5px solid #7C3AED;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#5B21B6;font-weight:bold"><i class="bi bi-lightbulb-fill"></i> Pro Tip: Use <code>DataFrameModel</code> for reuse, <code>DataFrameSchema</code> for quick scripts</span><br><br> <code>DataFrameModel</code> is easier to subclass, document, and test: it reads like a dataclass and fits naturally alongside Pydantic models. <code>DataFrameSchema</code> is useful when you want to build a schema programmatically at runtime, e.g., from a config file or database metadata.</p>
+</div>
+<div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
+<span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 2 - Extend the Schema</span><br><br> <b>Goal:</b> Subclass <code>StudentDataSchema</code> and add a <code>semester</code> column constrained to <code>[“Fall”, “Spring”, “Summer”]</code>. Validate a DataFrame that includes the column with valid values, then one that has an invalid value. Confirm only the second raises a <code>SchemaError</code>.
+<pre style="background:#FFF8E1;padding:10px;border-radius:4px;font-size:0.9em">class ExtendedSchema(StudentDataSchema):
+    semester: Series[str] = pa.Field(isin=["Fall", "Spring", "Summer"])</pre>
+</div>
+</section>
+<section id="custom-checks" class="level2">
+<h2 class="anchored" data-anchor-id="custom-checks">4. Custom Checks</h2>
+<p>Built-in checks cover ranges, null counts, string patterns, and allowed values. Custom checks handle business rules that require more logic:</p>
+<div id="17" class="cell" data-execution_count="5">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandera <span class="im">as</span> pa</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pandera.typing <span class="im">import</span> Series</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> GradeSchema(pa.DataFrameModel):</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    midterm_score: Series[<span class="bu">float</span>] <span class="op">=</span> pa.Field(ge<span class="op">=</span><span class="fl">0.0</span>, le<span class="op">=</span><span class="fl">100.0</span>)</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    final_score: Series[<span class="bu">float</span>] <span class="op">=</span> pa.Field(ge<span class="op">=</span><span class="fl">0.0</span>, le<span class="op">=</span><span class="fl">100.0</span>)</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>    project_score: Series[<span class="bu">float</span>] <span class="op">=</span> pa.Field(ge<span class="op">=</span><span class="fl">0.0</span>, le<span class="op">=</span><span class="fl">100.0</span>)</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">@pa.check</span>(<span class="st">"midterm_score"</span>, name<span class="op">=</span><span class="st">"not_all_perfect"</span>)</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> not_all_perfect_scores(cls, series: Series[<span class="bu">float</span>]) <span class="op">-&gt;</span> <span class="bu">bool</span>:  <span class="co"># noqa: N805</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> (series <span class="op">==</span> <span class="fl">100.0</span>).mean() <span class="op">&lt;</span> <span class="fl">0.5</span>  <span class="co"># less than 50% perfect scores</span></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">@pa.dataframe_check</span></span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> weighted_average_reasonable(cls, df: pd.DataFrame) <span class="op">-&gt;</span> <span class="bu">bool</span>:  <span class="co"># noqa: N805</span></span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>        avg <span class="op">=</span> df[<span class="st">"midterm_score"</span>] <span class="op">*</span> <span class="fl">0.3</span> <span class="op">+</span> df[<span class="st">"final_score"</span>] <span class="op">*</span> <span class="fl">0.45</span> <span class="op">+</span> df[<span class="st">"project_score"</span>] <span class="op">*</span> <span class="fl">0.25</span></span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> (avg <span class="op">&gt;=</span> <span class="fl">0.0</span>).<span class="bu">all</span>() <span class="kw">and</span> (avg <span class="op">&lt;=</span> <span class="fl">100.0</span>).<span class="bu">all</span>()</span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Validate the sample</span></span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>result <span class="op">=</span> GradeSchema.validate(sample_df[[<span class="st">"midterm_score"</span>, <span class="st">"final_score"</span>, <span class="st">"project_score"</span>]])</span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Custom checks passed:"</span>, result.shape)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Custom checks passed: (3, 3)</code></pre>
+</div>
+</div>
+<p><code>@pa.check("column_name")</code> adds a column-level check: return <code>True</code> (the whole series passes), a boolean <code>Series</code> (element-wise result), or raise with a message.</p>
+<p><code>@pa.dataframe_check</code> gets the whole DataFrame: use it for cross-column constraints.</p>
+<div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
+<span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 3 - Cross-Column Check</span><br><br> <b>Goal:</b> Add a <code><span class="citation" data-cites="pa.dataframe_check">@pa.dataframe_check</span></code> to <code>GradeSchema</code> that verifies <code>midterm_score</code> and <code>final_score</code> are not both 0 for the same student (a student with both scores at 0 is almost certainly an error, not a result). Confirm it passes on valid data and fails when you introduce a row with both at 0.
+<pre style="background:#FFF8E1;padding:10px;border-radius:4px;font-size:0.9em">@pa.dataframe_check
+def not_both_zero(cls, df: pd.DataFrame) -&gt; pd.Series:
+    return ~((df["midterm_score"] == 0) &amp; (df["final_score"] == 0))</pre>
+</div>
+</section>
+<section id="validation-in-a-pipeline" class="level2">
+<h2 class="anchored" data-anchor-id="validation-in-a-pipeline">5. Validation in a Pipeline</h2>
+<p>In a pipeline, you want to validate without crashing on the first error — collect all failures and decide what to do with them:</p>
+<div id="21" class="cell" data-execution_count="6">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandera <span class="im">as</span> pa</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> load_and_validate(</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    path: <span class="bu">str</span>,</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    schema: <span class="bu">type</span>[pa.DataFrameModel],</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>    <span class="op">*</span>,</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>    lazy: <span class="bu">bool</span> <span class="op">=</span> <span class="va">True</span>,</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>) <span class="op">-&gt;</span> <span class="bu">tuple</span>[pd.DataFrame, <span class="bu">list</span>[<span class="bu">dict</span>]]:</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> pd.read_csv(path)</span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="kw">not</span> lazy:</span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> schema.validate(df, lazy<span class="op">=</span><span class="va">False</span>), []</span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span>:</span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> schema.validate(df, lazy<span class="op">=</span><span class="va">True</span>), []</span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>    <span class="cf">except</span> pa.errors.SchemaErrors <span class="im">as</span> e:</span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a>        error_df <span class="op">=</span> e.failure_cases</span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a>        errors <span class="op">=</span> error_df.to_dict(orient<span class="op">=</span><span class="st">"records"</span>)</span>
+<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Return only the valid rows for downstream use</span></span>
+<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a>        bad_idx <span class="op">=</span> <span class="bu">set</span>(error_df[<span class="st">"index"</span>].dropna().astype(<span class="bu">int</span>).tolist())</span>
+<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a>        clean_df <span class="op">=</span> df.drop(index<span class="op">=</span><span class="bu">list</span>(bad_idx)).reset_index(drop<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> clean_df, errors</span>
+<span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-26"><a href="#cb12-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-27"><a href="#cb12-27" aria-hidden="true" tabindex="-1"></a><span class="co"># Use it</span></span>
+<span id="cb12-28"><a href="#cb12-28" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span>:</span>
+<span id="cb12-29"><a href="#cb12-29" aria-hidden="true" tabindex="-1"></a>    clean, errors <span class="op">=</span> load_and_validate(</span>
+<span id="cb12-30"><a href="#cb12-30" aria-hidden="true" tabindex="-1"></a>        <span class="st">"tutorials/data/university_analytics.csv"</span>,</span>
+<span id="cb12-31"><a href="#cb12-31" aria-hidden="true" tabindex="-1"></a>        StudentDataSchema,</span>
+<span id="cb12-32"><a href="#cb12-32" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb12-33"><a href="#cb12-33" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"Clean rows: </span><span class="sc">{</span><span class="bu">len</span>(clean)<span class="sc">}</span><span class="ss">, Errors: </span><span class="sc">{</span><span class="bu">len</span>(errors)<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb12-34"><a href="#cb12-34" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> errors:</span>
+<span id="cb12-35"><a href="#cb12-35" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="st">"First error:"</span>, errors[<span class="dv">0</span>])</span>
+<span id="cb12-36"><a href="#cb12-36" aria-hidden="true" tabindex="-1"></a><span class="cf">except</span> <span class="pp">FileNotFoundError</span>:</span>
+<span id="cb12-37"><a href="#cb12-37" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"CSV not found in this context — run from repo root"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>CSV not found in this context — run from repo root</code></pre>
+</div>
+</div>
+<div style="background:#EAF3FA;border-left:5px solid #0369A1;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-info-circle-fill"></i> Key Concept: lazy=True collects all errors; lazy=False stops on the first</span><br><br> <code>schema.validate(df, lazy=False)</code> (the default) raises a <code>SchemaError</code> on the first failure — fast and clear for development. <code>schema.validate(df, lazy=True)</code> collects every failure and raises a <code>SchemaErrors</code> (note the plural) at the end — better for production, where you want a full error report rather than a partial run.</p>
+</div>
+<div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 4 - Full Error Report</span><br><br> <b>Goal:</b> Introduce three invalid rows into <code>sample_df</code>: one with <code>midterm_score=150.0</code>, one with an invalid <code>program</code>, and one with a duplicate <code>student_id</code>. Call <code>StudentDataSchema.validate(bad_df, lazy=True)</code>. Catch the <code>SchemaErrors</code> exception and print the <code>failure_cases</code> DataFrame showing all three failures at once.</p>
+</div>
+</section>
+<section id="schemas-as-data-contracts-in-tests" class="level2">
+<h2 class="anchored" data-anchor-id="schemas-as-data-contracts-in-tests">6. Schemas as Data Contracts in Tests</h2>
+<p>A Pandera schema is documentation that runs. Put it in a pytest fixture and every test that touches a DataFrame automatically validates the contract:</p>
+<div id="24" class="cell" data-execution_count="7">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># tests/test_data_contracts.py  (save and run: uv run pytest tests/)</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ── paste into a test file and run with pytest ──</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandera <span class="im">as</span> pa</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pandera.typing <span class="im">import</span> Series</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pytest</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> StudentDataSchema(pa.DataFrameModel):</span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>    student_id: Series[<span class="bu">str</span>] <span class="op">=</span> pa.Field(str_matches<span class="op">=</span><span class="vs">r"</span><span class="dv">^</span><span class="vs">S</span><span class="dv">\d</span><span class="op">{4}</span><span class="dv">$</span><span class="vs">"</span>)</span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>    midterm_score: Series[<span class="bu">float</span>] <span class="op">=</span> pa.Field(ge<span class="op">=</span><span class="fl">0.0</span>, le<span class="op">=</span><span class="fl">100.0</span>)</span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>    final_score: Series[<span class="bu">float</span>] <span class="op">=</span> pa.Field(ge<span class="op">=</span><span class="fl">0.0</span>, le<span class="op">=</span><span class="fl">100.0</span>)</span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>    project_score: Series[<span class="bu">float</span>] <span class="op">=</span> pa.Field(ge<span class="op">=</span><span class="fl">0.0</span>, le<span class="op">=</span><span class="fl">100.0</span>)</span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>    program: Series[<span class="bu">str</span>] <span class="op">=</span> pa.Field(isin<span class="op">=</span>[<span class="st">"CS"</span>, <span class="st">"EE"</span>, <span class="st">"Math"</span>, <span class="st">"Physics"</span>, <span class="st">"Biology"</span>])</span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>    has_internet: Series[<span class="bu">bool</span>]</span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>    teacher_count: Series[<span class="bu">int</span>] <span class="op">=</span> pa.Field(ge<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a>    school_size: Series[<span class="bu">str</span>] <span class="op">=</span> pa.Field(isin<span class="op">=</span>[<span class="st">"Small"</span>, <span class="st">"Medium"</span>, <span class="st">"Large"</span>])</span>
+<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a>    <span class="kw">class</span> Config:</span>
+<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a>        <span class="bu">coerce</span> <span class="op">=</span> <span class="va">True</span></span>
+<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a><span class="at">@pytest.fixture</span></span>
+<span id="cb14-25"><a href="#cb14-25" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> valid_df():</span>
+<span id="cb14-26"><a href="#cb14-26" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> pd.DataFrame(</span>
+<span id="cb14-27"><a href="#cb14-27" aria-hidden="true" tabindex="-1"></a>        {</span>
+<span id="cb14-28"><a href="#cb14-28" aria-hidden="true" tabindex="-1"></a>            <span class="st">"student_id"</span>: [<span class="st">"S0001"</span>, <span class="st">"S0002"</span>],</span>
+<span id="cb14-29"><a href="#cb14-29" aria-hidden="true" tabindex="-1"></a>            <span class="st">"midterm_score"</span>: [<span class="fl">78.5</span>, <span class="fl">65.0</span>],</span>
+<span id="cb14-30"><a href="#cb14-30" aria-hidden="true" tabindex="-1"></a>            <span class="st">"final_score"</span>: [<span class="fl">82.0</span>, <span class="fl">70.0</span>],</span>
+<span id="cb14-31"><a href="#cb14-31" aria-hidden="true" tabindex="-1"></a>            <span class="st">"project_score"</span>: [<span class="fl">91.0</span>, <span class="fl">75.0</span>],</span>
+<span id="cb14-32"><a href="#cb14-32" aria-hidden="true" tabindex="-1"></a>            <span class="st">"program"</span>: [<span class="st">"CS"</span>, <span class="st">"EE"</span>],</span>
+<span id="cb14-33"><a href="#cb14-33" aria-hidden="true" tabindex="-1"></a>            <span class="st">"has_internet"</span>: [<span class="va">True</span>, <span class="va">False</span>],</span>
+<span id="cb14-34"><a href="#cb14-34" aria-hidden="true" tabindex="-1"></a>            <span class="st">"teacher_count"</span>: [<span class="dv">12</span>, <span class="dv">8</span>],</span>
+<span id="cb14-35"><a href="#cb14-35" aria-hidden="true" tabindex="-1"></a>            <span class="st">"school_size"</span>: [<span class="st">"Large"</span>, <span class="st">"Medium"</span>],</span>
+<span id="cb14-36"><a href="#cb14-36" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb14-37"><a href="#cb14-37" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb14-38"><a href="#cb14-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-39"><a href="#cb14-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-40"><a href="#cb14-40" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> test_valid_data_passes_schema(valid_df):</span>
+<span id="cb14-41"><a href="#cb14-41" aria-hidden="true" tabindex="-1"></a>    validated <span class="op">=</span> StudentDataSchema.validate(valid_df)</span>
+<span id="cb14-42"><a href="#cb14-42" aria-hidden="true" tabindex="-1"></a>    <span class="cf">assert</span> <span class="bu">len</span>(validated) <span class="op">==</span> <span class="dv">2</span>  <span class="co"># noqa: S101</span></span>
+<span id="cb14-43"><a href="#cb14-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-44"><a href="#cb14-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-45"><a href="#cb14-45" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> test_invalid_score_raises(valid_df):</span>
+<span id="cb14-46"><a href="#cb14-46" aria-hidden="true" tabindex="-1"></a>    bad <span class="op">=</span> valid_df.copy()</span>
+<span id="cb14-47"><a href="#cb14-47" aria-hidden="true" tabindex="-1"></a>    bad.loc[<span class="dv">0</span>, <span class="st">"midterm_score"</span>] <span class="op">=</span> <span class="fl">150.0</span></span>
+<span id="cb14-48"><a href="#cb14-48" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> pytest.raises(pa.errors.SchemaError):</span>
+<span id="cb14-49"><a href="#cb14-49" aria-hidden="true" tabindex="-1"></a>        StudentDataSchema.validate(bad)</span>
+<span id="cb14-50"><a href="#cb14-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-51"><a href="#cb14-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-52"><a href="#cb14-52" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> test_invalid_program_raises(valid_df):</span>
+<span id="cb14-53"><a href="#cb14-53" aria-hidden="true" tabindex="-1"></a>    bad <span class="op">=</span> valid_df.copy()</span>
+<span id="cb14-54"><a href="#cb14-54" aria-hidden="true" tabindex="-1"></a>    bad.loc[<span class="dv">0</span>, <span class="st">"program"</span>] <span class="op">=</span> <span class="st">"Underwater Basket Weaving"</span></span>
+<span id="cb14-55"><a href="#cb14-55" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> pytest.raises(pa.errors.SchemaError):</span>
+<span id="cb14-56"><a href="#cb14-56" aria-hidden="true" tabindex="-1"></a>        StudentDataSchema.validate(bad)</span>
+<span id="cb14-57"><a href="#cb14-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-58"><a href="#cb14-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-59"><a href="#cb14-59" aria-hidden="true" tabindex="-1"></a><span class="co"># Demonstration (not a real pytest run)</span></span>
+<span id="cb14-60"><a href="#cb14-60" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Tests defined. Run with: uv run pytest tests/test_data_contracts.py -v"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-error">
+<div class="ansi-escaped-output">
+<pre><span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">ModuleNotFoundError</span>                       Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[7]</span><span class="ansi-green-fg">, line 7</span>
+<span class="ansi-green-fg">      5</span> <span style="font-weight:bold;color:rgb(0,135,0)">import</span><span style="color:rgb(188,188,188)"> </span><span class="ansi-blue-fg ansi-bold">pandera</span><span style="color:rgb(188,188,188)"> </span><span style="font-weight:bold;color:rgb(0,135,0)">as</span><span style="color:rgb(188,188,188)"> </span><span class="ansi-blue-fg ansi-bold">pa</span>
+<span class="ansi-green-fg">      6</span> <span style="font-weight:bold;color:rgb(0,135,0)">from</span><span style="color:rgb(188,188,188)"> </span><span class="ansi-blue-fg ansi-bold">pandera</span><span class="ansi-blue-fg ansi-bold">.</span><span class="ansi-blue-fg ansi-bold">typing</span><span style="color:rgb(188,188,188)"> </span><span style="font-weight:bold;color:rgb(0,135,0)">import</span> Series
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">7</span> <span style="font-weight:bold;color:rgb(0,135,0)">import</span><span style="color:rgb(188,188,188)"> </span><span class="ansi-blue-fg ansi-bold">pytest</span>
+<span class="ansi-green-fg">     10</span> <span style="font-weight:bold;color:rgb(0,135,0)">class</span><span style="color:rgb(188,188,188)"> </span><span class="ansi-blue-fg ansi-bold">StudentDataSchema</span>(pa.DataFrameModel):
+<span class="ansi-green-fg">     11</span>     student_id: Series[<span style="color:rgb(0,135,0)">str</span>] = pa.Field(str_matches=<span class="ansi-yellow-fg">r</span><span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">^S</span><span class="ansi-yellow-fg">\</span><span class="ansi-yellow-fg">d</span><span style="font-weight:bold;color:rgb(175,95,135)">{4}</span><span class="ansi-yellow-fg">$</span><span class="ansi-yellow-fg">"</span>)
+
+<span class="ansi-red-fg">ModuleNotFoundError</span>: No module named 'pytest'</pre>
+</div>
+</div>
+</div>
+<div style="background:#F5F3FF;border-left:5px solid #7C3AED;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#5B21B6;font-weight:bold"><i class="bi bi-lightbulb-fill"></i> Pro Tip: Use <code>pa.DataFrameModel.example()</code> to generate test data automatically</span><br><br> Pandera can synthesise valid DataFrames from a schema: <code>StudentDataSchema.example(size=50)</code> generates 50 valid rows matching all constraints. This removes the need to hand-craft test fixtures for every new schema.</p>
+</div>
+<div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
+<span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 5 - Schema-Driven Test Data</span><br><br> <b>Goal:</b> Call <code>StudentDataSchema.example(size=20)</code> to generate 20 synthetic rows. Confirm that the generated DataFrame passes <code>StudentDataSchema.validate()</code> without errors. Then confirm that if you corrupt one cell (set a score to 200), validation fails.
+<pre style="background:#FFF8E1;padding:10px;border-radius:4px;font-size:0.9em">synthetic = StudentDataSchema.example(size=20)
+StudentDataSchema.validate(synthetic)  # should pass</pre>
+</div>
+</section>
+<section id="capstone-data-contract-for-grade-predictor" class="level2">
+<h2 class="anchored" data-anchor-id="capstone-data-contract-for-grade-predictor">Capstone: Data Contract for grade-predictor</h2>
+<p>Bring Pandera into the <code>grade-predictor</code> pipeline as a first-class data contract.</p>
+<div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
+<span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Capstone - End-to-End Validated Pipeline</span><br><br>
+<ol>
+<li>
+Define <code>StudentDataSchema</code> in <code>grade_predictor/schemas.py</code> covering all columns of <code>university_analytics.csv</code>
+</li>
+<li>
+Update <code>load_and_validate</code> (from Part 19) to run Pandera schema validation <em>after</em> row-level Pydantic validation
+</li>
+<li>
+Add a <code><span class="citation" data-cites="pa.dataframe_check">@pa.dataframe_check</span></code> that verifies the computed weighted average (using the weights from <code>PipelineConfig</code>) falls in [0, 100] for every row
+</li>
+<li>
+Write three tests: one that the real CSV passes the schema, one that a DataFrame with a bad score raises <code>SchemaError</code>, and one that uses <code>example()</code> to generate synthetic data and confirms it passes
+</li>
+<li>
+Run <code>uv run pytest -v</code> and confirm all three pass
+</li>
+</ol>
+</div>
+</section>
+<section id="further-reading" class="level2">
+<h2 class="anchored" data-anchor-id="further-reading">Further Reading</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Resource</th>
+<th>Why it matters</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><a href="https://pandera.readthedocs.io/">Pandera documentation</a></td>
+<td>Full reference: DataFrameSchema, DataFrameModel, check types, Polars support</td>
+</tr>
+<tr class="even">
+<td><a href="https://pandera.readthedocs.io/en/stable/polars.html">Pandera + Polars</a></td>
+<td>Same API works on Polars DataFrames</td>
+</tr>
+<tr class="odd">
+<td><a href="https://pandera.readthedocs.io/en/stable/pandas_on_spark.html">Pandera pytest integration</a></td>
+<td><code>@pa.check_types</code> decorator for function-level schema enforcement</td>
+</tr>
+<tr class="even">
+<td><a href="https://pandera.readthedocs.io/en/stable/pydantic_integration.html">Pydantic + Pandera together</a></td>
+<td>Use a Pandera schema as a Pydantic field type</td>
+</tr>
+<tr class="odd">
+<td><a href="https://docs.greatexpectations.io/">Great Expectations</a></td>
+<td>Enterprise-grade data quality platform; Pandera for code-first, GX for teams with data catalogs</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="summary" class="level2">
+<h2 class="anchored" data-anchor-id="summary">Summary</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Concept</th>
+<th>Key rule</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>DataFrameSchema</code></td>
+<td>Functional API: describe columns, constraints, table-level checks as a dict</td>
+</tr>
+<tr class="even">
+<td><code>DataFrameModel</code></td>
+<td>Class-based API: columns as annotated fields, checks as classmethods</td>
+</tr>
+<tr class="odd">
+<td><code>pa.Field(ge=, le=)</code></td>
+<td>Same constraint vocabulary as Pydantic’s <code>Field</code></td>
+</tr>
+<tr class="even">
+<td><code>pa.Check.isin([...])</code></td>
+<td>Restrict a column to an explicit set of values</td>
+</tr>
+<tr class="odd">
+<td><code>@pa.check("col")</code></td>
+<td>Column-level custom check: receives the Series, returns bool or bool Series</td>
+</tr>
+<tr class="even">
+<td><code>@pa.dataframe_check</code></td>
+<td>Cross-column check: receives the full DataFrame</td>
+</tr>
+<tr class="odd">
+<td><code>lazy=True</code></td>
+<td>Collect all failures; raises <code>SchemaErrors</code> (plural)</td>
+</tr>
+<tr class="even">
+<td><code>lazy=False</code></td>
+<td>Stop on first failure; raises <code>SchemaError</code></td>
+</tr>
+<tr class="odd">
+<td><code>schema.example(size=n)</code></td>
+<td>Generate n rows of valid synthetic data for testing</td>
+</tr>
+<tr class="even">
+<td>Pydantic + Pandera</td>
+<td>Validate rows with Pydantic, validate the assembled table with Pandera</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Next:</strong> Part 21 — Classical ML: Scikit-learn pipelines applied to the fully validated, typed <code>grade-predictor</code> dataset.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/sambaiga\.github\.io\/ds-mlops-path\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../../tutorials/02-dev-tools/07-pydantic-validation.html" class="pagination-link" aria-label="Part 19: Data Validation with Pydantic">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">Part 19: Data Validation with Pydantic</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../../about.html" class="pagination-link" aria-label="About the Author">
+        <span class="nav-page-text"><span class="chapter-title">About the Author</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p><span class="faux-block">© 2025–2026 <a href="https://sambaiga.github.io/">Anthony Faustine</a></span> <span class="faux-block">Code licensed under <a href="https://www.apache.org/licenses/LICENSE-2.0">Apache 2.0</a></span></p>
+</div>   
+    <div class="nav-footer-center">
+<div class="footer-social">
+<p><a href="mailto:sambaiga@gmail.com" title="Email"><i class="bi bi-envelope-at-fill"></i></a> <a href="https://github.com/sambaiga" title="GitHub"><i class="bi bi-github"></i></a> <a href="https://www.linkedin.com/in/sambaiga" title="LinkedIn"><i class="bi bi-linkedin"></i></a></p>
+</div>
+<div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.dev/sambaiga/ds-mlops-path/blob/main/tutorials/02-dev-tools/08-pandera-schema-validation.ipynb" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/sambaiga/ds-mlops-path/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li><li><a href="https://github.com/sambaiga/ds-mlops-path/blob/main/tutorials/02-dev-tools/08-pandera-schema-validation.ipynb" class="toc-action"><i class="bi empty"></i>View source</a></li></ul></div></div>
+    <div class="nav-footer-right">
+<p><span class="faux-block">Made with <a href="https://quarto.org">Quarto</a></span> <span class="faux-block"><a href="https://github.com/sambaiga/ds-mlops-path"><i class="bi bi-github"></i> View source</a></span></p>
+</div>
+  </div>
+</footer>
+
+
+
+
+<script src="../../site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>
