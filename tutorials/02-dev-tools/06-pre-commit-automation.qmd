@@ -20,12 +20,56 @@ By the end of Part 18 you will be able to:
 
 | # | Skill | Covered in |
 |---|---|---|
+| 0 | Explain what pre-commit is and install it | Sec. 0 |
 | 1 | Explain what a git hook is and why pre-commit manages them | Sec. 1 |
 | 2 | Write a `.pre-commit-config.yaml` with the essential DS hooks | Sec. 2 |
 | 3 | Use `nbstripout` to keep notebook outputs out of git history | Sec. 3 |
 | 4 | Configure commitizen to enforce conventional commits automatically | Sec. 4 |
 | 5 | Assign hooks to the right stage: `pre-commit` vs `pre-push` | Sec. 5 |
 | 6 | Debug a hook failure and use the `SKIP` escape hatch correctly | Sec. 6 |
+
+## 0. What is pre-commit and How to Install It
+
+`pre-commit` is a framework for managing git hooks. It lets you define a set of automated checks in a single YAML file (`.pre-commit-config.yaml`) that is committed with your code. Anyone who clones the repository and runs `pre-commit install` gets the identical set of checks running on their machine, each in its own isolated environment with pinned tool versions.
+
+Without pre-commit, quality checks are optional. With pre-commit, they are automatic: the checks run before every commit and block it if they fail. You cannot forget to run ruff, and your colleagues cannot skip it.
+
+![The pre-commit hook lifecycle: hook runs before the commit is sealed](https://pre-commit.com/images/logo.png)
+
+> Source: [pre-commit.com](https://pre-commit.com)
+
+### Install pre-commit
+
+In the `grade-predictor` project, pre-commit is already listed as a dev dependency and is installed with `uv sync`:
+
+```bash
+# Already included if you ran: uv sync --extra dev
+uv add --optional dev pre-commit
+
+# Activate the hooks for this repository (run once after every fresh clone)
+uv run pre-commit install
+```
+
+For use outside a uv project, or as a system-wide tool:
+
+```bash
+# via pipx (recommended for standalone use)
+pipx install pre-commit
+
+# via pip (in any active environment)
+pip install pre-commit
+
+# macOS via Homebrew
+brew install pre-commit
+
+# Verify
+pre-commit --version
+```
+
+<div class='ark-concept'>
+<span class='ark-concept-title'><i class="bi bi-info-circle-fill"></i> Key Concept: pre-commit install wires the hooks; it must run after every clone</span><br><br>
+The <code>.pre-commit-config.yaml</code> file describes <i>what</i> to run. <code>pre-commit install</code> writes the actual hook scripts into <code>.git/hooks/</code>. This second step is local-only and not version-controlled, so every developer who clones the repo must run it once. A good project README always lists it as a setup step.
+</div>
 
 ## 1. Git Hooks and Why pre-commit Manages Them
 

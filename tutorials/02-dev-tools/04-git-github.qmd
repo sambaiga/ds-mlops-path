@@ -20,12 +20,121 @@ By the end of Part 16 you will be able to:
 
 | # | Skill | Covered in |
 |---|---|---|
+| 0 | Install git and configure it with your identity and a remote host | Sec. 0 |
 | 1 | Initialize a git repository and write a correct `.gitignore` for a DS project | Sec. 1 |
 | 2 | Understand the three-state model: working tree, staging area, commit history | Sec. 2 |
 | 3 | Write conventional commits that serve as a searchable project log | Sec. 3 |
 | 4 | Use branches to run experiments without breaking working code | Sec. 4 |
 | 5 | Open a pull request and understand what good PR descriptions contain | Sec. 5 |
 | 6 | Write a GitHub Actions workflow that runs tests on every push | Sec. 6 |
+
+## 0. Installing and Configuring Git
+
+### Install git
+
+Git does not ship with every operating system. Check if it is already present:
+
+```bash
+git --version
+# git version 2.49.0
+```
+
+If it is not installed:
+
+```bash
+# macOS: via Homebrew (recommended)
+brew install git
+
+# macOS alternative: install Xcode Command Line Tools (includes git)
+xcode-select --install
+
+# Ubuntu / Debian
+sudo apt update && sudo apt install git
+
+# Windows: download the installer from the official site
+# https://git-scm.com/download/win
+# Git for Windows includes Git Bash, a Unix-style terminal, which is recommended
+```
+
+### First-time identity configuration
+
+Every commit records the author's name and email. Set them once, globally, before making any commit:
+
+```bash
+git config --global user.name "Your Name"
+git config --global user.email "you@example.com"
+git config --global core.editor "code --wait"   # use VS Code as the commit editor
+git config --global init.defaultBranch main
+```
+
+Verify the result:
+
+```bash
+git config --list --global
+```
+
+<div class='ark-concept'>
+<span class='ark-concept-title'><i class="bi bi-info-circle-fill"></i> Key Concept: Global vs local git config</span><br><br>
+<code>--global</code> writes to <code>~/.gitconfig</code> and applies to every repository on the machine. Omitting it writes to <code>.git/config</code> inside the current repository only. Use <code>--global</code> for your identity; use local config to override settings for a specific project (e.g., a work email for a client repo).
+</div>
+
+### Connect to GitHub (or GitLab)
+
+You need an account on a remote hosting service to push code and collaborate. GitHub and GitLab are the two most common choices for DS projects:
+
+| | GitHub | GitLab |
+|---|---|---|
+| Free private repos | Yes (unlimited) | Yes (unlimited) |
+| CI/CD included | GitHub Actions | GitLab CI |
+| Package registry | GitHub Packages | GitLab Container Registry |
+| Best for | Open source, community | Self-hosted, enterprise, full DevOps |
+
+The fastest way to authenticate is an SSH key. Generate one and add it to your account:
+
+```bash
+# Generate an Ed25519 key (replace with your email)
+ssh-keygen -t ed25519 -C "you@example.com"
+
+# Start the SSH agent and add the key
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519
+
+# Print the public key and copy it into GitHub / GitLab
+cat ~/.ssh/id_ed25519.pub
+```
+
+On GitHub: **Settings → SSH and GPG keys → New SSH key → paste the public key**.
+
+![Adding an SSH key to GitHub](https://docs.github.com/assets/cb-109858/mw-1440/images/help/settings/userbar-account-settings.webp)
+
+> Source: [GitHub Docs: Adding a new SSH key](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account)
+
+Alternatively, use the GitHub CLI (`gh`) to authenticate without manually copying keys:
+
+```bash
+# Install gh
+brew install gh           # macOS
+sudo apt install gh       # Ubuntu
+
+# Authenticate (follows a browser-based flow)
+gh auth login
+```
+
+Test the connection:
+
+```bash
+ssh -T git@github.com
+# Hi username! You've successfully authenticated.
+```
+
+<div class='ark-activity'>
+<span class='ark-activity-title'><i class="bi bi-puzzle-fill"></i> Activity 0 - Install and Configure git</span><br><br>
+<b>Goal:</b> Confirm git is installed and configured. Run <code>git --version</code>, set your <code>user.name</code> and <code>user.email</code>, and create a GitHub or GitLab account if you do not already have one. Add an SSH key and confirm the connection with <code>ssh -T git@github.com</code>.
+<pre>git --version
+git config --global user.name "Your Name"
+git config --global user.email "you@example.com"
+ssh -T git@github.com</pre>
+</div>
 
 ## 1. What Git Tracks and What It Must Not
 
