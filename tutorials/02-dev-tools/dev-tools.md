@@ -511,7 +511,7 @@ Run `ty check src/` and bring the output to zero errors.
 |---|---|
 | [ty documentation](https://github.com/astral-sh/ty) | Astral's type checker, integrated with the uv/ruff toolchain |
 | [numpy.typing](https://numpy.org/doc/stable/reference/typing.html) | `NDArray` and array annotation reference |
-| [mypy cheat sheet](https://mypy.readthedocs.io/en/stable/cheat_sheet_py3.html) | Quick reference; rules apply to ty as well |
+| [ty documentation](https://github.com/astral-sh/ty) | Astral type checker; authoritative reference for ty errors and configuration |
 | PEP 544 — [Protocols](https://peps.python.org/pep-0544/) | The spec behind structural subtyping for duck-typed ML objects |
 | [pandas type stubs](https://github.com/pandas-dev/pandas-stubs) | Official stubs for IDE-level type inference on DataFrames |
 

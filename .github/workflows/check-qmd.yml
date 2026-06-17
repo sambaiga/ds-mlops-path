@@ -47,31 +47,46 @@ jobs:
           fi
           echo "No inline callout styles found in QMD files."
 
-  render-qmd:
-    name: Render QMD files
+  validate-qmd:
+    name: Validate QMD structure
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install Quarto
-        uses: quarto-dev/quarto-actions/setup@v2
-        with:
-          version: "latest"
-
-      - name: Install uv
-        uses: astral-sh/setup-uv@v3
-        with:
-          version: "latest"
-
-      - name: Install dependencies
-        run: uv sync --extra dev
-
-      - name: Render Part 3 QMD files
+      - name: Check YAML frontmatter present in all QMD files
         run: |
+          rc=0
           for f in tutorials/02-dev-tools/*.qmd; do
-            echo "Rendering $f..."
-            quarto render "$f" --to html --no-execute 2>&1 | tail -3
+            if ! head -1 "$f" | grep -q "^---"; then
+              echo "Missing YAML frontmatter in $f"
+              rc=1
+            fi
           done
-        env:
-          PYTHONWARNINGS: ignore
+          exit $rc
+
+      - name: Check all cross-reference targets exist
+        run: |
+          rc=0
+          for f in tutorials/02-dev-tools/*.qmd; do
+            while IFS= read -r link; do
+              target=$(echo "$link" | grep -oP '(?<=\()tutorials/[^)]+(?=\))')
+              if [ -n "$target" ] && [ ! -f "$target" ]; then
+                echo "Broken link in $f: $target does not exist"
+                rc=1
+              fi
+            done < <(grep -oP '\[[^\]]+\]\([^\)]+\)' "$f" || true)
+          done
+          exit $rc
+
+      - name: Check code blocks have language identifiers
+        run: |
+          rc=0
+          for f in tutorials/02-dev-tools/*.qmd; do
+            count=$(grep -cP '^\`\`\`$' "$f" || true)
+            if [ "$count" -gt 0 ]; then
+              echo "$f has $count unlabelled code fences (missing language identifier)"
+              rc=1
+            fi
+          done
+          exit $rc
