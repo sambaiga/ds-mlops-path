@@ -67,17 +67,26 @@ jobs:
 
       - name: Check all cross-reference targets exist
         run: |
-          rc=0
-          for f in tutorials/02-dev-tools/*.qmd; do
-            while IFS= read -r link; do
-              target=$(echo "$link" | grep -oP '(?<=\()tutorials/[^)]+(?=\))')
-              if [ -n "$target" ] && [ ! -f "$target" ]; then
-                echo "Broken link in $f: $target does not exist"
-                rc=1
-              fi
-            done < <(grep -oP '\[[^\]]+\]\([^\)]+\)' "$f" || true)
-          done
-          exit $rc
+          python3 - <<'PYEOF'
+          import os, re, sys
+          rc = 0
+          for fname in sorted(os.listdir('tutorials/02-dev-tools')):
+              if not fname.endswith('.qmd'):
+                  continue
+              fpath = f'tutorials/02-dev-tools/{fname}'
+              with open(fpath) as fh:
+                  content = fh.read()
+              dirpath = os.path.dirname(fpath)
+              for href in re.findall(r'\[[^\]]+\]\(([^)]+)\)', content):
+                  path_part = href.split('#')[0]
+                  if not path_part or path_part.startswith(('http', 'mailto')):
+                      continue
+                  target = os.path.normpath(os.path.join(dirpath, path_part))
+                  if not os.path.exists(target):
+                      print(f"Broken link in {fpath}: {href}")
+                      rc = 1
+          sys.exit(rc)
+          PYEOF
 
       - name: Check code blocks have language identifiers
         run: |
