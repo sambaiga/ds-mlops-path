@@ -1,0 +1,2175 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.38">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Part 12: Presenting Data with Great Tables – DS-MLOps Path</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js" integrity="sha384-ZvpUoO/+PpLXR1lu4jmpXWu80pZlYUAfxl5NsBMWOEPSjUn/6Z/hRTt8+pR6L4N2" crossorigin="anonymous"></script><script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<link href="../../tutorials/01-python-basics/11-polars.html" rel="prev">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-de63f62b328812d8e578a4d74e282472.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-25d02d6ee2c20d6bcb3e5ee92e71e791.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<style>html{ scroll-behavior: smooth; }</style>
+<script src="https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.min.js" integrity="sha384-c9c+LnTbwQ3aujuU7ULEPVvgLs+Fn6fJUvIGTsuu1ZcCf11fiEubah0ttpca4ntM sha384-6V1/AdqZRWk1KAlWbKBlGhN7VG4iE/yAZcO6NZPMF8od0vukrvr0tg4qY6NSrItx" crossorigin="anonymous"></script>
+
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
+
+</head>
+
+<body class="nav-sidebar floating nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">DS-MLOps Path</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/sambaiga/ds-mlops-path"> <i class="bi bi-github" role="img" aria-label="View source on GitHub">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+    <a href="https://github.com/sambaiga/ds-mlops-path" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <a class="flex-grow-1 no-decor" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+          <h1 class="quarto-secondary-nav-title"><span class="chapter-title">Part 12: Presenting Data with Great Tables</span></h1>
+        </a>     
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../index.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Welcome</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false">
+ <span class="menu-text">Part 1: Python Basics</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/01-python-core.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 1: Language Core (Data &amp; Types)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/02-control-flow.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 2: Language Core (Control Flow &amp; Comprehensions)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/03-python-patterns.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 3: Patterns for Data Science &amp; ML</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/04-numpy.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 4: NumPy for Data &amp; ML</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/05-matplotlib.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 5: Matplotlib and Its Ecosystem</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/06-lets-plot.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 6: Grammar of Graphics with Lets-Plot</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/07-data-storytelling.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 7: Data Storytelling and House Style</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Part 2: Data Analysis</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/08-pandas-core.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 8: Pandas Core</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/09-pandas-operations.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 9: Pandas Operations</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/10-combining-reshaping.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 10: Combining, Reshaping &amp; Time Series</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/11-time-series.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 11: Time Series</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/11-polars.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 11: Polars &amp; the Expression API</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/12-great-tables.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">Part 12: Presenting Data with Great Tables</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">In this chapter</h2>
+   
+  <ul>
+  <li><a href="#before-you-begin" id="toc-before-you-begin" class="nav-link active" data-scroll-target="#before-you-begin">Before you begin</a></li>
+  <li><a href="#learning-objectives" id="toc-learning-objectives" class="nav-link" data-scroll-target="#learning-objectives">Learning Objectives</a></li>
+  <li><a href="#when-tables-beat-charts" id="toc-when-tables-beat-charts" class="nav-link" data-scroll-target="#when-tables-beat-charts">1. When Tables Beat Charts</a></li>
+  <li><a href="#your-first-styled-table" id="toc-your-first-styled-table" class="nav-link" data-scroll-target="#your-first-styled-table">2. Your First Styled Table</a></li>
+  <li><a href="#formatting-values-and-labelling-columns" id="toc-formatting-values-and-labelling-columns" class="nav-link" data-scroll-target="#formatting-values-and-labelling-columns">3. Formatting Values and Labelling Columns</a></li>
+  <li><a href="#column-spanners" id="toc-column-spanners" class="nav-link" data-scroll-target="#column-spanners">4. Column Spanners</a></li>
+  <li><a href="#conditional-styling" id="toc-conditional-styling" class="nav-link" data-scroll-target="#conditional-styling">5. Conditional Styling</a></li>
+  <li><a href="#summary-rows" id="toc-summary-rows" class="nav-link" data-scroll-target="#summary-rows">6. Summary Rows</a></li>
+  <li><a href="#model-comparison-with-metrics_report" id="toc-model-comparison-with-metrics_report" class="nav-link" data-scroll-target="#model-comparison-with-metrics_report">7. Model Comparison with <code>metrics_report()</code></a></li>
+  <li><a href="#capstone-course-performance-report" id="toc-capstone-course-performance-report" class="nav-link" data-scroll-target="#capstone-course-performance-report">Capstone: Course Performance Report</a></li>
+  <li><a href="#further-reading" id="toc-further-reading" class="nav-link" data-scroll-target="#further-reading">Further Reading</a></li>
+  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary">Summary</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.dev/sambaiga/ds-mlops-path/blob/main/tutorials/01-python-basics/12-great-tables.ipynb" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/sambaiga/ds-mlops-path/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li><li><a href="https://github.com/sambaiga/ds-mlops-path/blob/main/tutorials/01-python-basics/12-great-tables.ipynb" class="toc-action"><i class="bi empty"></i>View source</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block"><span class="chapter-title">Part 12: Presenting Data with Great Tables</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p><a href="https://colab.research.google.com/github/sambaiga/ds-mlops-path/blob/main/tutorials/01-python-basics/12-great-tables.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open In Colab"></a> <a href="https://raw.githubusercontent.com/sambaiga/ds-mlops-path/main/tutorials/01-python-basics/12-great-tables.ipynb"><img src="https://img.shields.io/badge/Download-Notebook-blue.svg?logo=jupyter&amp;logoColor=white" class="img-fluid" alt="Download Notebook"></a></p>
+<p><strong>DS-MLOps Data Analysis</strong></p>
+<p><strong>Python 3.12+ | Author: Anthony Faustine</strong></p>
+<section id="before-you-begin" class="level2">
+<h2 class="anchored" data-anchor-id="before-you-begin">Before you begin</h2>
+<p>This notebook assumes you have completed Parts 8-11 (the Data Analysis section). Every example builds on the <code>university_analytics.csv</code> dataset and the <code>ark.plot.gt_style</code> module introduced alongside the plotting chapters.</p>
+<p>A plain <code>df.head()</code> output serves you in a notebook. It does not serve a stakeholder, a report, or a slide deck. Great Tables (<code>great_tables</code>) is the Python library that bridges that gap: it wraps a pandas DataFrame in a fluent API and produces publication-ready HTML tables: precise column formatting, readable labels, conditional highlighting, and summary rows: with no CSS knowledge required.</p>
+<blockquote class="blockquote">
+<p>Callout markers used throughout this notebook are explained on the <a href="../../index.html#callout-guide">book cover page</a>.</p>
+</blockquote>
+</section>
+<section id="learning-objectives" class="level2">
+<h2 class="anchored" data-anchor-id="learning-objectives">Learning Objectives</h2>
+<p>By the end of Part 12 you will be able to:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>#</th>
+<th>Skill</th>
+<th>Covered in</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td>Explain when a table is the right choice over a chart</td>
+<td>Sec. 1</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td>Wrap a DataFrame with <code>GT()</code> and apply the project brand with <code>themed_gt()</code></td>
+<td>Sec. 2</td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td>Format numbers, percentages, and missing values with <code>fmt_*</code> methods</td>
+<td>Sec. 3</td>
+</tr>
+<tr class="even">
+<td>4</td>
+<td>Add readable column labels with <code>cols_label</code> and group related columns with <code>tab_spanner</code></td>
+<td>Sec. 4</td>
+</tr>
+<tr class="odd">
+<td>5</td>
+<td>Target cells with <code>loc</code> and apply styling with <code>tab_style</code></td>
+<td>Sec. 5</td>
+</tr>
+<tr class="even">
+<td>6</td>
+<td>Add grand summary rows with <code>grand_summary_rows</code></td>
+<td>Sec. 6</td>
+</tr>
+<tr class="odd">
+<td>7</td>
+<td>Build a model comparison table with <code>metrics_report()</code></td>
+<td>Sec. 7</td>
+</tr>
+</tbody>
+</table>
+<div id="4" class="cell" data-execution_count="1">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> great_tables <span class="im">import</span> GT, loc, md <span class="im">as</span> gt_md, style</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> ark.plot.gt_style <span class="im">import</span> metrics_report, themed_gt</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> ark.plot.tokens <span class="im">import</span> PRIMARY, SUCCESS, SURFACE_MUTED</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.read_csv(<span class="st">"data/university_analytics.csv"</span>)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"average_marks"</span>] <span class="op">=</span> (df[<span class="st">"midterm_score"</span>] <span class="op">+</span> df[<span class="st">"final_score"</span>] <span class="op">+</span> df[<span class="st">"project_score"</span>]) <span class="op">/</span> <span class="dv">3</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>df.head(<span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">student_id</th>
+<th data-quarto-table-cell-role="th">cohort</th>
+<th data-quarto-table-cell-role="th">program</th>
+<th data-quarto-table-cell-role="th">gender</th>
+<th data-quarto-table-cell-role="th">region</th>
+<th data-quarto-table-cell-role="th">guardian</th>
+<th data-quarto-table-cell-role="th">has_internet</th>
+<th data-quarto-table-cell-role="th">course_id</th>
+<th data-quarto-table-cell-role="th">course</th>
+<th data-quarto-table-cell-role="th">semester</th>
+<th data-quarto-table-cell-role="th">enrollment_date</th>
+<th data-quarto-table-cell-role="th">study_hours</th>
+<th data-quarto-table-cell-role="th">attendance_pct</th>
+<th data-quarto-table-cell-role="th">midterm_score</th>
+<th data-quarto-table-cell-role="th">final_score</th>
+<th data-quarto-table-cell-role="th">project_score</th>
+<th data-quarto-table-cell-role="th">final_grade</th>
+<th data-quarto-table-cell-role="th">passed</th>
+<th data-quarto-table-cell-role="th">average_marks</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>S0001</td>
+<td>2023</td>
+<td>Information Technology</td>
+<td>F</td>
+<td>South</td>
+<td>Father</td>
+<td>True</td>
+<td>C01</td>
+<td>Python Programming</td>
+<td>Fall 2023</td>
+<td>2023-09-04</td>
+<td>10.8</td>
+<td>88.6</td>
+<td>46.1</td>
+<td>54.4</td>
+<td>57.8</td>
+<td>D</td>
+<td>True</td>
+<td>52.766667</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1</th>
+<td>S0001</td>
+<td>2023</td>
+<td>Information Technology</td>
+<td>F</td>
+<td>South</td>
+<td>Father</td>
+<td>True</td>
+<td>C02</td>
+<td>Statistics</td>
+<td>Spring 2024</td>
+<td>2024-01-15</td>
+<td>16.1</td>
+<td>71.5</td>
+<td>49.9</td>
+<td>64.9</td>
+<td>67.0</td>
+<td>C</td>
+<td>True</td>
+<td>60.600000</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2</th>
+<td>S0001</td>
+<td>2023</td>
+<td>Information Technology</td>
+<td>F</td>
+<td>South</td>
+<td>Father</td>
+<td>True</td>
+<td>C03</td>
+<td>Data Structures</td>
+<td>Fall 2023</td>
+<td>2023-09-04</td>
+<td>23.6</td>
+<td>71.5</td>
+<td>57.3</td>
+<td>64.1</td>
+<td>83.0</td>
+<td>C</td>
+<td>True</td>
+<td>68.133333</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</section>
+<section id="when-tables-beat-charts" class="level2">
+<h2 class="anchored" data-anchor-id="when-tables-beat-charts">1. When Tables Beat Charts</h2>
+<p>A chart compresses a distribution into shape: it shows a trend, a cluster, or an outlier at a glance. A table preserves exact values so a reader can answer a precise question: <em>which course has the highest midterm average?</em> or <em>by how many points does one program outperform another?</em></p>
+<p>Use a table when: - Readers will look up a specific row or compare two exact values - The differences between groups are small and a chart would compress them into noise - A report or stakeholder document needs a citable number, not an impression</p>
+<p>Use a chart when: - You want to show a trend, a distribution, or a relationship across many data points - The pattern matters more than the individual values</p>
+<div style="background:#EAF3FA;border-left:5px solid #0369A1;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-info-circle-fill"></i> Key Concept: Tables serve lookup; charts serve pattern recognition</span><br><br> Neither replaces the other. A data storytelling section (Part 7) shows a trend with a chart. A summary report shows the underlying numbers in a table. The combination answers both the <em>what happened</em> and the <em>by exactly how much</em>.</p>
+</div>
+</section>
+<section id="your-first-styled-table" class="level2">
+<h2 class="anchored" data-anchor-id="your-first-styled-table">2. Your First Styled Table</h2>
+<p>Every Great Tables workflow starts with <code>GT(df)</code>: wrapping a pandas DataFrame in the Great Tables object. From there you chain methods to add structure and styling. On its own, <code>GT(df)</code> renders a minimal unstyled table. <code>themed_gt()</code> applies the project’s brand: column header background, font, border colours, and alternating row stripes: one call at the end of the chain.</p>
+<p>The first example is a summary of mean scores by gender:</p>
+<div id="10" class="cell" data-execution_count="2">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>summary <span class="op">=</span> (</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    df.groupby(<span class="st">"gender"</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    .agg(</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>        n_students<span class="op">=</span>(<span class="st">"student_id"</span>, <span class="st">"count"</span>),</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>        midterm<span class="op">=</span>(<span class="st">"midterm_score"</span>, <span class="st">"mean"</span>),</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>        final<span class="op">=</span>(<span class="st">"final_score"</span>, <span class="st">"mean"</span>),</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>        project<span class="op">=</span>(<span class="st">"project_score"</span>, <span class="st">"mean"</span>),</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>        fail_rate<span class="op">=</span>(<span class="st">"passed"</span>, <span class="kw">lambda</span> x: (<span class="op">~</span>x).mean()),</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    .reset_index()</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    .<span class="bu">round</span>(<span class="dv">2</span>)</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>summary</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="2">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">gender</th>
+<th data-quarto-table-cell-role="th">n_students</th>
+<th data-quarto-table-cell-role="th">midterm</th>
+<th data-quarto-table-cell-role="th">final</th>
+<th data-quarto-table-cell-role="th">project</th>
+<th data-quarto-table-cell-role="th">fail_rate</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>F</td>
+<td>1170</td>
+<td>60.85</td>
+<td>59.72</td>
+<td>65.63</td>
+<td>0.04</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1</th>
+<td>M</td>
+<td>1128</td>
+<td>60.93</td>
+<td>59.71</td>
+<td>65.07</td>
+<td>0.04</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2</th>
+<td>Other</td>
+<td>102</td>
+<td>59.86</td>
+<td>62.15</td>
+<td>63.57</td>
+<td>0.03</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<p><code>GT(df)</code> alone already renders a table, but column names are raw and values have no formatting. Wrapping it in <code>themed_gt()</code> applies the brand while <code>.tab_header()</code> adds a title and subtitle:</p>
+<div id="12" class="cell" data-execution_count="3">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>table <span class="op">=</span> (</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    GT(summary)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    .tab_header(</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>        title<span class="op">=</span>gt_md(<span class="st">"**Mean Exam Scores by Gender**"</span>),</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>        subtitle<span class="op">=</span><span class="st">"Students with complete score records across all three components"</span>,</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    .tab_source_note(<span class="st">"Source: DS-MLOps university analytics dataset · 2,400 rows"</span>)</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>themed_gt(table, n_rows<span class="op">=</span><span class="bu">len</span>(summary))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="3">
+<div id="ypzrcynzkv" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:100%;height:auto;">
+<style>
+#ypzrcynzkv table {
+          font-family: 'Libre Franklin', 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale;
+        }
+
+#ypzrcynzkv thead, tbody, tfoot, tr, td, th { border-style: none; }
+ tr { background-color: transparent; }
+#ypzrcynzkv p { margin: 0; padding: 0; }
+ #ypzrcynzkv .gt_table { display: table; border-collapse: collapse; line-height: normal; margin-left: auto; margin-right: auto; color: #171717; font-size: 13px; font-weight: normal; font-style: normal; background-color: #FFFFFF; width: 100%; border-top-style: solid; border-top-width: 2px; border-top-color: #1E293B; border-right-style: none; border-right-width: 2px; border-right-color: #D3D3D3; border-bottom-style: solid; border-bottom-width: 1px; border-bottom-color: #1E293B; border-left-style: none; border-left-width: 2px; border-left-color: #D3D3D3; }
+ #ypzrcynzkv .gt_caption { padding-top: 4px; padding-bottom: 4px; }
+ #ypzrcynzkv .gt_title { color: #171717; font-size: 16px; font-weight: bold; padding-top: 10px; padding-bottom: 10px; padding-left: 5px; padding-right: 5px; border-bottom-color: #FFFFFF; border-bottom-width: 0; }
+ #ypzrcynzkv .gt_subtitle { color: #171717; font-size: 13px; font-weight: initial; padding-top: 9px; padding-bottom: 11px; padding-left: 5px; padding-right: 5px; border-top-color: #FFFFFF; border-top-width: 0; }
+ #ypzrcynzkv .gt_heading { background-color: #FFFFFF; text-align: center; border-bottom-color: #FFFFFF; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; }
+ #ypzrcynzkv .gt_bottom_border { border-bottom-style: solid; border-bottom-width: 2px; border-bottom-color: #D3D3D3; }
+ #ypzrcynzkv .gt_col_headings { border-top-style: solid; border-top-width: 2px; border-top-color: #D3D3D3; border-bottom-style: solid; border-bottom-width: 1px; border-bottom-color: #D3D3D3; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; }
+ #ypzrcynzkv .gt_col_heading { color: #FFFFFF; background-color: #1E293B; font-size: 13px; font-weight: bold; text-transform: inherit; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; vertical-align: bottom; padding-top: 9px; padding-bottom: 11px; padding-left: 5px; padding-right: 5px; overflow-x: hidden; }
+ #ypzrcynzkv .gt_column_spanner_outer { color: #FFFFFF; background-color: #1E293B; font-size: 13px; font-weight: bold; text-transform: inherit; padding-top: 0; padding-bottom: 0; padding-left: 4px; padding-right: 4px; }
+ #ypzrcynzkv .gt_column_spanner_outer:first-child { padding-left: 0; }
+ #ypzrcynzkv .gt_column_spanner_outer:last-child { padding-right: 0; }
+ #ypzrcynzkv .gt_column_spanner { border-bottom-style: solid; border-bottom-width: 1px; border-bottom-color: #D3D3D3; vertical-align: bottom; padding-top: 9px; padding-bottom: 9px; overflow-x: hidden; display: inline-block; width: 100%; }
+ #ypzrcynzkv .gt_spanner_row { border-bottom-style: hidden; }
+ #ypzrcynzkv .gt_group_heading { padding-top: 8px; padding-bottom: 8px; padding-left: 5px; padding-right: 5px; color: #171717; background-color: #FFFFFF; font-size: 100%; font-weight: initial; text-transform: inherit; border-top-style: solid; border-top-width: 2px; border-top-color: #D3D3D3; border-bottom-style: solid; border-bottom-width: 2px; border-bottom-color: #D3D3D3; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; vertical-align: middle; text-align: left; }
+ #ypzrcynzkv .gt_empty_group_heading { padding: 0.5px; color: #171717; background-color: #FFFFFF; font-size: 100%; font-weight: initial; border-top-style: solid; border-top-width: 2px; border-top-color: #D3D3D3; border-bottom-style: solid; border-bottom-width: 2px; border-bottom-color: #D3D3D3; vertical-align: middle; }
+ #ypzrcynzkv .gt_from_md> :first-child { margin-top: 0; }
+ #ypzrcynzkv .gt_from_md> :last-child { margin-bottom: 0; }
+ #ypzrcynzkv .gt_row { padding-top: 7px; padding-bottom: 7px; padding-left: 5px; padding-right: 5px; margin: 10px; border-top-style: solid; border-top-width: 1px; border-top-color: #D3D3D3; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; vertical-align: middle; overflow-x: hidden; }
+ #ypzrcynzkv .gt_stub { color: #171717; background-color: #FFFFFF; font-size: 100%; font-weight: initial; text-transform: inherit; border-right-style: solid; border-right-width: 2px; border-right-color: #D3D3D3; padding-left: 5px; padding-right: 5px; }
+ #ypzrcynzkv .gt_stub_row_group { color: #171717; background-color: #FFFFFF; font-size: 100%; font-weight: initial; text-transform: inherit; border-right-style: solid; border-right-width: 2px; border-right-color: #D3D3D3; padding-left: 5px; padding-right: 5px; vertical-align: top; }
+ #ypzrcynzkv .gt_row_group_first td { border-top-width: 2px; }
+ #ypzrcynzkv .gt_row_group_first th { border-top-width: 2px; }
+ #ypzrcynzkv .gt_striped { color: #171717; background-color: #F4F4F4; }
+ #ypzrcynzkv .gt_table_body { border-top-style: solid; border-top-width: 2px; border-top-color: #D3D3D3; border-bottom-style: solid; border-bottom-width: 1px; border-bottom-color: #DEE2E6; }
+ #ypzrcynzkv .gt_grand_summary_row { color: #171717; background-color: #FFFFFF; text-transform: inherit; padding-top: 8px; padding-bottom: 8px; padding-left: 5px; padding-right: 5px; }
+ #ypzrcynzkv .gt_first_grand_summary_row_bottom { border-top-style: double; border-top-width: 6px; border-top-color: #D3D3D3; }
+ #ypzrcynzkv .gt_last_grand_summary_row_top { border-bottom-style: double; border-bottom-width: 6px; border-bottom-color: #D3D3D3; }
+ #ypzrcynzkv .gt_sourcenotes { color: #171717; background-color: #FFFFFF; border-bottom-style: none; border-bottom-width: 2px; border-bottom-color: #D3D3D3; border-left-style: none; border-left-width: 2px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 2px; border-right-color: #D3D3D3; }
+ #ypzrcynzkv .gt_sourcenote { font-size: 11px; padding-top: 6px; padding-bottom: 6px; padding-left: 5px; padding-right: 5px; text-align: left; }
+ #ypzrcynzkv .gt_left { text-align: left; }
+ #ypzrcynzkv .gt_center { text-align: center; }
+ #ypzrcynzkv .gt_right { text-align: right; font-variant-numeric: tabular-nums; }
+ #ypzrcynzkv .gt_font_normal { font-weight: normal; }
+ #ypzrcynzkv .gt_font_bold { font-weight: bold; }
+ #ypzrcynzkv .gt_font_italic { font-style: italic; }
+ #ypzrcynzkv .gt_super { font-size: 65%; }
+ #ypzrcynzkv .gt_footnote_marks { font-size: 75%; vertical-align: 0.4em; position: initial; }
+ #ypzrcynzkv .gt_asterisk { font-size: 100%; vertical-align: 0; }
+ 
+</style>
+
+<table class="gt_table caption-top table table-sm table-striped small" data-quarto-bootstrap="false">
+<thead>
+<tr class="gt_heading header">
+<td colspan="6" class="gt_heading gt_title gt_font_normal" style="color: #171717; font-weight: bold"><strong>Mean Exam Scores by Gender</strong></td>
+</tr>
+<tr class="gt_heading even">
+<td colspan="6" class="gt_heading gt_subtitle gt_font_normal gt_bottom_border" style="color: #6B7280">Students with complete score records across all three components</td>
+</tr>
+<tr class="gt_col_headings header">
+<th id="gender" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" style="color: #FFFFFF" scope="col">gender</th>
+<th id="n_students" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" style="color: #FFFFFF" scope="col">n_students</th>
+<th id="midterm" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" style="color: #FFFFFF" scope="col">midterm</th>
+<th id="final" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" style="color: #FFFFFF" scope="col">final</th>
+<th id="project" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" style="color: #FFFFFF" scope="col">project</th>
+<th id="fail_rate" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" style="color: #FFFFFF" scope="col">fail_rate</th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd">
+<td class="gt_row gt_center">F</td>
+<td class="gt_row gt_right">1170</td>
+<td class="gt_row gt_right">60.85</td>
+<td class="gt_row gt_right">59.72</td>
+<td class="gt_row gt_right">65.63</td>
+<td class="gt_row gt_right">0.04</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" style="background-color: #F8F9FA">M</td>
+<td class="gt_row gt_right" style="background-color: #F8F9FA">1128</td>
+<td class="gt_row gt_right" style="background-color: #F8F9FA">60.93</td>
+<td class="gt_row gt_right" style="background-color: #F8F9FA">59.71</td>
+<td class="gt_row gt_right" style="background-color: #F8F9FA">65.07</td>
+<td class="gt_row gt_right" style="background-color: #F8F9FA">0.04</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center">Other</td>
+<td class="gt_row gt_right">102</td>
+<td class="gt_row gt_right">59.86</td>
+<td class="gt_row gt_right">62.15</td>
+<td class="gt_row gt_right">63.57</td>
+<td class="gt_row gt_right">0.03</td>
+</tr>
+</tbody><tfoot class="gt_sourcenotes">
+<tr class="odd">
+<td colspan="6" class="gt_sourcenote" style="color: #6B7280; font-style: italic">Source: DS-MLOps university analytics dataset · 2,400 rows</td>
+</tr>
+</tfoot>
+
+</table>
+
+
+</div>
+</div>
+</div>
+<div style="background:#EAF3FA;border-left:5px solid #0369A1;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-info-circle-fill"></i> Key Concept: The chain always ends with <code>themed_gt()</code></span><br><br> <code>themed_gt()</code> applies brand-wide options (<code>tab_options</code>) and text styling. Call it <em>last</em>, after all structural methods (<code>tab_header</code>, <code>cols_label</code>, <code>tab_spanner</code>, etc.) so it can apply consistently across everything you have added.</p>
+</div>
+<div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
+<span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 1 - First Styled Table</span><br><br> <b>Goal:</b> Group <code>df</code> by <code>program</code> instead of <code>gender</code>, compute the same five aggregates, then wrap with <code>GT</code> and <code>themed_gt</code>. Add a title that identifies the program.
+<pre style="background:#FFF8E1;padding:10px;border-radius:4px;font-size:0.9em">program_summary = df.groupby("program").agg(...).reset_index().round(2)
+GT(program_summary).tab_header(title=gt_md("**...**"), subtitle="...").pipe(themed_gt, n_rows=len(program_summary))</pre>
+</div>
+<div id="15" class="cell" data-execution_count="4">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: build program_summary and display with GT + themed_gt</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="formatting-values-and-labelling-columns" class="level2">
+<h2 class="anchored" data-anchor-id="formatting-values-and-labelling-columns">3. Formatting Values and Labelling Columns</h2>
+<p>Raw floats in a table communicate false precision: a pass rate of <code>0.87654</code> signals noise, not information. Great Tables <code>fmt_*</code> methods format each column’s values to the right precision for its type, and <code>cols_label</code> replaces machine-readable column names with reader-facing ones.</p>
+<p>The four formatting methods used most in DS tables: - <code>fmt_number(columns, decimals)</code>: round to <code>decimals</code> places - <code>fmt_integer(columns)</code>: strip decimal point, add thousands separator - <code>fmt_percent(columns, decimals)</code>: multiply by 100 and append <code>%</code> - <code>fmt_missing(columns, missing_text)</code>: replace <code>NaN</code> with a readable label</p>
+<div style="background:#EAF7F0;border-left:5px solid #059669;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#059669;font-weight:bold"><i class="bi bi-journal-code"></i> Example: fmt_percent turns 0.913 into 91.3%</span><br><br> Without formatting, <code>fail_rate=0.04</code> reads as a raw proportion. With <code>fmt_percent(columns=‘fail_rate’, decimals=1)</code>, the same cell displays as <code>4.0%</code>: the reader does not need to mentally multiply by 100.</p>
+</div>
+<div id="19" class="cell" data-execution_count="5">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>formatted <span class="op">=</span> (</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    GT(summary)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    .tab_header(</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>        title<span class="op">=</span>gt_md(<span class="st">"**Mean Exam Scores by Gender**"</span>),</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>        subtitle<span class="op">=</span><span class="st">"All figures rounded to one decimal place"</span>,</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    .cols_label(</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>        gender<span class="op">=</span><span class="st">"Gender"</span>,</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>        n_students<span class="op">=</span><span class="st">"Students"</span>,</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>        midterm<span class="op">=</span><span class="st">"Midterm"</span>,</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>        final<span class="op">=</span><span class="st">"Final"</span>,</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>        project<span class="op">=</span><span class="st">"Project"</span>,</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>        fail_rate<span class="op">=</span><span class="st">"Fail Rate"</span>,  <span class="co"># noqa: S106</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>    .fmt_integer(columns<span class="op">=</span><span class="st">"n_students"</span>)</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>    .fmt_number(columns<span class="op">=</span>[<span class="st">"midterm"</span>, <span class="st">"final"</span>, <span class="st">"project"</span>], decimals<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>    .fmt_percent(columns<span class="op">=</span><span class="st">"fail_rate"</span>, decimals<span class="op">=</span><span class="dv">1</span>)  <span class="co"># noqa: S106</span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>    .tab_source_note(<span class="st">"Source: DS-MLOps university analytics dataset · 2,400 rows"</span>)</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>themed_gt(formatted, n_rows<span class="op">=</span><span class="bu">len</span>(summary))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="5">
+<div id="camkyvjucl" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:100%;height:auto;">
+<style>
+#camkyvjucl table {
+          font-family: 'Libre Franklin', 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale;
+        }
+
+#camkyvjucl thead, tbody, tfoot, tr, td, th { border-style: none; }
+ tr { background-color: transparent; }
+#camkyvjucl p { margin: 0; padding: 0; }
+ #camkyvjucl .gt_table { display: table; border-collapse: collapse; line-height: normal; margin-left: auto; margin-right: auto; color: #171717; font-size: 13px; font-weight: normal; font-style: normal; background-color: #FFFFFF; width: 100%; border-top-style: solid; border-top-width: 2px; border-top-color: #1E293B; border-right-style: none; border-right-width: 2px; border-right-color: #D3D3D3; border-bottom-style: solid; border-bottom-width: 1px; border-bottom-color: #1E293B; border-left-style: none; border-left-width: 2px; border-left-color: #D3D3D3; }
+ #camkyvjucl .gt_caption { padding-top: 4px; padding-bottom: 4px; }
+ #camkyvjucl .gt_title { color: #171717; font-size: 16px; font-weight: bold; padding-top: 10px; padding-bottom: 10px; padding-left: 5px; padding-right: 5px; border-bottom-color: #FFFFFF; border-bottom-width: 0; }
+ #camkyvjucl .gt_subtitle { color: #171717; font-size: 13px; font-weight: initial; padding-top: 9px; padding-bottom: 11px; padding-left: 5px; padding-right: 5px; border-top-color: #FFFFFF; border-top-width: 0; }
+ #camkyvjucl .gt_heading { background-color: #FFFFFF; text-align: center; border-bottom-color: #FFFFFF; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; }
+ #camkyvjucl .gt_bottom_border { border-bottom-style: solid; border-bottom-width: 2px; border-bottom-color: #D3D3D3; }
+ #camkyvjucl .gt_col_headings { border-top-style: solid; border-top-width: 2px; border-top-color: #D3D3D3; border-bottom-style: solid; border-bottom-width: 1px; border-bottom-color: #D3D3D3; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; }
+ #camkyvjucl .gt_col_heading { color: #FFFFFF; background-color: #1E293B; font-size: 13px; font-weight: bold; text-transform: inherit; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; vertical-align: bottom; padding-top: 9px; padding-bottom: 11px; padding-left: 5px; padding-right: 5px; overflow-x: hidden; }
+ #camkyvjucl .gt_column_spanner_outer { color: #FFFFFF; background-color: #1E293B; font-size: 13px; font-weight: bold; text-transform: inherit; padding-top: 0; padding-bottom: 0; padding-left: 4px; padding-right: 4px; }
+ #camkyvjucl .gt_column_spanner_outer:first-child { padding-left: 0; }
+ #camkyvjucl .gt_column_spanner_outer:last-child { padding-right: 0; }
+ #camkyvjucl .gt_column_spanner { border-bottom-style: solid; border-bottom-width: 1px; border-bottom-color: #D3D3D3; vertical-align: bottom; padding-top: 9px; padding-bottom: 9px; overflow-x: hidden; display: inline-block; width: 100%; }
+ #camkyvjucl .gt_spanner_row { border-bottom-style: hidden; }
+ #camkyvjucl .gt_group_heading { padding-top: 8px; padding-bottom: 8px; padding-left: 5px; padding-right: 5px; color: #171717; background-color: #FFFFFF; font-size: 100%; font-weight: initial; text-transform: inherit; border-top-style: solid; border-top-width: 2px; border-top-color: #D3D3D3; border-bottom-style: solid; border-bottom-width: 2px; border-bottom-color: #D3D3D3; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; vertical-align: middle; text-align: left; }
+ #camkyvjucl .gt_empty_group_heading { padding: 0.5px; color: #171717; background-color: #FFFFFF; font-size: 100%; font-weight: initial; border-top-style: solid; border-top-width: 2px; border-top-color: #D3D3D3; border-bottom-style: solid; border-bottom-width: 2px; border-bottom-color: #D3D3D3; vertical-align: middle; }
+ #camkyvjucl .gt_from_md> :first-child { margin-top: 0; }
+ #camkyvjucl .gt_from_md> :last-child { margin-bottom: 0; }
+ #camkyvjucl .gt_row { padding-top: 7px; padding-bottom: 7px; padding-left: 5px; padding-right: 5px; margin: 10px; border-top-style: solid; border-top-width: 1px; border-top-color: #D3D3D3; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; vertical-align: middle; overflow-x: hidden; }
+ #camkyvjucl .gt_stub { color: #171717; background-color: #FFFFFF; font-size: 100%; font-weight: initial; text-transform: inherit; border-right-style: solid; border-right-width: 2px; border-right-color: #D3D3D3; padding-left: 5px; padding-right: 5px; }
+ #camkyvjucl .gt_stub_row_group { color: #171717; background-color: #FFFFFF; font-size: 100%; font-weight: initial; text-transform: inherit; border-right-style: solid; border-right-width: 2px; border-right-color: #D3D3D3; padding-left: 5px; padding-right: 5px; vertical-align: top; }
+ #camkyvjucl .gt_row_group_first td { border-top-width: 2px; }
+ #camkyvjucl .gt_row_group_first th { border-top-width: 2px; }
+ #camkyvjucl .gt_striped { color: #171717; background-color: #F4F4F4; }
+ #camkyvjucl .gt_table_body { border-top-style: solid; border-top-width: 2px; border-top-color: #D3D3D3; border-bottom-style: solid; border-bottom-width: 1px; border-bottom-color: #DEE2E6; }
+ #camkyvjucl .gt_grand_summary_row { color: #171717; background-color: #FFFFFF; text-transform: inherit; padding-top: 8px; padding-bottom: 8px; padding-left: 5px; padding-right: 5px; }
+ #camkyvjucl .gt_first_grand_summary_row_bottom { border-top-style: double; border-top-width: 6px; border-top-color: #D3D3D3; }
+ #camkyvjucl .gt_last_grand_summary_row_top { border-bottom-style: double; border-bottom-width: 6px; border-bottom-color: #D3D3D3; }
+ #camkyvjucl .gt_sourcenotes { color: #171717; background-color: #FFFFFF; border-bottom-style: none; border-bottom-width: 2px; border-bottom-color: #D3D3D3; border-left-style: none; border-left-width: 2px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 2px; border-right-color: #D3D3D3; }
+ #camkyvjucl .gt_sourcenote { font-size: 11px; padding-top: 6px; padding-bottom: 6px; padding-left: 5px; padding-right: 5px; text-align: left; }
+ #camkyvjucl .gt_left { text-align: left; }
+ #camkyvjucl .gt_center { text-align: center; }
+ #camkyvjucl .gt_right { text-align: right; font-variant-numeric: tabular-nums; }
+ #camkyvjucl .gt_font_normal { font-weight: normal; }
+ #camkyvjucl .gt_font_bold { font-weight: bold; }
+ #camkyvjucl .gt_font_italic { font-style: italic; }
+ #camkyvjucl .gt_super { font-size: 65%; }
+ #camkyvjucl .gt_footnote_marks { font-size: 75%; vertical-align: 0.4em; position: initial; }
+ #camkyvjucl .gt_asterisk { font-size: 100%; vertical-align: 0; }
+ 
+</style>
+
+<table class="gt_table caption-top table table-sm table-striped small" data-quarto-bootstrap="false">
+<thead>
+<tr class="gt_heading header">
+<td colspan="6" class="gt_heading gt_title gt_font_normal" style="color: #171717; font-weight: bold"><strong>Mean Exam Scores by Gender</strong></td>
+</tr>
+<tr class="gt_heading even">
+<td colspan="6" class="gt_heading gt_subtitle gt_font_normal gt_bottom_border" style="color: #6B7280">All figures rounded to one decimal place</td>
+</tr>
+<tr class="gt_col_headings header">
+<th id="gender" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" style="color: #FFFFFF" scope="col">Gender</th>
+<th id="n_students" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" style="color: #FFFFFF" scope="col">Students</th>
+<th id="midterm" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" style="color: #FFFFFF" scope="col">Midterm</th>
+<th id="final" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" style="color: #FFFFFF" scope="col">Final</th>
+<th id="project" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" style="color: #FFFFFF" scope="col">Project</th>
+<th id="fail_rate" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" style="color: #FFFFFF" scope="col">Fail Rate</th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd">
+<td class="gt_row gt_center">F</td>
+<td class="gt_row gt_right">1,170</td>
+<td class="gt_row gt_right">60.9</td>
+<td class="gt_row gt_right">59.7</td>
+<td class="gt_row gt_right">65.6</td>
+<td class="gt_row gt_right">4.0%</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" style="background-color: #F8F9FA">M</td>
+<td class="gt_row gt_right" style="background-color: #F8F9FA">1,128</td>
+<td class="gt_row gt_right" style="background-color: #F8F9FA">60.9</td>
+<td class="gt_row gt_right" style="background-color: #F8F9FA">59.7</td>
+<td class="gt_row gt_right" style="background-color: #F8F9FA">65.1</td>
+<td class="gt_row gt_right" style="background-color: #F8F9FA">4.0%</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center">Other</td>
+<td class="gt_row gt_right">102</td>
+<td class="gt_row gt_right">59.9</td>
+<td class="gt_row gt_right">62.1</td>
+<td class="gt_row gt_right">63.6</td>
+<td class="gt_row gt_right">3.0%</td>
+</tr>
+</tbody><tfoot class="gt_sourcenotes">
+<tr class="odd">
+<td colspan="6" class="gt_sourcenote" style="color: #6B7280; font-style: italic">Source: DS-MLOps university analytics dataset · 2,400 rows</td>
+</tr>
+</tfoot>
+
+</table>
+
+
+</div>
+</div>
+</div>
+<div style="background:#F5F3FF;border-left:5px solid #7C3AED;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#5B21B6;font-weight:bold"><i class="bi bi-lightbulb-fill"></i> Pro Tip: fmt_missing catches the NaN before the reader sees it</span><br><br> Any column that can contain <code>NaN</code>: a score column with ~3% missing, an optional field: should have <code>fmt_missing(columns=…, missing_text=“:”)</code> added to the chain. A blank cell in a published table is ambiguous: did the student not sit the exam, or did the pipeline drop the value?</p>
+</div>
+<div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
+<span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 2 - Format the Program Table</span><br><br> <b>Goal:</b> Take the <code>program_summary</code> from Activity 1 and add <code>cols_label</code>, <code>fmt_integer</code>, <code>fmt_number</code>, and <code>fmt_percent</code> to match the <code>formatted</code> table above.
+<pre style="background:#FFF8E1;padding:10px;border-radius:4px;font-size:0.9em">formatted_programs = (
+    GT(program_summary)
+    .cols_label(program="Program", n_students="Students", ...)
+    .fmt_integer(columns="n_students")
+    .fmt_number(columns=[...], decimals=1)
+    .fmt_percent(columns="fail_rate", decimals=1)
+)
+themed_gt(formatted_programs, n_rows=len(program_summary))</pre>
+</div>
+<div id="22" class="cell" data-execution_count="6">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: add cols_label and fmt_* to your program_summary table</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="column-spanners" class="level2">
+<h2 class="anchored" data-anchor-id="column-spanners">4. Column Spanners</h2>
+<p>When a table has several columns that belong to a natural group, for example three score columns or multiple model metrics, a column spanner adds a shared header label above the group. This reduces cognitive load: the reader understands the table structure before reading the individual values.</p>
+<p><code>tab_spanner(label, columns)</code> draws the label above the specified columns. It does not move or reorder columns; it only adds a visual grouping above them.</p>
+<div id="25" class="cell" data-execution_count="7">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Course performance table: one row per course</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>course_detail <span class="op">=</span> (</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    df.groupby(<span class="st">"course"</span>)</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    .agg(</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>        students<span class="op">=</span>(<span class="st">"student_id"</span>, <span class="st">"count"</span>),</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>        midterm<span class="op">=</span>(<span class="st">"midterm_score"</span>, <span class="st">"mean"</span>),</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>        final<span class="op">=</span>(<span class="st">"final_score"</span>, <span class="st">"mean"</span>),</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>        project<span class="op">=</span>(<span class="st">"project_score"</span>, <span class="st">"mean"</span>),</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>        pass_rate<span class="op">=</span>(<span class="st">"passed"</span>, <span class="st">"mean"</span>),</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>    .reset_index()</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>    .<span class="bu">round</span>(<span class="dv">2</span>)</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>course_detail</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="7">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">course</th>
+<th data-quarto-table-cell-role="th">students</th>
+<th data-quarto-table-cell-role="th">midterm</th>
+<th data-quarto-table-cell-role="th">final</th>
+<th data-quarto-table-cell-role="th">project</th>
+<th data-quarto-table-cell-role="th">pass_rate</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>Data Structures</td>
+<td>400</td>
+<td>61.74</td>
+<td>59.67</td>
+<td>66.24</td>
+<td>0.96</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1</th>
+<td>Databases</td>
+<td>400</td>
+<td>60.90</td>
+<td>59.65</td>
+<td>64.97</td>
+<td>0.96</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2</th>
+<td>Linear Algebra</td>
+<td>400</td>
+<td>60.74</td>
+<td>59.67</td>
+<td>64.76</td>
+<td>0.96</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">3</th>
+<td>Machine Learning</td>
+<td>400</td>
+<td>61.00</td>
+<td>60.78</td>
+<td>64.83</td>
+<td>0.96</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">4</th>
+<td>Python Programming</td>
+<td>400</td>
+<td>60.54</td>
+<td>59.35</td>
+<td>65.29</td>
+<td>0.96</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">5</th>
+<td>Statistics</td>
+<td>400</td>
+<td>60.16</td>
+<td>59.80</td>
+<td>65.59</td>
+<td>0.97</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<div id="26" class="cell" data-execution_count="8">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>with_spanner <span class="op">=</span> (</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    GT(course_detail)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    .tab_header(title<span class="op">=</span>gt_md(<span class="st">"**Performance by Course**"</span>))</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    .cols_label(</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>        course<span class="op">=</span><span class="st">"Course"</span>,</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>        students<span class="op">=</span><span class="st">"Students"</span>,</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>        midterm<span class="op">=</span><span class="st">"Midterm"</span>,</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>        final<span class="op">=</span><span class="st">"Final"</span>,</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>        project<span class="op">=</span><span class="st">"Project"</span>,</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>        pass_rate<span class="op">=</span><span class="st">"Pass Rate"</span>,  <span class="co"># noqa: S106</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>    .tab_spanner(label<span class="op">=</span><span class="st">"Score (0-100)"</span>, columns<span class="op">=</span>[<span class="st">"midterm"</span>, <span class="st">"final"</span>, <span class="st">"project"</span>])</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>    .fmt_integer(columns<span class="op">=</span><span class="st">"students"</span>)</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>    .fmt_number(columns<span class="op">=</span>[<span class="st">"midterm"</span>, <span class="st">"final"</span>, <span class="st">"project"</span>], decimals<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>    .fmt_percent(columns<span class="op">=</span><span class="st">"pass_rate"</span>, decimals<span class="op">=</span><span class="dv">1</span>)  <span class="co"># noqa: S106</span></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>    .tab_source_note(<span class="st">"Source: DS-MLOps university analytics dataset · 2,400 rows"</span>)</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>themed_gt(with_spanner, n_rows<span class="op">=</span><span class="bu">len</span>(course_detail))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="8">
+<div id="ecskxsifod" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:100%;height:auto;">
+<style>
+#ecskxsifod table {
+          font-family: 'Libre Franklin', 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale;
+        }
+
+#ecskxsifod thead, tbody, tfoot, tr, td, th { border-style: none; }
+ tr { background-color: transparent; }
+#ecskxsifod p { margin: 0; padding: 0; }
+ #ecskxsifod .gt_table { display: table; border-collapse: collapse; line-height: normal; margin-left: auto; margin-right: auto; color: #171717; font-size: 13px; font-weight: normal; font-style: normal; background-color: #FFFFFF; width: 100%; border-top-style: solid; border-top-width: 2px; border-top-color: #1E293B; border-right-style: none; border-right-width: 2px; border-right-color: #D3D3D3; border-bottom-style: solid; border-bottom-width: 1px; border-bottom-color: #1E293B; border-left-style: none; border-left-width: 2px; border-left-color: #D3D3D3; }
+ #ecskxsifod .gt_caption { padding-top: 4px; padding-bottom: 4px; }
+ #ecskxsifod .gt_title { color: #171717; font-size: 16px; font-weight: bold; padding-top: 10px; padding-bottom: 10px; padding-left: 5px; padding-right: 5px; border-bottom-color: #FFFFFF; border-bottom-width: 0; }
+ #ecskxsifod .gt_subtitle { color: #171717; font-size: 13px; font-weight: initial; padding-top: 9px; padding-bottom: 11px; padding-left: 5px; padding-right: 5px; border-top-color: #FFFFFF; border-top-width: 0; }
+ #ecskxsifod .gt_heading { background-color: #FFFFFF; text-align: center; border-bottom-color: #FFFFFF; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; }
+ #ecskxsifod .gt_bottom_border { border-bottom-style: solid; border-bottom-width: 2px; border-bottom-color: #D3D3D3; }
+ #ecskxsifod .gt_col_headings { border-top-style: solid; border-top-width: 2px; border-top-color: #D3D3D3; border-bottom-style: solid; border-bottom-width: 1px; border-bottom-color: #D3D3D3; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; }
+ #ecskxsifod .gt_col_heading { color: #FFFFFF; background-color: #1E293B; font-size: 13px; font-weight: bold; text-transform: inherit; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; vertical-align: bottom; padding-top: 9px; padding-bottom: 11px; padding-left: 5px; padding-right: 5px; overflow-x: hidden; }
+ #ecskxsifod .gt_column_spanner_outer { color: #FFFFFF; background-color: #1E293B; font-size: 13px; font-weight: bold; text-transform: inherit; padding-top: 0; padding-bottom: 0; padding-left: 4px; padding-right: 4px; }
+ #ecskxsifod .gt_column_spanner_outer:first-child { padding-left: 0; }
+ #ecskxsifod .gt_column_spanner_outer:last-child { padding-right: 0; }
+ #ecskxsifod .gt_column_spanner { border-bottom-style: solid; border-bottom-width: 1px; border-bottom-color: #D3D3D3; vertical-align: bottom; padding-top: 9px; padding-bottom: 9px; overflow-x: hidden; display: inline-block; width: 100%; }
+ #ecskxsifod .gt_spanner_row { border-bottom-style: hidden; }
+ #ecskxsifod .gt_group_heading { padding-top: 8px; padding-bottom: 8px; padding-left: 5px; padding-right: 5px; color: #171717; background-color: #FFFFFF; font-size: 100%; font-weight: initial; text-transform: inherit; border-top-style: solid; border-top-width: 2px; border-top-color: #D3D3D3; border-bottom-style: solid; border-bottom-width: 2px; border-bottom-color: #D3D3D3; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; vertical-align: middle; text-align: left; }
+ #ecskxsifod .gt_empty_group_heading { padding: 0.5px; color: #171717; background-color: #FFFFFF; font-size: 100%; font-weight: initial; border-top-style: solid; border-top-width: 2px; border-top-color: #D3D3D3; border-bottom-style: solid; border-bottom-width: 2px; border-bottom-color: #D3D3D3; vertical-align: middle; }
+ #ecskxsifod .gt_from_md> :first-child { margin-top: 0; }
+ #ecskxsifod .gt_from_md> :last-child { margin-bottom: 0; }
+ #ecskxsifod .gt_row { padding-top: 7px; padding-bottom: 7px; padding-left: 5px; padding-right: 5px; margin: 10px; border-top-style: solid; border-top-width: 1px; border-top-color: #D3D3D3; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; vertical-align: middle; overflow-x: hidden; }
+ #ecskxsifod .gt_stub { color: #171717; background-color: #FFFFFF; font-size: 100%; font-weight: initial; text-transform: inherit; border-right-style: solid; border-right-width: 2px; border-right-color: #D3D3D3; padding-left: 5px; padding-right: 5px; }
+ #ecskxsifod .gt_stub_row_group { color: #171717; background-color: #FFFFFF; font-size: 100%; font-weight: initial; text-transform: inherit; border-right-style: solid; border-right-width: 2px; border-right-color: #D3D3D3; padding-left: 5px; padding-right: 5px; vertical-align: top; }
+ #ecskxsifod .gt_row_group_first td { border-top-width: 2px; }
+ #ecskxsifod .gt_row_group_first th { border-top-width: 2px; }
+ #ecskxsifod .gt_striped { color: #171717; background-color: #F4F4F4; }
+ #ecskxsifod .gt_table_body { border-top-style: solid; border-top-width: 2px; border-top-color: #D3D3D3; border-bottom-style: solid; border-bottom-width: 1px; border-bottom-color: #DEE2E6; }
+ #ecskxsifod .gt_grand_summary_row { color: #171717; background-color: #FFFFFF; text-transform: inherit; padding-top: 8px; padding-bottom: 8px; padding-left: 5px; padding-right: 5px; }
+ #ecskxsifod .gt_first_grand_summary_row_bottom { border-top-style: double; border-top-width: 6px; border-top-color: #D3D3D3; }
+ #ecskxsifod .gt_last_grand_summary_row_top { border-bottom-style: double; border-bottom-width: 6px; border-bottom-color: #D3D3D3; }
+ #ecskxsifod .gt_sourcenotes { color: #171717; background-color: #FFFFFF; border-bottom-style: none; border-bottom-width: 2px; border-bottom-color: #D3D3D3; border-left-style: none; border-left-width: 2px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 2px; border-right-color: #D3D3D3; }
+ #ecskxsifod .gt_sourcenote { font-size: 11px; padding-top: 6px; padding-bottom: 6px; padding-left: 5px; padding-right: 5px; text-align: left; }
+ #ecskxsifod .gt_left { text-align: left; }
+ #ecskxsifod .gt_center { text-align: center; }
+ #ecskxsifod .gt_right { text-align: right; font-variant-numeric: tabular-nums; }
+ #ecskxsifod .gt_font_normal { font-weight: normal; }
+ #ecskxsifod .gt_font_bold { font-weight: bold; }
+ #ecskxsifod .gt_font_italic { font-style: italic; }
+ #ecskxsifod .gt_super { font-size: 65%; }
+ #ecskxsifod .gt_footnote_marks { font-size: 75%; vertical-align: 0.4em; position: initial; }
+ #ecskxsifod .gt_asterisk { font-size: 100%; vertical-align: 0; }
+ 
+</style>
+
+<table class="gt_table caption-top table table-sm table-striped small" data-quarto-bootstrap="false">
+<thead>
+<tr class="gt_heading header">
+<td colspan="6" class="gt_heading gt_title gt_font_normal" style="color: #171717; font-weight: bold"><strong>Performance by Course</strong></td>
+</tr>
+<tr class="gt_col_headings gt_spanner_row even">
+<th rowspan="2" id="course" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" style="color: #FFFFFF" scope="col">Course</th>
+<th rowspan="2" id="students" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" style="color: #FFFFFF" scope="col">Students</th>
+<th colspan="3" id="Score-(0-100)" class="gt_center gt_columns_top_border gt_column_spanner_outer" data-quarto-table-cell-role="th" scope="colgroup"><span class="gt_column_spanner">Score (0-100)</span></th>
+<th rowspan="2" id="pass_rate" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" style="color: #FFFFFF" scope="col">Pass Rate</th>
+</tr>
+<tr class="gt_col_headings header">
+<th id="midterm" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" style="color: #FFFFFF" scope="col">Midterm</th>
+<th id="final" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" style="color: #FFFFFF" scope="col">Final</th>
+<th id="project" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" style="color: #FFFFFF" scope="col">Project</th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd">
+<td class="gt_row gt_center">Data Structures</td>
+<td class="gt_row gt_right">400</td>
+<td class="gt_row gt_right">61.7</td>
+<td class="gt_row gt_right">59.7</td>
+<td class="gt_row gt_right">66.2</td>
+<td class="gt_row gt_right">96.0%</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" style="background-color: #F8F9FA">Databases</td>
+<td class="gt_row gt_right" style="background-color: #F8F9FA">400</td>
+<td class="gt_row gt_right" style="background-color: #F8F9FA">60.9</td>
+<td class="gt_row gt_right" style="background-color: #F8F9FA">59.6</td>
+<td class="gt_row gt_right" style="background-color: #F8F9FA">65.0</td>
+<td class="gt_row gt_right" style="background-color: #F8F9FA">96.0%</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center">Linear Algebra</td>
+<td class="gt_row gt_right">400</td>
+<td class="gt_row gt_right">60.7</td>
+<td class="gt_row gt_right">59.7</td>
+<td class="gt_row gt_right">64.8</td>
+<td class="gt_row gt_right">96.0%</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" style="background-color: #F8F9FA">Machine Learning</td>
+<td class="gt_row gt_right" style="background-color: #F8F9FA">400</td>
+<td class="gt_row gt_right" style="background-color: #F8F9FA">61.0</td>
+<td class="gt_row gt_right" style="background-color: #F8F9FA">60.8</td>
+<td class="gt_row gt_right" style="background-color: #F8F9FA">64.8</td>
+<td class="gt_row gt_right" style="background-color: #F8F9FA">96.0%</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center">Python Programming</td>
+<td class="gt_row gt_right">400</td>
+<td class="gt_row gt_right">60.5</td>
+<td class="gt_row gt_right">59.4</td>
+<td class="gt_row gt_right">65.3</td>
+<td class="gt_row gt_right">96.0%</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" style="background-color: #F8F9FA">Statistics</td>
+<td class="gt_row gt_right" style="background-color: #F8F9FA">400</td>
+<td class="gt_row gt_right" style="background-color: #F8F9FA">60.2</td>
+<td class="gt_row gt_right" style="background-color: #F8F9FA">59.8</td>
+<td class="gt_row gt_right" style="background-color: #F8F9FA">65.6</td>
+<td class="gt_row gt_right" style="background-color: #F8F9FA">97.0%</td>
+</tr>
+</tbody><tfoot class="gt_sourcenotes">
+<tr class="odd">
+<td colspan="6" class="gt_sourcenote" style="color: #6B7280; font-style: italic">Source: DS-MLOps university analytics dataset · 2,400 rows</td>
+</tr>
+</tfoot>
+
+</table>
+
+
+</div>
+</div>
+</div>
+<div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
+<span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 3 - Add a Spanner</span><br><br> <b>Goal:</b> Take the <code>formatted_programs</code> table from Activity 2 and add a <code>tab_spanner</code> labelled <code>“Scores (0-100)”</code> over the three score columns.
+<pre style="background:#FFF8E1;padding:10px;border-radius:4px;font-size:0.9em">GT(program_summary)
+    ...
+    .tab_spanner(label="Scores (0-100)", columns=["midterm", "final", "project"])
+    ...</pre>
+</div>
+<div id="28" class="cell" data-execution_count="9">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: add a tab_spanner to the program table</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="conditional-styling" class="level2">
+<h2 class="anchored" data-anchor-id="conditional-styling">5. Conditional Styling</h2>
+<p>Conditional styling directs the reader’s eye to the cells that matter: the highest pass rate, the lowest score, an outlier. <code>tab_style</code> applies a visual property and <code>loc</code> specifies exactly where it applies. <code>style</code> is the what, <code>loc</code> is the where.</p>
+<p>The most common locations: - <code>loc.body(columns, rows)</code>: specific cells in the data area - <code>loc.column_labels()</code>: the column header row - <code>loc.title()</code> / <code>loc.subtitle()</code>: the table header text</p>
+<p><code>rows</code> inside <code>loc.body()</code> accepts an integer index, a list of indices, or a lambda that receives the DataFrame and returns a boolean Series.</p>
+<div id="31" class="cell" data-execution_count="10">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>highlighted <span class="op">=</span> (</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    GT(course_detail)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    .tab_header(title<span class="op">=</span>gt_md(<span class="st">"**Course Performance: Best and Worst Pass Rate**"</span>))</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    .cols_label(</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>        course<span class="op">=</span><span class="st">"Course"</span>,</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>        students<span class="op">=</span><span class="st">"Students"</span>,</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>        midterm<span class="op">=</span><span class="st">"Midterm"</span>,</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>        final<span class="op">=</span><span class="st">"Final"</span>,</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>        project<span class="op">=</span><span class="st">"Project"</span>,</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>        pass_rate<span class="op">=</span><span class="st">"Pass Rate"</span>,  <span class="co"># noqa: S106</span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>    .tab_spanner(label<span class="op">=</span><span class="st">"Score (0-100)"</span>, columns<span class="op">=</span>[<span class="st">"midterm"</span>, <span class="st">"final"</span>, <span class="st">"project"</span>])</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>    .fmt_integer(columns<span class="op">=</span><span class="st">"students"</span>)</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>    .fmt_number(columns<span class="op">=</span>[<span class="st">"midterm"</span>, <span class="st">"final"</span>, <span class="st">"project"</span>], decimals<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>    .fmt_percent(columns<span class="op">=</span><span class="st">"pass_rate"</span>, decimals<span class="op">=</span><span class="dv">1</span>)  <span class="co"># noqa: S106</span></span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>    .tab_style(</span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>        style<span class="op">=</span>style.fill(color<span class="op">=</span>SUCCESS),</span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>        locations<span class="op">=</span>loc.body(</span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>            columns<span class="op">=</span><span class="st">"pass_rate"</span>,</span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>            rows<span class="op">=</span><span class="kw">lambda</span> df_gt: df_gt[<span class="st">"pass_rate"</span>] <span class="op">==</span> df_gt[<span class="st">"pass_rate"</span>].<span class="bu">max</span>(),</span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>        ),</span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>    .tab_style(</span>
+<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a>        style<span class="op">=</span>style.fill(color<span class="op">=</span><span class="st">"#FEF2F2"</span>),</span>
+<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a>        locations<span class="op">=</span>loc.body(</span>
+<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a>            columns<span class="op">=</span><span class="st">"pass_rate"</span>,</span>
+<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a>            rows<span class="op">=</span><span class="kw">lambda</span> df_gt: df_gt[<span class="st">"pass_rate"</span>] <span class="op">==</span> df_gt[<span class="st">"pass_rate"</span>].<span class="bu">min</span>(),</span>
+<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a>        ),</span>
+<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb10-31"><a href="#cb10-31" aria-hidden="true" tabindex="-1"></a>themed_gt(highlighted, n_rows<span class="op">=</span><span class="bu">len</span>(course_detail))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="10">
+<div id="rmrjnhtctl" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:100%;height:auto;">
+<style>
+#rmrjnhtctl table {
+          font-family: 'Libre Franklin', 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale;
+        }
+
+#rmrjnhtctl thead, tbody, tfoot, tr, td, th { border-style: none; }
+ tr { background-color: transparent; }
+#rmrjnhtctl p { margin: 0; padding: 0; }
+ #rmrjnhtctl .gt_table { display: table; border-collapse: collapse; line-height: normal; margin-left: auto; margin-right: auto; color: #171717; font-size: 13px; font-weight: normal; font-style: normal; background-color: #FFFFFF; width: 100%; border-top-style: solid; border-top-width: 2px; border-top-color: #1E293B; border-right-style: none; border-right-width: 2px; border-right-color: #D3D3D3; border-bottom-style: solid; border-bottom-width: 1px; border-bottom-color: #1E293B; border-left-style: none; border-left-width: 2px; border-left-color: #D3D3D3; }
+ #rmrjnhtctl .gt_caption { padding-top: 4px; padding-bottom: 4px; }
+ #rmrjnhtctl .gt_title { color: #171717; font-size: 16px; font-weight: bold; padding-top: 10px; padding-bottom: 10px; padding-left: 5px; padding-right: 5px; border-bottom-color: #FFFFFF; border-bottom-width: 0; }
+ #rmrjnhtctl .gt_subtitle { color: #171717; font-size: 13px; font-weight: initial; padding-top: 9px; padding-bottom: 11px; padding-left: 5px; padding-right: 5px; border-top-color: #FFFFFF; border-top-width: 0; }
+ #rmrjnhtctl .gt_heading { background-color: #FFFFFF; text-align: center; border-bottom-color: #FFFFFF; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; }
+ #rmrjnhtctl .gt_bottom_border { border-bottom-style: solid; border-bottom-width: 2px; border-bottom-color: #D3D3D3; }
+ #rmrjnhtctl .gt_col_headings { border-top-style: solid; border-top-width: 2px; border-top-color: #D3D3D3; border-bottom-style: solid; border-bottom-width: 1px; border-bottom-color: #D3D3D3; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; }
+ #rmrjnhtctl .gt_col_heading { color: #FFFFFF; background-color: #1E293B; font-size: 13px; font-weight: bold; text-transform: inherit; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; vertical-align: bottom; padding-top: 9px; padding-bottom: 11px; padding-left: 5px; padding-right: 5px; overflow-x: hidden; }
+ #rmrjnhtctl .gt_column_spanner_outer { color: #FFFFFF; background-color: #1E293B; font-size: 13px; font-weight: bold; text-transform: inherit; padding-top: 0; padding-bottom: 0; padding-left: 4px; padding-right: 4px; }
+ #rmrjnhtctl .gt_column_spanner_outer:first-child { padding-left: 0; }
+ #rmrjnhtctl .gt_column_spanner_outer:last-child { padding-right: 0; }
+ #rmrjnhtctl .gt_column_spanner { border-bottom-style: solid; border-bottom-width: 1px; border-bottom-color: #D3D3D3; vertical-align: bottom; padding-top: 9px; padding-bottom: 9px; overflow-x: hidden; display: inline-block; width: 100%; }
+ #rmrjnhtctl .gt_spanner_row { border-bottom-style: hidden; }
+ #rmrjnhtctl .gt_group_heading { padding-top: 8px; padding-bottom: 8px; padding-left: 5px; padding-right: 5px; color: #171717; background-color: #FFFFFF; font-size: 100%; font-weight: initial; text-transform: inherit; border-top-style: solid; border-top-width: 2px; border-top-color: #D3D3D3; border-bottom-style: solid; border-bottom-width: 2px; border-bottom-color: #D3D3D3; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; vertical-align: middle; text-align: left; }
+ #rmrjnhtctl .gt_empty_group_heading { padding: 0.5px; color: #171717; background-color: #FFFFFF; font-size: 100%; font-weight: initial; border-top-style: solid; border-top-width: 2px; border-top-color: #D3D3D3; border-bottom-style: solid; border-bottom-width: 2px; border-bottom-color: #D3D3D3; vertical-align: middle; }
+ #rmrjnhtctl .gt_from_md> :first-child { margin-top: 0; }
+ #rmrjnhtctl .gt_from_md> :last-child { margin-bottom: 0; }
+ #rmrjnhtctl .gt_row { padding-top: 7px; padding-bottom: 7px; padding-left: 5px; padding-right: 5px; margin: 10px; border-top-style: solid; border-top-width: 1px; border-top-color: #D3D3D3; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; vertical-align: middle; overflow-x: hidden; }
+ #rmrjnhtctl .gt_stub { color: #171717; background-color: #FFFFFF; font-size: 100%; font-weight: initial; text-transform: inherit; border-right-style: solid; border-right-width: 2px; border-right-color: #D3D3D3; padding-left: 5px; padding-right: 5px; }
+ #rmrjnhtctl .gt_stub_row_group { color: #171717; background-color: #FFFFFF; font-size: 100%; font-weight: initial; text-transform: inherit; border-right-style: solid; border-right-width: 2px; border-right-color: #D3D3D3; padding-left: 5px; padding-right: 5px; vertical-align: top; }
+ #rmrjnhtctl .gt_row_group_first td { border-top-width: 2px; }
+ #rmrjnhtctl .gt_row_group_first th { border-top-width: 2px; }
+ #rmrjnhtctl .gt_striped { color: #171717; background-color: #F4F4F4; }
+ #rmrjnhtctl .gt_table_body { border-top-style: solid; border-top-width: 2px; border-top-color: #D3D3D3; border-bottom-style: solid; border-bottom-width: 1px; border-bottom-color: #DEE2E6; }
+ #rmrjnhtctl .gt_grand_summary_row { color: #171717; background-color: #FFFFFF; text-transform: inherit; padding-top: 8px; padding-bottom: 8px; padding-left: 5px; padding-right: 5px; }
+ #rmrjnhtctl .gt_first_grand_summary_row_bottom { border-top-style: double; border-top-width: 6px; border-top-color: #D3D3D3; }
+ #rmrjnhtctl .gt_last_grand_summary_row_top { border-bottom-style: double; border-bottom-width: 6px; border-bottom-color: #D3D3D3; }
+ #rmrjnhtctl .gt_sourcenotes { color: #171717; background-color: #FFFFFF; border-bottom-style: none; border-bottom-width: 2px; border-bottom-color: #D3D3D3; border-left-style: none; border-left-width: 2px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 2px; border-right-color: #D3D3D3; }
+ #rmrjnhtctl .gt_sourcenote { font-size: 11px; padding-top: 6px; padding-bottom: 6px; padding-left: 5px; padding-right: 5px; text-align: left; }
+ #rmrjnhtctl .gt_left { text-align: left; }
+ #rmrjnhtctl .gt_center { text-align: center; }
+ #rmrjnhtctl .gt_right { text-align: right; font-variant-numeric: tabular-nums; }
+ #rmrjnhtctl .gt_font_normal { font-weight: normal; }
+ #rmrjnhtctl .gt_font_bold { font-weight: bold; }
+ #rmrjnhtctl .gt_font_italic { font-style: italic; }
+ #rmrjnhtctl .gt_super { font-size: 65%; }
+ #rmrjnhtctl .gt_footnote_marks { font-size: 75%; vertical-align: 0.4em; position: initial; }
+ #rmrjnhtctl .gt_asterisk { font-size: 100%; vertical-align: 0; }
+ 
+</style>
+
+<table class="gt_table caption-top table table-sm table-striped small" data-quarto-bootstrap="false">
+<thead>
+<tr class="gt_heading header">
+<td colspan="6" class="gt_heading gt_title gt_font_normal" style="color: #171717; font-weight: bold"><strong>Course Performance: Best and Worst Pass Rate</strong></td>
+</tr>
+<tr class="gt_col_headings gt_spanner_row even">
+<th rowspan="2" id="course" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" style="color: #FFFFFF" scope="col">Course</th>
+<th rowspan="2" id="students" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" style="color: #FFFFFF" scope="col">Students</th>
+<th colspan="3" id="Score-(0-100)" class="gt_center gt_columns_top_border gt_column_spanner_outer" data-quarto-table-cell-role="th" scope="colgroup"><span class="gt_column_spanner">Score (0-100)</span></th>
+<th rowspan="2" id="pass_rate" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" style="color: #FFFFFF" scope="col">Pass Rate</th>
+</tr>
+<tr class="gt_col_headings header">
+<th id="midterm" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" style="color: #FFFFFF" scope="col">Midterm</th>
+<th id="final" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" style="color: #FFFFFF" scope="col">Final</th>
+<th id="project" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" style="color: #FFFFFF" scope="col">Project</th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd">
+<td class="gt_row gt_center">Data Structures</td>
+<td class="gt_row gt_right">400</td>
+<td class="gt_row gt_right">61.7</td>
+<td class="gt_row gt_right">59.7</td>
+<td class="gt_row gt_right">66.2</td>
+<td class="gt_row gt_right" style="background-color: #FEF2F2">96.0%</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" style="background-color: #F8F9FA">Databases</td>
+<td class="gt_row gt_right" style="background-color: #F8F9FA">400</td>
+<td class="gt_row gt_right" style="background-color: #F8F9FA">60.9</td>
+<td class="gt_row gt_right" style="background-color: #F8F9FA">59.6</td>
+<td class="gt_row gt_right" style="background-color: #F8F9FA">65.0</td>
+<td class="gt_row gt_right" style="background-color: #FEF2F2; background-color: #F8F9FA">96.0%</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center">Linear Algebra</td>
+<td class="gt_row gt_right">400</td>
+<td class="gt_row gt_right">60.7</td>
+<td class="gt_row gt_right">59.7</td>
+<td class="gt_row gt_right">64.8</td>
+<td class="gt_row gt_right" style="background-color: #FEF2F2">96.0%</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" style="background-color: #F8F9FA">Machine Learning</td>
+<td class="gt_row gt_right" style="background-color: #F8F9FA">400</td>
+<td class="gt_row gt_right" style="background-color: #F8F9FA">61.0</td>
+<td class="gt_row gt_right" style="background-color: #F8F9FA">60.8</td>
+<td class="gt_row gt_right" style="background-color: #F8F9FA">64.8</td>
+<td class="gt_row gt_right" style="background-color: #FEF2F2; background-color: #F8F9FA">96.0%</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center">Python Programming</td>
+<td class="gt_row gt_right">400</td>
+<td class="gt_row gt_right">60.5</td>
+<td class="gt_row gt_right">59.4</td>
+<td class="gt_row gt_right">65.3</td>
+<td class="gt_row gt_right" style="background-color: #FEF2F2">96.0%</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" style="background-color: #F8F9FA">Statistics</td>
+<td class="gt_row gt_right" style="background-color: #F8F9FA">400</td>
+<td class="gt_row gt_right" style="background-color: #F8F9FA">60.2</td>
+<td class="gt_row gt_right" style="background-color: #F8F9FA">59.8</td>
+<td class="gt_row gt_right" style="background-color: #F8F9FA">65.6</td>
+<td class="gt_row gt_right" style="background-color: #059669; background-color: #F8F9FA">97.0%</td>
+</tr>
+</tbody>
+</table>
+
+
+</div>
+</div>
+</div>
+<div style="background:#EAF3FA;border-left:5px solid #0369A1;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-info-circle-fill"></i> Key Concept: <code>loc</code> is a targeting system, not a filter</span><br><br> <code>loc.body(rows=lambda df: df[‘pass_rate’] == df[‘pass_rate’].max())</code> does not subset the table: it identifies which rows receive the styling. The underlying data is unchanged. You can chain multiple <code>tab_style</code> calls; later ones add to earlier ones without overwriting.</p>
+</div>
+<div style="background:#FEF2F2;border-left:5px solid #DC2626;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#991B1B;font-weight:bold"><i class="bi bi-bug-fill"></i> Common Mistake: Passing a boolean mask directly to <code>rows</code></span><br><br> <code>loc.body(rows=course_detail[‘pass_rate’] == course_detail[‘pass_rate’].max())</code> fails because <code>rows</code> inside <code>loc.body()</code> needs a callable that receives the <em>rendered</em> DataFrame, not the original one. Always use a lambda: <code>rows=lambda df: df[‘pass_rate’] == df[‘pass_rate’].max()</code>.</p>
+</div>
+<div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
+<span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 4 - Highlight the Best Midterm Score</span><br><br> <b>Goal:</b> Take the <code>highlighted</code> table and add a third <code>tab_style</code> call that highlights the <code>midterm</code> cell with the highest value in a light blue (<code>#EAF3FA</code>). Use a lambda for the row selection.
+<pre style="background:#FFF8E1;padding:10px;border-radius:4px;font-size:0.9em">.tab_style(
+    style=style.fill(color="#EAF3FA"),
+    locations=loc.body(
+        columns="midterm",
+        rows=lambda df: df["midterm"] == df["midterm"].max(),
+    ),
+)</pre>
+</div>
+<div id="35" class="cell" data-execution_count="11">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: add a third tab_style call for the highest midterm value</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="summary-rows" class="level2">
+<h2 class="anchored" data-anchor-id="summary-rows">6. Summary Rows</h2>
+<p>A summary row aggregates the entire table into one footer row: a grand mean, a column total, or a count. The reader no longer needs to mentally compute the aggregate, and the table and its summary stay in the same visual unit.</p>
+<p><code>grand_summary_rows(fns)</code> adds these rows. <code>fns</code> is a dict mapping a display label to an aggregation function. In version 0.20, it aggregates all numeric columns in the table, so the DataFrame passed to <code>GT</code> should contain only the columns you want summarised:</p>
+<div id="38" class="cell" data-execution_count="12">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> great_tables <span class="im">import</span> vals <span class="im">as</span> gt_vals  <span class="co"># noqa: F401</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Use only the score + pass_rate columns so the summary row is meaningful</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>course_scores <span class="op">=</span> course_detail.drop(columns<span class="op">=</span>[<span class="st">"students"</span>])</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>with_summary <span class="op">=</span> (</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    GT(course_scores)</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>    .tab_header(title<span class="op">=</span>gt_md(<span class="st">"**Course Summary with Grand Mean**"</span>))</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>    .cols_label(</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>        course<span class="op">=</span><span class="st">"Course"</span>,</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>        midterm<span class="op">=</span><span class="st">"Midterm"</span>,</span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>        final<span class="op">=</span><span class="st">"Final"</span>,</span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>        project<span class="op">=</span><span class="st">"Project"</span>,</span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>        pass_rate<span class="op">=</span><span class="st">"Pass Rate"</span>,  <span class="co"># noqa: S106</span></span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>    .tab_spanner(label<span class="op">=</span><span class="st">"Score (0-100)"</span>, columns<span class="op">=</span>[<span class="st">"midterm"</span>, <span class="st">"final"</span>, <span class="st">"project"</span>])</span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>    .fmt_number(columns<span class="op">=</span>[<span class="st">"midterm"</span>, <span class="st">"final"</span>, <span class="st">"project"</span>], decimals<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>    .fmt_percent(columns<span class="op">=</span><span class="st">"pass_rate"</span>, decimals<span class="op">=</span><span class="dv">1</span>)  <span class="co"># noqa: S106</span></span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a>    .grand_summary_rows(</span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a>        fns<span class="op">=</span>{<span class="st">"Mean"</span>: <span class="kw">lambda</span> x: x.mean(numeric_only<span class="op">=</span><span class="va">True</span>)},</span>
+<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a>themed_gt(with_summary, n_rows<span class="op">=</span><span class="bu">len</span>(course_scores))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="12">
+<div id="gmukuetdih" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:100%;height:auto;">
+<style>
+#gmukuetdih table {
+          font-family: 'Libre Franklin', 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale;
+        }
+
+#gmukuetdih thead, tbody, tfoot, tr, td, th { border-style: none; }
+ tr { background-color: transparent; }
+#gmukuetdih p { margin: 0; padding: 0; }
+ #gmukuetdih .gt_table { display: table; border-collapse: collapse; line-height: normal; margin-left: auto; margin-right: auto; color: #171717; font-size: 13px; font-weight: normal; font-style: normal; background-color: #FFFFFF; width: 100%; border-top-style: solid; border-top-width: 2px; border-top-color: #1E293B; border-right-style: none; border-right-width: 2px; border-right-color: #D3D3D3; border-bottom-style: solid; border-bottom-width: 1px; border-bottom-color: #1E293B; border-left-style: none; border-left-width: 2px; border-left-color: #D3D3D3; }
+ #gmukuetdih .gt_caption { padding-top: 4px; padding-bottom: 4px; }
+ #gmukuetdih .gt_title { color: #171717; font-size: 16px; font-weight: bold; padding-top: 10px; padding-bottom: 10px; padding-left: 5px; padding-right: 5px; border-bottom-color: #FFFFFF; border-bottom-width: 0; }
+ #gmukuetdih .gt_subtitle { color: #171717; font-size: 13px; font-weight: initial; padding-top: 9px; padding-bottom: 11px; padding-left: 5px; padding-right: 5px; border-top-color: #FFFFFF; border-top-width: 0; }
+ #gmukuetdih .gt_heading { background-color: #FFFFFF; text-align: center; border-bottom-color: #FFFFFF; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; }
+ #gmukuetdih .gt_bottom_border { border-bottom-style: solid; border-bottom-width: 2px; border-bottom-color: #D3D3D3; }
+ #gmukuetdih .gt_col_headings { border-top-style: solid; border-top-width: 2px; border-top-color: #D3D3D3; border-bottom-style: solid; border-bottom-width: 1px; border-bottom-color: #D3D3D3; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; }
+ #gmukuetdih .gt_col_heading { color: #FFFFFF; background-color: #1E293B; font-size: 13px; font-weight: bold; text-transform: inherit; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; vertical-align: bottom; padding-top: 9px; padding-bottom: 11px; padding-left: 5px; padding-right: 5px; overflow-x: hidden; }
+ #gmukuetdih .gt_column_spanner_outer { color: #FFFFFF; background-color: #1E293B; font-size: 13px; font-weight: bold; text-transform: inherit; padding-top: 0; padding-bottom: 0; padding-left: 4px; padding-right: 4px; }
+ #gmukuetdih .gt_column_spanner_outer:first-child { padding-left: 0; }
+ #gmukuetdih .gt_column_spanner_outer:last-child { padding-right: 0; }
+ #gmukuetdih .gt_column_spanner { border-bottom-style: solid; border-bottom-width: 1px; border-bottom-color: #D3D3D3; vertical-align: bottom; padding-top: 9px; padding-bottom: 9px; overflow-x: hidden; display: inline-block; width: 100%; }
+ #gmukuetdih .gt_spanner_row { border-bottom-style: hidden; }
+ #gmukuetdih .gt_group_heading { padding-top: 8px; padding-bottom: 8px; padding-left: 5px; padding-right: 5px; color: #171717; background-color: #FFFFFF; font-size: 100%; font-weight: initial; text-transform: inherit; border-top-style: solid; border-top-width: 2px; border-top-color: #D3D3D3; border-bottom-style: solid; border-bottom-width: 2px; border-bottom-color: #D3D3D3; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; vertical-align: middle; text-align: left; }
+ #gmukuetdih .gt_empty_group_heading { padding: 0.5px; color: #171717; background-color: #FFFFFF; font-size: 100%; font-weight: initial; border-top-style: solid; border-top-width: 2px; border-top-color: #D3D3D3; border-bottom-style: solid; border-bottom-width: 2px; border-bottom-color: #D3D3D3; vertical-align: middle; }
+ #gmukuetdih .gt_from_md> :first-child { margin-top: 0; }
+ #gmukuetdih .gt_from_md> :last-child { margin-bottom: 0; }
+ #gmukuetdih .gt_row { padding-top: 7px; padding-bottom: 7px; padding-left: 5px; padding-right: 5px; margin: 10px; border-top-style: solid; border-top-width: 1px; border-top-color: #D3D3D3; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; vertical-align: middle; overflow-x: hidden; }
+ #gmukuetdih .gt_stub { color: #171717; background-color: #FFFFFF; font-size: 100%; font-weight: initial; text-transform: inherit; border-right-style: solid; border-right-width: 2px; border-right-color: #D3D3D3; padding-left: 5px; padding-right: 5px; }
+ #gmukuetdih .gt_stub_row_group { color: #171717; background-color: #FFFFFF; font-size: 100%; font-weight: initial; text-transform: inherit; border-right-style: solid; border-right-width: 2px; border-right-color: #D3D3D3; padding-left: 5px; padding-right: 5px; vertical-align: top; }
+ #gmukuetdih .gt_row_group_first td { border-top-width: 2px; }
+ #gmukuetdih .gt_row_group_first th { border-top-width: 2px; }
+ #gmukuetdih .gt_striped { color: #171717; background-color: #F4F4F4; }
+ #gmukuetdih .gt_table_body { border-top-style: solid; border-top-width: 2px; border-top-color: #D3D3D3; border-bottom-style: solid; border-bottom-width: 1px; border-bottom-color: #DEE2E6; }
+ #gmukuetdih .gt_grand_summary_row { color: #171717; background-color: #FFFFFF; text-transform: inherit; padding-top: 8px; padding-bottom: 8px; padding-left: 5px; padding-right: 5px; }
+ #gmukuetdih .gt_first_grand_summary_row_bottom { border-top-style: double; border-top-width: 6px; border-top-color: #D3D3D3; }
+ #gmukuetdih .gt_last_grand_summary_row_top { border-bottom-style: double; border-bottom-width: 6px; border-bottom-color: #D3D3D3; }
+ #gmukuetdih .gt_sourcenotes { color: #171717; background-color: #FFFFFF; border-bottom-style: none; border-bottom-width: 2px; border-bottom-color: #D3D3D3; border-left-style: none; border-left-width: 2px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 2px; border-right-color: #D3D3D3; }
+ #gmukuetdih .gt_sourcenote { font-size: 11px; padding-top: 6px; padding-bottom: 6px; padding-left: 5px; padding-right: 5px; text-align: left; }
+ #gmukuetdih .gt_left { text-align: left; }
+ #gmukuetdih .gt_center { text-align: center; }
+ #gmukuetdih .gt_right { text-align: right; font-variant-numeric: tabular-nums; }
+ #gmukuetdih .gt_font_normal { font-weight: normal; }
+ #gmukuetdih .gt_font_bold { font-weight: bold; }
+ #gmukuetdih .gt_font_italic { font-style: italic; }
+ #gmukuetdih .gt_super { font-size: 65%; }
+ #gmukuetdih .gt_footnote_marks { font-size: 75%; vertical-align: 0.4em; position: initial; }
+ #gmukuetdih .gt_asterisk { font-size: 100%; vertical-align: 0; }
+ 
+</style>
+
+<table class="gt_table caption-top table table-sm table-striped small" data-quarto-bootstrap="false">
+<thead>
+<tr class="gt_heading header">
+<td colspan="6" class="gt_heading gt_title gt_font_normal" style="color: #171717; font-weight: bold"><strong>Course Summary with Grand Mean</strong></td>
+</tr>
+<tr class="gt_col_headings gt_spanner_row even">
+<th rowspan="2" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col"></th>
+<th rowspan="2" id="course" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" style="color: #FFFFFF" scope="col">Course</th>
+<th colspan="3" id="Score-(0-100)" class="gt_center gt_columns_top_border gt_column_spanner_outer" data-quarto-table-cell-role="th" scope="colgroup"><span class="gt_column_spanner">Score (0-100)</span></th>
+<th rowspan="2" id="pass_rate" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" style="color: #FFFFFF" scope="col">Pass Rate</th>
+</tr>
+<tr class="gt_col_headings header">
+<th id="midterm" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" style="color: #FFFFFF" scope="col">Midterm</th>
+<th id="final" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" style="color: #FFFFFF" scope="col">Final</th>
+<th id="project" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" style="color: #FFFFFF" scope="col">Project</th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd">
+<th class="gt_row gt_left gt_stub" data-quarto-table-cell-role="th">&nbsp;</th>
+<td class="gt_row gt_center">Data Structures</td>
+<td class="gt_row gt_right">61.7</td>
+<td class="gt_row gt_right">59.7</td>
+<td class="gt_row gt_right">66.2</td>
+<td class="gt_row gt_right">96.0%</td>
+</tr>
+<tr class="even">
+<th class="gt_row gt_left gt_stub" data-quarto-table-cell-role="th">&nbsp;</th>
+<td class="gt_row gt_center" style="background-color: #F8F9FA">Databases</td>
+<td class="gt_row gt_right" style="background-color: #F8F9FA">60.9</td>
+<td class="gt_row gt_right" style="background-color: #F8F9FA">59.6</td>
+<td class="gt_row gt_right" style="background-color: #F8F9FA">65.0</td>
+<td class="gt_row gt_right" style="background-color: #F8F9FA">96.0%</td>
+</tr>
+<tr class="odd">
+<th class="gt_row gt_left gt_stub" data-quarto-table-cell-role="th">&nbsp;</th>
+<td class="gt_row gt_center">Linear Algebra</td>
+<td class="gt_row gt_right">60.7</td>
+<td class="gt_row gt_right">59.7</td>
+<td class="gt_row gt_right">64.8</td>
+<td class="gt_row gt_right">96.0%</td>
+</tr>
+<tr class="even">
+<th class="gt_row gt_left gt_stub" data-quarto-table-cell-role="th">&nbsp;</th>
+<td class="gt_row gt_center" style="background-color: #F8F9FA">Machine Learning</td>
+<td class="gt_row gt_right" style="background-color: #F8F9FA">61.0</td>
+<td class="gt_row gt_right" style="background-color: #F8F9FA">60.8</td>
+<td class="gt_row gt_right" style="background-color: #F8F9FA">64.8</td>
+<td class="gt_row gt_right" style="background-color: #F8F9FA">96.0%</td>
+</tr>
+<tr class="odd">
+<th class="gt_row gt_left gt_stub" data-quarto-table-cell-role="th">&nbsp;</th>
+<td class="gt_row gt_center">Python Programming</td>
+<td class="gt_row gt_right">60.5</td>
+<td class="gt_row gt_right">59.4</td>
+<td class="gt_row gt_right">65.3</td>
+<td class="gt_row gt_right">96.0%</td>
+</tr>
+<tr class="even">
+<th class="gt_row gt_left gt_stub" data-quarto-table-cell-role="th">&nbsp;</th>
+<td class="gt_row gt_center" style="background-color: #F8F9FA">Statistics</td>
+<td class="gt_row gt_right" style="background-color: #F8F9FA">60.2</td>
+<td class="gt_row gt_right" style="background-color: #F8F9FA">59.8</td>
+<td class="gt_row gt_right" style="background-color: #F8F9FA">65.6</td>
+<td class="gt_row gt_right" style="background-color: #F8F9FA">97.0%</td>
+</tr>
+<tr class="odd">
+<th class="gt_first_grand_summary_row_bottom gt_row gt_left gt_stub gt_grand_summary_row" data-quarto-table-cell-role="th">Mean</th>
+<td class="gt_first_grand_summary_row_bottom gt_row gt_center gt_grand_summary_row">---</td>
+<td class="gt_first_grand_summary_row_bottom gt_row gt_right gt_grand_summary_row">60.84666666666667</td>
+<td class="gt_first_grand_summary_row_bottom gt_row gt_right gt_grand_summary_row">59.82</td>
+<td class="gt_first_grand_summary_row_bottom gt_row gt_right gt_grand_summary_row">65.27999999999999</td>
+<td class="gt_first_grand_summary_row_bottom gt_row gt_right gt_grand_summary_row">0.9616666666666666</td>
+</tr>
+</tbody>
+</table>
+
+
+</div>
+</div>
+</div>
+<div style="background:#F5F3FF;border-left:5px solid #7C3AED;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#5B21B6;font-weight:bold"><i class="bi bi-lightbulb-fill"></i> Pro Tip: Shape the DataFrame before passing it to GT</span><br><br> <code>grand_summary_rows</code> aggregates every numeric column in the table. If a count column like <code>students</code> would produce a meaningless mean, drop it before calling <code>GT()</code>: <code>df.drop(columns=[“students”])</code>. If the table still includes a string column like the row label, pass <code>numeric_only=True</code> to the aggregation: <code>lambda x: x.mean(numeric_only=True)</code>.</p>
+</div>
+<div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
+<span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 5 - Add a Min and Max Row</span><br><br> <b>Goal:</b> Extend <code>with_summary</code> to show three summary rows: <code>Min</code>, <code>Max</code>, and <code>Mean</code> across all score columns. Pass a dict with three keys to <code>fns</code>.
+<pre style="background:#FFF8E1;padding:10px;border-radius:4px;font-size:0.9em">fns={"Min": lambda x: x.min(numeric_only=True), "Max": lambda x: x.max(numeric_only=True), "Mean": lambda x: x.mean(numeric_only=True)}</pre>
+</div>
+<div id="41" class="cell" data-execution_count="13">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: add Min/Max/Mean grand summary rows</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="model-comparison-with-metrics_report" class="level2">
+<h2 class="anchored" data-anchor-id="model-comparison-with-metrics_report">7. Model Comparison with <code>metrics_report()</code></h2>
+<p>The <code>ark.plot.gt_style</code> module ships <code>metrics_report()</code>: a one-call wrapper that produces a publication-ready model comparison table. It handles formatting, brand styling, and conditional highlighting in a single call.</p>
+<p><code>metrics_report(df, metrics, minimize_cols, maximize_cols)</code> highlights the best value in each metric column: green for minimize metrics (lower is better: MAE, RMSE), green for maximize metrics (higher is better: R², accuracy). The caller decides which direction is better for each metric; the function does not guess.</p>
+<div id="44" class="cell" data-execution_count="14">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>comparison <span class="op">=</span> pd.DataFrame(</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    {</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Model"</span>: [<span class="st">"Linear Regression"</span>, <span class="st">"Ridge (α=0.1)"</span>, <span class="st">"Ridge (α=1.0)"</span>, <span class="st">"Random Forest"</span>],</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>        <span class="st">"MAE"</span>: [<span class="fl">8.21</span>, <span class="fl">8.09</span>, <span class="fl">7.98</span>, <span class="fl">7.43</span>],</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>        <span class="st">"RMSE"</span>: [<span class="fl">10.42</span>, <span class="fl">10.31</span>, <span class="fl">10.19</span>, <span class="fl">9.61</span>],</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>        <span class="st">"R2"</span>: [<span class="fl">0.781</span>, <span class="fl">0.784</span>, <span class="fl">0.788</span>, <span class="fl">0.810</span>],</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>metrics_report(</span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>    comparison,</span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>    metrics<span class="op">=</span>[<span class="st">"MAE"</span>, <span class="st">"RMSE"</span>, <span class="st">"R2"</span>],</span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>    minimize_cols<span class="op">=</span>[<span class="st">"MAE"</span>, <span class="st">"RMSE"</span>],</span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>    maximize_cols<span class="op">=</span>[<span class="st">"R2"</span>],</span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>    title<span class="op">=</span><span class="st">"Grade Prediction: Model Comparison"</span>,</span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>    subtitle<span class="op">=</span><span class="st">"Predicting average_marks from study_hours, attendance_pct, and program"</span>,</span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>    source_note<span class="op">=</span><span class="st">"university_analytics.csv · 5-fold CV · held-out 20% test set"</span>,</span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="14">
+<div id="kxbwgwhicu" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:100%;height:auto;">
+<style>
+#kxbwgwhicu table {
+          font-family: 'Libre Franklin', 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale;
+        }
+
+#kxbwgwhicu thead, tbody, tfoot, tr, td, th { border-style: none; }
+ tr { background-color: transparent; }
+#kxbwgwhicu p { margin: 0; padding: 0; }
+ #kxbwgwhicu .gt_table { display: table; border-collapse: collapse; line-height: normal; margin-left: auto; margin-right: auto; color: #171717; font-size: 13px; font-weight: normal; font-style: normal; background-color: #FFFFFF; width: 100%; border-top-style: solid; border-top-width: 2px; border-top-color: #1E293B; border-right-style: none; border-right-width: 2px; border-right-color: #D3D3D3; border-bottom-style: solid; border-bottom-width: 1px; border-bottom-color: #1E293B; border-left-style: none; border-left-width: 2px; border-left-color: #D3D3D3; }
+ #kxbwgwhicu .gt_caption { padding-top: 4px; padding-bottom: 4px; }
+ #kxbwgwhicu .gt_title { color: #171717; font-size: 16px; font-weight: bold; padding-top: 10px; padding-bottom: 10px; padding-left: 5px; padding-right: 5px; border-bottom-color: #FFFFFF; border-bottom-width: 0; }
+ #kxbwgwhicu .gt_subtitle { color: #171717; font-size: 13px; font-weight: initial; padding-top: 9px; padding-bottom: 11px; padding-left: 5px; padding-right: 5px; border-top-color: #FFFFFF; border-top-width: 0; }
+ #kxbwgwhicu .gt_heading { background-color: #FFFFFF; text-align: center; border-bottom-color: #FFFFFF; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; }
+ #kxbwgwhicu .gt_bottom_border { border-bottom-style: solid; border-bottom-width: 2px; border-bottom-color: #D3D3D3; }
+ #kxbwgwhicu .gt_col_headings { border-top-style: solid; border-top-width: 2px; border-top-color: #D3D3D3; border-bottom-style: solid; border-bottom-width: 1px; border-bottom-color: #D3D3D3; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; }
+ #kxbwgwhicu .gt_col_heading { color: #FFFFFF; background-color: #1E293B; font-size: 13px; font-weight: bold; text-transform: inherit; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; vertical-align: bottom; padding-top: 9px; padding-bottom: 11px; padding-left: 5px; padding-right: 5px; overflow-x: hidden; }
+ #kxbwgwhicu .gt_column_spanner_outer { color: #FFFFFF; background-color: #1E293B; font-size: 13px; font-weight: bold; text-transform: inherit; padding-top: 0; padding-bottom: 0; padding-left: 4px; padding-right: 4px; }
+ #kxbwgwhicu .gt_column_spanner_outer:first-child { padding-left: 0; }
+ #kxbwgwhicu .gt_column_spanner_outer:last-child { padding-right: 0; }
+ #kxbwgwhicu .gt_column_spanner { border-bottom-style: solid; border-bottom-width: 1px; border-bottom-color: #D3D3D3; vertical-align: bottom; padding-top: 9px; padding-bottom: 9px; overflow-x: hidden; display: inline-block; width: 100%; }
+ #kxbwgwhicu .gt_spanner_row { border-bottom-style: hidden; }
+ #kxbwgwhicu .gt_group_heading { padding-top: 8px; padding-bottom: 8px; padding-left: 5px; padding-right: 5px; color: #171717; background-color: #FFFFFF; font-size: 100%; font-weight: initial; text-transform: inherit; border-top-style: solid; border-top-width: 2px; border-top-color: #D3D3D3; border-bottom-style: solid; border-bottom-width: 2px; border-bottom-color: #D3D3D3; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; vertical-align: middle; text-align: left; }
+ #kxbwgwhicu .gt_empty_group_heading { padding: 0.5px; color: #171717; background-color: #FFFFFF; font-size: 100%; font-weight: initial; border-top-style: solid; border-top-width: 2px; border-top-color: #D3D3D3; border-bottom-style: solid; border-bottom-width: 2px; border-bottom-color: #D3D3D3; vertical-align: middle; }
+ #kxbwgwhicu .gt_from_md> :first-child { margin-top: 0; }
+ #kxbwgwhicu .gt_from_md> :last-child { margin-bottom: 0; }
+ #kxbwgwhicu .gt_row { padding-top: 7px; padding-bottom: 7px; padding-left: 5px; padding-right: 5px; margin: 10px; border-top-style: solid; border-top-width: 1px; border-top-color: #D3D3D3; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; vertical-align: middle; overflow-x: hidden; }
+ #kxbwgwhicu .gt_stub { color: #171717; background-color: #FFFFFF; font-size: 100%; font-weight: initial; text-transform: inherit; border-right-style: solid; border-right-width: 2px; border-right-color: #D3D3D3; padding-left: 5px; padding-right: 5px; }
+ #kxbwgwhicu .gt_stub_row_group { color: #171717; background-color: #FFFFFF; font-size: 100%; font-weight: initial; text-transform: inherit; border-right-style: solid; border-right-width: 2px; border-right-color: #D3D3D3; padding-left: 5px; padding-right: 5px; vertical-align: top; }
+ #kxbwgwhicu .gt_row_group_first td { border-top-width: 2px; }
+ #kxbwgwhicu .gt_row_group_first th { border-top-width: 2px; }
+ #kxbwgwhicu .gt_striped { color: #171717; background-color: #F4F4F4; }
+ #kxbwgwhicu .gt_table_body { border-top-style: solid; border-top-width: 2px; border-top-color: #D3D3D3; border-bottom-style: solid; border-bottom-width: 1px; border-bottom-color: #DEE2E6; }
+ #kxbwgwhicu .gt_grand_summary_row { color: #171717; background-color: #FFFFFF; text-transform: inherit; padding-top: 8px; padding-bottom: 8px; padding-left: 5px; padding-right: 5px; }
+ #kxbwgwhicu .gt_first_grand_summary_row_bottom { border-top-style: double; border-top-width: 6px; border-top-color: #D3D3D3; }
+ #kxbwgwhicu .gt_last_grand_summary_row_top { border-bottom-style: double; border-bottom-width: 6px; border-bottom-color: #D3D3D3; }
+ #kxbwgwhicu .gt_sourcenotes { color: #171717; background-color: #FFFFFF; border-bottom-style: none; border-bottom-width: 2px; border-bottom-color: #D3D3D3; border-left-style: none; border-left-width: 2px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 2px; border-right-color: #D3D3D3; }
+ #kxbwgwhicu .gt_sourcenote { font-size: 11px; padding-top: 6px; padding-bottom: 6px; padding-left: 5px; padding-right: 5px; text-align: left; }
+ #kxbwgwhicu .gt_left { text-align: left; }
+ #kxbwgwhicu .gt_center { text-align: center; }
+ #kxbwgwhicu .gt_right { text-align: right; font-variant-numeric: tabular-nums; }
+ #kxbwgwhicu .gt_font_normal { font-weight: normal; }
+ #kxbwgwhicu .gt_font_bold { font-weight: bold; }
+ #kxbwgwhicu .gt_font_italic { font-style: italic; }
+ #kxbwgwhicu .gt_super { font-size: 65%; }
+ #kxbwgwhicu .gt_footnote_marks { font-size: 75%; vertical-align: 0.4em; position: initial; }
+ #kxbwgwhicu .gt_asterisk { font-size: 100%; vertical-align: 0; }
+ 
+</style>
+
+<table class="gt_table caption-top table table-sm table-striped small" data-quarto-bootstrap="false">
+<thead>
+<tr class="gt_heading header">
+<td colspan="4" class="gt_heading gt_title gt_font_normal" style="color: #171717; font-weight: bold">Grade Prediction: Model Comparison</td>
+</tr>
+<tr class="gt_heading even">
+<td colspan="4" class="gt_heading gt_subtitle gt_font_normal gt_bottom_border" style="color: #6B7280">Predicting average_marks from study_hours, attendance_pct, and program</td>
+</tr>
+<tr class="gt_col_headings header">
+<th id="Model" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" style="color: #FFFFFF" scope="col">Model</th>
+<th id="MAE" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" style="color: #FFFFFF" scope="col">MAE</th>
+<th id="RMSE" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" style="color: #FFFFFF" scope="col">RMSE</th>
+<th id="R2" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" style="color: #FFFFFF" scope="col">R2</th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd">
+<td class="gt_row gt_center">Linear Regression</td>
+<td class="gt_row gt_right">8.210</td>
+<td class="gt_row gt_right">10.420</td>
+<td class="gt_row gt_right">0.781</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" style="background-color: #F8F9FA">Ridge (α=0.1)</td>
+<td class="gt_row gt_right" style="background-color: #F8F9FA">8.090</td>
+<td class="gt_row gt_right" style="background-color: #F8F9FA">10.310</td>
+<td class="gt_row gt_right" style="background-color: #F8F9FA">0.784</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center">Ridge (α=1.0)</td>
+<td class="gt_row gt_right">7.980</td>
+<td class="gt_row gt_right">10.190</td>
+<td class="gt_row gt_right">0.788</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" style="background-color: #F8F9FA">Random Forest</td>
+<td class="gt_row gt_right" style="background-color: #F8F9FA; background-color: #F8F9FA; color: #1E293B; font-weight: bold">7.430</td>
+<td class="gt_row gt_right" style="background-color: #F8F9FA; background-color: #F8F9FA; color: #1E293B; font-weight: bold">9.610</td>
+<td class="gt_row gt_right" style="background-color: #F8F9FA; background-color: #F8F9FA; color: #1E293B; font-weight: bold">0.810</td>
+</tr>
+</tbody><tfoot class="gt_sourcenotes">
+<tr class="odd">
+<td colspan="4" class="gt_sourcenote" style="color: #6B7280; font-style: italic">university_analytics.csv · 5-fold CV · held-out 20% test set</td>
+</tr>
+</tfoot>
+
+</table>
+
+
+</div>
+</div>
+</div>
+<div style="background:#EAF3FA;border-left:5px solid #0369A1;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-info-circle-fill"></i> Key Concept: metrics_report highlights by direction, not by rank</span><br><br> <code>minimize_cols</code> highlights the row with the <em>lowest</em> value: better for error metrics. <code>maximize_cols</code> highlights the row with the <em>highest</em> value: better for performance metrics. A column can appear in at most one list. If a column appears in neither, it is formatted but not highlighted.</p>
+</div>
+<div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
+<span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 6 - Add a Gradient Boosting Row</span><br><br> <b>Goal:</b> Add a fifth row to <code>comparison</code>: <code>“Gradient Boosting”</code> with MAE=6.91, RMSE=8.84, R2=0.843: and re-run <code>metrics_report()</code>. Confirm the highlighted row updates automatically.
+<pre style="background:#FFF8E1;padding:10px;border-radius:4px;font-size:0.9em">comparison = pd.concat([comparison, pd.DataFrame([{"Model": "Gradient Boosting", "MAE": 6.91, "RMSE": 8.84, "R2": 0.843}])], ignore_index=True)
+metrics_report(comparison, metrics=[...], minimize_cols=[...], maximize_cols=[...], ...)</pre>
+</div>
+<div id="47" class="cell" data-execution_count="15">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: add Gradient Boosting row and re-run metrics_report</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="capstone-course-performance-report" class="level2">
+<h2 class="anchored" data-anchor-id="capstone-course-performance-report">Capstone: Course Performance Report</h2>
+<p>Combine every technique from this notebook into one complete report table. The report should give a department head a single table they can paste into a slide deck.</p>
+<div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Capstone Exercise - Course Performance Report</span><br><br></p>
+<b>Goal:</b>
+<ol>
+<li>
+Build a <code>report</code> DataFrame grouped by <code>course</code> with columns: students, midterm mean, final mean, project mean, pass rate, and average_marks mean
+</li>
+<li>
+Wrap with <code>GT</code>. Add a descriptive title and source note
+</li>
+<li>
+Apply <code>cols_label</code> and the appropriate <code>fmt_*</code> for each column
+</li>
+<li>
+Add a <code>tab_spanner</code> over the three score columns
+</li>
+<li>
+Highlight the course with the highest pass rate (green) and lowest pass rate (light red)
+</li>
+<li>
+Add a grand <code>Mean</code> summary row across all numeric columns
+</li>
+<li>
+Call <code>themed_gt()</code> last
+</li>
+</ol>
+<pre style="background:#FFF8E1;padding:10px;border-radius:4px;font-size:0.9em"># Build report DataFrame first, then chain all GT methods in one expression</pre>
+</div>
+<div id="50" class="cell" data-execution_count="16">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: build the complete course performance report</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="further-reading" class="level2">
+<h2 class="anchored" data-anchor-id="further-reading">Further Reading</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Resource</th>
+<th>Why it matters</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><a href="https://posit-dev.github.io/great-tables/">Great Tables documentation</a></td>
+<td>Complete API reference with rendered examples for every method</td>
+</tr>
+<tr class="even">
+<td><a href="https://posit-dev.github.io/great-tables/reference/#targeting-cells">Great Tables: <code>loc</code> reference</a></td>
+<td>Full list of location helpers: <code>loc.body</code>, <code>loc.column_labels</code>, <code>loc.spanner_labels</code>, <code>loc.grand_summary</code></td>
+</tr>
+<tr class="odd">
+<td><a href="https://posit-dev.github.io/great-tables/blog/">Great Tables blog: Python tables</a></td>
+<td>Worked examples including financial reports and ML comparison tables</td>
+</tr>
+<tr class="even">
+<td>Knaflic, C.N. (2015). <em>Storytelling with Data</em>. Wiley.</td>
+<td>Chapter 2 covers when tables serve communication better than charts</td>
+</tr>
+<tr class="odd">
+<td><a href="https://pandas.pydata.org/docs/reference/api/pandas.core.groupby.DataFrameGroupBy.agg.html">pandas <code>GroupBy.agg</code> reference</a></td>
+<td>Named aggregations (<code>col=(src, func)</code>) used throughout this notebook</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="summary" class="level2">
+<h2 class="anchored" data-anchor-id="summary">Summary</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>GT method</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>GT(df)</code></td>
+<td>Wrap a DataFrame and begin the method chain</td>
+</tr>
+<tr class="even">
+<td><code>themed_gt(table, n_rows=n)</code></td>
+<td>Apply project brand: header colors, font, striped rows. Call last.</td>
+</tr>
+<tr class="odd">
+<td><code>tab_header(title, subtitle)</code></td>
+<td>Add a title row above the column headers</td>
+</tr>
+<tr class="even">
+<td><code>tab_source_note(text)</code></td>
+<td>Add an attribution line below the table</td>
+</tr>
+<tr class="odd">
+<td><code>cols_label(**kwargs)</code></td>
+<td>Replace column names with reader-facing labels</td>
+</tr>
+<tr class="even">
+<td><code>fmt_number(columns, decimals)</code></td>
+<td>Round floats to <code>decimals</code> places</td>
+</tr>
+<tr class="odd">
+<td><code>fmt_integer(columns)</code></td>
+<td>Remove decimal, add thousands separator</td>
+</tr>
+<tr class="even">
+<td><code>fmt_percent(columns, decimals)</code></td>
+<td>Multiply by 100 and append <code>%</code></td>
+</tr>
+<tr class="odd">
+<td><code>fmt_missing(columns, missing_text)</code></td>
+<td>Replace <code>NaN</code> with a readable placeholder</td>
+</tr>
+<tr class="even">
+<td><code>tab_spanner(label, columns)</code></td>
+<td>Group related columns under a shared header label</td>
+</tr>
+<tr class="odd">
+<td><code>tab_style(style, locations)</code></td>
+<td>Apply a visual property (<code>fill</code>, <code>text</code>) to a location (<code>loc.body</code>, <code>loc.column_labels</code>)</td>
+</tr>
+<tr class="even">
+<td><code>loc.body(columns, rows)</code></td>
+<td>Target specific cells; <code>rows</code> takes an index or a lambda</td>
+</tr>
+<tr class="odd">
+<td><code>grand_summary_rows(fns)</code></td>
+<td>Add one summary row per key in <code>fns</code>; aggregates all numeric columns</td>
+</tr>
+<tr class="even">
+<td><code>metrics_report(df, metrics, ...)</code></td>
+<td>One-call ML comparison table with directional highlighting</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Next:</strong> Part 3: Dev Tools covers the professional toolchain: uv, ruff, type annotations, git, pytest, and pre-commit.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/sambaiga\.github\.io\/ds-mlops-path\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../../tutorials/01-python-basics/11-polars.html" class="pagination-link" aria-label="Part 11: Polars &amp; the Expression API">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">Part 11: Polars &amp; the Expression API</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>© 2025 <a href="https://github.com/sambaiga">Anthony Faustine</a> · Apache 2.0 License</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.dev/sambaiga/ds-mlops-path/blob/main/tutorials/01-python-basics/12-great-tables.ipynb" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/sambaiga/ds-mlops-path/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li><li><a href="https://github.com/sambaiga/ds-mlops-path/blob/main/tutorials/01-python-basics/12-great-tables.ipynb" class="toc-action"><i class="bi empty"></i>View source</a></li></ul></div></div>
+    <div class="nav-footer-right">
+<p>Built with <a href="https://quarto.org">Quarto</a> · <a href="https://github.com/sambaiga/ds-mlops-path">Source on GitHub</a></p>
+</div>
+  </div>
+</footer>
+
+
+
+
+<script src="../../site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>
