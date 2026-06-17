@@ -90,12 +90,28 @@ jobs:
 
       - name: Check code blocks have language identifiers
         run: |
-          rc=0
-          for f in tutorials/02-dev-tools/*.qmd; do
-            count=$(grep -cP '^\`\`\`$' "$f" || true)
-            if [ "$count" -gt 0 ]; then
-              echo "$f has $count unlabelled code fences (missing language identifier)"
-              rc=1
-            fi
-          done
-          exit $rc
+          python3 - <<'PYEOF'
+          import os, sys
+          rc = 0
+          for fname in sorted(os.listdir('tutorials/02-dev-tools')):
+              if not fname.endswith('.qmd'):
+                  continue
+              fpath = f'tutorials/02-dev-tools/{fname}'
+              in_block = False
+              unlabelled = []
+              with open(fpath) as fh:
+                  for lineno, line in enumerate(fh, 1):
+                      stripped = line.rstrip()
+                      if stripped.startswith('```'):
+                          if in_block:
+                              in_block = False   # closing fence
+                          elif stripped == '```':
+                              unlabelled.append(lineno)
+                              in_block = True    # opening fence, no language
+                          else:
+                              in_block = True    # opening fence with language
+              if unlabelled:
+                  print(f"{fpath}: unlabelled opening fence(s) at lines {unlabelled}")
+                  rc = 1
+          sys.exit(rc)
+          PYEOF
