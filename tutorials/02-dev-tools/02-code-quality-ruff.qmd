@@ -23,7 +23,8 @@ By the end of Part 14 you will be able to:
 | 3 | Run `ruff format` and understand when to run it | Sec. 3 |
 | 4 | Configure ruff in `pyproject.toml` with a ruleset appropriate for DS code | Sec. 4 |
 | 5 | Identify the lint rules that catch the most common silent bugs in DS code | Sec. 5 |
-| 6 | Use `# noqa` and per-file ignores correctly | Sec. 6 |
+| 6 | Write Google-style docstrings and enforce them with ruff's D ruleset | Sec. 6 |
+| 7 | Use `# noqa` and per-file ignores correctly | Sec. 7 |
 
 ## 1. Two Different Jobs
 
@@ -250,7 +251,122 @@ label = "Pass" if score >= 50 else "Fail"
 <code>def split(df, cols=[])</code> shares the same list object across every call. The second call gets whatever the first call left in the list. This exact pattern appears in DS code regularly because it looks like a harmless convenience. Use an empty tuple <code>()</code> or <code>None</code> with a guard inside the function.
 </div>
 
-## 6. `# noqa` and When to Use It
+## 6. Docstrings: Style, Content, and Enforcement
+
+A docstring is the first string literal inside a function, class, or module. It is not a comment; it is data that Python exposes through `help()`, IDEs, and documentation generators. The rule for when to write one: if a function is called from outside the file it lives in, it needs a docstring.
+
+**The Google style** is the de facto standard for DS projects:
+
+```python
+def compute_grade(
+    midterm: float,
+    final: float,
+    project: float,
+    weights: tuple[float, float, float] = (0.30, 0.45, 0.25),
+) -> float:
+    """Compute a weighted average grade from three component scores.
+
+    Args:
+        midterm: Score from 0 to 100.
+        final: Score from 0 to 100.
+        project: Score from 0 to 100.
+        weights: Three weights that must sum to 1.0. Order is (midterm, final, project).
+
+    Returns:
+        Weighted average score from 0 to 100.
+
+    Raises:
+        ValueError: If weights do not sum to 1.0 within a tolerance of 1e-6.
+
+    Example:
+        >>> compute_grade(80, 90, 75)
+        84.25
+    """
+    if abs(sum(weights) - 1.0) > 1e-6:
+        raise ValueError(f"Weights must sum to 1.0, got {sum(weights)}")
+    return midterm * weights[0] + final * weights[1] + project * weights[2]
+```
+
+The structure: one-line summary, blank line, then named sections. The sections you actually need depend on the function: `Args` and `Returns` for anything non-trivial, `Raises` when exceptions are part of the contract, `Example` for functions that need a concrete demo to be understood.
+
+<div class='ark-concept'>
+<span class='ark-concept-title'><i class="bi bi-info-circle-fill"></i> Key Concept: Write for the caller, not the implementer</span><br><br>
+A docstring answers: "what does this function do from the outside?" It does not explain how it works internally. <code>"""Compute weighted average grade"""</code> is useful. <code>"""Multiply midterm by weights[0] and add to final times weights[1]"""</code> is not: it describes the implementation, which the caller can already read. Write what a caller needs to know to use the function correctly: inputs, outputs, edge cases.
+</div>
+
+**What counts as a module-level docstring?**
+
+A module docstring sits at the very top of the file, before any imports:
+
+```python
+"""Grade predictor: core grade computation functions.
+
+This module provides the core logic for computing student grades,
+assigning letter grades, and flagging at-risk students.
+"""
+import pandas as pd
+```
+
+**Enforcing docstrings with ruff**
+
+Ruff's `D` rule group (pydocstyle) checks docstring conventions. Add it to `pyproject.toml`:
+
+```toml
+[tool.ruff.lint]
+select = [
+    "E", "F", "I", "B", "N", "UP", "SIM",
+    "D",   # pydocstyle: docstring conventions
+]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"   # enforce Google-style structure
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**"    = ["S101", "D"]         # tests do not need docstrings
+"**/*.ipynb"  = ["E501", "F811", "D"] # notebooks: docstrings not required
+```
+
+The key rules:
+- `D100`: missing module docstring
+- `D101/D102/D103`: missing class/method/function docstring
+- `D205`: blank line required after first-line summary
+- `D417`: missing argument descriptions in the docstring
+
+<div class='ark-tip'>
+<span class='ark-tip-title'><i class="bi bi-lightbulb-fill"></i> Pro Tip: Enforce docstrings only on public functions</span><br><br>
+Functions prefixed with <code>_</code> are internal by convention. Ruff's D rules skip them by default when <code>convention = "google"</code> is set. This means you only have to document the API surface: the functions a caller is expected to use. Internal helpers stay undocumented until they grow complex enough to warrant it.
+</div>
+
+**Enforcing spell-checking with codespell**
+
+Docstrings and comments accumulate typos. `codespell` catches them before they reach the repository. Add it to `.pre-commit-config.yaml`:
+
+```yaml
+- repo: https://github.com/codespell-project/codespell
+  rev: v2.3.0
+  hooks:
+    - id: codespell
+      args: [--write-changes]
+      additional_dependencies: [tomli]
+```
+
+With `--write-changes`, codespell fixes unambiguous typos automatically. Ambiguous corrections are left for you to resolve. For project-specific words that codespell does not recognise (library names, abbreviations), add them to `pyproject.toml`:
+
+```toml
+[tool.codespell]
+skip = "*.ipynb,uv.lock,_freeze"
+ignore-words-list = "caste,midterms"
+```
+
+<div class='ark-activity'>
+<span class='ark-activity-title'><i class="bi bi-puzzle-fill"></i> Activity 3 - Write and Enforce Docstrings</span><br><br>
+<b>Goal:</b> Write Google-style docstrings for all three public functions in <code>grade-predictor/src/grade_predictor/core.py</code>: <code>compute_grade</code>, <code>grade_to_letter</code>, and <code>flag_at_risk</code>. Add the <code>D</code> rule group to <code>pyproject.toml</code> with <code>convention = "google"</code>. Run <code>ruff check src/</code> and fix every D-rule finding. Confirm zero findings.
+<pre>uv run ruff check src/ --select D
+# fix each finding, then re-run
+uv run ruff check src/ --select D</pre>
+</div>
+
+## 7. `# noqa` and When to Use It
 
 `# noqa: E501` suppresses one rule on one line. Use it when suppression is the right answer, not when you want to avoid fixing the real problem.
 
@@ -313,9 +429,12 @@ Apply the full ruff workflow to the `grade-predictor` project you have built so 
 |---|---|
 | `ruff check` | Finds bugs and style issues. Does not rewrite code unless `--fix` is passed. |
 | `ruff format` | Rewrites layout only. Cannot introduce bugs. Run on save locally. |
-| Rule groups | `E/F` always. `B` for DS. `I` for import order. Add others incrementally. |
+| Rule groups | `E/F` always. `B` for DS. `I` for import order. `D` for docstrings. Add others incrementally. |
 | `per-file-ignores` | Use for notebooks and tests, not for hiding real problems. |
 | CI check | `ruff format . --check` exits 1 if anything would change. Always include in CI. |
+| Google docstring | One-line summary, blank line, `Args:`, `Returns:`, `Raises:`, `Example:` sections as needed. |
+| `D` rule group | `convention = "google"` in `[tool.ruff.lint.pydocstyle]` enforces Google style. |
+| codespell | Catches typos in docstrings and comments; `--write-changes` fixes unambiguous ones automatically. |
 | `# noqa` | A deliberate decision, not a shortcut. Include the specific rule code. |
 
 **Next:** [Part 15: Type Annotations](03-type-annotations.ipynb) adds static type checking on top of the clean codebase you have here.

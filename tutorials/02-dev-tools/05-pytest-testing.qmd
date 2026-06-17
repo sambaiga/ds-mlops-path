@@ -27,6 +27,7 @@ By the end of Part 17 you will be able to:
 | 5 | Test exception handling with `pytest.raises` | Sec. 5 |
 | 6 | Measure test coverage and set a minimum threshold | Sec. 6 |
 | 7 | Organize a test suite for a DS project | Sec. 7 |
+| 8 | Mock external dependencies (APIs, file reads) with `unittest.mock.patch` | Sec. 8 |
 
 ## 1. Why DS Code Needs Tests
 
@@ -284,6 +285,104 @@ uv run pytest tests/unit/ -v                    # fast, local
 uv run pytest tests/ -v --override-ini=addopts=  # full suite, CI
 ```
 
+## 8. Mocking External Dependencies
+
+Some code cannot be tested with real data: a function that calls an API, reads from a database, or writes to a file. Mocking replaces that dependency with a controlled substitute for the duration of the test.
+
+`unittest.mock.patch` is the standard tool. It temporarily replaces an object at a given import path with a `MagicMock` that you control:
+
+```python
+# grade_predictor/io.py
+import requests
+
+def fetch_course_list(api_url: str) -> list[dict]:
+    """Fetch the current course list from the university API."""
+    response = requests.get(api_url)
+    response.raise_for_status()
+    return response.json()
+```
+
+Testing this without hitting the network:
+
+```python
+# tests/unit/test_io.py
+from unittest.mock import patch, MagicMock
+from grade_predictor.io import fetch_course_list
+
+def test_fetch_course_list_returns_parsed_json():
+    mock_response = MagicMock()
+    mock_response.json.return_value = [{"course_id": "C01", "name": "Stats"}]
+    mock_response.raise_for_status.return_value = None
+
+    with patch("grade_predictor.io.requests.get", return_value=mock_response) as mock_get:
+        result = fetch_course_list("https://api.example.com/courses")
+
+    mock_get.assert_called_once_with("https://api.example.com/courses")
+    assert result == [{"course_id": "C01", "name": "Stats"}]
+```
+
+<div class='ark-concept'>
+<span class='ark-concept-title'><i class="bi bi-info-circle-fill"></i> Key Concept: Patch at the import location, not the definition location</span><br><br>
+<code>requests.get</code> is defined in the <code>requests</code> library, but <code>fetch_course_list</code> imports it into <code>grade_predictor.io</code>. Patching <code>requests.get</code> would not work because the function already has a reference to the original. Patch <code>"grade_predictor.io.requests.get"</code>: the name as it appears inside the module under test. This is the single most common mock mistake.
+</div>
+
+For pandas-based code, mock the file read so tests do not depend on a real CSV being present:
+
+```python
+from unittest.mock import patch
+import pandas as pd
+
+def test_load_students_returns_dataframe():
+    fake_csv = pd.DataFrame({
+        "student_id": ["S0001", "S0002"],
+        "final_score": [85.0, 72.0],
+    })
+
+    with patch("grade_predictor.io.pd.read_csv", return_value=fake_csv):
+        from grade_predictor.io import load_students
+        result = load_students("any/path.csv")
+
+    assert len(result) == 2
+    assert "final_score" in result.columns
+```
+
+`pytest-mock` is a thin wrapper that makes the same pattern slightly cleaner as a fixture:
+
+```toml
+# pyproject.toml
+[project.optional-dependencies]
+test = ["pytest", "pytest-cov", "pytest-mock"]
+```
+
+```python
+# Same test with pytest-mock's mocker fixture
+def test_fetch_course_list_with_mocker(mocker):
+    mock_get = mocker.patch("grade_predictor.io.requests.get")
+    mock_get.return_value.json.return_value = [{"course_id": "C01"}]
+    mock_get.return_value.raise_for_status.return_value = None
+
+    result = fetch_course_list("https://api.example.com/courses")
+    assert result[0]["course_id"] == "C01"
+```
+
+<div class='ark-mistake'>
+<span class='ark-mistake-title'><i class="bi bi-bug-fill"></i> Common Mistake: Over-mocking</span><br><br>
+If a test mocks every function the code under test calls, it is no longer testing the code: it is testing the mock. A unit test should run the real logic and mock only the I/O boundary: network calls, file reads, database queries. A function that computes a grade from numbers does not need any mocking. A function that reads grades from an API does. Mock the API; run the computation logic for real.
+</div>
+
+<div class='ark-activity'>
+<span class='ark-activity-title'><i class="bi bi-puzzle-fill"></i> Activity 5 - Mock a CSV Load</span><br><br>
+<b>Goal:</b> Write a <code>load_grades(path: str) -> pd.DataFrame</code> function in <code>grade_predictor/io.py</code> that calls <code>pd.read_csv(path)</code>. Write a test that mocks <code>pd.read_csv</code> to return a two-row DataFrame, calls <code>load_grades("any/path.csv")</code>, and asserts the result has two rows without reading a real file.
+<pre>from unittest.mock import patch
+import pandas as pd
+
+def test_load_grades_mocked():
+    fake_df = pd.DataFrame({"student_id": ["S0001", "S0002"], "score": [80.0, 70.0]})
+    with patch("grade_predictor.io.pd.read_csv", return_value=fake_df):
+        result = load_grades("any/path.csv")
+    assert len(result) == 2</pre>
+</div>
+
 ## Capstone - A Working Test Suite
 
 Write a complete test suite for `grade-predictor`.
@@ -320,5 +419,8 @@ Write a test suite that achieves 80% coverage. It must include:
 | Fixtures | `conftest.py` for shared data. Session scope for large CSV files. |
 | `assert_frame_equal` | Never `df1.equals(df2)` for floats. Numeric tolerance is built in. |
 | Coverage | 80% target. Focus on silent-failure paths, not trivial lines. |
+| `patch("module.name")` | Patch at the import location, not the definition location. |
+| Mock only I/O boundaries | Network, file reads, databases. Real logic runs for real. |
+| `pytest-mock` mocker fixture | Cleaner syntax for `patch` as a fixture; install as a test dependency. |
 
 **Next:** [Part 18: Automation with pre-commit](06-pre-commit-automation.qmd) automates every check from Parts 14-17 so they run without thinking.
