@@ -1,21 +1,21 @@
 /*-- scss:defaults --*/
 
-// Brand tokens mirrored from ark/plot/tokens.py, which in turn mirrors
-// sambaiga.github.io's assets/scss/_defaults.scss. Keep these three in sync
-// by hand - there's no automated link between the two repos' theme files.
-// If a proper shared-theme Quarto extension gets built later, this file is
-// the one to replace with `quarto add sambaiga/<theme-repo>`.
+// Brand tokens — mirrors ark/plot/tokens.py and sambaiga.github.io _defaults.scss.
+// Keep these three in sync by hand.
 
-$primary: #1E293B;
-$link-color: #0369A1;
-$body-color: #171717;
-$body-bg: #FFFFFF;
-$code-bg: #F1F5F9;
-$code-color: #171717;
+$primary:              #1E293B;
+$link-color:           #0369A1;
+$body-color:           #1A202C;
+$body-bg:              #FFFFFF;
+$code-bg:              #F8FAFC;
+$code-color:           #0F172A;
 
-$font-family-sans-serif: "Libre Franklin", "Segoe UI", Roboto, Helvetica, Arial, sans-serif !default;
-$headings-font-family: "Jost", "Segoe UI", Roboto, Helvetica, Arial, sans-serif !default;
-$headings-font-weight: 600;
+$font-family-sans-serif: "Libre Franklin", "Segoe UI", system-ui, sans-serif !default;
+$headings-font-family:   "Jost", "Segoe UI", system-ui, sans-serif !default;
+$headings-font-weight:   600;
+$headings-color:         #1E293B;
+$font-size-base:         1.0625rem;
+$line-height-base:       1.8;
 
 $web-font-path: "https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&family=Libre+Franklin:ital,wght@0,100..900;1,100..900&display=swap";
 
@@ -25,48 +25,124 @@ $web-font-path: "https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..
   @import url($web-font-path);
 }
 
-.sidebar-title {
-  font-family: $headings-font-family;
-}
+// ── Base typography ──────────────────────────────────────────────────────────
 
-// Justify body prose (chapter text, callout boxes) so the right edge isn't
-// ragged. Headings, code, and tables are untouched since they aren't <p>.
 p {
   text-align: justify;
   hyphens: auto;
+  margin-bottom: 1.1rem;
 }
+
+h1, h2, h3, h4 {
+  letter-spacing: -0.015em;
+  line-height: 1.25;
+}
+
+.content h2,
+.chapter h2 {
+  border-bottom: 1px solid #EEF2F7;
+  padding-bottom: 0.3em;
+  margin-top: 2.5rem;
+}
+
+blockquote {
+  border-left: 4px solid #0369A1;
+  background: #F0F7FF;
+  padding: 0.9rem 1.25rem;
+  margin: 1.5rem 0;
+  border-radius: 0 8px 8px 0;
+  font-style: italic;
+  color: #334155;
+
+  p { margin-bottom: 0; text-align: left; }
+}
+
+// ── Code ─────────────────────────────────────────────────────────────────────
+
+pre.sourceCode {
+  border: none;
+  border-left: 3px solid #0369A1;
+  border-radius: 0 8px 8px 0;
+  background: #F8FAFC;
+  padding: 1rem 1.3rem;
+  font-size: 0.875rem;
+}
+
+code:not(.sourceCode) {
+  background: #EFF6FF;
+  color: #1E3A5F;
+  border: 1px solid #DBEAFE;
+  padding: 0.15em 0.45em;
+  border-radius: 4px;
+  font-size: 0.875em;
+}
+
+// ── Sidebar ──────────────────────────────────────────────────────────────────
+
+.sidebar-title {
+  font-family: $headings-font-family;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #1E293B;
+}
+
+.sidebar-menu-container {
+  font-size: 0.8125rem;
+}
+
+.sidebar-item.sidebar-item-section .sidebar-item-text {
+  font-weight: 700;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #475569;
+}
+
+.sidebar-item.active > .sidebar-item-container .sidebar-item-text {
+  color: #0369A1;
+  font-weight: 600;
+}
+
+// ── Chapter title area ────────────────────────────────────────────────────────
+
+.quarto-title-block {
+  padding-bottom: 1rem;
+  margin-bottom: 2rem;
+  border-bottom: 2px solid #F1F5F9;
+
+  .title { font-size: 1.875rem; line-height: 1.2; }
+}
+
+.quarto-title-breadcrumbs {
+  font-size: 0.8125rem;
+  color: #64748B;
+}
+
+// ── Callout (Quarto-native) ──────────────────────────────────────────────────
 
 div.callout {
   border-left-color: $primary;
 }
 
-// ── Callout divs (used in QMD chapters) ─────────────────────────────────────
-// Notebooks keep inline styles for Colab/Jupyter compatibility.
-// QMD files use these classes instead of repeating inline styles everywhere.
+// ── ARK callout divs (QMD chapters only; notebooks use inline styles) ────────
 
 .ark-concept {
   background: #EAF3FA;
   border-left: 5px solid #0369A1;
   padding: 14px 18px;
-  border-radius: 6px;
-  margin: 16px 0;
+  border-radius: 0 8px 8px 0;
+  margin: 18px 0;
 }
-.ark-concept-title {
-  color: #0369A1;
-  font-weight: bold;
-}
+.ark-concept-title { color: #0369A1; font-weight: bold; }
 
 .ark-activity {
   background: #EBF5F0;
   border-left: 5px solid #009E73;
   padding: 14px 18px;
-  border-radius: 6px;
-  margin: 16px 0;
+  border-radius: 0 8px 8px 0;
+  margin: 18px 0;
 }
-.ark-activity-title {
-  color: #065F46;
-  font-weight: bold;
-}
+.ark-activity-title { color: #065F46; font-weight: bold; }
 .ark-activity pre {
   background: #FFF8E1;
   padding: 10px;
@@ -78,50 +154,30 @@ div.callout {
   background: #F5F3FF;
   border-left: 5px solid #7C3AED;
   padding: 14px 18px;
-  border-radius: 6px;
-  margin: 16px 0;
+  border-radius: 0 8px 8px 0;
+  margin: 18px 0;
 }
-.ark-tip-title {
-  color: #5B21B6;
-  font-weight: bold;
-}
+.ark-tip-title { color: #5B21B6; font-weight: bold; }
 
 .ark-mistake {
   background: #FEF2F2;
   border-left: 5px solid #DC2626;
   padding: 14px 18px;
-  border-radius: 6px;
-  margin: 16px 0;
+  border-radius: 0 8px 8px 0;
+  margin: 18px 0;
 }
-.ark-mistake-title {
-  color: #991B1B;
-  font-weight: bold;
-}
+.ark-mistake-title { color: #991B1B; font-weight: bold; }
 
 .ark-example {
   background: #EAF7F0;
   border-left: 5px solid #059669;
   padding: 14px 18px;
-  border-radius: 6px;
-  margin: 16px 0;
+  border-radius: 0 8px 8px 0;
+  margin: 18px 0;
 }
-.ark-example-title {
-  color: #059669;
-  font-weight: bold;
-}
+.ark-example-title { color: #059669; font-weight: bold; }
 
-.cover-author {
-  font-size: 0.95rem;
-  color: #94A3B8;
-  margin-top: 6px;
-  margin-bottom: 0;
-  a { text-decoration: none; }
-  i { font-size: 1.05em; vertical-align: middle; }
-}
-
-// ── Footer (mirrored from sambaiga.github.io assets/scss/components/_footer.scss) ──
-// Uses concrete values instead of SCSS variables; update in sync with the blog.
-// $footer-bg: #0F172A  $footer-fg: #E5E7EB  $footer-link: #38BDF8
+// ── Footer ───────────────────────────────────────────────────────────────────
 
 .nav-footer {
   background-color: #0F172A;
@@ -173,125 +229,58 @@ div.callout {
   }
 
   @media (min-width: 768px) {
-    .nav-footer-left { text-align: left; }
+    .nav-footer-left  { text-align: left; }
     .nav-footer-right { text-align: right; }
     .nav-footer-center { text-align: center; }
   }
 
   @media (max-width: 767px) {
     text-align: center;
-    .nav-footer-left, .nav-footer-right, .nav-footer-center {
+    .nav-footer-left,
+    .nav-footer-right,
+    .nav-footer-center {
       width: 100%;
       margin-bottom: 1rem;
     }
   }
 }
 
-// Quarto numbers index.qmd as chapter 1 in HTML output even when its
-// heading is marked {.unnumbered} (a known Quarto limitation - PDF output
-// honours it, HTML doesn't). Hide the number on the welcome/cover entry only
-// - it's always the first top-level sidebar item and the breadcrumb on the
-// page itself - so every real chapter keeps its number untouched.
+// ── Sidebar: hide spurious chapter-number on welcome entry ───────────────────
 .sidebar-menu-container > ul.list-unstyled.mt-1 > li.sidebar-item:first-child .chapter-number,
 .quarto-title-breadcrumbs .breadcrumb-item:first-child .chapter-number {
   display: none;
 }
 
-// ── Cover page: part cards ───────────────────────────────────────────────────
-
-.part-card {
-  border: 1px solid #DEE2E6;
-  border-radius: 10px;
-  padding: 20px 22px;
-  height: 100%;
-  transition: box-shadow 0.2s ease, transform 0.2s ease;
-  background: #FFFFFF;
-
-  &:hover {
-    box-shadow: 0 4px 18px rgba(30, 41, 59, 0.12);
-    transform: translateY(-2px);
-  }
-
-  h3 {
-    font-family: "Jost", sans-serif;
-    font-size: 1.1rem;
-    margin-top: 10px;
-    margin-bottom: 8px;
-    color: #1E293B;
-  }
-
-  p {
-    font-size: 0.9rem;
-    color: #495057;
-    text-align: left;
-    hyphens: none;
-    margin-bottom: 10px;
-  }
-
-  ul {
-    padding-left: 1.1rem;
-    margin-bottom: 0;
-    font-size: 0.875rem;
-
-    li {
-      margin-bottom: 3px;
-    }
-  }
-
-  &.part-complete {
-    border-left: 4px solid #059669;
-  }
-
-  &.part-in-progress {
-    border-left: 4px solid #0369A1;
-  }
-
-  &.part-coming-soon {
-    border-left: 4px solid #CED4DA;
-    opacity: 0.75;
-  }
-}
-
-.part-badge {
-  display: inline-block;
-  font-size: 0.7rem;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  padding: 3px 10px;
-  border-radius: 999px;
-
-  &.badge-complete {
-    background: #D1FAE5;
-    color: #065F46;
-  }
-
-  &.badge-in-progress {
-    background: #DBEAFE;
-    color: #1E40AF;
-  }
-
-  &.badge-coming-soon {
-    background: #F1F5F9;
-    color: #6B7280;
-  }
-}
-
-// ── Cover page: hero / intro strip ──────────────────────────────────────────
+// ── Cover hero ───────────────────────────────────────────────────────────────
 
 .cover-hero {
   background: linear-gradient(135deg, #1E293B 0%, #0F172A 100%);
-  border-radius: 12px;
-  padding: 36px 40px;
-  margin-bottom: 32px;
+  border-radius: 14px;
+  padding: 44px 48px;
+  margin-bottom: 36px;
   color: #FFFFFF;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: -60px;
+    right: -60px;
+    width: 260px;
+    height: 260px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(56,189,248,0.07) 0%, transparent 70%);
+    pointer-events: none;
+  }
 
   h1 {
-    font-family: "Jost", sans-serif;
-    font-size: 1.8rem;
-    font-weight: 700;
+    font-family: $headings-font-family;
+    font-size: 2.25rem;
+    font-weight: 800;
     color: #FFFFFF;
-    margin-bottom: 10px;
+    margin-bottom: 12px;
+    letter-spacing: -0.03em;
   }
 
   p {
@@ -299,47 +288,65 @@ div.callout {
     font-size: 1rem;
     text-align: left;
     hyphens: none;
-    margin-bottom: 20px;
-    max-width: 600px;
+    margin-bottom: 0;
+    max-width: 560px;
+    line-height: 1.65;
   }
+
+  @media (max-width: 576px) {
+    padding: 28px 24px;
+    h1 { font-size: 1.65rem; }
+  }
+}
+
+.cover-author {
+  font-size: 0.9rem;
+  color: #94A3B8;
+  margin-top: 8px;
+  margin-bottom: 24px;
+  a { text-decoration: none; }
+  i { font-size: 1.05em; vertical-align: middle; }
 }
 
 .cover-stat-row {
   display: flex;
-  gap: 28px;
+  gap: 32px;
   flex-wrap: wrap;
-  margin-bottom: 24px;
+  margin-bottom: 28px;
+
+  @media (max-width: 400px) { gap: 20px; }
 }
 
 .cover-stat {
-  text-align: center;
-
   .stat-value {
     display: block;
-    font-family: "Jost", sans-serif;
-    font-size: 1.6rem;
-    font-weight: 700;
+    font-family: $headings-font-family;
+    font-size: 1.75rem;
+    font-weight: 800;
     color: #38BDF8;
+    line-height: 1;
   }
-
   .stat-label {
     display: block;
-    font-size: 0.75rem;
+    font-size: 0.68rem;
     color: #94A3B8;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.08em;
+    margin-top: 3px;
   }
 }
 
-// ── Cover page: CTA buttons ──────────────────────────────────────────────────
+// ── Cover CTA buttons ────────────────────────────────────────────────────────
 
 .btn-cover {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   padding: 10px 22px;
-  border-radius: 6px;
+  border-radius: 7px;
   text-decoration: none;
   font-weight: 600;
-  font-size: 0.9rem;
+  font-size: 0.875rem;
   margin-right: 10px;
   margin-top: 4px;
   transition: opacity 0.15s ease, transform 0.15s ease;
@@ -350,28 +357,213 @@ div.callout {
     text-decoration: none;
   }
 
-  &.btn-primary-cover {
-    background: #FFFFFF;
-    color: #1E293B;
-  }
-
+  &.btn-primary-cover  { background: #FFFFFF; color: #1E293B; }
   &.btn-secondary-cover {
     background: transparent;
     color: #FFFFFF;
-    border: 1.5px solid rgba(255, 255, 255, 0.5);
+    border: 1.5px solid rgba(255,255,255,0.4);
   }
 }
 
-// ── Cover page: section divider label ────────────────────────────────────────
+// ── Cover section divider label ───────────────────────────────────────────────
 
 .section-label {
-  font-family: "Jost", sans-serif;
-  font-size: 0.75rem;
+  font-family: $headings-font-family;
+  font-size: 0.68rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: #6B7280;
-  margin-bottom: 16px;
-  padding-bottom: 8px;
-  border-bottom: 1px solid #E9ECEF;
+  letter-spacing: 0.12em;
+  color: #94A3B8;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  &::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: #EEF2F7;
+  }
+}
+
+// ── 4-act learning-path roadmap ───────────────────────────────────────────────
+
+.roadmap-grid {
+  gap: 1.125rem !important;
+}
+
+.act-card {
+  border: 1px solid #E9ECEF;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #FFFFFF;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+
+  &:hover {
+    box-shadow: 0 6px 24px rgba(30,41,59,0.09);
+    transform: translateY(-2px);
+  }
+}
+
+.act-stripe {
+  height: 5px;
+  flex-shrink: 0;
+
+  &.act-1 { background: #0369A1; }
+  &.act-2 { background: #7C3AED; }
+  &.act-3 { background: #059669; }
+  &.act-4 { background: #D97706; }
+}
+
+.act-inner {
+  padding: 20px 22px 24px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.act-icon {
+  font-size: 1.75rem;
+  display: block;
+  margin-bottom: 10px;
+  line-height: 1;
+
+  &.act-icon-1 { color: #0369A1; }
+  &.act-icon-2 { color: #7C3AED; }
+  &.act-icon-3 { color: #059669; }
+  &.act-icon-4 { color: #D97706; }
+}
+
+.act-eyebrow {
+  font-family: $headings-font-family;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #94A3B8;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.act-name {
+  font-family: $headings-font-family;
+  font-size: 1.0rem;
+  font-weight: 700;
+  color: #1E293B;
+  margin: 0 0 4px;
+  letter-spacing: -0.01em;
+  border-bottom: none !important;
+  padding-bottom: 0 !important;
+  margin-top: 0 !important;
+}
+
+.act-desc {
+  font-size: 0.795rem;
+  color: #64748B;
+  line-height: 1.5;
+  text-align: left;
+  hyphens: none;
+  margin-bottom: 0;
+}
+
+.act-chapters {
+  list-style: none;
+  padding: 0;
+  margin: 14px 0 0;
+  border-top: 1px solid #F1F5F9;
+  padding-top: 12px;
+}
+
+.act-chapters li {
+  padding: 3px 0;
+
+  a {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.8rem;
+    text-decoration: none;
+    color: #1E293B;
+    &:hover { color: #0369A1; text-decoration: none; }
+  }
+
+  .ch-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.8rem;
+    color: #9CA3AF;
+  }
+}
+
+.ch-num {
+  font-family: $headings-font-family;
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #CBD5E1;
+  min-width: 20px;
+  flex-shrink: 0;
+}
+
+.ch-name { flex: 1; }
+
+.ch-check {
+  color: #10B981;
+  font-size: 0.7rem;
+  flex-shrink: 0;
+}
+
+.ch-soon {
+  font-size: 0.58rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #9CA3AF;
+  background: #F9FAFB;
+  border: 1px solid #E9ECEF;
+  padding: 1px 6px;
+  border-radius: 99px;
+  flex-shrink: 0;
+}
+
+// ── Preface ───────────────────────────────────────────────────────────────────
+
+.preface-epigraph {
+  font-family: $headings-font-family;
+  font-size: 1.15rem;
+  font-weight: 400;
+  font-style: italic;
+  color: #0369A1;
+  border-left: 4px solid #0369A1;
+  background: #F0F7FF;
+  padding: 1.1rem 1.5rem;
+  border-radius: 0 10px 10px 0;
+  margin: 0 0 2.5rem;
+  line-height: 1.65;
+  text-align: left;
+}
+
+.preface-body > p:first-of-type::first-letter {
+  float: left;
+  font-family: $headings-font-family;
+  font-size: 3.5rem;
+  font-weight: 800;
+  line-height: 0.75;
+  margin: 0.06em 0.1em 0 0;
+  color: #0369A1;
+}
+
+.preface-attr {
+  margin-top: 2.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid #EEF2F7;
+  font-size: 0.875rem;
+  color: #64748B;
+
+  strong { color: #1E293B; }
 }
