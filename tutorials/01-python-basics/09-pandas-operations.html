@@ -79,7 +79,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../../site_libs/quarto-html/quarto-syntax-highlighting-de63f62b328812d8e578a4d74e282472.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-369035fd49b832c5f4f2d78fcf1b6dcb.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-212e973001e6594fb07bce043cc2f62c.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -108,6 +108,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   }
 }</script>
 <style>html{ scroll-behavior: smooth; }</style>
+<script src="../../site_libs/quarto-diagram/mermaid.min.js"></script>
+<script src="../../site_libs/quarto-diagram/mermaid-init.js"></script>
+<link href="../../site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.min.js" integrity="sha384-c9c+LnTbwQ3aujuU7ULEPVvgLs+Fn6fJUvIGTsuu1ZcCf11fiEubah0ttpca4ntM sha384-6V1/AdqZRWk1KAlWbKBlGhN7VG4iE/yAZcO6NZPMF8od0vukrvr0tg4qY6NSrItx" crossorigin="anonymous"></script>
 
 <script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
@@ -132,6 +135,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </button>
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="mailto:sambaiga@gmail.com"> <i class="bi bi-envelope-at" role="img" aria-label="Email Anthony Faustine">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://www.linkedin.com/in/sambaiga"> <i class="bi bi-linkedin" role="img" aria-label="LinkedIn">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
   <li class="nav-item compact">
     <a class="nav-link" href="https://github.com/sambaiga/ds-mlops-path"> <i class="bi bi-github" role="img" aria-label="View source on GitHub">
 </i> 
@@ -1205,7 +1218,38 @@ with_internet[["midterm_score", "final_score", "project_score"]].agg(["mean", "s
 <h3 class="anchored" data-anchor-id="a.-rolling-and-expanding-windows">5a. Rolling and Expanding Windows</h3>
 <p><code>rolling(n)</code> groups each row with the <code>n-1</code> rows before it and applies an aggregation. It is the standard tool for smoothing noisy signals, computing moving averages, or creating features that capture recent trend for a time-ordered dataset.</p>
 <p><code>expanding()</code> is the cumulative version: each row aggregates everything from the start of the series up to that point. The first row is its own mean; the second is the mean of rows 1-2; and so on.</p>
-<div id="61" class="cell" data-execution_count="23">
+<blockquote class="blockquote">
+<p><strong>Rolling window (size=3): slides one step at a time</strong></p>
+</blockquote>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">flowchart LR
+    subgraph W1 ["window 1 (size=3)"]
+        A1["day 1: 70"] --&gt; A2["day 2: 80"] --&gt; A3["day 3: 90"]
+    end
+    subgraph W2 ["window 2 (size=3)"]
+        B1["day 2: 80"] --&gt; B2["day 3: 90"] --&gt; B3["day 4: 60"]
+    end
+    subgraph W3 ["window 3 (size=3)"]
+        C1["day 3: 90"] --&gt; C2["day 4: 60"] --&gt; C3["day 5: 75"]
+    end
+    W1 --&gt;|mean = 80.0| R1["result[2]"]
+    W2 --&gt;|mean = 76.7| R2["result[3]"]
+    W3 --&gt;|mean = 75.0| R3["result[4]"]
+
+    style R1 fill:#EBF5F0,stroke:#059669,color:#065F46
+    style R2 fill:#EAF3FA,stroke:#0369A1,color:#0C4A6E
+    style R3 fill:#F5F3FF,stroke:#7C3AED,color:#3B0764
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+<div id="62" class="cell" data-execution_count="23">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Sort by average_marks to give the rolling window a meaningful order here</span></span>
 <span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>df_sorted <span class="op">=</span> df.sort_values(<span class="st">"average_marks"</span>).reset_index(drop<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1297,7 +1341,7 @@ with_internet[["midterm_score", "final_score", "project_score"]].agg(["mean", "s
 <p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-info-circle-fill"></i> Key Concept: Rolling windows require ordered data to be meaningful</span><br><br> <code>rolling(5)</code> looks at the 5 rows immediately before each row in whatever order they sit in the DataFrame. On unsorted data the window picks up random rows and produces meaningless averages. Always sort by the relevant axis (time, score, sequence number) before calling <code>rolling()</code>. The NaN values in the first <code>n-1</code> rows are correct: there is not enough history to fill those windows yet.</p>
 </div>
 <p>In time-series work, the pattern is almost always: sort by date, group by entity, then compute a rolling stat per group. The <code>groupby().transform()</code> tip from Section 4 applies here too:</p>
-<div id="64" class="cell" data-execution_count="24">
+<div id="65" class="cell" data-execution_count="24">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Per-program 10-student rolling mean of average_marks</span></span>
 <span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a><span class="co"># transform keeps the result aligned to the original index</span></span>
 <span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"marks_prog_rolling10"</span>] <span class="op">=</span> (</span>
@@ -1342,7 +1386,7 @@ with_internet[["midterm_score", "final_score", "project_score"]].agg(["mean", "s
 <th data-quarto-table-cell-role="th">3</th>
 <td>Information Technology</td>
 <td>66.466667</td>
-<td>66.286667</td>
+<td>66.356667</td>
 </tr>
 <tr class="odd">
 <th data-quarto-table-cell-role="th">4</th>
@@ -1367,7 +1411,7 @@ with_internet[["midterm_score", "final_score", "project_score"]].agg(["mean", "s
 <h3 class="anchored" data-anchor-id="b.-expressive-filtering-with-df.query">5b. Expressive Filtering with <code>df.query()</code></h3>
 <p>Boolean masks work well for one or two conditions. For complex multi-condition filters, <code>df.query()</code> expresses the same logic as a readable string, closer to how you would say it out loud.</p>
 <p>Reference an external variable inside a query string with the <code>@</code> prefix:</p>
-<div id="66" class="cell" data-execution_count="25">
+<div id="67" class="cell" data-execution_count="25">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Boolean mask version -- correct but harder to read</span></span>
 <span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>mask <span class="op">=</span> (df[<span class="st">"midterm_score"</span>] <span class="op">&gt;</span> <span class="dv">70</span>) <span class="op">&amp;</span> (df[<span class="st">"final_score"</span>] <span class="op">&gt;</span> <span class="dv">70</span>) <span class="op">&amp;</span> (df[<span class="st">"program"</span>].isin([<span class="st">"Engineering"</span>, <span class="st">"Sciences"</span>]))</span>
 <span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"mask result  : </span><span class="sc">{</span>mask<span class="sc">.</span><span class="bu">sum</span>()<span class="sc">}</span><span class="ss"> rows"</span>)</span>
@@ -1392,7 +1436,7 @@ df_q["rolling_mean"] = df_q["average_marks"].rolling(20).mean()
 result = df_q.query("rolling_mean &gt; 75 and program == 'Sciences'")
 print(len(result))</pre>
 </div>
-<div id="69" class="cell" data-execution_count="26">
+<div id="70" class="cell" data-execution_count="26">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: rolling mean, then query-filter to Sciences students above rolling threshold</span></span>
 <span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
@@ -1422,7 +1466,7 @@ grade_distribution = df["final_grade"].value_counts(normalize=True)
 passing = df[df["passed"] == True]["average_marks"].agg(["mean"])  # noqa: E712
 failing = df[df["passed"] == False]["average_marks"].agg(["mean"])  # noqa: E712</pre>
 </div>
-<div id="72" class="cell" data-execution_count="27">
+<div id="73" class="cell" data-execution_count="27">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: build the risk and performance report described above</span></span>
 <span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
@@ -1962,13 +2006,15 @@ failing = df[df["passed"] == False]["average_marks"].agg(["mean"])  # noqa: E712
 <footer class="footer">
   <div class="nav-footer">
     <div class="nav-footer-left">
-<p>© 2025 <a href="https://github.com/sambaiga">Anthony Faustine</a> · Apache 2.0 License</p>
+<p><span class="faux-block">© 2025–2026 <a href="https://sambaiga.github.io/">Anthony Faustine</a></span> <span class="faux-block">Code licensed under <a href="https://www.apache.org/licenses/LICENSE-2.0">Apache 2.0</a></span></p>
 </div>   
     <div class="nav-footer-center">
-      &nbsp;
-    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.dev/sambaiga/ds-mlops-path/blob/main/tutorials/01-python-basics/09-pandas-operations.ipynb" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/sambaiga/ds-mlops-path/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li><li><a href="https://github.com/sambaiga/ds-mlops-path/blob/main/tutorials/01-python-basics/09-pandas-operations.ipynb" class="toc-action"><i class="bi empty"></i>View source</a></li></ul></div></div>
+<div class="footer-social">
+<p><a href="mailto:sambaiga@gmail.com" title="Email"><i class="bi bi-envelope-at-fill"></i></a> <a href="https://github.com/sambaiga" title="GitHub"><i class="bi bi-github"></i></a> <a href="https://www.linkedin.com/in/sambaiga" title="LinkedIn"><i class="bi bi-linkedin"></i></a></p>
+</div>
+<div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.dev/sambaiga/ds-mlops-path/blob/main/tutorials/01-python-basics/09-pandas-operations.ipynb" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/sambaiga/ds-mlops-path/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li><li><a href="https://github.com/sambaiga/ds-mlops-path/blob/main/tutorials/01-python-basics/09-pandas-operations.ipynb" class="toc-action"><i class="bi empty"></i>View source</a></li></ul></div></div>
     <div class="nav-footer-right">
-<p>Built with <a href="https://quarto.org">Quarto</a> · <a href="https://github.com/sambaiga/ds-mlops-path">Source on GitHub</a></p>
+<p><span class="faux-block">Made with <a href="https://quarto.org">Quarto</a></span> <span class="faux-block"><a href="https://github.com/sambaiga/ds-mlops-path"><i class="bi bi-github"></i> View source</a></span></p>
 </div>
   </div>
 </footer>

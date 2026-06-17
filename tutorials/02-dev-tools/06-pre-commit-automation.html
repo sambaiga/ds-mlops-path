@@ -79,7 +79,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../../site_libs/quarto-html/quarto-syntax-highlighting-de63f62b328812d8e578a4d74e282472.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-369035fd49b832c5f4f2d78fcf1b6dcb.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-212e973001e6594fb07bce043cc2f62c.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -108,6 +108,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   }
 }</script>
 <style>html{ scroll-behavior: smooth; }</style>
+<script src="../../site_libs/quarto-diagram/mermaid.min.js"></script>
+<script src="../../site_libs/quarto-diagram/mermaid-init.js"></script>
+<link href="../../site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
 
 
 </head>
@@ -129,6 +132,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </button>
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="mailto:sambaiga@gmail.com"> <i class="bi bi-envelope-at" role="img" aria-label="Email Anthony Faustine">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://www.linkedin.com/in/sambaiga"> <i class="bi bi-linkedin" role="img" aria-label="LinkedIn">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
   <li class="nav-item compact">
     <a class="nav-link" href="https://github.com/sambaiga/ds-mlops-path"> <i class="bi bi-github" role="img" aria-label="View source on GitHub">
 </i> 
@@ -420,15 +433,29 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 class="anchored" data-anchor-id="what-is-pre-commit-and-how-to-install-it">0. What is pre-commit and How to Install It</h2>
 <p><code>pre-commit</code> is a framework for managing git hooks. It lets you define a set of automated checks in a single YAML file (<code>.pre-commit-config.yaml</code>) that is committed with your code. Anyone who clones the repository and runs <code>pre-commit install</code> gets the identical set of checks running on their machine, each in its own isolated environment with pinned tool versions.</p>
 <p>Without pre-commit, quality checks are optional. With pre-commit, they are automatic: the checks run before every commit and block it if they fail. You cannot forget to run ruff, and your colleagues cannot skip it.</p>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="https://pre-commit.com/images/logo.png" class="img-fluid figure-img"></p>
-<figcaption>The pre-commit hook lifecycle: hook runs before the commit is sealed</figcaption>
-</figure>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">flowchart LR
+    A["git commit -m '...'"] --&gt; B["pre-commit\nhooks run"]
+    B --&gt; C{ruff check}
+    C --&gt;|"auto-fixed"| D["file changed\ngit add + retry"]
+    D --&gt; B
+    C --&gt;|"no findings"| E{commitizen\ncommit-msg}
+    E --&gt;|"invalid format"| F["commit BLOCKED"]
+    E --&gt;|"valid format"| G["commit sealed"]
+
+    style G fill:#EBF5F0,stroke:#059669,color:#065F46
+    style F fill:#FEF2F2,stroke:#DC2626,color:#991B1B
+    style D fill:#EAF3FA,stroke:#0369A1,color:#0C4A6E
+</pre>
 </div>
-<blockquote class="blockquote">
-<p>Source: <a href="https://pre-commit.com">pre-commit.com</a></p>
-</blockquote>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
 <section id="install-pre-commit" class="level3">
 <h3 class="anchored" data-anchor-id="install-pre-commit">Install pre-commit</h3>
 <p>In the <code>grade-predictor</code> project, pre-commit is already listed as a dev dependency and is installed with <code>uv sync</code>:</p>
@@ -1174,13 +1201,15 @@ uv run cz commit</pre>
 <footer class="footer">
   <div class="nav-footer">
     <div class="nav-footer-left">
-<p>© 2025 <a href="https://github.com/sambaiga">Anthony Faustine</a> · Apache 2.0 License</p>
+<p><span class="faux-block">© 2025–2026 <a href="https://sambaiga.github.io/">Anthony Faustine</a></span> <span class="faux-block">Code licensed under <a href="https://www.apache.org/licenses/LICENSE-2.0">Apache 2.0</a></span></p>
 </div>   
     <div class="nav-footer-center">
-      &nbsp;
-    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/sambaiga/ds-mlops-path/edit/main/tutorials/02-dev-tools/06-pre-commit-automation.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/sambaiga/ds-mlops-path/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li><li><a href="https://github.com/sambaiga/ds-mlops-path/blob/main/tutorials/02-dev-tools/06-pre-commit-automation.qmd" class="toc-action"><i class="bi empty"></i>View source</a></li></ul></div></div>
+<div class="footer-social">
+<p><a href="mailto:sambaiga@gmail.com" title="Email"><i class="bi bi-envelope-at-fill"></i></a> <a href="https://github.com/sambaiga" title="GitHub"><i class="bi bi-github"></i></a> <a href="https://www.linkedin.com/in/sambaiga" title="LinkedIn"><i class="bi bi-linkedin"></i></a></p>
+</div>
+<div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/sambaiga/ds-mlops-path/edit/main/tutorials/02-dev-tools/06-pre-commit-automation.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/sambaiga/ds-mlops-path/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li><li><a href="https://github.com/sambaiga/ds-mlops-path/blob/main/tutorials/02-dev-tools/06-pre-commit-automation.qmd" class="toc-action"><i class="bi empty"></i>View source</a></li></ul></div></div>
     <div class="nav-footer-right">
-<p>Built with <a href="https://quarto.org">Quarto</a> · <a href="https://github.com/sambaiga/ds-mlops-path">Source on GitHub</a></p>
+<p><span class="faux-block">Made with <a href="https://quarto.org">Quarto</a></span> <span class="faux-block"><a href="https://github.com/sambaiga/ds-mlops-path"><i class="bi bi-github"></i> View source</a></span></p>
 </div>
   </div>
 </footer>

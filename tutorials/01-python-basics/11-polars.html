@@ -79,7 +79,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../../site_libs/quarto-html/quarto-syntax-highlighting-de63f62b328812d8e578a4d74e282472.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-369035fd49b832c5f4f2d78fcf1b6dcb.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-212e973001e6594fb07bce043cc2f62c.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -108,6 +108,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   }
 }</script>
 <style>html{ scroll-behavior: smooth; }</style>
+<script src="../../site_libs/quarto-diagram/mermaid.min.js"></script>
+<script src="../../site_libs/quarto-diagram/mermaid-init.js"></script>
+<link href="../../site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.min.js" integrity="sha384-c9c+LnTbwQ3aujuU7ULEPVvgLs+Fn6fJUvIGTsuu1ZcCf11fiEubah0ttpca4ntM sha384-6V1/AdqZRWk1KAlWbKBlGhN7VG4iE/yAZcO6NZPMF8od0vukrvr0tg4qY6NSrItx" crossorigin="anonymous"></script>
 
 <script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
@@ -132,6 +135,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </button>
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="mailto:sambaiga@gmail.com"> <i class="bi bi-envelope-at" role="img" aria-label="Email Anthony Faustine">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://www.linkedin.com/in/sambaiga"> <i class="bi bi-linkedin" role="img" aria-label="LinkedIn">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
   <li class="nav-item compact">
     <a class="nav-link" href="https://github.com/sambaiga/ds-mlops-path"> <i class="bi bi-github" role="img" aria-label="View source on GitHub">
 </i> 
@@ -1449,7 +1462,39 @@ df.select(cs.string())</pre>
 <section id="lazyframe-and-lazy-evaluation" class="level2">
 <h2 class="anchored" data-anchor-id="lazyframe-and-lazy-evaluation">4. LazyFrame and Lazy Evaluation</h2>
 <p>Every Polars operation above ran eagerly: it computed the result immediately and returned a new DataFrame. <code>df.lazy()</code> switches to lazy mode. In lazy mode, operations build a <em>query plan</em> instead of executing immediately. <code>.collect()</code> runs the optimized plan.</p>
-<div id="39" class="cell" data-execution_count="13">
+<blockquote class="blockquote">
+<p><strong>Lazy evaluation: plan builds up, data reads only on .collect()</strong></p>
+</blockquote>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">flowchart LR
+    A["scan_csv('file.csv')
+no data read yet"] --&gt; B["filter(col &gt; 60)
+adds predicate"]
+    B --&gt; C["group_by('program')
+adds aggregation"]
+    C --&gt; D["select(['program','mean'])
+projects columns"]
+    D --&gt;|".collect()"| E["query optimised:
+1. predicate pushdown
+2. projection pruning
+3. execute in chunks"]
+    E --&gt; F["DataFrame
+only now in memory"]
+
+    style A fill:#F5F3FF,stroke:#7C3AED,color:#3B0764
+    style E fill:#EAF3FA,stroke:#0369A1,color:#0C4A6E
+    style F fill:#EBF5F0,stroke:#059669,color:#065F46
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+<div id="40" class="cell" data-execution_count="13">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Build a query plan -- nothing executes yet</span></span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>lazy_query <span class="op">=</span> (</span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    df.lazy()</span>
@@ -1472,7 +1517,7 @@ df.select(cs.string())</pre>
         DF ["student_id", "cohort", "program", "gender", ...]; PROJECT["program", "average_marks", "has_internet"] 3/19 COLUMNS</code></pre>
 </div>
 </div>
-<div id="40" class="cell" data-execution_count="14">
+<div id="41" class="cell" data-execution_count="14">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Execute the plan and get the result</span></span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>lazy_query.collect()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="14">
@@ -1536,7 +1581,7 @@ df.select(cs.string())</pre>
 )
 top_schools</pre>
 </div>
-<div id="44" class="cell" data-execution_count="15">
+<div id="45" class="cell" data-execution_count="15">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: lazy top-schools query</span></span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
@@ -1547,7 +1592,7 @@ top_schools</pre>
 <div style="background:#EAF3FA;border-left:5px solid #0369A1;padding:14px 18px;border-radius:6px;margin:16px 0">
 <p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-info-circle-fill"></i> Key Concept: SQL queries run on lazy DataFrames and benefit from the same query optimization</span><br><br> <code>pl.SQLContext</code> compiles SQL into Polars’ lazy query plan. The optimizer applies the same predicate pushdown and projection pushdown as a hand-written <code>.lazy().filter().select()</code> chain. You get SQL’s readability and Polars’ performance for free.</p>
 </div>
-<div id="46" class="cell" data-execution_count="16">
+<div id="47" class="cell" data-execution_count="16">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> polars <span class="im">as</span> pl</span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Register DataFrames under SQL table names</span></span>
@@ -1604,7 +1649,7 @@ shape: (5, 2)
 <section id="datetime-in-polars" class="level2">
 <h2 class="anchored" data-anchor-id="datetime-in-polars">5. Date/Time in Polars</h2>
 <p>Polars can parse dates directly at read time with <code>try_parse_dates=True</code>. There is no separate <code>to_datetime</code> step for standard ISO-format date strings:</p>
-<div id="49" class="cell" data-execution_count="17">
+<div id="50" class="cell" data-execution_count="17">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>attendance <span class="op">=</span> pl.read_csv(<span class="st">"data/daily_attendance.csv"</span>, try_parse_dates<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(attendance.dtypes)</span>
 <span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>attendance.head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -1668,7 +1713,7 @@ shape: (5, 2)
 <p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-info-circle-fill"></i> Key Concept: Polars parses dates at load time; pandas requires an explicit conversion step</span><br><br> In pandas, date columns read as <code>str</code> dtype until you call <code>pd.to_datetime()</code>. Polars with <code>try_parse_dates=True</code> infers and parses ISO-format dates automatically during <code>read_csv</code>, producing a <code>pl.Date</code> or <code>pl.Datetime</code> column. This means filtering and arithmetic work on dates immediately, without a conversion step.</p>
 </div>
 <p>Date-component extraction uses the <code>.dt</code> namespace, similar to pandas:</p>
-<div id="52" class="cell" data-execution_count="18">
+<div id="53" class="cell" data-execution_count="18">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract year, month, and weekday from the date column</span></span>
 <span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>attendance.select(</span>
 <span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>    [</span>
@@ -1739,7 +1784,7 @@ shape: (5, 2)
 </div>
 </div>
 <p>Resampling to weekly or monthly means uses <code>group_by_dynamic</code> instead of pandas’ <code>resample</code>:</p>
-<div id="54" class="cell" data-execution_count="19">
+<div id="55" class="cell" data-execution_count="19">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Monthly mean attendance rate per school using group_by_dynamic</span></span>
 <span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>school_300 <span class="op">=</span> attendance.<span class="bu">filter</span>(pl.col(<span class="st">"school_id"</span>) <span class="op">==</span> <span class="dv">300</span>)</span>
 <span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1800,7 +1845,7 @@ shape: (5, 2)
     pl.col("attendance_rate").mean().alias("monthly_mean")
 ).sort(["school_id", "date"])</pre>
 </div>
-<div id="57" class="cell" data-execution_count="20">
+<div id="58" class="cell" data-execution_count="20">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: monthly mean attendance per school using group_by_dynamic</span></span>
 <span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
@@ -1899,7 +1944,7 @@ shape: (5, 2)
 <section id="a.-the-over-expression" class="level3">
 <h3 class="anchored" data-anchor-id="a.-the-over-expression">7a. The <code>over()</code> Expression</h3>
 <p>In pandas, adding a per-group statistic back to the original rows requires <code>groupby().transform()</code>. In Polars, <code>pl.col("x").mean().over("group")</code> does the same thing inside a single <code>with_columns()</code> call. It computes the aggregation per group and broadcasts the result back to every row, aligned to the original index automatically.</p>
-<div id="64" class="cell" data-execution_count="21">
+<div id="65" class="cell" data-execution_count="21">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Add the per-program mean and std to every student row, in one expression</span></span>
 <span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> df.with_columns(</span>
 <span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>    program_mean<span class="op">=</span>pl.col(<span class="st">"average_marks"</span>).mean().over(<span class="st">"program"</span>),</span>
@@ -1987,7 +2032,7 @@ shape: (5, 2)
 <div style="background:#EAF3FA;border-left:5px solid #0369A1;padding:14px 18px;border-radius:6px;margin:16px 0">
 <p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-info-circle-fill"></i> Key Concept: <code>over()</code> computes group stats without reducing rows</span><br><br> <code>group_by().agg()</code> produces one row per group: the result has as many rows as there are unique group values. <code>.over(“group”)</code> inside <code>with_columns()</code> keeps all original rows and attaches the group stat to each one. This is the right tool for feature engineering: every student in the <code>“Engineering”</code> program gets the engineering mean attached to their row, ready for modelling without a join.</p>
 </div>
-<div id="66" class="cell" data-execution_count="22">
+<div id="67" class="cell" data-execution_count="22">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Rolling mean per school using over() -- group-aware rolling window</span></span>
 <span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> polars <span class="im">as</span> pl</span>
 <span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -2087,7 +2132,7 @@ shape: (5, 2)
 )
 df_z.sort("gender_zscore", descending=True).select(["student_id", "gender", "average_marks", "gender_zscore"]).head(6)</pre>
 </div>
-<div id="68" class="cell" data-execution_count="23">
+<div id="69" class="cell" data-execution_count="23">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: per-gender z-score using over()</span></span>
 <span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
@@ -2096,7 +2141,7 @@ df_z.sort("gender_zscore", descending=True).select(["student_id", "gender", "ave
 <h3 class="anchored" data-anchor-id="b.-streaming-processing-files-larger-than-memory">7b. Streaming: Processing Files Larger Than Memory</h3>
 <p><code>pl.scan_csv()</code> and <code>pl.scan_parquet()</code> read a file lazily: no data loads until <code>.collect()</code> is called. Combined with Polars’ streaming engine, filters and projections execute in chunks, so the working memory never exceeds what the query actually needs, even if the source file is larger than RAM.</p>
 <p>The API is identical to eager reads; the difference is <code>scan_</code> instead of <code>read_</code>.</p>
-<div id="70" class="cell" data-execution_count="24">
+<div id="71" class="cell" data-execution_count="24">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># scan_csv: no data loads here, only a query plan is built</span></span>
 <span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>lazy_scan <span class="op">=</span> (</span>
 <span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>    pl.scan_csv(<span class="st">"data/university_analytics.csv"</span>)</span>
@@ -2226,7 +2271,7 @@ regional_summary = merged.group_by("region").agg(
     pl.col("average_marks").mean().alias("mean_marks")
 ).sort("region")</pre>
 </div>
-<div id="75" class="cell" data-execution_count="25">
+<div id="76" class="cell" data-execution_count="25">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: reproduce top schools, risk report, and regional summary in Polars</span></span>
 <span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
@@ -2773,13 +2818,15 @@ regional_summary = merged.group_by("region").agg(
 <footer class="footer">
   <div class="nav-footer">
     <div class="nav-footer-left">
-<p>© 2025 <a href="https://github.com/sambaiga">Anthony Faustine</a> · Apache 2.0 License</p>
+<p><span class="faux-block">© 2025–2026 <a href="https://sambaiga.github.io/">Anthony Faustine</a></span> <span class="faux-block">Code licensed under <a href="https://www.apache.org/licenses/LICENSE-2.0">Apache 2.0</a></span></p>
 </div>   
     <div class="nav-footer-center">
-      &nbsp;
-    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.dev/sambaiga/ds-mlops-path/blob/main/tutorials/01-python-basics/11-polars.ipynb" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/sambaiga/ds-mlops-path/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li><li><a href="https://github.com/sambaiga/ds-mlops-path/blob/main/tutorials/01-python-basics/11-polars.ipynb" class="toc-action"><i class="bi empty"></i>View source</a></li></ul></div></div>
+<div class="footer-social">
+<p><a href="mailto:sambaiga@gmail.com" title="Email"><i class="bi bi-envelope-at-fill"></i></a> <a href="https://github.com/sambaiga" title="GitHub"><i class="bi bi-github"></i></a> <a href="https://www.linkedin.com/in/sambaiga" title="LinkedIn"><i class="bi bi-linkedin"></i></a></p>
+</div>
+<div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.dev/sambaiga/ds-mlops-path/blob/main/tutorials/01-python-basics/11-polars.ipynb" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/sambaiga/ds-mlops-path/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li><li><a href="https://github.com/sambaiga/ds-mlops-path/blob/main/tutorials/01-python-basics/11-polars.ipynb" class="toc-action"><i class="bi empty"></i>View source</a></li></ul></div></div>
     <div class="nav-footer-right">
-<p>Built with <a href="https://quarto.org">Quarto</a> · <a href="https://github.com/sambaiga/ds-mlops-path">Source on GitHub</a></p>
+<p><span class="faux-block">Made with <a href="https://quarto.org">Quarto</a></span> <span class="faux-block"><a href="https://github.com/sambaiga/ds-mlops-path"><i class="bi bi-github"></i> View source</a></span></p>
 </div>
   </div>
 </footer>

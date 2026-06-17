@@ -79,7 +79,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../../site_libs/quarto-html/quarto-syntax-highlighting-de63f62b328812d8e578a4d74e282472.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-369035fd49b832c5f4f2d78fcf1b6dcb.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-212e973001e6594fb07bce043cc2f62c.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -108,6 +108,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   }
 }</script>
 <style>html{ scroll-behavior: smooth; }</style>
+<script src="../../site_libs/quarto-diagram/mermaid.min.js"></script>
+<script src="../../site_libs/quarto-diagram/mermaid-init.js"></script>
+<link href="../../site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
 
 
 </head>
@@ -129,6 +132,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </button>
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="mailto:sambaiga@gmail.com"> <i class="bi bi-envelope-at" role="img" aria-label="Email Anthony Faustine">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://www.linkedin.com/in/sambaiga"> <i class="bi bi-linkedin" role="img" aria-label="LinkedIn">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
   <li class="nav-item compact">
     <a class="nav-link" href="https://github.com/sambaiga/ds-mlops-path"> <i class="bi bi-github" role="img" aria-label="View source on GitHub">
 </i> 
@@ -423,6 +436,28 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 class="anchored" data-anchor-id="why-ds-code-needs-tests">1. Why DS Code Needs Tests</h2>
 <p>A normalization function applied after the train/test split instead of before. A <code>fillna(0)</code> that should have been <code>fillna(df["score"].mean())</code>. A boolean column that silently became an integer. These bugs do not raise exceptions; they produce wrong outputs quietly.</p>
 <p>In DS, silent bugs are the hard ones. A test suite converts “I think this is right” into “this is verifiably correct, and stays correct when the code changes.”</p>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">flowchart LR
+    A["pytest discovers\ntest_*.py files"] --&gt; B["run @pytest.fixture\nsetup phase"]
+    B --&gt; C["execute test body\nassert statements"]
+    C --&gt; D{assert passes?}
+    D --&gt;|yes| E["PASSED"]
+    D --&gt;|no| F["FAILED\nfull traceback"]
+    E &amp; F --&gt; G["teardown\n(yield fixtures)"]
+    G --&gt; H["next test"]
+
+    style E fill:#EBF5F0,stroke:#059669,color:#065F46
+    style F fill:#FEF2F2,stroke:#DC2626,color:#991B1B
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
 <p>Here is the simplest possible test for <code>compute_grade</code>:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># tests/test_core.py</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> grade_predictor.core <span class="im">import</span> compute_grade</span>
@@ -600,6 +635,29 @@ def test_add_average_marks_shape(sample_df):
 </section>
 <section id="organizing-a-ds-test-suite" class="level2">
 <h2 class="anchored" data-anchor-id="organizing-a-ds-test-suite">7. Organizing a DS Test Suite</h2>
+<p>The standard structure for a DS project follows the test pyramid: many fast unit tests at the base, fewer integration tests in the middle, and a small number of end-to-end tests at the top.</p>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">flowchart TD
+    E2E["End-to-End\nfull pipeline: CSV in, report out\nfew, slow, run in CI only"]
+    INT["Integration\nmodule boundaries: pipeline + io\nsome, seconds, run pre-push"]
+    UNIT["Unit\nsingle functions: compute_grade, flag_at_risk\nmany, milliseconds, run on every save"]
+
+    UNIT --&gt;|"build confidence"| INT
+    INT --&gt;|"build confidence"| E2E
+
+    style E2E fill:#FEF2F2,stroke:#DC2626,color:#991B1B
+    style INT fill:#EAF3FA,stroke:#0369A1,color:#0C4A6E
+    style UNIT fill:#EBF5F0,stroke:#059669,color:#065F46
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
 <pre class="text"><code>tests/
 ├── conftest.py            # shared fixtures: sample_df, university_df
 ├── unit/
@@ -1213,13 +1271,15 @@ Coverage configured in <code>pyproject.toml</code> with <code>–cov-fail-under=
 <footer class="footer">
   <div class="nav-footer">
     <div class="nav-footer-left">
-<p>© 2025 <a href="https://github.com/sambaiga">Anthony Faustine</a> · Apache 2.0 License</p>
+<p><span class="faux-block">© 2025–2026 <a href="https://sambaiga.github.io/">Anthony Faustine</a></span> <span class="faux-block">Code licensed under <a href="https://www.apache.org/licenses/LICENSE-2.0">Apache 2.0</a></span></p>
 </div>   
     <div class="nav-footer-center">
-      &nbsp;
-    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/sambaiga/ds-mlops-path/edit/main/tutorials/02-dev-tools/05-pytest-testing.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/sambaiga/ds-mlops-path/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li><li><a href="https://github.com/sambaiga/ds-mlops-path/blob/main/tutorials/02-dev-tools/05-pytest-testing.qmd" class="toc-action"><i class="bi empty"></i>View source</a></li></ul></div></div>
+<div class="footer-social">
+<p><a href="mailto:sambaiga@gmail.com" title="Email"><i class="bi bi-envelope-at-fill"></i></a> <a href="https://github.com/sambaiga" title="GitHub"><i class="bi bi-github"></i></a> <a href="https://www.linkedin.com/in/sambaiga" title="LinkedIn"><i class="bi bi-linkedin"></i></a></p>
+</div>
+<div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/sambaiga/ds-mlops-path/edit/main/tutorials/02-dev-tools/05-pytest-testing.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/sambaiga/ds-mlops-path/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li><li><a href="https://github.com/sambaiga/ds-mlops-path/blob/main/tutorials/02-dev-tools/05-pytest-testing.qmd" class="toc-action"><i class="bi empty"></i>View source</a></li></ul></div></div>
     <div class="nav-footer-right">
-<p>Built with <a href="https://quarto.org">Quarto</a> · <a href="https://github.com/sambaiga/ds-mlops-path">Source on GitHub</a></p>
+<p><span class="faux-block">Made with <a href="https://quarto.org">Quarto</a></span> <span class="faux-block"><a href="https://github.com/sambaiga/ds-mlops-path"><i class="bi bi-github"></i> View source</a></span></p>
 </div>
   </div>
 </footer>
