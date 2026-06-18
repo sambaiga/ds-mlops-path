@@ -373,7 +373,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
    
   <ul>
   <li><a href="#before-you-begin" id="toc-before-you-begin" class="nav-link active" data-scroll-target="#before-you-begin">Before you begin</a></li>
-  <li><a href="#learning-objectives" id="toc-learning-objectives" class="nav-link" data-scroll-target="#learning-objectives">Learning Objectives</a></li>
   <li><a href="#two-different-jobs" id="toc-two-different-jobs" class="nav-link" data-scroll-target="#two-different-jobs">1. Two Different Jobs</a></li>
   <li><a href="#running-ruff-check" id="toc-running-ruff-check" class="nav-link" data-scroll-target="#running-ruff-check">2. Running <code>ruff check</code></a></li>
   <li><a href="#running-ruff-format" id="toc-running-ruff-format" class="nav-link" data-scroll-target="#running-ruff-format">3. Running <code>ruff format</code></a></li>
@@ -382,8 +381,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#docstrings-style-content-and-enforcement" id="toc-docstrings-style-content-and-enforcement" class="nav-link" data-scroll-target="#docstrings-style-content-and-enforcement">6. Docstrings: Style, Content, and Enforcement</a></li>
   <li><a href="#noqa-and-when-to-use-it" id="toc-noqa-and-when-to-use-it" class="nav-link" data-scroll-target="#noqa-and-when-to-use-it">7. <code># noqa</code> and When to Use It</a></li>
   <li><a href="#capstone---apply-ruff-to-grade-predictor" id="toc-capstone---apply-ruff-to-grade-predictor" class="nav-link" data-scroll-target="#capstone---apply-ruff-to-grade-predictor">Capstone - Apply ruff to grade-predictor</a></li>
-  <li><a href="#further-reading" id="toc-further-reading" class="nav-link" data-scroll-target="#further-reading">Further Reading</a></li>
-  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary">Summary</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/sambaiga/ds-mlops-path/edit/main/tutorials/02-dev-tools/02-code-quality-ruff.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/sambaiga/ds-mlops-path/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li><li><a href="https://github.com/sambaiga/ds-mlops-path/blob/main/tutorials/02-dev-tools/02-code-quality-ruff.qmd" class="toc-action"><i class="bi empty"></i>View source</a></li></ul></div></nav>
     </div>
@@ -420,12 +417,74 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="before-you-begin" class="level2">
 <h2 class="anchored" data-anchor-id="before-you-begin">Before you begin</h2>
 <p>This chapter assumes you have completed <a href="../../tutorials/02-dev-tools/01-uv-project-setup.html">Part 13: Project Setup with uv</a>. The <code>grade-predictor</code> project you built there is the codebase ruff will run on. If you are starting here, create the project with <code>uv init grade-predictor --package</code> and add <code>pandas&gt;=2.1</code> as a dependency before continuing.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Topics covered
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Topic</th>
+<th>Why it matters</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Linting vs formatting</strong></td>
+<td>Two separate concerns: catching bugs vs enforcing style</td>
+</tr>
+<tr class="even">
+<td><strong><code>ruff check</code></strong></td>
+<td>Detects 700+ code patterns 100x faster than flake8</td>
+</tr>
+<tr class="odd">
+<td><strong><code>ruff format</code></strong></td>
+<td>Opinionated formatter compatible with Black</td>
+</tr>
+<tr class="even">
+<td><strong><code>pyproject.toml</code> configuration</strong></td>
+<td>Rule selection and per-file ignores without a separate config file</td>
+</tr>
+<tr class="odd">
+<td><strong>Noqa comments</strong></td>
+<td>Suppress a specific rule on one line without disabling it globally</td>
+</tr>
+<tr class="even">
+<td><strong>CI and pre-commit integration</strong></td>
+<td>Fail the build on lint errors; run on every commit automatically</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
 <blockquote class="blockquote">
 <p>Callout markers used throughout this chapter are explained on the <a href="../../index.html#callout-guide">book cover page</a>.</p>
 </blockquote>
-</section>
-<section id="learning-objectives" class="level2">
-<h2 class="anchored" data-anchor-id="learning-objectives">Learning Objectives</h2>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Learning Objectives
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
 <p>By the end of Part 14 you will be able to:</p>
 <table class="caption-top table">
 <colgroup>
@@ -478,6 +537,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </tr>
 </tbody>
 </table>
+</div>
+</div>
+</div>
 </section>
 <section id="two-different-jobs" class="level2">
 <h2 class="anchored" data-anchor-id="two-different-jobs">1. Two Different Jobs</h2>
@@ -786,9 +848,18 @@ Commit the clean state: <code>git commit -m “style: apply ruff to grade-predic
 </li>
 </ol>
 </div>
-</section>
-<section id="further-reading" class="level2">
-<h2 class="anchored" data-anchor-id="further-reading">Further Reading</h2>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Further Reading
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -819,9 +890,21 @@ Commit the clean state: <code>git commit -m “style: apply ruff to grade-predic
 </tr>
 </tbody>
 </table>
-</section>
-<section id="summary" class="level2">
-<h2 class="anchored" data-anchor-id="summary">Summary</h2>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Summary
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
 <table class="caption-top table">
 <colgroup>
 <col style="width: 50%">
@@ -872,6 +955,9 @@ Commit the clean state: <code>git commit -m “style: apply ruff to grade-predic
 </tr>
 </tbody>
 </table>
+</div>
+</div>
+</div>
 <p><strong>Next:</strong> <a href="../../tutorials/02-dev-tools/03-type-annotations.html">Part 15: Type Annotations</a> adds static type checking on top of the clean codebase you have here.</p>
 
 

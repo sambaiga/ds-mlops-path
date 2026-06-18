@@ -373,7 +373,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
    
   <ul>
   <li><a href="#before-you-begin" id="toc-before-you-begin" class="nav-link active" data-scroll-target="#before-you-begin">Before you begin</a></li>
-  <li><a href="#learning-objectives" id="toc-learning-objectives" class="nav-link" data-scroll-target="#learning-objectives">Learning Objectives</a></li>
   <li><a href="#what-is-uv-and-why-use-it" id="toc-what-is-uv-and-why-use-it" class="nav-link" data-scroll-target="#what-is-uv-and-why-use-it">0. What is uv and Why Use It</a>
   <ul class="collapse">
   <li><a href="#how-uv-compares-to-the-alternatives" id="toc-how-uv-compares-to-the-alternatives" class="nav-link" data-scroll-target="#how-uv-compares-to-the-alternatives">How uv compares to the alternatives</a></li>
@@ -387,8 +386,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#secret-management-with-.env" id="toc-secret-management-with-.env" class="nav-link" data-scroll-target="#secret-management-with-.env">6. Secret Management with <code>.env</code></a></li>
   <li><a href="#uv-run-the-universal-entry-point" id="toc-uv-run-the-universal-entry-point" class="nav-link" data-scroll-target="#uv-run-the-universal-entry-point">7. <code>uv run</code>: The Universal Entry Point</a></li>
   <li><a href="#capstone---build-grade-predictor-from-scratch" id="toc-capstone---build-grade-predictor-from-scratch" class="nav-link" data-scroll-target="#capstone---build-grade-predictor-from-scratch">Capstone - Build <code>grade-predictor</code> from Scratch</a></li>
-  <li><a href="#further-reading" id="toc-further-reading" class="nav-link" data-scroll-target="#further-reading">Further Reading</a></li>
-  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary">Summary</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/sambaiga/ds-mlops-path/edit/main/tutorials/02-dev-tools/01-uv-project-setup.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/sambaiga/ds-mlops-path/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li><li><a href="https://github.com/sambaiga/ds-mlops-path/blob/main/tutorials/02-dev-tools/01-uv-project-setup.qmd" class="toc-action"><i class="bi empty"></i>View source</a></li></ul></div></nav>
     </div>
@@ -426,12 +423,74 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 class="anchored" data-anchor-id="before-you-begin">Before you begin</h2>
 <p>This chapter assumes you have completed Parts 1 and 2. No prior experience with virtual environments is required. If you have used <code>pip</code> and <code>venv</code> before, every concept here maps directly onto what you already know.</p>
 <p>You will build a project called <code>grade-predictor</code>, a small Python package that computes and analyses student grades from <code>university_analytics.csv</code>. This project thread continues through all six Dev Tools chapters, giving every tool a real codebase to act on.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Topics covered
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Topic</th>
+<th>Why it matters</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>uv vs pip/venv/Poetry</strong></td>
+<td>Faster installs, built-in lockfiles, one tool for everything</td>
+</tr>
+<tr class="even">
+<td><strong><code>pyproject.toml</code></strong></td>
+<td>The single source of truth for dependencies and project metadata</td>
+</tr>
+<tr class="odd">
+<td><strong><code>uv init</code> and <code>uv add</code></strong></td>
+<td>Create and extend projects without manually editing TOML</td>
+</tr>
+<tr class="even">
+<td><strong>Lockfile (<code>uv.lock</code>)</strong></td>
+<td>Pins every transitive dependency for reproducible environments</td>
+</tr>
+<tr class="odd">
+<td><strong>Extras and dev dependencies</strong></td>
+<td>Separate production, test, and development dependencies cleanly</td>
+</tr>
+<tr class="even">
+<td><strong><code>uv run</code></strong></td>
+<td>Execute scripts in the project environment without activating it</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
 <blockquote class="blockquote">
 <p>Callout markers used throughout this notebook are explained on the <a href="../../index.html#callout-guide">book cover page</a>.</p>
 </blockquote>
-</section>
-<section id="learning-objectives" class="level2">
-<h2 class="anchored" data-anchor-id="learning-objectives">Learning Objectives</h2>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Learning Objectives
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
 <p>By the end of Part 13 you will be able to:</p>
 <table class="caption-top table">
 <colgroup>
@@ -489,6 +548,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </tr>
 </tbody>
 </table>
+</div>
+</div>
+</div>
 </section>
 <section id="what-is-uv-and-why-use-it" class="level2">
 <h2 class="anchored" data-anchor-id="what-is-uv-and-why-use-it">0. What is uv and Why Use It</h2>
@@ -836,9 +898,18 @@ Create <code>.env</code> with <code>REPORT_TITLE=Grade Predictor</code> and add 
 </li>
 </ol>
 </div>
-</section>
-<section id="further-reading" class="level2">
-<h2 class="anchored" data-anchor-id="further-reading">Further Reading</h2>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Further Reading
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -869,9 +940,21 @@ Create <code>.env</code> with <code>REPORT_TITLE=Grade Predictor</code> and add 
 </tr>
 </tbody>
 </table>
-</section>
-<section id="summary" class="level2">
-<h2 class="anchored" data-anchor-id="summary">Summary</h2>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Summary
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
 <table class="caption-top table">
 <colgroup>
 <col style="width: 50%">
@@ -910,6 +993,9 @@ Create <code>.env</code> with <code>REPORT_TITLE=Grade Predictor</code> and add 
 </tr>
 </tbody>
 </table>
+</div>
+</div>
+</div>
 <p><strong>Next:</strong> <a href="../../tutorials/02-dev-tools/02-code-quality-ruff.html">Part 14: Code Quality with ruff</a> runs <code>ruff check</code> and <code>ruff format</code> on the <code>grade-predictor</code> codebase you just created.</p>
 
 
