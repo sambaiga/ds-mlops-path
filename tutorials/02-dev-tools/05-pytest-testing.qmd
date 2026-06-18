@@ -15,22 +15,73 @@ This chapter assumes you have completed [Part 13](01-uv-project-setup.qmd) throu
 
 The testing patterns here apply to any DS function or data pipeline step, not just `grade-predictor`. If you have written tests before, focus on sections 4 and 5: they cover DataFrame testing and schema validation, which are rarely covered in standard pytest tutorials.
 
+::: {.callout-note collapse="true" icon=false}
+## Topics covered
+
+| Topic | Why it matters |
+|---|---|
+| **What pytest is** | A test runner that replaces unittest with far less boilerplate |
+| **Test discovery and structure** | pytest finds and runs tests automatically without registration |
+| **`@pytest.mark.parametrize`** | One test body, many inputs: all boundary cases in a table |
+| **Fixtures and `conftest.py`** | Reusable, scoped test data shared across all test files |
+| **DataFrame testing** | `assert_frame_equal`, shape checks, dtype and schema assertions |
+| **Coverage measurement** | Which code paths run; enforce a minimum with `--cov-fail-under` |
+| **Mocking I/O** | Replace file reads and API calls with controlled substitutes |
+| **Modern built-in fixtures** | `tmp_path`, `monkeypatch`, `capfd`: no import, no extra package |
+:::
+
 > Callout markers used throughout this chapter are explained on the [book cover page](../../index.qmd#callout-guide).
 
+::: {.callout-note collapse="true" icon=false}
 ## Learning Objectives
 
 By the end of Part 17 you will be able to:
 
 | # | Skill | Covered in |
 |---|---|---|
-| 1 | Write and run pytest tests for DS functions | Sec. 1 |
+| 0 | Explain what pytest is, how it compares to unittest, and install it | Sec. 0 |
+| 1 | Write and run pytest tests for DS functions using essential CLI flags | Sec. 1 |
 | 2 | Use `@pytest.mark.parametrize` to test multiple inputs without duplicating code | Sec. 2 |
 | 3 | Write fixtures that provide reusable sample DataFrames | Sec. 3 |
-| 4 | Test pandas transforms with `assert_frame_equal` and schema assertions | Sec. 4 |
+| 4 | Test pandas transforms with `assert_frame_equal`, `pytest.approx`, and schema assertions | Sec. 4 |
 | 5 | Test exception handling with `pytest.raises` | Sec. 5 |
 | 6 | Measure test coverage and set a minimum threshold | Sec. 6 |
 | 7 | Organize a test suite for a DS project | Sec. 7 |
 | 8 | Mock external dependencies (APIs, file reads) with `unittest.mock.patch` | Sec. 8 |
+| 9 | Use built-in pytest fixtures: `tmp_path`, `monkeypatch`, `capfd` | Sec. 9 |
+:::
+
+## 0. What is pytest and Why Use It
+
+Python ships with a built-in test runner called `unittest`. It works, but it forces you to subclass `TestCase`, call `self.assertEqual(...)` instead of `assert`, and write substantial boilerplate before a single assertion runs. pytest is the community standard for a reason: it discovers tests automatically, uses plain `assert` statements, and provides richer output with no extra effort.
+
+```{mermaid}
+flowchart LR
+    A["unittest"] -->|"subclass TestCase\nself.assertEqual\nsetUp / tearDown"| B["works\nbut verbose"]
+    C["pytest"] -->|"plain assert\nautodiscovery\nrich output"| D["same tests\nhalf the code"]
+
+    style B fill:#FEF2F2,stroke:#DC2626,color:#991B1B
+    style D fill:#EBF5F0,stroke:#059669,color:#065F46
+```
+
+Install pytest and the two plugins you will use throughout this chapter:
+
+```bash
+uv add --dev pytest pytest-cov pytest-mock
+```
+
+`pytest-cov` measures which lines of code are exercised. `pytest-mock` wraps `unittest.mock.patch` as a fixture so mocking reads more cleanly.
+
+Verify the installation:
+
+```bash
+uv run pytest --version
+```
+
+<div class='ark-concept'>
+<span class='ark-concept-title'><i class="bi bi-info-circle-fill"></i> Key Concept: pytest discovers tests by naming convention</span><br><br>
+pytest collects any file matching <code>test_*.py</code> or <code>*_test.py</code>, and within those files any function starting with <code>test_</code>. No registration, no base class, no import of pytest is required in the test file itself. Name your files and functions correctly and pytest finds them automatically.
+</div>
 
 ## 1. Why DS Code Needs Tests
 
@@ -69,7 +120,21 @@ Run it:
 uv run pytest tests/ -v
 ```
 
-The `-v` flag shows each test name and its pass/fail status. Without it, pytest shows only a dot per passing test.
+The `-v` flag shows each test name and its pass/fail status. Without it, pytest shows only a dot per passing test. A handful of flags cover the vast majority of what you need day-to-day:
+
+| Flag | What it does |
+|---|---|
+| `-v` | Verbose: show each test name |
+| `-x` | Stop on first failure |
+| `-k "grade"` | Run only tests whose name contains "grade" |
+| `--tb=short` | Shorter traceback: location and assertion only, no full stack |
+| `-q` | Quiet: one character per test, good for large suites |
+| `--last-failed` | Re-run only the tests that failed in the previous run |
+
+```bash
+uv run pytest tests/ -x --tb=short   # stop on first failure with compact output
+uv run pytest tests/ -k "parametrize" # run tests matching a keyword
+```
 
 <div class='ark-concept'>
 <span class='ark-concept-title'><i class="bi bi-info-circle-fill"></i> Key Concept: A test is an executable specification</span><br><br>
@@ -208,7 +273,23 @@ def test_output_dtypes(sample_df):
     assert result["passed"].dtype == "bool"
 ```
 
-These three patterns together test the shape, the values, and the types. A transform that passes all three is well-specified.
+**Pattern 4: `pytest.approx` for scalar float comparisons**
+
+When testing a single computed value rather than a full DataFrame, use `pytest.approx` instead of `==`. It handles floating-point rounding automatically:
+
+```python
+import pytest
+from grade_predictor.core import compute_grade
+
+def test_compute_grade_weighted():
+    # 0.30*80 + 0.45*85 + 0.25*90 = 84.25
+    result = compute_grade(midterm=80.0, final=85.0, project=90.0)
+    assert result == pytest.approx(84.25, rel=1e-4)
+```
+
+`pytest.approx` also works on lists and dicts of floats: `assert [0.1 + 0.2, 0.3] == pytest.approx([0.3, 0.3])`.
+
+These four patterns together test the shape, the values, the types, and numeric precision. A transform that passes all four is well-specified.
 
 <div class='ark-mistake'>
 <span class='ark-mistake-title'><i class="bi bi-bug-fill"></i> Common Mistake: <code>assert df1.equals(df2)</code> for floats</span><br><br>
@@ -416,6 +497,66 @@ def test_load_grades_mocked():
     assert len(result) == 2</pre>
 </div>
 
+## 9. Modern Built-in Fixtures
+
+pytest ships three fixtures that cover a large class of I/O and environment problems without any extra package. They require no import in your test file.
+
+**`tmp_path` — isolated temporary directories**
+
+Any test that writes to disk should write to a temporary directory that disappears after the test. `tmp_path` provides a `pathlib.Path` object pointing to a unique directory created for each test:
+
+```python
+def test_pipeline_writes_output(tmp_path):
+    from grade_predictor.pipeline import run_pipeline
+    output_file = tmp_path / "results.csv"
+    run_pipeline(output_path=output_file)
+    assert output_file.exists()
+    assert output_file.stat().st_size > 0
+```
+
+No cleanup needed: pytest removes the directory after the test completes.
+
+**`monkeypatch` — patching environment variables and objects**
+
+`monkeypatch` is pytest's built-in alternative to `unittest.mock.patch` for patching attributes, environment variables, and dictionary entries. Changes are automatically undone after each test:
+
+```python
+def test_pipeline_config_from_env(monkeypatch):
+    monkeypatch.setenv("MODEL_THRESHOLD", "0.75")
+    monkeypatch.setenv("DATA_PATH", "tests/fixtures/sample.csv")
+    from grade_predictor.config import PipelineConfig
+    cfg = PipelineConfig()
+    assert cfg.model_threshold == 0.75
+```
+
+Use `monkeypatch.setattr` to patch any object attribute: `monkeypatch.setattr(module, "function_name", mock_fn)`.
+
+**`capfd` — capturing stdout and stderr**
+
+`capfd` captures file-descriptor-level output, including output from C extensions and subprocesses:
+
+```python
+def test_report_prints_summary(capfd):
+    from grade_predictor.report import print_summary
+    print_summary(pass_rate=0.82, total=120)
+    out, err = capfd.readouterr()
+    assert "82%" in out
+    assert err == ""
+```
+
+<div class='ark-tip'>
+<span class='ark-tip-title'><i class="bi bi-lightbulb-fill"></i> Pro Tip: Run tests in parallel with pytest-xdist</span><br><br>
+Install <code>pytest-xdist</code> and run with <code>-n auto</code> to distribute tests across all CPU cores. A suite that takes 45 seconds single-threaded often runs in 12 seconds with <code>-n auto</code>. The only requirement is that tests must not share mutable global state.
+<br><br>
+<code>uv add --dev pytest-xdist</code><br>
+<code>uv run pytest tests/ -n auto</code>
+</div>
+
+<div class='ark-activity'>
+<span class='ark-activity-title'><i class="bi bi-puzzle-fill"></i> Activity 6 - Built-in Fixtures</span><br><br>
+<b>Goal:</b> Write three tests, one per fixture. (1) Use <code>tmp_path</code> to write a small CSV with <code>pd.DataFrame.to_csv</code> and assert the file exists. (2) Use <code>monkeypatch.setenv</code> to set <code>MODEL_THRESHOLD=0.9</code> and assert your <code>PipelineConfig</code> reads it correctly. (3) Use <code>capfd</code> to capture the output of a function that prints a summary line and assert the expected string appears in <code>out</code>.
+</div>
+
 ## Capstone - A Working Test Suite
 
 Write a complete test suite for `grade-predictor`.
@@ -433,6 +574,7 @@ Write a test suite that achieves 80% coverage. It must include:
 <pre>uv run pytest tests/ --cov=grade_predictor --cov-report=term-missing</pre>
 </div>
 
+::: {.callout-note collapse="true" icon=false}
 ## Further Reading
 
 | Resource | Why it matters |
@@ -442,7 +584,9 @@ Write a test suite that achieves 80% coverage. It must include:
 | [pandas testing utilities](https://pandas.pydata.org/docs/reference/testing.html) | `assert_frame_equal` and `assert_series_equal` reference |
 | [pytest-cov documentation](https://pytest-cov.readthedocs.io/) | Coverage measurement and HTML report generation |
 | [pandera documentation](https://pandera.readthedocs.io/) | Schema-level DataFrame validation: the next step after dtype assertions |
+:::
 
+::: {.callout-note collapse="true" icon=false}
 ## Summary
 
 | Concept | Key rule |
@@ -455,5 +599,6 @@ Write a test suite that achieves 80% coverage. It must include:
 | `patch("module.name")` | Patch at the import location, not the definition location. |
 | Mock only I/O boundaries | Network, file reads, databases. Real logic runs for real. |
 | `pytest-mock` mocker fixture | Cleaner syntax for `patch` as a fixture; install as a test dependency. |
+:::
 
 **Next:** [Part 18: Automation with pre-commit](06-pre-commit-automation.qmd) automates every check from Parts 14-17 so they run without thinking.
