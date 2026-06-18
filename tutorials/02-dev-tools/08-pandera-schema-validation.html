@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Part 20: DataFrame Schema Validation with Pandera – From Data to Impact</title>
+<title>Data Schema Validation with Pandera – From Data to Impact</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -68,6 +68,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../../">
+<link href="../../tutorials/02-dev-tools/09-logging.html" rel="next">
 <link href="../../tutorials/02-dev-tools/07-pydantic-validation.html" rel="prev">
 <script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
@@ -159,7 +160,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
         <a class="flex-grow-1 no-decor" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
-          <h1 class="quarto-secondary-nav-title"><span class="chapter-title">Part 20: DataFrame Schema Validation with Pandera</span></h1>
+          <h1 class="quarto-secondary-nav-title"><span class="chapter-title">Data Schema Validation with Pandera</span></h1>
         </a>     
     </div>
   </nav>
@@ -323,7 +324,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../tutorials/02-dev-tools/08-pandera-schema-validation.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">Part 20: DataFrame Schema Validation with Pandera</span></a>
+  <a href="../../tutorials/02-dev-tools/08-pandera-schema-validation.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">Data Schema Validation with Pandera</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/02-dev-tools/09-logging.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 21: Logging for ML Projects</span></a>
   </div>
 </li>
       </ul>
@@ -378,6 +384,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#validation-in-a-pipeline" id="toc-validation-in-a-pipeline" class="nav-link" data-scroll-target="#validation-in-a-pipeline">5. Validation in a Pipeline</a></li>
   <li><a href="#schemas-as-data-contracts-in-tests" id="toc-schemas-as-data-contracts-in-tests" class="nav-link" data-scroll-target="#schemas-as-data-contracts-in-tests">6. Schemas as Data Contracts in Tests</a></li>
   <li><a href="#capstone-data-contract-for-grade-predictor" id="toc-capstone-data-contract-for-grade-predictor" class="nav-link" data-scroll-target="#capstone-data-contract-for-grade-predictor">Capstone: Data Contract for grade-predictor</a></li>
+  <li><a href="#why-pandera-comparing-schema-validation-tools" id="toc-why-pandera-comparing-schema-validation-tools" class="nav-link" data-scroll-target="#why-pandera-comparing-schema-validation-tools">7. Why Pandera? Comparing Schema Validation Tools</a></li>
   <li><a href="#further-reading" id="toc-further-reading" class="nav-link" data-scroll-target="#further-reading">Further Reading</a></li>
   <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary">Summary</a></li>
   </ul>
@@ -388,7 +395,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title d-none d-lg-block"><span class="chapter-title">Part 20: DataFrame Schema Validation with Pandera</span></h1>
+<h1 class="title d-none d-lg-block"><span class="chapter-title">Data Schema Validation with Pandera</span></h1>
 </div>
 
 
@@ -482,7 +489,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 class="anchored" data-anchor-id="pydantic-validated-the-row.-who-validates-the-table">0. Pydantic Validated the Row. Who Validates the Table?</h2>
 <p>You have a <code>StudentRecord</code> Pydantic model. It validates <code>midterm_score</code> is between 0 and 100, that <code>student_id</code> matches <code>S\d{4}</code>, and that <code>program</code> is a non-empty string. Pydantic runs when a <em>single record</em> enters the system.</p>
 <p>Now you load <code>university_analytics.csv</code> into a DataFrame. There are 2,400 rows. You could loop through them with <code>StudentRecord.model_validate</code>, but that tells you nothing about the <em>table</em>: whether <code>student_id</code> is unique across all rows, whether the distribution of <code>program</code> values matches what you expect, whether the proportion of missing values in <code>has_internet</code> is within an acceptable bound. A row validator answers “is this row correct?”. A schema validator answers “is this table correct?”.</p>
-<p><strong>Pandera</strong> (<a href="https://pandera.readthedocs.io/">pandera.readthedocs.io</a>) is a statistical data validation library for DataFrames. You define a schema — column types, constraints, uniqueness, allowed values, statistical properties — and Pandera checks the whole DataFrame against it in one call. It supports pandas and Polars, integrates with pytest, and can generate synthetic data for testing.</p>
+<p><strong>Pandera</strong> (<a href="https://pandera.readthedocs.io/">pandera.readthedocs.io</a>) is a statistical data validation library for DataFrames. You define a schema: column types, constraints, uniqueness, allowed values, statistical properties, and Pandera checks the whole DataFrame against it in one call. It supports pandas and Polars, integrates with pytest, and can generate synthetic data for testing.</p>
 <section id="install" class="level3">
 <h3 class="anchored" data-anchor-id="install">Install</h3>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> add pandera          <span class="co"># or: pip install pandera</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -553,7 +560,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </tbody>
 </table>
 <div style="background:#EAF3FA;border-left:5px solid #0369A1;padding:14px 18px;border-radius:6px;margin:16px 0">
-<p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-info-circle-fill"></i> Key Concept: Use both, not one</span><br><br> Pydantic and Pandera are not alternatives — they validate at different levels. A production pipeline uses Pydantic to validate records as they arrive (JSON from an API, rows from a queue) and Pandera to validate the assembled DataFrame before it enters a model or a write operation. Together they form a complete contract on the data.</p>
+<p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-info-circle-fill"></i> Key Concept: Use both, not one</span><br><br> Pydantic and Pandera are not alternatives; they validate at different levels. A production pipeline uses Pydantic to validate records as they arrive (JSON from an API, rows from a queue) and Pandera to validate the assembled DataFrame before it enters a model or a write operation. Together they form a complete contract on the data.</p>
 </div>
 </section>
 <section id="defining-a-dataframeschema" class="level2">
@@ -588,7 +595,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <pre><code>Schema created with 10 columns</code></pre>
 </div>
 </div>
-<p><code>coerce=True</code> tells Pandera to attempt type coercion before validation — <code>"78.5"</code> becomes <code>78.5</code> for a <code>float</code> column — mirroring Pydantic’s behaviour at the row level.</p>
+<p><code>coerce=True</code> tells Pandera to attempt type coercion before validation: <code>"78.5"</code> becomes <code>78.5</code> for a <code>float</code> column, mirroring Pydantic’s behaviour at the row level.</p>
 <p>Validate a DataFrame:</p>
 <div id="10" class="cell" data-execution_count="2">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Build a small valid sample</span></span>
@@ -721,7 +728,7 @@ def not_both_zero(cls, df: pd.DataFrame) -&gt; pd.Series:
 </section>
 <section id="validation-in-a-pipeline" class="level2">
 <h2 class="anchored" data-anchor-id="validation-in-a-pipeline">5. Validation in a Pipeline</h2>
-<p>In a pipeline, you want to validate without crashing on the first error — collect all failures and decide what to do with them:</p>
+<p>In a pipeline, you want to validate without crashing on the first error, collecting all failures and decide what to do with them:</p>
 <div id="21" class="cell" data-execution_count="6">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandera <span class="im">as</span> pa</span>
@@ -759,13 +766,13 @@ def not_both_zero(cls, df: pd.DataFrame) -&gt; pd.Series:
 <span id="cb12-34"><a href="#cb12-34" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> errors:</span>
 <span id="cb12-35"><a href="#cb12-35" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="st">"First error:"</span>, errors[<span class="dv">0</span>])</span>
 <span id="cb12-36"><a href="#cb12-36" aria-hidden="true" tabindex="-1"></a><span class="cf">except</span> <span class="pp">FileNotFoundError</span>:</span>
-<span id="cb12-37"><a href="#cb12-37" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"CSV not found in this context — run from repo root"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb12-37"><a href="#cb12-37" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"CSV not found in this context; run from repo root"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>CSV not found in this context — run from repo root</code></pre>
+<pre><code>CSV not found in this context; run from repo root</code></pre>
 </div>
 </div>
 <div style="background:#EAF3FA;border-left:5px solid #0369A1;padding:14px 18px;border-radius:6px;margin:16px 0">
-<p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-info-circle-fill"></i> Key Concept: lazy=True collects all errors; lazy=False stops on the first</span><br><br> <code>schema.validate(df, lazy=False)</code> (the default) raises a <code>SchemaError</code> on the first failure — fast and clear for development. <code>schema.validate(df, lazy=True)</code> collects every failure and raises a <code>SchemaErrors</code> (note the plural) at the end — better for production, where you want a full error report rather than a partial run.</p>
+<p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-info-circle-fill"></i> Key Concept: lazy=True collects all errors; lazy=False stops on the first</span><br><br> <code>schema.validate(df, lazy=False)</code> (the default) raises a <code>SchemaError</code> on the first failure: fast and clear for development. <code>schema.validate(df, lazy=True)</code> collects every failure and raises a <code>SchemaErrors</code> (note the plural) at the end, better for production, where you want a full error report rather than a partial run.</p>
 </div>
 <div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
 <p><span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 4 - Full Error Report</span><br><br> <b>Goal:</b> Introduce three invalid rows into <code>sample_df</code>: one with <code>midterm_score=150.0</code>, one with an invalid <code>program</code>, and one with a duplicate <code>student_id</code>. Call <code>StudentDataSchema.validate(bad_df, lazy=True)</code>. Catch the <code>SchemaErrors</code> exception and print the <code>failure_cases</code> DataFrame showing all three failures at once.</p>
@@ -883,6 +890,59 @@ Run <code>uv run pytest -v</code> and confirm all three pass
 </ol>
 </div>
 </section>
+<section id="why-pandera-comparing-schema-validation-tools" class="level2">
+<h2 class="anchored" data-anchor-id="why-pandera-comparing-schema-validation-tools">7. Why Pandera? Comparing Schema Validation Tools</h2>
+<p>Before Pandera became the community standard for DataFrame validation, several tools tackled the same problem in different ways. Understanding the landscape helps you choose the right tool for your context.</p>
+<div style="background:#EAF3FA;border-left:5px solid #0369A1;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-info-circle-fill"></i> Key Concept: Schema validation is not the same as data cleaning</span><br><br> Schema validation answers a yes/no question: does this DataFrame conform to the contract? It runs fast and fails loudly. Data cleaning transforms and repairs data. The two serve different purposes: validate at the pipeline boundary, clean before you get there.</p>
+</div>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Tool</th>
+<th>Best for</th>
+<th>Limitation</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Pandera</strong></td>
+<td>DataFrame contracts in Python pipelines</td>
+<td>pandas/polars-specific; not for arbitrary dicts</td>
+</tr>
+<tr class="even">
+<td><strong>Great Expectations</strong></td>
+<td>Enterprise data quality suites, HTML reports, data docs</td>
+<td>Heavy setup, complex configuration, overkill for most ML work</td>
+</tr>
+<tr class="odd">
+<td><strong>Pydantic</strong></td>
+<td>Row-level validation, API payloads, config models</td>
+<td>Not designed for tabular data; looping over rows is slow</td>
+</tr>
+<tr class="even">
+<td><strong>Frictionless Data</strong></td>
+<td>YAML-defined schemas, cross-language contracts</td>
+<td>Less Python-native; validation logic lives in config files</td>
+</tr>
+<tr class="odd">
+<td><strong>Cerberus / marshmallow</strong></td>
+<td>Dict and object validation</td>
+<td>No DataFrame support; designed for records not tables</td>
+</tr>
+</tbody>
+</table>
+<p>The practical split comes down to scope. Pydantic is the right choice when you are validating individual records at a system boundary: an API payload, a config file, a single row entering a pipeline. Pandera is the right choice when you are validating the structure and statistics of an entire DataFrame. They are complementary, not competing: Part 19 showed you Pydantic for the row, this notebook shows you Pandera for the table.</p>
+<p>Great Expectations is powerful but designed for data engineering teams who need data documentation, alerting, and audit trails across multiple data sources. For most ML projects, Pandera gives you 90% of the value with 10% of the setup.</p>
+<div style="background:#F5F3FF;border-left:5px solid #7C3AED;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#5B21B6;font-weight:bold"><i class="bi bi-lightbulb-fill"></i> Pro Tip: Use both Pydantic and Pandera in the same pipeline</span><br><br> Validate incoming JSON records with Pydantic as they arrive, then validate the assembled DataFrame with Pandera before it enters any model or transformation. The two checks run at different granularities and catch different classes of bugs: Pydantic catches a bad individual record, Pandera catches drift in the distribution across hundreds of records.</p>
+</div>
+</section>
 <section id="further-reading" class="level2">
 <h2 class="anchored" data-anchor-id="further-reading">Further Reading</h2>
 <table class="caption-top table">
@@ -972,7 +1032,7 @@ Run <code>uv run pytest -v</code> and confirm all three pass
 </tr>
 </tbody>
 </table>
-<p><strong>Next:</strong> Part 21 — Classical ML: Scikit-learn pipelines applied to the fully validated, typed <code>grade-predictor</code> dataset.</p>
+<p><strong>Next:</strong> Part 21: Classical ML: Scikit-learn pipelines applied to the fully validated, typed <code>grade-predictor</code> dataset.</p>
 
 
 </section>
@@ -1385,6 +1445,9 @@ Run <code>uv run pytest -v</code> and confirm all three pass
       </a>          
   </div>
   <div class="nav-page nav-page-next">
+      <a href="../../tutorials/02-dev-tools/09-logging.html" class="pagination-link" aria-label="Part 21: Logging for ML Projects">
+        <span class="nav-page-text"><span class="chapter-title">Part 21: Logging for ML Projects</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
   </div>
 </nav>
 </div> <!-- /content -->
