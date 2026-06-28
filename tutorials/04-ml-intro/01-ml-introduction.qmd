@@ -1,0 +1,152 @@
+---
+title: "Part 22: The AI Landscape"
+---
+
+[![View Source on GitHub](https://img.shields.io/badge/Source-GitHub-181717.svg?logo=github)](https://github.com/sambaiga/ds-mlops-path/blob/main/tutorials/04-ml-intro/01-ml-introduction.qmd)
+
+**DS-MLOps ML Landscape**
+
+**Python 3.12+ | Author: Anthony Faustine**
+
+## Before you begin
+
+This chapter assumes you have completed [Part 12: IDE Setup](../02-dev-tools/00-vscode-setup.qmd) through [Part 21: Logging](../02-dev-tools/09-logging.ipynb). You can write Python, structure a project with `uv`, version it with Git, test it with pytest, and validate data with Pydantic. Those skills are the foundation on which everything from this chapter onward is built.
+
+This chapter is conceptual. There is no code to run. The goal is to build the mental model you need before writing a single line of model code: why rule-based programming reaches its limits, and how the AI landscape is structured from the analytical tier through to the theoretical boundary of AGI.
+
+> Callout markers used throughout this chapter are explained on the [book cover page](../../index.qmd#callout-guide).
+
+::: {.callout-note collapse="true" icon=false}
+## Topics covered
+
+| Topic | Why it matters |
+|---|---|
+| **The limits of rules** | Understanding why pattern-based learning exists at all |
+| **The AI landscape** | Where ML, deep learning, and generative AI each sit in the hierarchy |
+:::
+
+::: {.callout-note collapse="true" icon=false}
+## Learning Objectives
+
+By the end of Part 22 you will be able to:
+
+| # | Skill | Covered in |
+|---|---|---|
+| 1 | Explain the difference between rule-based programming and machine learning, and give concrete examples of each | Sec. 0 |
+| 2 | Describe the three-tier AI capability framework and place ML, deep learning, generative AI, and AGI within it | Sec. 1 |
+:::
+
+## 0. The Problem That Motivates ML
+
+Before any formal definition, consider four problems you have almost certainly encountered.
+
+Every time you open Google Maps and ask for directions, it finds you the fastest route in seconds. The obvious approach to building that system is to write rules: avoid roads with heavy traffic, prefer motorways for long distances, take side streets when congestion is detected. But traffic is never that simple. An accident, a school run, a concert ending, a sudden downpour: the combinations of factors are endless and constantly shifting. Every rule you add has exceptions, and those exceptions have exceptions. A model trained on billions of journeys handles all of this without a single explicit rule, because it learned the patterns of how traffic behaves rather than trying to describe them.
+
+The pattern extends further. Netflix recommends films, and you would not expect to write rules for that: "if the user watched three action films and one drama, recommend this specific title." The space of possible watch histories and individual preferences is too large and too personal for any human to encode. Yet the recommendations work, and they improve the more you watch.
+
+Scale the problem further. Google Translate converts a sentence from Swahili to English in under a second, across 133 languages. No one wrote the grammar rules for every language pair. The patterns were learned from billions of translated documents.
+
+Now consider the most recent and visible example. Ask an AI writing assistant to draft a cover letter or explain a concept in plain language. Writing explicit rules for generating fluent, contextually appropriate text is impossible; the space of possible inputs alone is infinite. Yet modern AI assistants do it reliably, because they learned the structure of language from billions of examples of human writing, without a single grammar rule explicitly coded.
+
+All four problems share the same structure: the rules are either too numerous, too variable, or simply unknown until you examine the data. The same challenge appears in less obvious places. Consider detecting energy theft from smart meter data. Some customers bypass their meters or tamper with the measurement. A natural first attempt is to write rules: if consumption drops suddenly by more than 50%, flag the account; if recorded usage is significantly lower than the neighbourhood average for three consecutive months, flag it; if a meter reading changes pattern after a maintenance visit, flag it. You build the rules and test them. They catch some cases but miss many others. Legitimate consumption drops when a family goes on holiday. A household running fewer appliances in summer looks suspicious under your rules. You add exceptions, then exceptions to the exceptions. Every rule surfaces a new case it handles incorrectly. And as theft patterns change, your rules become outdated.
+
+This is the problem that machine learning was built to solve.
+
+In traditional programming, you provide the rules and the computer applies them to data to produce output. In machine learning, you reverse that flow: you provide data and examples of the desired output, and the computer finds the rules. When the rules are too complex to write by hand, this reversal is the right approach.
+
+<div class='ark-concept'>
+<span class='ark-concept-title'><i class="bi bi-info-circle-fill"></i> Key Concept: When rules fail, patterns can be learned</span><br><br>
+Traditional programming: you write the rules, the computer applies them.<br>
+Machine learning: you provide labeled examples, the computer learns the rules.<br><br>
+When the rules are too complex, too numerous, or simply unknown, switching from writing rules to learning from data is the right move. This is not a marginal improvement. It is a qualitatively different approach to building intelligent systems.
+</div>
+
+## 1. The AI Landscape
+
+::: {.callout-note collapse="true" icon=false}
+## Acronyms used in this chapter
+
+| Acronym | Full term |
+|---|---|
+| AI | Artificial Intelligence |
+| ML | Machine Learning |
+| DL | Deep Learning |
+| GenAI | Generative AI |
+| LLM | Large Language Model |
+| AGI | Artificial General Intelligence |
+:::
+
+The four problems in Section 0 share more than a structure. They are all applications of Artificial Intelligence (AI), and each sits at a different point on the same spectrum. Google Maps predicts travel times. The recommendation engine predicts what you will enjoy. The translation system predicts word sequences across 133 languages. The writing assistant goes further and generates something new from what it learned. To understand what separates them and when each approach applies, you need precise definitions.
+
+Artificial Intelligence, Machine Learning (ML), Deep Learning (DL), and Generative AI (GenAI) are used interchangeably in journalism and product marketing. That conflation leads to poor decisions in practice: reaching for a large language model when a logistic regression would solve the problem in an afternoon, or dismissing AI entirely because "we don't have enough data for ChatGPT." Each term describes something distinct, and the distinctions matter when you are choosing a tool. The diagram below organises AI into three tiers by what each tier is capable of.
+
+![Strategic Classification of AI Capabilities by Problem Complexity. The framework maps AI capabilities to three tiers: Analytical and Predictive AI at the base, Optimization and Decision-Making AI in the middle, and AGI at the top as a theoretical construct. Capability increases with each tier.](figs/ai-capability-tiers.png){fig-alt="Three-tier AI capability diagram. Base tier: analytical and predictive AI. Middle tier: optimization and decision-making AI. Top tier: AGI, marked as theoretical."}
+
+**Analytical and predictive AI** is where most production systems live today, and the central technology is Machine Learning. An ML system learns from data to produce a useful output, rather than from explicit rules written by hand. That output takes many forms. Sometimes it is a prediction: a fraud score, a demand forecast, a disease diagnosis. Sometimes it is a discovered pattern: a cluster of customers who behave similarly, an anomaly in sensor readings that no rule would have caught. Sometimes it goes beyond analysis entirely and generates something new, as in the writing assistant from Section 0. What unifies these is the source of the intelligence: data, not rules.
+
+Within ML, Deep Learning extended what was possible. By stacking multiple layers of computation, DL models can learn highly complex patterns and non-linear relationships directly from massive amounts of raw data. A traditional ML model struggles when the signal is buried in pixels, audio waveforms, or raw text. A deep learning model finds it anyway, because each layer learns progressively more abstract structure from the layer before. This is why deep learning powers image recognition, speech transcription, and language translation at scale. It is responsible for most of the high-profile AI advances of the past decade.
+
+Generative AI (GenAI) is the most recent step in this progression. Where earlier ML systems detect patterns and return a label or a number, generative systems create new content. Built on Large Language Models (LLMs) pre-trained on billions of text examples, they produce text, images, and code. ChatGPT, GitHub Copilot, and Stable Diffusion are all generative AI systems. The writing assistant from Section 0 belongs here.
+
+All three technologies sit inside the same tier because they share the same foundation: the system learns its intelligence from data. What the output looks like varies widely, from a classification label to a discovered cluster to a generated paragraph. But in every case, the intelligence comes from patterns in data, not from rules a human wrote.
+
+The figure below shows how these technologies nest within each other. It also shows where Data Science sits in relation to them.
+
+![Relationships between Artificial Intelligence, Machine Learning, Deep Learning, Generative AI, and Data Science. ML is nested inside AI; DL inside ML; GenAI inside DL. Data Science overlaps with ML and AI but also extends beyond them into statistics, programming, and domain knowledge.](figs/ai-ml-ds-hierarchy.svg){fig-alt="Nested ellipse diagram showing AI as the outermost region, ML inside AI, DL inside ML, GenAI inside DL. A separate overlapping ellipse for Data Science partially overlaps ML and AI and extends to the right, with the label positioned outside AI to show components beyond ML."}
+
+**Data science** is the broader practice that uses ML as its primary tool. It combines ML with statistical analysis, programming, visualisation, and domain knowledge to extract value from data. Not everything in data science is ML: exploratory analysis, data cleaning, and stakeholder communication are all data science work with no model involved. The overlap in the figure is deliberate. When an organisation says it is "using AI", it almost always means ML applied within a data science workflow.
+
+Knowing what will happen is valuable. Knowing what to do about it is more valuable. **Optimization and decision-making AI** closes that gap. It combines a predictive model with constrained optimisation to recommend the best action under uncertainty. Google Maps from Section 0 illustrates this precisely. The ML model predicts how long each road segment will take given current traffic, time of day, and historical patterns. That is analytical AI. The optimisation layer then finds the fastest combination of segments from your start to your destination, accounting for tolls, road types, and real-time incidents. The prediction answers "how long will this road take?" The optimisation answers "which road should I take?" The distinctive output is not a prediction but a recommended action.
+
+Both tiers above address specific, bounded problems within defined domains. **Artificial General Intelligence (AGI)** is the theoretical tier that would not be so constrained. Defined as AI with human-level reasoning, creativity, and judgment across any domain, AGI would generalise knowledge without domain boundaries. It is a long-term research goal.
+
+A common and reasonable question at this point is whether systems like Claude, GPT-4, or Gemini already qualify. They appear impressively general: a single system can write code, explain medical concepts, translate languages, and reason through problems across many domains. But appearing general is not the same as being general. These systems learned broad patterns from broad training data. They do not reason from first principles, cannot update their knowledge from new experiences after training, and fail in systematic ways that reveal the limits of pattern matching rather than genuine understanding. AGI would require a system that sets its own goals, learns continuously from interaction, and reasons reliably in situations it has never encountered. No system deployed today does this.
+
+<div class='ark-concept'>
+<span class='ark-concept-title'><i class="bi bi-info-circle-fill"></i> Key Concept: AI as a continuum, not a single technology</span><br><br>
+Not every problem requires generative AI or deep learning. In many situations, a well-tuned gradient-boosted tree or a logistic regression delivers higher returns with lower implementation cost. The critical question is not which AI technology is available, but which tier is appropriate for the problem at hand. Matching technical capability to actual business need is a more valuable skill than knowing the latest model architecture.
+</div>
+
+<div class='ark-mistake'>
+<span class='ark-mistake-title'><i class="bi bi-bug-fill"></i> Common Mistake: Treating AI, ML, and deep learning as synonyms</span><br><br>
+"We are using AI to solve this" usually means "we trained an ML model on labeled examples." Saying AI when you mean logistic regression overstates the complexity and makes it harder to have a useful conversation about the approach, its limitations, and its data requirements. Use the correct term for the specific technique. This matters especially when communicating with stakeholders about what a system can and cannot do.
+</div>
+
+<div class='ark-activity'>
+<span class='ark-activity-title'><i class="bi bi-puzzle-fill"></i> Activity 1 - Map the System</span><br><br>
+<b>Goal:</b> For each AI system below, identify (a) which tier it belongs to: Analytical AI, Optimization AI, or outside current AI (AGI territory); and (b) which technology it uses: rule-based, classical ML, deep learning, or generative AI.<br><br>
+<ol>
+<li>A thermostat that turns heating on when the temperature drops below 18 degrees.</li>
+<li>Google Maps choosing the fastest route from your location to your destination, accounting for live traffic and tolls.</li>
+<li>Netflix recommending the next series to watch based on your viewing history and ratings.</li>
+<li>An AI writing assistant generating a draft cover letter from a short prompt.</li>
+<li>AlphaFold predicting the 3D structure of a protein from its amino acid sequence.</li>
+<li>A hospital model classifying chest X-rays as normal, pneumonia, or COVID-19.</li>
+<li>A battery storage controller that decides when to buy and sell electricity to maximise daily revenue.</li>
+</ol>
+</div>
+
+::: {.callout-note collapse="true" icon=false}
+## Further Reading
+
+| Resource | Why it matters |
+|---|---|
+| Pedro Domingos, *The Master Algorithm* (2015) | Accessible introduction that maps the five major ML tribes and the intuition behind each |
+| Ian Goodfellow, Yoshua Bengio, Aaron Courville, *Deep Learning* (2016) | The standard reference for deep learning theory; the introductory chapters place DL within the AI landscape |
+| Burstrm, T. et al. (2021). AI, dynamic capabilities and value creation. *Technological Forecasting and Social Change*. | Foundation for understanding AI not as a single technology but as a continuum of capabilities |
+| Shollo, A. et al. (2022). Shifting perspectives on AI in the firm. *Journal of Information Technology*. | Why most organisations fail to realise AI value, and why model accuracy is rarely the bottleneck |
+:::
+
+::: {.callout-note collapse="true" icon=false}
+## Summary
+
+| Concept | Key point |
+|---|---|
+| When rules fail | The patterns are too many, too variable, or simply unknown until you look at the data |
+| AI as a continuum | Three tiers: Analytical and Predictive AI, Optimization and Decision-Making AI, AGI (theoretical) |
+| ML, DL, GenAI | Nested hierarchy inside Analytical AI; each extends what the tier below can learn and produce |
+| Appearing general is not being general | LLMs work across domains because of broad training data, not general reasoning ability |
+| Data Science | The broader practice that uses ML as its primary tool, combining it with statistics, visualisation, and domain knowledge |
+:::
+
+**Next:** [Part 23: What Is Machine Learning?](02-ml-what-is-ml.qmd) builds directly on this landscape. You know where ML sits in the AI hierarchy. The next chapter defines precisely what it is, how it learns, what it produces, and when to reach for it.
