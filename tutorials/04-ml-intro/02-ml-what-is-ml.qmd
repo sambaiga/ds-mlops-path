@@ -8,6 +8,7 @@ title: "Part 23: What Is Machine Learning?"
 
 **Python 3.12+ | Author: Anthony Faustine**
 
+::: {.callout-note collapse="true" icon=false}
 ## Before you begin
 
 This chapter continues directly from [Part 22: The AI Landscape](01-ml-introduction.qmd). You should understand the three-tier AI capability framework and the distinction between rule-based programming and machine learning before reading further. You should also have completed [Part 12: IDE Setup](../02-dev-tools/00-vscode-setup.qmd) through [Part 21: Logging](../02-dev-tools/09-logging.ipynb): those practical skills are the foundation on which all hands-on ML work in later chapters builds.
@@ -16,7 +17,6 @@ This chapter is conceptual. There is no code to run. The goal is to move from th
 
 > Callout markers used throughout this chapter are explained on the [book cover page](../../index.qmd#callout-guide).
 
-::: {.callout-note collapse="true" icon=false}
 ## Topics covered
 
 | Topic | Why it matters |
@@ -28,20 +28,9 @@ This chapter is conceptual. There is no code to run. The goal is to move from th
 | **Real-world impact** | Grounding the theory in concrete problems across multiple domains |
 :::
 
-::: {.callout-note collapse="true" icon=false}
-## Learning Objectives
+## What Machine Learning Is
 
-By the end of Part 23 you will be able to:
-
-| # | Skill | Covered in |
-|---|---|---|
-| 1 | Give a precise definition of machine learning and describe its three steps | Sec. 0 |
-| 2 | Classify any ML problem by learning paradigm and task type | Sec. 1 |
-| 3 | Apply a decision checklist to decide whether ML is the right tool for a given problem | Sec. 2 |
-| 4 | Map ML paradigms to real problems across energy, supply chain, healthcare, and manufacturing | Sec. 3 |
-:::
-
-## 0. What Machine Learning Is
+Consider 50,000 emails, each labeled as spam or not spam. Show them to an ML algorithm and it adjusts its internal parameters until it can reliably separate the two. Show it a new email it has never seen and it returns a judgment. No one wrote a rule that says "emails containing the words 'free', 'winner', and 'click here' together are probably spam." The algorithm found that pattern on its own, from the examples.
 
 Machine learning is a set of algorithms that automatically detect patterns in data and use those patterns to make predictions or inferences. It is a subfield of artificial intelligence that enables computers to improve their performance on a task through experience, without being explicitly programmed for every scenario.
 
@@ -53,12 +42,7 @@ Any machine learning algorithm involves three steps:
 
 ![The three steps of machine learning. Steps 1 and 2 together form the training process: a learning process in which the model adjusts its parameters until its predictions match the known outputs. Step 3 applies the trained model to new data it was never shown during training.](figs/ml-three-steps.svg){fig-alt="Three cards labelled Identify a Pattern, Build a Model, and Use the Model, connected by arrows. A bracket under cards 1 and 2 reads Training equals a learning process. Card 3 is annotated generalisation: the goal."}
 
-Training a model is a learning process. The algorithm is exposed to historical examples, such as thousands of emails labeled as spam or not spam, and adjusts its internal parameters until its predictions match the expected outputs as closely as possible.
-
-<div class='ark-concept'>
-<span class='ark-concept-title'><i class="bi bi-info-circle-fill"></i> Key Concept: What are internal parameters?</span><br><br>
-Parameters are the numbers inside a model that training adjusts. In a linear regression predicting house prices, they are the coefficients on each input feature: the weight given to size, location, and age. In a neural network, they are the connection weights between millions of nodes. Before training, the parameters are initialised at random. After training, their values encode everything the model learned from the data. The prediction a trained model makes is entirely determined by those parameter values applied to a new input.
-</div>
+Training a model is a learning process. The algorithm is exposed to historical examples, such as thousands of emails labeled as spam or not spam, and adjusts its internal parameters until its predictions match the expected outputs as closely as possible. Parameters are the numbers a model adjusts during training: in a linear regression, the coefficients on each input feature; in a neural network, the connection weights between millions of nodes. Before training they are initialised at random; after training, their values encode everything the model learned.
 
 A new email arrives. The model applies what it learned and returns a judgment. Critically, the model does not memorise the training examples. It extracts the underlying structure so that it can make useful predictions on data it has never seen before.
 
@@ -69,11 +53,11 @@ This is what distinguishes ML from a lookup table. A lookup table returns the co
 A model that performs perfectly on training data but fails on new data is useless in practice. The goal of training is not to memorise examples but to generalise: to capture the underlying structure of the problem well enough to make accurate predictions on data the model was never shown. Every design decision in ML, from choosing a model family to setting regularisation, is ultimately about improving generalisation.
 </div>
 
-Two common confusions are worth clearing up directly.
-
-**ML is not traditional programming.** A traditional program executes explicit instructions written by a human. A trained model encodes statistical patterns extracted from data. The source of the logic is different: one is written by hand, the other is learned from examples.
-
-**ML is not memorisation.** A lookup table that returns the correct answer for every training example is not a model. A useful model finds the pattern behind the examples and applies it to cases it has not seen before.
+<div class='ark-mistake'>
+<span class='ark-mistake-title'><i class="bi bi-bug-fill"></i> Common Mistake: Two confusions that follow ML beginners for years</span><br><br>
+<b>ML is not traditional programming.</b> A traditional program executes explicit instructions written by a human. A trained model encodes statistical patterns extracted from data. The source of the logic is different: one is written by hand, the other is learned from examples.<br><br>
+<b>ML is not memorisation.</b> A lookup table that returns the correct answer for every training example is not a model. A useful model finds the pattern behind the examples and applies it to cases it has not seen before. A model that memorises its training data will fail on any new input that differs even slightly from what it was shown.
+</div>
 
 <div class='ark-activity'>
 <span class='ark-activity-title'><i class="bi bi-puzzle-fill"></i> Activity 1 - Rules or Learning?</span><br><br>
@@ -86,6 +70,19 @@ Two common confusions are worth clearing up directly.
 <li>Sort a list of names alphabetically.</li>
 </ol>
 </div>
+
+::: {.callout-note collapse="true" icon=false}
+## Learning Objectives
+
+By the end of Part 23 you will be able to:
+
+| # | Skill | Covered in |
+|---|---|---|
+| 1 | Give a precise definition of machine learning and describe its three steps | Introduction |
+| 2 | Classify any ML problem by learning paradigm and task type | Sec. 1 |
+| 3 | Apply a decision checklist to decide whether ML is the right tool for a given problem | Sec. 2 |
+| 4 | Map ML paradigms to real problems across energy, supply chain, healthcare, and manufacturing | Sec. 3 |
+:::
 
 ## 1. The ML Taxonomy
 
@@ -160,7 +157,38 @@ The table is a quick reference. What matters more is being able to tell these ty
 </ol>
 </div>
 
+### 1.3 The Model Complexity Spectrum
+
+Choosing a learning paradigm and a task type narrows down the algorithm family. Within that family, you still face a choice along a spectrum from simple, interpretable models to complex, high-capacity ones.
+
+| Model family | Interpretability | Capacity | Data needs | Best suited to |
+|---|---|---|---|---|
+| **Linear and logistic regression** | High | Low | Small to medium | Tabular data, regulated domains, establishing a baseline |
+| **Tree-based models** | Medium | High | Medium | Tabular data; the most reliable family for production ML |
+| **Neural networks** | Low | Very high | Large | Unstructured data: images, text, audio, sequences |
+
+**Linear models** produce a prediction that is a weighted sum of the input features. Their predictions can be explained by inspecting the weights, which makes them auditable and easy to debug. They work well when the relationship between features and the target is approximately linear and when interpretability is a constraint.
+
+**Tree-based models** such as random forests, gradient-boosted trees (XGBoost, LightGBM), and decision trees learn non-linear decision boundaries by splitting the input space recursively. Gradient-boosted trees consistently perform best on tabular data in practice. Individual tree predictions can be explained with tools like SHAP values even when the ensemble is too large to inspect directly.
+
+**Neural networks** learn hierarchical representations through stacked layers of computation. They excel when the input is unstructured: an image is a grid of pixels with no obvious feature structure; a sentence is a sequence of tokens whose meaning depends on order and context. Neural networks find structure in that raw form automatically. The cost is opacity: the relationship between inputs and outputs runs through millions of learned parameters with no simple interpretation.
+
+<div class='ark-concept'>
+<span class='ark-concept-title'><i class="bi bi-info-circle-fill"></i> Key Concept: The interpretability-capacity tradeoff</span><br><br>
+Higher capacity means the model can represent more complex patterns. Higher interpretability means humans can understand why the model makes a given prediction. These two properties generally trade off. The right position on the spectrum depends on three questions: How much data do you have? Are predictions on unstructured data required? Does the problem domain require human-auditable explanations? Defaulting to a neural network when a gradient-boosted tree would work is a common and costly mistake.
+</div>
+
+<div class='ark-tip'>
+<span class='ark-tip-title'><i class="bi bi-lightbulb-fill"></i> Pro Tip: Use model complexity as a diagnostic</span><br><br>
+If a linear model performs nearly as well as a gradient-boosted tree on your problem, the relationship is approximately linear and the simpler model is the right production choice. If a gradient-boosted tree performs nearly as well as a neural network on tabular data, the neural network is probably adding complexity without adding accuracy. Work up the complexity spectrum only when simpler models leave meaningful performance on the table.
+</div>
+
 ## 2. When to Use ML
+
+<div class='ark-tip'>
+<span class='ark-tip-title'><i class="bi bi-lightbulb-fill"></i> Pro Tip: Write the problem statement before choosing a model</span><br><br>
+Before opening a notebook, write one sentence that specifies: what the model predicts, using what inputs, evaluated by what metric, to achieve what business goal. "A binary classifier that predicts whether a meter reading is anomalous, using 30-day rolling consumption features, evaluated by F1 score at a 0.5 threshold, to reduce manual review effort by 60%." This sentence forces clarity before any code is written and is the single most effective way to avoid building the wrong thing.
+</div>
 
 Machine learning is a powerful tool, but it is not the right tool for every problem. Using ML where a simpler approach would work adds unnecessary complexity, data requirements, and maintenance overhead. Knowing when not to use ML is as important as knowing how to use it.
 
@@ -183,11 +211,6 @@ Machine learning is a powerful tool, but it is not the right tool for every prob
 **Full interpretability is legally or ethically required.** Some decisions, particularly in regulated domains such as credit scoring, clinical diagnosis, and criminal justice, require explanations that a regulator or affected party can audit. A neural network with millions of parameters does not provide this natively. If the decision must be explainable at the level of individual features and their contributions, start with interpretable models such as logistic regression or decision trees before considering more complex alternatives.
 
 **The problem definition is unstable.** If the definition of the target changes every few weeks, for instance because the business is still deciding what "at-risk customer" means, the cost of retraining and re-evaluating a model exceeds the benefit. Stabilise the problem definition first.
-
-<div class='ark-tip'>
-<span class='ark-tip-title'><i class="bi bi-lightbulb-fill"></i> Pro Tip: Write the problem statement before choosing a model</span><br><br>
-Before opening a notebook, write one sentence that specifies: what the model predicts, using what inputs, evaluated by what metric, to achieve what business goal. "A binary classifier that predicts whether a meter reading is anomalous, using 30-day rolling consumption features, evaluated by F1 score at a 0.5 threshold, to reduce manual review effort by 60%." This sentence forces clarity before any code is written and is the single most effective way to avoid building the wrong thing.
-</div>
 
 <div class='ark-activity'>
 <span class='ark-activity-title'><i class="bi bi-puzzle-fill"></i> Activity 3 - Should You Use ML?</span><br><br>
@@ -232,16 +255,11 @@ Two observations from practice are worth stating directly.
 
 First, most high-value ML applications in industry are not glamorous. The majority of value comes from accurate demand forecasting, reliable anomaly detection, and well-calibrated classifiers for operational decisions. These are not problems that require a new algorithm. They require clean data, sound evaluation, and disciplined deployment.
 
-Second, the barrier to impact in most organisations is not the model. Research shows that roughly 20% of organisations implementing AI achieve their projected outcomes, and the primary failures are strategic and organisational rather than technical. Data quality issues, misaligned success metrics, models that solve the wrong problem, and insufficient production infrastructure cause more failures than model accuracy. Getting the problem definition right is more valuable than getting the model right.
+Second, the barrier to impact in most organisations is not the model. Research shows that roughly 20% of organisations implementing AI achieve their projected outcomes (Babu et al., 2021), and the primary failures are strategic and organisational rather than technical. Data quality issues, misaligned success metrics, models that solve the wrong problem, and insufficient production infrastructure cause more failures than model accuracy. Getting the problem definition right is more valuable than getting the model right.
 
 <div class='ark-mistake'>
 <span class='ark-mistake-title'><i class="bi bi-bug-fill"></i> Common Mistake: Starting with the algorithm</span><br><br>
 A common failure pattern is choosing a model, often a neural network because it appeared in a recent paper, before defining the problem precisely. The algorithm should be the last decision, not the first. The first decisions are: what does the model predict, using what inputs, and how will you know if it is working? A well-defined problem with a gradient-boosted tree often outperforms a poorly defined problem with a transformer. Start with the problem, not the model.
-</div>
-
-<div class='ark-tip'>
-<span class='ark-tip-title'><i class="bi bi-lightbulb-fill"></i> Pro Tip: Start with the simplest model that could work</span><br><br>
-Before training anything complex, fit a baseline: a linear regression for regression problems, a logistic regression for classification, a simple moving average for forecasting. This baseline tells you the floor of performance you need to exceed and often reveals data quality issues before you invest time in a more complex model. A neural network that only marginally outperforms a linear model on clean tabular data is usually not worth the added complexity in production.
 </div>
 
 ::: {.callout-note collapse="true" icon=false}
@@ -254,6 +272,8 @@ Before training anything complex, fit a baseline: a linear regression for regres
 | Chip Huyen, *Designing Machine Learning Systems* (2022) | Covers the full lifecycle from problem definition to production; essential for the engineering perspective |
 | [Google Machine Learning Crash Course](https://developers.google.com/machine-learning/crash-course) | Free, structured introduction with practical exercises covering supervised learning fundamentals |
 | Faustine, A. and Pereira, L. (2022). FPSeq2Q: Fully Parameterized Sequence-to-Quantile Regression for Net-Load Forecasting. *IEEE Transactions on Smart Grid*, 13(3), 2440-2451. | A published production system showing how forecasting, uncertainty quantification, and deployment combine |
+| Babu, M. A. et al. (2021). Exploring AI value realization. *Business Horizons*. | The source for the 20% AI success rate statistic and analysis of why most AI initiatives fail to deliver projected value |
+| Shollo, A. et al. (2022). Shifting perspectives on AI in the firm. *Journal of Information Technology*. | Why most organisations fail to realise AI value, and why model accuracy is rarely the bottleneck |
 :::
 
 ::: {.callout-note collapse="true" icon=false}

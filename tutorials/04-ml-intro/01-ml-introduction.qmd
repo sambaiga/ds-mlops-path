@@ -8,6 +8,7 @@ title: "Part 22: The AI Landscape"
 
 **Python 3.12+ | Author: Anthony Faustine**
 
+::: {.callout-note collapse="true" icon=false}
 ## Before you begin
 
 This chapter assumes you have completed [Part 12: IDE Setup](../02-dev-tools/00-vscode-setup.qmd) through [Part 21: Logging](../02-dev-tools/09-logging.ipynb). You can write Python, structure a project with `uv`, version it with Git, test it with pytest, and validate data with Pydantic. Those skills are the foundation on which everything from this chapter onward is built.
@@ -16,7 +17,6 @@ This chapter is conceptual. There is no code to run. The goal is to build the me
 
 > Callout markers used throughout this chapter are explained on the [book cover page](../../index.qmd#callout-guide).
 
-::: {.callout-note collapse="true" icon=false}
 ## Topics covered
 
 | Topic | Why it matters |
@@ -25,34 +25,19 @@ This chapter is conceptual. There is no code to run. The goal is to build the me
 | **The AI landscape** | Where ML, deep learning, and generative AI each sit in the hierarchy |
 :::
 
-::: {.callout-note collapse="true" icon=false}
-## Learning Objectives
+## The Problem That Motivates ML
 
-By the end of Part 22 you will be able to:
+Imagine you are asked to build a system that detects energy theft from smart meter data. Some customers bypass their meters or tamper with the measurement device. The natural first attempt is to write rules: if consumption drops suddenly by more than 50%, flag the account; if recorded usage is significantly lower than the neighbourhood average for three consecutive months, flag it; if a meter reading changes pattern after a maintenance visit, flag it.
 
-| # | Skill | Covered in |
-|---|---|---|
-| 1 | Explain the difference between rule-based programming and machine learning, and give concrete examples of each | Sec. 0 |
-| 2 | Describe the three-tier AI capability framework and place ML, deep learning, generative AI, and AGI within it | Sec. 1 |
-:::
+You build the rules and test them. They catch some cases but miss many others. Legitimate consumption drops when a family goes on holiday. A household running fewer appliances in summer looks suspicious under your rules. You add exceptions, then exceptions to the exceptions. Every rule surfaces a new case it handles incorrectly. And as theft patterns evolve, your rules become outdated before you finish writing them.
 
-## 0. The Problem That Motivates ML
-
-Before any formal definition, consider four problems you have almost certainly encountered.
-
-Every time you open Google Maps and ask for directions, it finds you the fastest route in seconds. The obvious approach to building that system is to write rules: avoid roads with heavy traffic, prefer motorways for long distances, take side streets when congestion is detected. But traffic is never that simple. An accident, a school run, a concert ending, a sudden downpour: the combinations of factors are endless and constantly shifting. Every rule you add has exceptions, and those exceptions have exceptions. A model trained on billions of journeys handles all of this without a single explicit rule, because it learned the patterns of how traffic behaves rather than trying to describe them.
-
-The pattern extends further. Netflix recommends films, and you would not expect to write rules for that: "if the user watched three action films and one drama, recommend this specific title." The space of possible watch histories and individual preferences is too large and too personal for any human to encode. Yet the recommendations work, and they improve the more you watch.
-
-Scale the problem further. Google Translate converts a sentence from Swahili to English in under a second, across 133 languages. No one wrote the grammar rules for every language pair. The patterns were learned from billions of translated documents.
-
-Now consider the most recent and visible example. Ask an AI writing assistant to draft a cover letter or explain a concept in plain language. Writing explicit rules for generating fluent, contextually appropriate text is impossible; the space of possible inputs alone is infinite. Yet modern AI assistants do it reliably, because they learned the structure of language from billions of examples of human writing, without a single grammar rule explicitly coded.
-
-All four problems share the same structure: the rules are either too numerous, too variable, or simply unknown until you examine the data. The same challenge appears in less obvious places. Consider detecting energy theft from smart meter data. Some customers bypass their meters or tamper with the measurement. A natural first attempt is to write rules: if consumption drops suddenly by more than 50%, flag the account; if recorded usage is significantly lower than the neighbourhood average for three consecutive months, flag it; if a meter reading changes pattern after a maintenance visit, flag it. You build the rules and test them. They catch some cases but miss many others. Legitimate consumption drops when a family goes on holiday. A household running fewer appliances in summer looks suspicious under your rules. You add exceptions, then exceptions to the exceptions. Every rule surfaces a new case it handles incorrectly. And as theft patterns change, your rules become outdated.
+This is not a problem you can solve by writing more rules. The combinations of factors are too numerous, too variable, and too context-dependent for any human to enumerate. The same structure appears wherever the rules become overwhelming: Google Maps routing around an accident and a school run and a concert all happening at the same moment, a recommendation engine personalising to a watch history it has never seen before, a writing assistant composing fluent text for a question no one has ever asked. In every case, the answer is the same.
 
 This is the problem that machine learning was built to solve.
 
 In traditional programming, you provide the rules and the computer applies them to data to produce output. In machine learning, you reverse that flow: you provide data and examples of the desired output, and the computer finds the rules. When the rules are too complex to write by hand, this reversal is the right approach.
+
+In Part 24 you will see this exact problem translated into a five-component ML specification -- the structured framing that prevents teams from spending six months building the right system for the wrong question. For now, the goal is to understand why the problem structure demands a different approach entirely.
 
 <div class='ark-concept'>
 <span class='ark-concept-title'><i class="bi bi-info-circle-fill"></i> Key Concept: When rules fail, patterns can be learned</span><br><br>
@@ -61,24 +46,22 @@ Machine learning: you provide labeled examples, the computer learns the rules.<b
 When the rules are too complex, too numerous, or simply unknown, switching from writing rules to learning from data is the right move. This is not a marginal improvement. It is a qualitatively different approach to building intelligent systems.
 </div>
 
-## 1. The AI Landscape
-
 ::: {.callout-note collapse="true" icon=false}
-## Acronyms used in this chapter
+## Learning Objectives
 
-| Acronym | Full term |
-|---|---|
-| AI | Artificial Intelligence |
-| ML | Machine Learning |
-| DL | Deep Learning |
-| GenAI | Generative AI |
-| LLM | Large Language Model |
-| AGI | Artificial General Intelligence |
+By the end of Part 22 you will be able to:
+
+| # | Skill | Covered in |
+|---|---|---|
+| 1 | Explain the difference between rule-based programming and machine learning, and give concrete examples of each | Introduction |
+| 2 | Describe the three-tier AI capability framework and place ML, deep learning, generative AI, and AGI within it | Sec. 1 |
 :::
 
-The four problems in Section 0 share more than a structure. They are all applications of Artificial Intelligence (AI), and each sits at a different point on the same spectrum. Google Maps predicts travel times. The recommendation engine predicts what you will enjoy. The translation system predicts word sequences across 133 languages. The writing assistant goes further and generates something new from what it learned. To understand what separates them and when each approach applies, you need precise definitions.
+## 1. The AI Landscape
 
-Artificial Intelligence, Machine Learning (ML), Deep Learning (DL), and Generative AI (GenAI) are used interchangeably in journalism and product marketing. That conflation leads to poor decisions in practice: reaching for a large language model when a logistic regression would solve the problem in an afternoon, or dismissing AI entirely because "we don't have enough data for ChatGPT." Each term describes something distinct, and the distinctions matter when you are choosing a tool. The diagram below organises AI into three tiers by what each tier is capable of.
+The problems in Section 0 are all applications of Artificial Intelligence (AI), and each sits at a different point on the same spectrum. The energy theft detector learns patterns from meter readings. Google Maps predicts travel times. A writing assistant generates something new from what it learned. To understand what separates them and when each approach applies, you need precise definitions.
+
+Artificial Intelligence, Machine Learning (ML), Deep Learning (DL), and Generative AI (GenAI) are used interchangeably in journalism and product marketing. That conflation leads to poor decisions in practice: reaching for a large language model (LLM) when a logistic regression would solve the problem in an afternoon, or dismissing AI entirely because "we don't have enough data for ChatGPT." Each term describes something distinct, and the distinctions matter when you are choosing a tool. The diagram below organises AI into three tiers by what each tier is capable of.
 
 ![Strategic Classification of AI Capabilities by Problem Complexity. The framework maps AI capabilities to three tiers: Analytical and Predictive AI at the base, Optimization and Decision-Making AI in the middle, and AGI at the top as a theoretical construct. Capability increases with each tier.](figs/ai-capability-tiers.png){fig-alt="Three-tier AI capability diagram. Base tier: analytical and predictive AI. Middle tier: optimization and decision-making AI. Top tier: AGI, marked as theoretical."}
 

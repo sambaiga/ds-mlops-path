@@ -8,6 +8,7 @@ title: "Part 24: The ML Workflow and Problem Framing"
 
 **Python 3.12+ | Author: Anthony Faustine**
 
+::: {.callout-note collapse="true" icon=false}
 ## Before you begin
 
 This chapter continues from [Part 22: The AI Landscape](01-ml-introduction.qmd) and [Part 23: What Is Machine Learning?](02-ml-what-is-ml.qmd). You should be able to classify any problem by learning paradigm and task type before reading further. The energy theft scenario introduced in Part 22 and classified in Part 23 runs through this chapter as the primary worked example.
@@ -16,7 +17,6 @@ This chapter is conceptual. There is no code to run. The goal is to move from kn
 
 > Callout markers used throughout this chapter are explained on the [book cover page](../../index.qmd#callout-guide).
 
-::: {.callout-note collapse="true" icon=false}
 ## Topics covered
 
 | Topic | Why it matters |
@@ -28,6 +28,16 @@ This chapter is conceptual. There is no code to run. The goal is to move from kn
 | **Bias and variance** | Diagnosing underfitting and overfitting from learning curves, using a baseline to separate avoidable bias from variance |
 | **ML strategy** | A structured decision framework for improving a model that is not performing well enough, including distribution mismatch |
 :::
+
+## Why Workflow Matters
+
+In Part 23 you classified the energy theft problem: it is anomaly detection, unsupervised paradigm. That classification is necessary but not sufficient. Knowing what kind of problem you have does not tell you how to build a working system.
+
+The naive path is tempting. Load the meter data. Fit an isolation forest. Look at the output. Report a result. This path fails in practice, and it fails in ways that are hard to detect from inside the project.
+
+Consider what happens on a dataset where 0.5% of meters are tampered. A model that flags nothing at all is 99.5% accurate. A model that flags everything is 0.5% accurate. Neither catches a single thief. Accuracy, used naively, gives you a number that looks meaningful and tells you nothing about whether the system works.
+
+The structured workflow exists to prevent this. It forces you to specify what success means before you start, to evaluate on data the model has never influenced, and to diagnose failure rather than paper over it. The rest of this chapter walks through each stage.
 
 ::: {.callout-note collapse="true" icon=false}
 ## Learning Objectives
@@ -43,16 +53,6 @@ By the end of Part 24 you will be able to:
 | 5 | Diagnose underfitting and overfitting from a learning curve and name the right intervention | Sec. 5 |
 | 6 | Use avoidable bias and variance to decide whether to invest in model complexity or more data | Sec. 5, 6 |
 :::
-
-## 0. The gap between "I have a problem" and "I have a model"
-
-In Part 23 you classified the energy theft problem: it is anomaly detection, unsupervised paradigm. That classification is necessary but not sufficient. Knowing what kind of problem you have does not tell you how to build a working system.
-
-The naive path is tempting. Load the meter data. Fit an isolation forest. Look at the output. Report a result. This path fails in practice, and it fails in ways that are hard to detect from inside the project.
-
-Consider what happens on a dataset where 0.5% of meters are tampered. A model that flags nothing at all is 99.5% accurate. A model that flags everything is 0.5% accurate. Neither catches a single thief. Accuracy, used naively, gives you a number that looks meaningful and tells you nothing about whether the system works.
-
-The structured workflow exists to prevent this. It forces you to specify what success means before you start, to evaluate on data the model has never influenced, and to diagnose failure rather than paper over it. The rest of this chapter walks through each stage.
 
 ## 1. Translating a business problem into an ML problem
 
@@ -197,12 +197,7 @@ A subtler and often more damaging problem than temporal leakage is distribution 
 
 A common scenario: you are building a demand forecasting model for agricultural processing sites in rural Tanzania. You have abundant training data from large commercial facilities in Dar es Salaam, but the actual deployment targets are small farm-level sites with very different consumption profiles. The model evaluates well on Dar es Salaam validation data and collapses in production.
 
-The fix is directional: **your validation and test sets must always reflect the distribution of data the model will encounter in production**, even if this means the training distribution is inconsistent with the val/test distribution. It is better to train on abundant but imperfectly matched data and evaluate on representative production-like data than the reverse.
-
-<div class='ark-mistake'>
-<span class='ark-mistake-title'><i class="bi bi-x-circle-fill"></i> Common Mistake: Pooling all sources and splitting randomly</span><br><br>
-When you have two data sources of very different sizes, the temptation is to pool them and split randomly so that train, val, and test all come from the same combined distribution. This is statistically clean but practically wrong: the val and test sets will mostly reflect the larger source, which may not match production. Instead, populate val and test exclusively from production-representative data, and train on whatever you have available.
-</div>
+The fix is directional: **your validation and test sets must always reflect the distribution of data the model will encounter in production**, even if this means the training distribution is inconsistent with the val/test distribution. It is better to train on abundant but imperfectly matched data and evaluate on representative production-like data than the reverse. When you have two data sources of very different sizes, populate val and test from the production-representative source and train on whatever you have available. Pooling everything and splitting randomly means val and test will mostly reflect the larger source, not the production environment.
 
 ### 3.4 Feature leakage
 
