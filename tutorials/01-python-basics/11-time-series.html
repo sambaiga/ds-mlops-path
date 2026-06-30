@@ -108,9 +108,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   }
 }</script>
 <style>html{ scroll-behavior: smooth; }</style>
-<script src="../../site_libs/quarto-diagram/mermaid.min.js"></script>
-<script src="../../site_libs/quarto-diagram/mermaid-init.js"></script>
-<link href="../../site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.min.js" integrity="sha384-c9c+LnTbwQ3aujuU7ULEPVvgLs+Fn6fJUvIGTsuu1ZcCf11fiEubah0ttpca4ntM sha384-6V1/AdqZRWk1KAlWbKBlGhN7VG4iE/yAZcO6NZPMF8od0vukrvr0tg4qY6NSrItx" crossorigin="anonymous"></script>
 
 <script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
@@ -427,8 +424,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">In this chapter</h2>
    
   <ul>
-  <li><a href="#before-you-begin" id="toc-before-you-begin" class="nav-link active" data-scroll-target="#before-you-begin">Before you begin</a></li>
-  <li><a href="#date-and-time-data-types" id="toc-date-and-time-data-types" class="nav-link" data-scroll-target="#date-and-time-data-types">1. Date and Time Data Types</a></li>
+  <li><a href="#date-and-time-data-types" id="toc-date-and-time-data-types" class="nav-link active" data-scroll-target="#date-and-time-data-types">1. Date and Time Data Types</a></li>
   <li><a href="#the-datetimeindex" id="toc-the-datetimeindex" class="nav-link" data-scroll-target="#the-datetimeindex">2. The <code>DatetimeIndex</code></a></li>
   <li><a href="#selecting-data-from-a-time-series" id="toc-selecting-data-from-a-time-series" class="nav-link" data-scroll-target="#selecting-data-from-a-time-series">3. Selecting Data from a Time Series</a></li>
   <li><a href="#the-power-of-pandas-resample" id="toc-the-power-of-pandas-resample" class="nav-link" data-scroll-target="#the-power-of-pandas-resample">4. The Power of Pandas: <code>resample</code></a></li>
@@ -463,65 +459,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 <p><a href="https://colab.research.google.com/github/sambaiga/ds-mlops-path/blob/main/tutorials/01-python-basics/11-time-series.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open In Colab"></a> <a href="https://raw.githubusercontent.com/sambaiga/ds-mlops-path/main/tutorials/01-python-basics/11-time-series.ipynb"><img src="https://img.shields.io/badge/Download-Notebook-blue.svg?logo=jupyter&amp;logoColor=white" class="img-fluid" alt="Download Notebook"></a></p>
-<p><strong>DS-MLOps Data Analysis</strong></p>
-<p><strong>Python 3.12+ | Author: Anthony Faustine</strong></p>
-<section id="before-you-begin" class="level2">
-<h2 class="anchored" data-anchor-id="before-you-begin">Before you begin</h2>
-<p>This notebook continues from Part 10 (<code>10-combining-reshaping.ipynb</code>), which covered concatenation, merging, groupby, and pivoting. The student exam results dataset has no real dates in it, only an <code>establishment_year</code>, so this part introduces a second dataset built for the job: daily attendance records for 5 schools over a school term: the shape most time-indexed data takes in practice, one row per day per entity.</p>
-<p>Part 12 (<code>11-polars.ipynb</code>) continues with Polars, including its own (faster) take on time-indexed data.</p>
-<div class="callout callout-style-default callout-note no-icon callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Topics covered
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-1" class="callout-1-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<table class="caption-top table">
-<colgroup>
-<col style="width: 50%">
-<col style="width: 50%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Topic</th>
-<th>Why it matters</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><strong><code>Timestamp</code> and <code>to_datetime</code></strong></td>
-<td>pandas’ building block for a single point in time, and how to parse one out of text</td>
-</tr>
-<tr class="even">
-<td><strong><code>DatetimeIndex</code></strong></td>
-<td>An index made of dates unlocks date-based slicing, not just position-based</td>
-</tr>
-<tr class="odd">
-<td><strong>Selecting by date</strong></td>
-<td>Partial strings and date ranges, instead of exact label or integer position</td>
-</tr>
-<tr class="even">
-<td><strong><code>resample</code></strong></td>
-<td>Change the time granularity of a series: daily to weekly, weekly to monthly</td>
-</tr>
-<tr class="odd">
-<td><strong>Timezones</strong></td>
-<td>Localize naive timestamps, convert between zones, and store everything in UTC</td>
-</tr>
-<tr class="even">
-<td><strong>Lag, lead, and autocorrelation</strong></td>
-<td>Create feature-engineered columns from past values; measure how much a series predicts itself</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-</div>
+<p>The attendance report says 87% for Monday. Is that better or worse than last month? You have the numbers but the date column is plain text – pandas cannot slice by month, compute week-over-week changes, or resample to monthly totals until the column is a proper datetime type with a DatetimeIndex. This notebook adds that infrastructure, using daily attendance records across five schools over a full term.</p>
+<p>Part 10 (<code>10-combining-reshaping.ipynb</code>) introduced time series data and basic date parsing. This notebook goes deeper: DatetimeIndex slicing, <code>resample</code>, timezones, and lag features – the same building blocks used in Part 12 (<code>11-polars.ipynb</code>) and, later, in forecasting.</p>
 <blockquote class="blockquote">
 <p>Callout markers used throughout this notebook are explained on the <a href="../../index.html#callout-guide">book cover page</a>.</p>
 </blockquote>
@@ -539,7 +478,7 @@ dtype: object</code></pre>
 </div>
 </div>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon no-icon"></i>
 </div>
@@ -548,7 +487,7 @@ dtype: object</code></pre>
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>By the end of Part 11 you will be able to:</p>
 <table class="caption-top table">
@@ -600,7 +539,6 @@ dtype: object</code></pre>
 </div>
 </div>
 </div>
-</section>
 <section id="date-and-time-data-types" class="level2">
 <h2 class="anchored" data-anchor-id="date-and-time-data-types">1. Date and Time Data Types</h2>
 <p>The <code>date</code> column above read in as plain text, <code>str</code> dtype, not a date pandas can do arithmetic on. <code>pd.to_datetime</code> converts it to pandas’ dedicated datetime dtype, <code>datetime64</code>:</p>
@@ -642,7 +580,10 @@ for d in dates:
 <section id="the-datetimeindex" class="level2">
 <h2 class="anchored" data-anchor-id="the-datetimeindex">2. The <code>DatetimeIndex</code></h2>
 <p>Setting a datetime column as the index turns it into a <code>DatetimeIndex</code>, which unlocks date-based slicing instead of only position-based or exact-label lookups. Each school’s rows are pulled out first, since a <code>DatetimeIndex</code> only makes sense for one time series at a time:</p>
-<div id="13" class="cell" data-execution_count="5">
+<div style="background:#EAF3FA;border-left:5px solid #0369A1;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-key-fill"></i> Key Concept: Setting a datetime column as the index creates a <code>DatetimeIndex</code> that unlocks date-based slicing</span><br><br> Once you call <code>.set_index('date')</code> on a datetime column, the result has a <code>DatetimeIndex</code>. You can then use partial date strings in <code>.loc</code> – <code>school.loc['2025-02']</code> selects every row in February without spelling out start and end times. Without a <code>DatetimeIndex</code>, <code>.loc</code> requires an exact label match; with one, it understands periods.</p>
+</div>
+<div id="14" class="cell" data-execution_count="5">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>school_300 <span class="op">=</span> attendance[attendance[<span class="st">"school_id"</span>] <span class="op">==</span> <span class="dv">300</span>].set_index(<span class="st">"date"</span>)</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>school_300.index</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="5">
@@ -673,7 +614,7 @@ for d in dates:
 <pre style="background:#FFF8E1;padding:10px;border-radius:4px;font-size:0.9em">school_302 = attendance[attendance["school_id"] == 302].set_index("date")
 isinstance(school_302.index, pd.DatetimeIndex)</pre>
 </div>
-<div id="16" class="cell" data-execution_count="6">
+<div id="17" class="cell" data-execution_count="6">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: filter to school_id 302, set date as index, confirm DatetimeIndex</span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
@@ -681,7 +622,7 @@ isinstance(school_302.index, pd.DatetimeIndex)</pre>
 <section id="selecting-data-from-a-time-series" class="level2">
 <h2 class="anchored" data-anchor-id="selecting-data-from-a-time-series">3. Selecting Data from a Time Series</h2>
 <p>A <code>DatetimeIndex</code> accepts a partial date string in <code>.loc</code>, matching every row that falls inside it. <code>"2025-02"</code> selects the whole month without spelling out the first and last day:</p>
-<div id="18" class="cell" data-execution_count="7">
+<div id="19" class="cell" data-execution_count="7">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>school_300.loc[<span class="st">"2025-02"</span>].head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="7">
 <div>
@@ -733,7 +674,7 @@ isinstance(school_302.index, pd.DatetimeIndex)</pre>
 </div>
 </div>
 <p>A slice with two partial dates selects everything between them, inclusive of both ends:</p>
-<div id="20" class="cell" data-execution_count="8">
+<div id="21" class="cell" data-execution_count="8">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>school_300.loc[<span class="st">"2025-02-01"</span>:<span class="st">"2025-02-07"</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="8">
 <div>
@@ -787,7 +728,7 @@ isinstance(school_302.index, pd.DatetimeIndex)</pre>
 <div style="background:#EAF7F0;border-left:5px solid #059669;padding:14px 18px;border-radius:6px;margin:16px 0">
 <p><span style="color:#059669;font-weight:bold"><i class="bi bi-journal-code"></i> Example: Comparing the size of two date ranges</span><br><br> <code>len(school_300.loc[“2025-01”])</code> against <code>len(school_300.loc[“2025-02”])</code> confirms the row count for each month matches its number of business days, the same <code>bdate_range</code> weekday-only pattern used to build this dataset in the first place.</p>
 </div>
-<div id="22" class="cell" data-execution_count="9">
+<div id="23" class="cell" data-execution_count="9">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"January business days  : </span><span class="sc">{</span><span class="bu">len</span>(school_300.loc[<span class="st">'2025-01'</span>])<span class="sc">}</span><span class="ss">"</span>)</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"February business days : </span><span class="sc">{</span><span class="bu">len</span>(school_300.loc[<span class="st">'2025-02'</span>])<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
@@ -801,7 +742,7 @@ February business days : 20</code></pre>
 <pre style="background:#FFF8E1;padding:10px;border-radius:4px;font-size:0.9em">last_two_weeks = school_300.loc["2025-03-15":"2025-03-28"]
 last_two_weeks["attendance_rate"].mean()</pre>
 </div>
-<div id="24" class="cell" data-execution_count="10">
+<div id="25" class="cell" data-execution_count="10">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: select 2025-03-15 through 2025-03-28 and print the mean attendance_rate</span></span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
@@ -809,7 +750,7 @@ last_two_weeks["attendance_rate"].mean()</pre>
 <section id="the-power-of-pandas-resample" class="level2">
 <h2 class="anchored" data-anchor-id="the-power-of-pandas-resample">4. The Power of Pandas: <code>resample</code></h2>
 <p><code>resample</code> changes the time granularity of a series: daily data summarized into weekly or monthly figures, the same split-apply-combine idea from Part 3’s <code>groupby</code>, except the groups are time intervals instead of category values:</p>
-<div id="26" class="cell" data-execution_count="11">
+<div id="27" class="cell" data-execution_count="11">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>weekly_attendance <span class="op">=</span> school_300[<span class="st">"attendance_rate"</span>].resample(<span class="st">"W"</span>).mean()</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>weekly_attendance.head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="11">
@@ -826,7 +767,7 @@ Freq: W-SUN, Name: attendance_rate, dtype: float64</code></pre>
 <p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-info-circle-fill"></i> Key Concept: <code>resample</code> groups by time interval, <code>groupby</code> groups by value</span><br><br> <code>df.groupby(“caste”)</code> (Part 3) splits rows by whatever value is already in the <code>caste</code> column. <code>series.resample(“W”)</code> splits rows by which week their <code>DatetimeIndex</code> label falls into, intervals that did not exist as a column at all until <code>resample</code> created them. Both still end with an aggregation like <code>.mean()</code> to combine each group into one number.</p>
 </div>
 <p>Monthly resampling on the same series needs only a different frequency string. In pandas 3 the old <code>"M"</code> alias was removed; the replacement is <code>"ME"</code> (month-end), which anchors each bucket to the last calendar day of the month:</p>
-<div id="29" class="cell" data-execution_count="12">
+<div id="30" class="cell" data-execution_count="12">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>monthly_attendance <span class="op">=</span> school_300[<span class="st">"attendance_rate"</span>].resample(<span class="st">"ME"</span>).mean()</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>monthly_attendance</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="12">
@@ -845,7 +786,7 @@ Freq: ME, Name: attendance_rate, dtype: float64</code></pre>
 <b>Goal:</b> Set <code>date</code> as the index on the full <code>attendance</code> table, group by <code>school_id</code>, and resample to monthly means in one chained call. Use <code>“ME”</code> (month-end): the pandas 3 replacement for the removed <code>“M”</code> alias.
 <pre style="background:#FFF8E1;padding:10px;border-radius:4px;font-size:0.9em">attendance.set_index("date").groupby("school_id")["attendance_rate"].resample("ME").mean()</pre>
 </div>
-<div id="32" class="cell" data-execution_count="13">
+<div id="33" class="cell" data-execution_count="13">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: set date as index, group by school_id, resample monthly, take the mean</span></span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
@@ -859,7 +800,7 @@ Freq: ME, Name: attendance_rate, dtype: float64</code></pre>
 <li><code>tz_convert(tz)</code>: shifts a timezone-aware series to a different timezone. The values change to represent the same instant in the target zone.</li>
 </ul>
 <p>The standard practice for storage: localize to UTC, convert to local time only for display.</p>
-<div id="34" class="cell" data-execution_count="14">
+<div id="35" class="cell" data-execution_count="14">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Localize the naive DatetimeIndex to East Africa Time (UTC+3, Tanzania/Kenya)</span></span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>school_300_eat <span class="op">=</span> school_300.copy()</span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>school_300_eat.index <span class="op">=</span> school_300_eat.index.tz_localize(<span class="st">"Africa/Nairobi"</span>)</span>
@@ -874,35 +815,11 @@ Freq: ME, Name: attendance_rate, dtype: float64</code></pre>
 UTC:             DatetimeIndex(['2025-01-05 21:00:00+00:00', '2025-01-06 21:00:00+00:00'], dtype='datetime64[us, UTC]', name='date', freq=None)</code></pre>
 </div>
 </div>
-<blockquote class="blockquote">
-<p><strong>Timezone flow: localize once, store as UTC, convert for display</strong></p>
-</blockquote>
-<div class="cell" data-layout-align="default">
-<div class="cell-output-display">
-<div>
-<p></p><figure class="figure"><p></p>
-<div>
-<pre class="mermaid mermaid-js">flowchart LR
-    A["tz-naive Timestamp
-2024-01-15 09:00
-(no timezone info)"] --&gt;|"tz_localize('US/Eastern')"| B["tz-aware
-2024-01-15 09:00-05:00"]
-    B --&gt;|"tz_convert('UTC')"| C["UTC
-2024-01-15 14:00+00:00"]
-    C --&gt;|"tz_convert('Africa/Dar_es_Salaam')"| D["Local display
-2024-01-15 17:00+03:00"]
-
-    A2["mixing naive + aware
-in the same column"] --&gt;|"raises"| E["TypeError"]
-
-    style C fill:#EBF5F0,stroke:#059669,color:#065F46
-    style E fill:#FEF2F2,stroke:#DC2626,color:#991B1B
-    style A style=dashed
-</pre>
-</div>
-<p></p></figure><p></p>
-</div>
-</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="figs/timezone-flow.svg" class="img-fluid figure-img" alt="Four boxes connected by arrows: tz-naive (dashed, gray), tz-aware (blue), UTC stored (green), local display (purple). A red warning box below warns against mixing naive and aware timestamps. A green tip box recommends storing in UTC."></p>
+<figcaption>Timezone handling flow: a tz-naive timestamp from a CSV is localized to its source timezone, converted to UTC for storage, then converted to a local timezone only when displaying output. Mixing naive and aware timestamps in the same column raises a TypeError.</figcaption>
+</figure>
 </div>
 <div style="background:#EAF3FA;border-left:5px solid #0369A1;padding:14px 18px;border-radius:6px;margin:16px 0">
 <p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-info-circle-fill"></i> Key Concept: Store in UTC, display in local time</span><br><br> UTC has no daylight saving transitions and no ambiguous hours, so it is the only safe format for storing timestamps that will be compared, sorted, or joined across sources. Localize to UTC at ingestion; convert to the user’s timezone only when formatting for display. Timestamps stored as naive local time break silently when DST shifts: two records that look 60 minutes apart may actually be 120 minutes apart, or the same instant twice.</p>
@@ -911,7 +828,7 @@ in the same column"] --&gt;|"raises"| E["TypeError"]
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>school_300_utc.index[<span class="dv">0</span>] <span class="op">&gt;</span> school_300.index[<span class="dv">0</span>]</span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="co"># TypeError: Cannot compare tz-naive and tz-aware datetime-like objects</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>The fix is always to localize the naive series before comparing:</p>
-<div id="38" class="cell" data-execution_count="15">
+<div id="39" class="cell" data-execution_count="15">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Compare two timezone-aware timestamps safely</span></span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>school_300_eat_end <span class="op">=</span> school_300_eat.index[<span class="op">-</span><span class="dv">1</span>]</span>
 <span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>school_300_utc_end <span class="op">=</span> school_300_utc.index[<span class="op">-</span><span class="dv">1</span>]</span>
@@ -940,7 +857,7 @@ s302_london.index = s302_london.index.tz_convert("Europe/London")
 print(s302_eat.index[0])
 print(s302_london.index[0])</pre>
 </div>
-<div id="41" class="cell" data-execution_count="16">
+<div id="42" class="cell" data-execution_count="16">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: localize school_302 to Africa/Nairobi then convert to Europe/London</span></span>
 <span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
@@ -949,7 +866,7 @@ print(s302_london.index[0])</pre>
 <h2 class="anchored" data-anchor-id="lag-lead-and-autocorrelation">6. Lag, Lead, and Autocorrelation</h2>
 <p>A lag feature answers the question: “what was the value yesterday?” It is the most common feature engineering step for time series in ML. If Monday’s attendance rate predicts Tuesday’s, a lag-1 feature captures that relationship in a column a model can consume.</p>
 <p><code>shift(n)</code> moves values forward by <code>n</code> periods (positive = lag, negative = lead). The first <code>n</code> rows get <code>NaN</code> because there is no previous value to fill them.</p>
-<div id="43" class="cell" data-execution_count="17">
+<div id="44" class="cell" data-execution_count="17">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>rate <span class="op">=</span> school_300[<span class="st">"attendance_rate"</span>].copy()</span>
 <span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="co"># lag-1: yesterday's attendance rate</span></span>
@@ -1039,7 +956,7 @@ print(s302_london.index[0])</pre>
 <div style="background:#EAF3FA;border-left:5px solid #0369A1;padding:14px 18px;border-radius:6px;margin:16px 0">
 <p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-info-circle-fill"></i> Key Concept: Lag features turn time series forecasting into supervised learning</span><br><br> A gradient boosting model does not know what “time” means. It knows column values. Giving it a <code>rate_lag1</code> column is how you communicate “yesterday’s value” in a language the model understands. A model trained on <code>[rate_lag1, rate_lag5, day_of_week]</code> predicting <code>attendance_rate</code> is a supervised regression problem built from a single time series. The NaN rows produced by <code>shift</code> must be dropped or filled before training.</p>
 </div>
-<div id="45" class="cell" data-execution_count="18">
+<div id="46" class="cell" data-execution_count="18">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Rolling 5-day average: smooth out day-of-week noise</span></span>
 <span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>rolling_mean <span class="op">=</span> rate.rolling(window<span class="op">=</span><span class="dv">5</span>).mean()</span>
 <span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>rolling_mean.name <span class="op">=</span> <span class="st">"rate_rolling5"</span></span>
@@ -1121,7 +1038,7 @@ print(s302_london.index[0])</pre>
 </div>
 </div>
 <p><code>autocorr(lag)</code> measures how strongly a series correlates with a delayed copy of itself. An autocorrelation close to 1 means yesterday’s value is a strong predictor of today’s: a useful sanity check before building a lag-based model.</p>
-<div id="47" class="cell" data-execution_count="19">
+<div id="48" class="cell" data-execution_count="19">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> lag <span class="kw">in</span> [<span class="dv">1</span>, <span class="dv">5</span>, <span class="dv">10</span>]:</span>
 <span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>    ac <span class="op">=</span> rate.autocorr(lag<span class="op">=</span>lag)</span>
 <span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"autocorr(lag=</span><span class="sc">{</span>lag<span class="sc">:&gt;2}</span><span class="ss">): </span><span class="sc">{</span>ac<span class="sc">:.3f}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -1148,7 +1065,7 @@ print(fm_302.head())
 print("autocorr lag1:", rate_302.autocorr(lag=1).round(3))
 print("autocorr lag5:", rate_302.autocorr(lag=5).round(3))</pre>
 </div>
-<div id="50" class="cell" data-execution_count="20">
+<div id="51" class="cell" data-execution_count="20">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: build lag feature matrix for school_302 and check autocorrelations</span></span>
 <span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
@@ -1180,7 +1097,7 @@ last_week = weekly.loc[:, "2025-03-24":"2025-03-28"]
 drop_per_school = first_week.groupby("school_id").mean() - last_week.groupby("school_id").mean()
 drop_per_school.sort_values(ascending=False)</pre>
 </div>
-<div id="53" class="cell" data-execution_count="21">
+<div id="54" class="cell" data-execution_count="21">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: build the term-end attendance report described above</span></span>
 <span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>

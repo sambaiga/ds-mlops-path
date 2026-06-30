@@ -1435,112 +1435,24 @@ with_internet[["midterm_score", "final_score", "project_score"]].agg(["mean", "s
 <h3 class="anchored" data-anchor-id="a.-rolling-and-expanding-windows">5a. Rolling and Expanding Windows</h3>
 <p><code>rolling(n)</code> groups each row with the <code>n-1</code> rows before it and applies an aggregation. It is the standard tool for smoothing noisy signals, computing moving averages, or creating features that capture recent trend for a time-ordered dataset.</p>
 <p><code>expanding()</code> is the cumulative version: each row aggregates everything from the start of the series up to that point. The first row is its own mean; the second is the mean of rows 1-2; and so on.</p>
-<div id="69" class="cell" data-execution_count="25">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.patches <span class="im">as</span> mpatches</span>
-<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> matplotlib.patches <span class="im">import</span> FancyBboxPatch</span>
-<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
-<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>BG <span class="op">=</span> <span class="st">"#F8FAFC"</span></span>
-<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>GREEN <span class="op">=</span> <span class="st">"#059669"</span></span>
-<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>BLUE <span class="op">=</span> <span class="st">"#0369A1"</span></span>
-<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>PURPLE <span class="op">=</span> <span class="st">"#7C3AED"</span></span>
-<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a>LGRN <span class="op">=</span> <span class="st">"#ECFDF5"</span></span>
-<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a>LBLUE <span class="op">=</span> <span class="st">"#EFF6FF"</span></span>
-<span id="cb35-11"><a href="#cb35-11" aria-hidden="true" tabindex="-1"></a>LPURP <span class="op">=</span> <span class="st">"#F5F3FF"</span></span>
-<span id="cb35-12"><a href="#cb35-12" aria-hidden="true" tabindex="-1"></a>GRAY <span class="op">=</span> <span class="st">"#64748B"</span></span>
-<span id="cb35-13"><a href="#cb35-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-14"><a href="#cb35-14" aria-hidden="true" tabindex="-1"></a>scores <span class="op">=</span> [<span class="dv">70</span>, <span class="dv">80</span>, <span class="dv">90</span>, <span class="dv">60</span>, <span class="dv">75</span>]</span>
-<span id="cb35-15"><a href="#cb35-15" aria-hidden="true" tabindex="-1"></a>days <span class="op">=</span> [<span class="st">"day 1"</span>, <span class="st">"day 2"</span>, <span class="st">"day 3"</span>, <span class="st">"day 4"</span>, <span class="st">"day 5"</span>]</span>
-<span id="cb35-16"><a href="#cb35-16" aria-hidden="true" tabindex="-1"></a>window_colors <span class="op">=</span> [(GREEN, LGRN), (BLUE, LBLUE), (PURPLE, LPURP)]</span>
-<span id="cb35-17"><a href="#cb35-17" aria-hidden="true" tabindex="-1"></a>window_means <span class="op">=</span> [<span class="fl">80.0</span>, <span class="fl">76.7</span>, <span class="fl">75.0</span>]</span>
-<span id="cb35-18"><a href="#cb35-18" aria-hidden="true" tabindex="-1"></a>result_labels <span class="op">=</span> [<span class="st">"result[2]"</span>, <span class="st">"result[3]"</span>, <span class="st">"result[4]"</span>]</span>
-<span id="cb35-19"><a href="#cb35-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-20"><a href="#cb35-20" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">9</span>, <span class="dv">4</span>))</span>
-<span id="cb35-21"><a href="#cb35-21" aria-hidden="true" tabindex="-1"></a>fig.patch.set_facecolor(BG)</span>
-<span id="cb35-22"><a href="#cb35-22" aria-hidden="true" tabindex="-1"></a>ax.set_facecolor(BG)</span>
-<span id="cb35-23"><a href="#cb35-23" aria-hidden="true" tabindex="-1"></a>ax.set_xlim(<span class="op">-</span><span class="fl">0.5</span>, <span class="fl">6.5</span>)</span>
-<span id="cb35-24"><a href="#cb35-24" aria-hidden="true" tabindex="-1"></a>ax.set_ylim(<span class="op">-</span><span class="fl">0.3</span>, <span class="fl">4.2</span>)</span>
-<span id="cb35-25"><a href="#cb35-25" aria-hidden="true" tabindex="-1"></a>ax.axis(<span class="st">"off"</span>)</span>
-<span id="cb35-26"><a href="#cb35-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-27"><a href="#cb35-27" aria-hidden="true" tabindex="-1"></a><span class="co"># Draw score tiles (top row)</span></span>
-<span id="cb35-28"><a href="#cb35-28" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> xi, (day, score) <span class="kw">in</span> <span class="bu">enumerate</span>(<span class="bu">zip</span>(days, scores, strict<span class="op">=</span><span class="va">False</span>)):</span>
-<span id="cb35-29"><a href="#cb35-29" aria-hidden="true" tabindex="-1"></a>    ax.add_patch(</span>
-<span id="cb35-30"><a href="#cb35-30" aria-hidden="true" tabindex="-1"></a>        FancyBboxPatch((xi <span class="op">+</span> <span class="fl">0.05</span>, <span class="fl">3.1</span>), <span class="fl">0.9</span>, <span class="fl">0.7</span>, boxstyle<span class="op">=</span><span class="st">"round,pad=0.04"</span>, facecolor<span class="op">=</span><span class="st">"white"</span>, edgecolor<span class="op">=</span>GRAY, lw<span class="op">=</span><span class="fl">1.2</span>)</span>
-<span id="cb35-31"><a href="#cb35-31" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb35-32"><a href="#cb35-32" aria-hidden="true" tabindex="-1"></a>    ax.text(xi <span class="op">+</span> <span class="fl">0.5</span>, <span class="fl">3.6</span>, <span class="bu">str</span>(score), ha<span class="op">=</span><span class="st">"center"</span>, va<span class="op">=</span><span class="st">"center"</span>, fontsize<span class="op">=</span><span class="dv">11</span>, fontweight<span class="op">=</span><span class="st">"bold"</span>, color<span class="op">=</span><span class="st">"#0F172A"</span>)</span>
-<span id="cb35-33"><a href="#cb35-33" aria-hidden="true" tabindex="-1"></a>    ax.text(xi <span class="op">+</span> <span class="fl">0.5</span>, <span class="fl">3.2</span>, day, ha<span class="op">=</span><span class="st">"center"</span>, va<span class="op">=</span><span class="st">"center"</span>, fontsize<span class="op">=</span><span class="fl">7.5</span>, color<span class="op">=</span>GRAY)</span>
-<span id="cb35-34"><a href="#cb35-34" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-35"><a href="#cb35-35" aria-hidden="true" tabindex="-1"></a>ax.text(<span class="op">-</span><span class="fl">0.3</span>, <span class="fl">3.45</span>, <span class="st">"scores:"</span>, ha<span class="op">=</span><span class="st">"right"</span>, va<span class="op">=</span><span class="st">"center"</span>, fontsize<span class="op">=</span><span class="dv">9</span>, color<span class="op">=</span>GRAY)</span>
-<span id="cb35-36"><a href="#cb35-36" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-37"><a href="#cb35-37" aria-hidden="true" tabindex="-1"></a><span class="co"># Draw each window as a colored bracket under the relevant tiles</span></span>
-<span id="cb35-38"><a href="#cb35-38" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> wi, (start, (edge_c, fill_c), mean, lbl) <span class="kw">in</span> <span class="bu">enumerate</span>(</span>
-<span id="cb35-39"><a href="#cb35-39" aria-hidden="true" tabindex="-1"></a>    <span class="bu">zip</span>([<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">2</span>], window_colors, window_means, result_labels, strict<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb35-40"><a href="#cb35-40" aria-hidden="true" tabindex="-1"></a>):</span>
-<span id="cb35-41"><a href="#cb35-41" aria-hidden="true" tabindex="-1"></a>    y <span class="op">=</span> <span class="fl">2.4</span> <span class="op">-</span> wi <span class="op">*</span> <span class="fl">0.75</span></span>
-<span id="cb35-42"><a href="#cb35-42" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Highlight bracket</span></span>
-<span id="cb35-43"><a href="#cb35-43" aria-hidden="true" tabindex="-1"></a>    ax.add_patch(</span>
-<span id="cb35-44"><a href="#cb35-44" aria-hidden="true" tabindex="-1"></a>        FancyBboxPatch(</span>
-<span id="cb35-45"><a href="#cb35-45" aria-hidden="true" tabindex="-1"></a>            (start <span class="op">+</span> <span class="fl">0.02</span>, y <span class="op">-</span> <span class="fl">0.12</span>),</span>
-<span id="cb35-46"><a href="#cb35-46" aria-hidden="true" tabindex="-1"></a>            <span class="fl">3.0</span> <span class="op">-</span> <span class="fl">0.04</span>,</span>
-<span id="cb35-47"><a href="#cb35-47" aria-hidden="true" tabindex="-1"></a>            <span class="fl">0.45</span>,</span>
-<span id="cb35-48"><a href="#cb35-48" aria-hidden="true" tabindex="-1"></a>            boxstyle<span class="op">=</span><span class="st">"round,pad=0.04"</span>,</span>
-<span id="cb35-49"><a href="#cb35-49" aria-hidden="true" tabindex="-1"></a>            facecolor<span class="op">=</span>fill_c,</span>
-<span id="cb35-50"><a href="#cb35-50" aria-hidden="true" tabindex="-1"></a>            edgecolor<span class="op">=</span>edge_c,</span>
-<span id="cb35-51"><a href="#cb35-51" aria-hidden="true" tabindex="-1"></a>            lw<span class="op">=</span><span class="fl">1.8</span>,</span>
-<span id="cb35-52"><a href="#cb35-52" aria-hidden="true" tabindex="-1"></a>            alpha<span class="op">=</span><span class="fl">0.9</span>,</span>
-<span id="cb35-53"><a href="#cb35-53" aria-hidden="true" tabindex="-1"></a>        )</span>
-<span id="cb35-54"><a href="#cb35-54" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb35-55"><a href="#cb35-55" aria-hidden="true" tabindex="-1"></a>    ax.text(</span>
-<span id="cb35-56"><a href="#cb35-56" aria-hidden="true" tabindex="-1"></a>        start <span class="op">+</span> <span class="fl">1.5</span>,</span>
-<span id="cb35-57"><a href="#cb35-57" aria-hidden="true" tabindex="-1"></a>        y <span class="op">+</span> <span class="fl">0.1</span>,</span>
-<span id="cb35-58"><a href="#cb35-58" aria-hidden="true" tabindex="-1"></a>        <span class="ss">f"window </span><span class="sc">{</span>wi <span class="op">+</span> <span class="dv">1</span><span class="sc">}</span><span class="ss">  (days </span><span class="sc">{</span>start <span class="op">+</span> <span class="dv">1</span><span class="sc">}</span><span class="ss">-</span><span class="sc">{</span>start <span class="op">+</span> <span class="dv">3</span><span class="sc">}</span><span class="ss">)"</span>,</span>
-<span id="cb35-59"><a href="#cb35-59" aria-hidden="true" tabindex="-1"></a>        ha<span class="op">=</span><span class="st">"center"</span>,</span>
-<span id="cb35-60"><a href="#cb35-60" aria-hidden="true" tabindex="-1"></a>        va<span class="op">=</span><span class="st">"center"</span>,</span>
-<span id="cb35-61"><a href="#cb35-61" aria-hidden="true" tabindex="-1"></a>        fontsize<span class="op">=</span><span class="dv">9</span>,</span>
-<span id="cb35-62"><a href="#cb35-62" aria-hidden="true" tabindex="-1"></a>        color<span class="op">=</span>edge_c,</span>
-<span id="cb35-63"><a href="#cb35-63" aria-hidden="true" tabindex="-1"></a>        fontweight<span class="op">=</span><span class="st">"bold"</span>,</span>
-<span id="cb35-64"><a href="#cb35-64" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb35-65"><a href="#cb35-65" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Arrow + result</span></span>
-<span id="cb35-66"><a href="#cb35-66" aria-hidden="true" tabindex="-1"></a>    ax.annotate(</span>
-<span id="cb35-67"><a href="#cb35-67" aria-hidden="true" tabindex="-1"></a>        <span class="st">""</span>,</span>
-<span id="cb35-68"><a href="#cb35-68" aria-hidden="true" tabindex="-1"></a>        xy<span class="op">=</span>(<span class="fl">5.5</span>, y <span class="op">+</span> <span class="fl">0.1</span>),</span>
-<span id="cb35-69"><a href="#cb35-69" aria-hidden="true" tabindex="-1"></a>        xytext<span class="op">=</span>(start <span class="op">+</span> <span class="fl">3.05</span>, y <span class="op">+</span> <span class="fl">0.1</span>),</span>
-<span id="cb35-70"><a href="#cb35-70" aria-hidden="true" tabindex="-1"></a>        arrowprops<span class="op">=</span>{<span class="st">"arrowstyle"</span>: <span class="st">"-&gt;"</span>, <span class="st">"color"</span>: edge_c, <span class="st">"lw"</span>: <span class="fl">1.5</span>},</span>
-<span id="cb35-71"><a href="#cb35-71" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb35-72"><a href="#cb35-72" aria-hidden="true" tabindex="-1"></a>    ax.text(<span class="fl">5.6</span>, y <span class="op">+</span> <span class="fl">0.1</span>, <span class="ss">f"mean = </span><span class="sc">{</span>mean<span class="sc">:.1f}</span><span class="ss">  (</span><span class="sc">{</span>lbl<span class="sc">}</span><span class="ss">)"</span>, va<span class="op">=</span><span class="st">"center"</span>, fontsize<span class="op">=</span><span class="dv">9</span>, color<span class="op">=</span>edge_c)</span>
-<span id="cb35-73"><a href="#cb35-73" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-74"><a href="#cb35-74" aria-hidden="true" tabindex="-1"></a>ax.text(</span>
-<span id="cb35-75"><a href="#cb35-75" aria-hidden="true" tabindex="-1"></a>    <span class="fl">0.5</span>,</span>
-<span id="cb35-76"><a href="#cb35-76" aria-hidden="true" tabindex="-1"></a>    <span class="fl">0.05</span>,</span>
-<span id="cb35-77"><a href="#cb35-77" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Rolling(3): the first two results are NaN (not enough prior rows to fill the window)."</span>,</span>
-<span id="cb35-78"><a href="#cb35-78" aria-hidden="true" tabindex="-1"></a>    fontsize<span class="op">=</span><span class="fl">8.5</span>,</span>
-<span id="cb35-79"><a href="#cb35-79" aria-hidden="true" tabindex="-1"></a>    color<span class="op">=</span>GRAY,</span>
-<span id="cb35-80"><a href="#cb35-80" aria-hidden="true" tabindex="-1"></a>    style<span class="op">=</span><span class="st">"italic"</span>,</span>
-<span id="cb35-81"><a href="#cb35-81" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb35-82"><a href="#cb35-82" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-83"><a href="#cb35-83" aria-hidden="true" tabindex="-1"></a>fig.suptitle(<span class="st">"rolling(n=3).mean()  --  window slides one row at a time"</span>, fontsize<span class="op">=</span><span class="dv">11</span>, color<span class="op">=</span><span class="st">"#0F172A"</span>, y<span class="op">=</span><span class="fl">1.0</span>)</span>
-<span id="cb35-84"><a href="#cb35-84" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
-<span id="cb35-85"><a href="#cb35-85" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display">
-<div>
+<div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="09-pandas-operations_files/figure-html/cell-26-output-1.png" width="841" height="389" class="figure-img"></p>
+<p><img src="figs/rolling-window.svg" class="img-fluid figure-img" alt="Five day score boxes at top. Three colored brackets slide across: green (days 1-3, mean 80), blue (days 2-4, mean 76.7), purple (days 3-5, mean 75). Amber bar at bottom notes first two results are NaN."></p>
+<figcaption>Rolling window of size 3 sliding over five days of scores. Window 1 covers days 1-3, window 2 days 2-4, window 3 days 3-5, each producing a mean. The first two results are NaN.</figcaption>
 </figure>
 </div>
-</div>
-</div>
-<div id="70" class="cell" data-execution_count="26">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Sort by average_marks to give the rolling window a meaningful order here</span></span>
-<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>df_sorted <span class="op">=</span> df.sort_values(<span class="st">"average_marks"</span>).reset_index(drop<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 5-row rolling mean: smooth out noise</span></span>
-<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>df_sorted[<span class="st">"marks_rolling5"</span>] <span class="op">=</span> df_sorted[<span class="st">"average_marks"</span>].rolling(window<span class="op">=</span><span class="dv">5</span>).mean()</span>
-<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a><span class="co"># expanding mean: cumulative average as we move through sorted students</span></span>
-<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a>df_sorted[<span class="st">"marks_cumulative"</span>] <span class="op">=</span> df_sorted[<span class="st">"average_marks"</span>].expanding().mean()</span>
-<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a>df_sorted[[<span class="st">"student_id"</span>, <span class="st">"average_marks"</span>, <span class="st">"marks_rolling5"</span>, <span class="st">"marks_cumulative"</span>]].head(<span class="dv">8</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="26">
+<div id="70" class="cell" data-execution_count="25">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Sort by average_marks to give the rolling window a meaningful order here</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>df_sorted <span class="op">=</span> df.sort_values(<span class="st">"average_marks"</span>).reset_index(drop<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 5-row rolling mean: smooth out noise</span></span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>df_sorted[<span class="st">"marks_rolling5"</span>] <span class="op">=</span> df_sorted[<span class="st">"average_marks"</span>].rolling(window<span class="op">=</span><span class="dv">5</span>).mean()</span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a><span class="co"># expanding mean: cumulative average as we move through sorted students</span></span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>df_sorted[<span class="st">"marks_cumulative"</span>] <span class="op">=</span> df_sorted[<span class="st">"average_marks"</span>].expanding().mean()</span>
+<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a>df_sorted[[<span class="st">"student_id"</span>, <span class="st">"average_marks"</span>, <span class="st">"marks_rolling5"</span>, <span class="st">"marks_cumulative"</span>]].head(<span class="dv">8</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="25">
 <div>
 
 
@@ -1621,16 +1533,16 @@ with_internet[["midterm_score", "final_score", "project_score"]].agg(["mean", "s
 <p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-info-circle-fill"></i> Key Concept: Rolling windows require ordered data to be meaningful</span><br><br> <code>rolling(5)</code> looks at the 5 rows immediately before each row in whatever order they sit in the DataFrame. On unsorted data the window picks up random rows and produces meaningless averages. Always sort by the relevant axis (time, score, sequence number) before calling <code>rolling()</code>. The NaN values in the first <code>n-1</code> rows are correct: there is not enough history to fill those windows yet.</p>
 </div>
 <p>In time-series work, the pattern is almost always: sort by date, group by entity, then compute a rolling stat per group. The <code>groupby().transform()</code> tip from Section 4 applies here too:</p>
-<div id="73" class="cell" data-execution_count="27">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Per-program 10-student rolling mean of average_marks</span></span>
-<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a><span class="co"># transform keeps the result aligned to the original index</span></span>
-<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"marks_prog_rolling10"</span>] <span class="op">=</span> (</span>
-<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>    df.sort_values(<span class="st">"average_marks"</span>)</span>
-<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>    .groupby(<span class="st">"program"</span>)[<span class="st">"average_marks"</span>]</span>
-<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>    .transform(<span class="kw">lambda</span> s: s.rolling(<span class="dv">10</span>, min_periods<span class="op">=</span><span class="dv">3</span>).mean())</span>
-<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a>df[[<span class="st">"program"</span>, <span class="st">"average_marks"</span>, <span class="st">"marks_prog_rolling10"</span>]].dropna().head(<span class="dv">6</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="27">
+<div id="73" class="cell" data-execution_count="26">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Per-program 10-student rolling mean of average_marks</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a><span class="co"># transform keeps the result aligned to the original index</span></span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"marks_prog_rolling10"</span>] <span class="op">=</span> (</span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>    df.sort_values(<span class="st">"average_marks"</span>)</span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>    .groupby(<span class="st">"program"</span>)[<span class="st">"average_marks"</span>]</span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>    .transform(<span class="kw">lambda</span> s: s.rolling(<span class="dv">10</span>, min_periods<span class="op">=</span><span class="dv">3</span>).mean())</span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a>df[[<span class="st">"program"</span>, <span class="st">"average_marks"</span>, <span class="st">"marks_prog_rolling10"</span>]].dropna().head(<span class="dv">6</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="26">
 <div>
 
 
@@ -1691,15 +1603,15 @@ with_internet[["midterm_score", "final_score", "project_score"]].agg(["mean", "s
 <h3 class="anchored" data-anchor-id="b.-expressive-filtering-with-df.query">5b. Expressive Filtering with <code>df.query()</code></h3>
 <p>Boolean masks work well for one or two conditions. For complex multi-condition filters, <code>df.query()</code> expresses the same logic as a readable string, closer to how you would say it out loud.</p>
 <p>Reference an external variable inside a query string with the <code>@</code> prefix:</p>
-<div id="75" class="cell" data-execution_count="28">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Boolean mask version -- correct but harder to read</span></span>
-<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>mask <span class="op">=</span> (df[<span class="st">"midterm_score"</span>] <span class="op">&gt;</span> <span class="dv">70</span>) <span class="op">&amp;</span> (df[<span class="st">"final_score"</span>] <span class="op">&gt;</span> <span class="dv">70</span>) <span class="op">&amp;</span> (df[<span class="st">"program"</span>].isin([<span class="st">"Engineering"</span>, <span class="st">"Sciences"</span>]))</span>
-<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"mask result  : </span><span class="sc">{</span>mask<span class="sc">.</span><span class="bu">sum</span>()<span class="sc">}</span><span class="ss"> rows"</span>)</span>
-<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Same filter as a query string -- reads like a sentence</span></span>
-<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>threshold <span class="op">=</span> <span class="dv">70</span></span>
-<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>result <span class="op">=</span> df.query(<span class="st">"midterm_score &gt; @threshold and final_score &gt; @threshold and program in ['Engineering', 'Sciences']"</span>)</span>
-<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"query result : </span><span class="sc">{</span><span class="bu">len</span>(result)<span class="sc">}</span><span class="ss"> rows"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="75" class="cell" data-execution_count="27">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Boolean mask version -- correct but harder to read</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>mask <span class="op">=</span> (df[<span class="st">"midterm_score"</span>] <span class="op">&gt;</span> <span class="dv">70</span>) <span class="op">&amp;</span> (df[<span class="st">"final_score"</span>] <span class="op">&gt;</span> <span class="dv">70</span>) <span class="op">&amp;</span> (df[<span class="st">"program"</span>].isin([<span class="st">"Engineering"</span>, <span class="st">"Sciences"</span>]))</span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"mask result  : </span><span class="sc">{</span>mask<span class="sc">.</span><span class="bu">sum</span>()<span class="sc">}</span><span class="ss"> rows"</span>)</span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Same filter as a query string -- reads like a sentence</span></span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>threshold <span class="op">=</span> <span class="dv">70</span></span>
+<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a>result <span class="op">=</span> df.query(<span class="st">"midterm_score &gt; @threshold and final_score &gt; @threshold and program in ['Engineering', 'Sciences']"</span>)</span>
+<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"query result : </span><span class="sc">{</span><span class="bu">len</span>(result)<span class="sc">}</span><span class="ss"> rows"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>mask result  : 14 rows
 query result : 14 rows</code></pre>
@@ -1716,9 +1628,9 @@ df_q["rolling_mean"] = df_q["average_marks"].rolling(20).mean()
 result = df_q.query("rolling_mean &gt; 75 and program == 'Sciences'")
 print(len(result))</pre>
 </div>
-<div id="78" class="cell" data-execution_count="29">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: rolling mean, then query-filter to Sciences students above rolling threshold</span></span>
-<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="78" class="cell" data-execution_count="28">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: rolling mean, then query-filter to Sciences students above rolling threshold</span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 </section>
@@ -1746,9 +1658,9 @@ grade_distribution = df["final_grade"].value_counts(normalize=True)
 passing = df[df["passed"] == True]["average_marks"].agg(["mean"])  # noqa: E712
 failing = df[df["passed"] == False]["average_marks"].agg(["mean"])  # noqa: E712</pre>
 </div>
-<div id="81" class="cell" data-execution_count="30">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: build the risk and performance report described above</span></span>
-<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="81" class="cell" data-execution_count="29">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: build the risk and performance report described above</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="further-reading" class="level2">

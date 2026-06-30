@@ -108,9 +108,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   }
 }</script>
 <style>html{ scroll-behavior: smooth; }</style>
-<script src="../../site_libs/quarto-diagram/mermaid.min.js"></script>
-<script src="../../site_libs/quarto-diagram/mermaid-init.js"></script>
-<link href="../../site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.min.js" integrity="sha384-c9c+LnTbwQ3aujuU7ULEPVvgLs+Fn6fJUvIGTsuu1ZcCf11fiEubah0ttpca4ntM sha384-6V1/AdqZRWk1KAlWbKBlGhN7VG4iE/yAZcO6NZPMF8od0vukrvr0tg4qY6NSrItx" crossorigin="anonymous"></script>
 
 <script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
@@ -427,8 +424,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">In this chapter</h2>
    
   <ul>
-  <li><a href="#before-you-begin" id="toc-before-you-begin" class="nav-link active" data-scroll-target="#before-you-begin">Before you begin</a></li>
-  <li><a href="#concatenating-dataframes-with-pd.concat" id="toc-concatenating-dataframes-with-pd.concat" class="nav-link" data-scroll-target="#concatenating-dataframes-with-pd.concat">1. Concatenating DataFrames with <code>pd.concat</code></a></li>
+  <li><a href="#concatenating-dataframes-with-pd.concat" id="toc-concatenating-dataframes-with-pd.concat" class="nav-link active" data-scroll-target="#concatenating-dataframes-with-pd.concat">1. Concatenating DataFrames with <code>pd.concat</code></a></li>
   <li><a href="#joining-data-with-pd.merge" id="toc-joining-data-with-pd.merge" class="nav-link" data-scroll-target="#joining-data-with-pd.merge">2. Joining Data with <code>pd.merge</code></a>
   <ul class="collapse">
   <li><a href="#duplicate-keys-when-merge-produces-more-rows-than-you-expect" id="toc-duplicate-keys-when-merge-produces-more-rows-than-you-expect" class="nav-link" data-scroll-target="#duplicate-keys-when-merge-produces-more-rows-than-you-expect">Duplicate keys: when merge produces more rows than you expect</a></li>
@@ -470,70 +466,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 <p><a href="https://colab.research.google.com/github/sambaiga/ds-mlops-path/blob/main/tutorials/01-python-basics/10-combining-reshaping.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open In Colab"></a> <a href="https://raw.githubusercontent.com/sambaiga/ds-mlops-path/main/tutorials/01-python-basics/10-combining-reshaping.ipynb"><img src="https://img.shields.io/badge/Download-Notebook-blue.svg?logo=jupyter&amp;logoColor=white" class="img-fluid" alt="Download Notebook"></a></p>
-<p><strong>DS-MLOps Data Analysis</strong></p>
-<p><strong>Python 3.12+ | Author: Anthony Faustine</strong></p>
-<section id="before-you-begin" class="level2">
-<h2 class="anchored" data-anchor-id="before-you-begin">Before you begin</h2>
-<p>This notebook continues from Part 9 (<code>09-pandas-operations.ipynb</code>). Real analyses rarely live in one table: a second file with reference data shows up, a result needs splitting by category, and a wide summary table is easier to read than a long one. This part covers four multi-table operations and adds time-indexed data as a fifth theme: concatenation, merging, <code>groupby</code>, pivoting, and working with dates and <code>resample</code>.</p>
-<p>Alongside the student exam results, we use a small synthetic table mapping each <code>school_id</code> to a region, and a second dataset of daily attendance records covering five schools over a full school term.</p>
-<p>Part 11 (<code>11-polars.ipynb</code>) continues with Polars and the expression API.</p>
-<div class="callout callout-style-default callout-note no-icon callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Topics covered
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-1" class="callout-1-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<table class="caption-top table">
-<colgroup>
-<col style="width: 50%">
-<col style="width: 50%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Topic</th>
-<th>Why it matters</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><strong><code>pd.concat</code></strong></td>
-<td>Stack DataFrames on top of each other, or side by side</td>
-</tr>
-<tr class="even">
-<td><strong><code>pd.merge</code></strong></td>
-<td>Combine two tables on a shared key, the same idea as a SQL join</td>
-</tr>
-<tr class="odd">
-<td><strong><code>groupby</code></strong></td>
-<td>Split a dataset into groups, apply a function to each, combine the results</td>
-</tr>
-<tr class="even">
-<td><strong><code>pivot_table</code></strong></td>
-<td>Reshape a long result into a wide, readable summary table</td>
-</tr>
-<tr class="odd">
-<td><strong><code>Timestamp</code> and <code>to_datetime</code></strong></td>
-<td>Parse text into dates; the building block for all time-indexed work</td>
-</tr>
-<tr class="even">
-<td><strong><code>DatetimeIndex</code></strong></td>
-<td>An index made of dates unlocks date-based slicing instead of position-only</td>
-</tr>
-<tr class="odd">
-<td><strong><code>resample</code></strong></td>
-<td>Change the time granularity of a series: daily to weekly, weekly to monthly</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-</div>
+<p>Your manager emails on Monday morning: three spreadsheets, different schools, different formats – “combine these and tell me which region is improving.” The data you want lives across files, split by category, and needs reshaping before it says anything useful. Part 9 showed you how to derive new columns from one table. This notebook adds the operations you reach for when the data is already split across multiple tables or needs to change shape: <code>pd.concat</code>, <code>pd.merge</code>, <code>groupby</code>, <code>pivot_table</code>, and time-indexed data with <code>DatetimeIndex</code>.</p>
+<p>Part 9 (<code>09-pandas-operations.ipynb</code>) built the column-level toolkit. What you build here – multi-table joins and time-indexed aggregations – is the direct input for Part 11 (<code>11-time-series.ipynb</code>), which goes deeper on resampling and forecasting.</p>
 <blockquote class="blockquote">
 <p>Callout markers used throughout this notebook are explained on the <a href="../../index.html#callout-guide">book cover page</a>.</p>
 </blockquote>
@@ -694,7 +628,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon no-icon"></i>
 </div>
@@ -703,7 +637,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>By the end of Part 10 you will be able to:</p>
 <table class="caption-top table">
@@ -770,7 +704,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
-</section>
 <section id="concatenating-dataframes-with-pd.concat" class="level2">
 <h2 class="anchored" data-anchor-id="concatenating-dataframes-with-pd.concat">1. Concatenating DataFrames with <code>pd.concat</code></h2>
 <p><code>pd.concat</code> stacks DataFrames together. By default it stacks rows on top of each other (<code>axis=0</code>), the operation you need when the same columns show up in two separate files or two separate batches:</p>
@@ -854,11 +787,14 @@ len(recombined) == len(df)</pre>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: split df by program == "Data Science", concat back, and confirm the row count matches</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
+<div style="background:#EAF3FA;border-left:5px solid #0369A1;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-key-fill"></i> Key Concept: <code>pd.concat</code> preserves all columns and uses <code>axis</code> to choose the direction</span><br><br> <code>pd.concat(objs, axis=0)</code> stacks DataFrames row by row – every row from the second appended below the last row of the first. <code>axis=1</code> places them side by side as new columns. Passing <code>keys=[...]</code> adds a named outer index level so you can trace which original frame each row came from. When column sets differ, <code>concat</code> fills the missing values with <code>NaN</code> rather than raising an error.</p>
+</div>
 </section>
 <section id="joining-data-with-pd.merge" class="level2">
 <h2 class="anchored" data-anchor-id="joining-data-with-pd.merge">2. Joining Data with <code>pd.merge</code></h2>
 <p><code>pd.merge</code> combines two tables on a shared key, the same idea as a SQL join. The <code>courses</code> table loaded above has one row per <code>course_id</code>; merging it onto <code>df</code> attaches metadata (credits, department, instructor) to every enrollment row:</p>
-<div id="13" class="cell" data-execution_count="5">
+<div id="14" class="cell" data-execution_count="5">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>df_with_meta <span class="op">=</span> pd.merge(df, courses, on<span class="op">=</span><span class="st">"course_id"</span>, how<span class="op">=</span><span class="st">"left"</span>)</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>df_with_meta[[<span class="st">"student_id"</span>, <span class="st">"course_id"</span>, <span class="st">"course_x"</span>, <span class="st">"department"</span>, <span class="st">"credits"</span>]].head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="5">
@@ -923,49 +859,12 @@ len(recombined) == len(df)</pre>
 </div>
 </div>
 </div>
-<blockquote class="blockquote">
-<p><strong>Join types: which rows survive each merge strategy</strong></p>
-</blockquote>
-<div class="cell" data-layout-align="default">
-<div class="cell-output-display">
-<div>
-<p></p><figure class="figure"><p></p>
-<div>
-<pre class="mermaid mermaid-js">flowchart LR
-    subgraph LEFT ["Left: students"]
-        LR1["S001 | Alice"]
-        LR2["S002 | Bob"]
-        LR3["S003 | Carol"]
-    end
-    subgraph RIGHT ["Right: grades"]
-        RR1["S001 | 85"]
-        RR2["S002 | 72"]
-        RR4["S004 | 90"]
-    end
-    LR1 &amp; RR1 --&gt; INN["inner: S001 (match only)"]
-    LR2 &amp; RR2 --&gt; INN2["inner: S002 (match only)"]
-    LR1 &amp; LR2 &amp; LR3 --&gt; LEFT2["left: S001, S002, S003
-(Carol grade = NaN)"]
-    RR1 &amp; RR2 &amp; RR4 --&gt; RIGHT2["right: S001, S002, S004
-(Alice/Bob keep grade, S004 name = NaN)"]
-    LR1 &amp; LR2 &amp; LR3 &amp; RR4 --&gt; OUTER["outer: all 4 students, NaN where no match"]
-
-    style INN fill:#EBF5F0,stroke:#059669,color:#065F46
-    style INN2 fill:#EBF5F0,stroke:#059669,color:#065F46
-    style LEFT2 fill:#EAF3FA,stroke:#0369A1,color:#0C4A6E
-    style RIGHT2 fill:#F5F3FF,stroke:#7C3AED,color:#3B0764
-    style OUTER fill:#FEF2F2,stroke:#DC2626,color:#991B1B
-</pre>
-</div>
-<p></p></figure><p></p>
-</div>
-</div>
-</div>
+<p>The <code>how</code> parameter controls which rows survive when a key has no match on the other side. The diagram below maps each strategy to the rows it keeps.</p>
 <p>The <code>how</code> argument decides which rows survive when a key on one side has no match on the other. <code>courses</code> here has a row for every <code>course_id</code> in <code>df</code>, so every <code>how</code> gives the same result; the difference only shows up once the two tables disagree:</p>
 <div style="background:#EAF7F0;border-left:5px solid #059669;padding:14px 18px;border-radius:6px;margin:16px 0">
 <p><span style="color:#059669;font-weight:bold"><i class="bi bi-journal-code"></i> Example: When <code>how</code> actually changes the result</span><br><br> Merging <code>df</code> against only half of <code>courses</code> with <code>how=“inner”</code> keeps only enrollments whose course is in that half. The same merge with <code>how=“left”</code> keeps every student, with <code>region</code> set to <code>NaN</code> wherever the school was missing from the smaller table.</p>
 </div>
-<div id="17" class="cell" data-execution_count="6">
+<div id="18" class="cell" data-execution_count="6">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>half_courses <span class="op">=</span> courses[courses[<span class="st">"department"</span>] <span class="op">==</span> <span class="st">"Computing"</span>]</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>inner_result <span class="op">=</span> pd.merge(df, half_courses, on<span class="op">=</span><span class="st">"course_id"</span>, how<span class="op">=</span><span class="st">"inner"</span>)</span>
@@ -977,17 +876,11 @@ len(recombined) == len(df)</pre>
 </div>
 </div>
 <p>The four join types differ only in which rows they keep, never in how rows are matched:</p>
-<div id="19" class="cell" data-execution_count="7">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> ark.plot.diagrams <span class="im">import</span> merge_join_types_diagram</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>merge_join_types_diagram()<span class="op">;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display">
-<div>
+<div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="10-combining-reshaping_files/figure-html/cell-8-output-1.png" width="941" height="287" class="figure-img"></p>
+<p><img src="figs/merge-join-types.svg" class="img-fluid figure-img" alt="Four rows, one per join type: inner (green), left (blue), right (purple), outer (red). Each shows a Venn diagram, example result rows, a plain-English rule, and the how= label."></p>
+<figcaption>The four pd.merge join types mapped by which rows survive. inner keeps matched rows only. left keeps all left rows with NaN where right has no match. right keeps all right rows. outer keeps every row from both sides with NaN filling the gaps.</figcaption>
 </figure>
-</div>
-</div>
 </div>
 <div style="background:#FEF2F2;border-left:5px solid #DC2626;padding:14px 18px;border-radius:6px;margin:16px 0">
 <p><span style="color:#991B1B;font-weight:bold"><i class="bi bi-bug-fill"></i> Common Mistake: Forgetting that an unmatched key produces <code>NaN</code>, not a dropped row</span><br><br> With <code>how=“left”</code>, an enrollment whose <code>course_id</code> has no match in <code>courses</code> still gets a row, just with <code>NaN</code> in every column that came from <code>courses</code>. Code that assumes every row has a real <code>region</code> after a left merge will silently miscount or mis-group those rows later, usually in a <code>groupby</code> a few cells down.</p>
@@ -996,33 +889,33 @@ len(recombined) == len(df)</pre>
 <h3 class="anchored" data-anchor-id="duplicate-keys-when-merge-produces-more-rows-than-you-expect">Duplicate keys: when merge produces more rows than you expect</h3>
 <p>Every example so far used a key where the right table had at most one match per left row (many-to-one). When the right table has more than one match, the result has more rows than either input, and this is correct but often surprising.</p>
 <p>Concrete example: if a student is enrolled in three courses, a left merge of the enrollment table against a course details table produces three rows for that student, one per course. That is the right answer, but code that assumed row counts stay the same will silently operate on a bigger table.</p>
-<div id="22" class="cell" data-execution_count="8">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a small example: two students, one appearing in two courses</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>students_small <span class="op">=</span> pd.DataFrame(</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    {</span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>        <span class="st">"student_id"</span>: [<span class="st">"S0001"</span>, <span class="st">"S0001"</span>, <span class="st">"S0002"</span>],</span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>        <span class="st">"course_id"</span>: [<span class="st">"C01"</span>, <span class="st">"C02"</span>, <span class="st">"C01"</span>],</span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>        <span class="st">"score"</span>: [<span class="dv">85</span>, <span class="dv">72</span>, <span class="dv">91</span>],</span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>course_info <span class="op">=</span> pd.DataFrame(</span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>    {</span>
-<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>        <span class="st">"course_id"</span>: [<span class="st">"C01"</span>, <span class="st">"C02"</span>],</span>
-<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>        <span class="st">"course_name"</span>: [<span class="st">"Statistics"</span>, <span class="st">"Algorithms"</span>],</span>
-<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>        <span class="st">"credits"</span>: [<span class="dv">3</span>, <span class="dv">4</span>],</span>
-<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>merged_dup <span class="op">=</span> pd.merge(students_small, course_info, on<span class="op">=</span><span class="st">"course_id"</span>, how<span class="op">=</span><span class="st">"left"</span>)</span>
-<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"students_small rows: </span><span class="sc">{</span><span class="bu">len</span>(students_small)<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"after merge rows   : </span><span class="sc">{</span><span class="bu">len</span>(merged_dup)<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>merged_dup</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="23" class="cell" data-execution_count="7">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a small example: two students, one appearing in two courses</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>students_small <span class="op">=</span> pd.DataFrame(</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    {</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>        <span class="st">"student_id"</span>: [<span class="st">"S0001"</span>, <span class="st">"S0001"</span>, <span class="st">"S0002"</span>],</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>        <span class="st">"course_id"</span>: [<span class="st">"C01"</span>, <span class="st">"C02"</span>, <span class="st">"C01"</span>],</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>        <span class="st">"score"</span>: [<span class="dv">85</span>, <span class="dv">72</span>, <span class="dv">91</span>],</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>course_info <span class="op">=</span> pd.DataFrame(</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>    {</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>        <span class="st">"course_id"</span>: [<span class="st">"C01"</span>, <span class="st">"C02"</span>],</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>        <span class="st">"course_name"</span>: [<span class="st">"Statistics"</span>, <span class="st">"Algorithms"</span>],</span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>        <span class="st">"credits"</span>: [<span class="dv">3</span>, <span class="dv">4</span>],</span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>merged_dup <span class="op">=</span> pd.merge(students_small, course_info, on<span class="op">=</span><span class="st">"course_id"</span>, how<span class="op">=</span><span class="st">"left"</span>)</span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"students_small rows: </span><span class="sc">{</span><span class="bu">len</span>(students_small)<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"after merge rows   : </span><span class="sc">{</span><span class="bu">len</span>(merged_dup)<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>merged_dup</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>students_small rows: 3
 after merge rows   : 3</code></pre>
 </div>
-<div class="cell-output cell-output-display" data-execution_count="8">
+<div class="cell-output cell-output-display" data-execution_count="7">
 <div>
 
 
@@ -1071,17 +964,17 @@ after merge rows   : 3</code></pre>
 <div style="background:#EAF3FA;border-left:5px solid #0369A1;padding:14px 18px;border-radius:6px;margin:16px 0">
 <p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-info-circle-fill"></i> Key Concept: A many-to-one merge preserves row count; a one-to-many merge multiplies it</span><br><br> <b>Many-to-one (the common case):</b> each row on the left matches at most one row on the right. Row count stays the same.<br><br> <b>One-to-many:</b> one row on the left matches several rows on the right. Each match becomes its own output row. A student enrolled in 3 courses becomes 3 rows after merging on a course-detail table.<br><br> <b>Many-to-many:</b> both sides have duplicates on the key. Every left row pairs with every matching right row: 3 left rows matching 4 right rows produces 12 output rows. This is almost never what you want and is usually a sign of a design error in the data or the query.</p>
 </div>
-<div id="24" class="cell" data-execution_count="9">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Verify: check how many rows the real df gains after merging on course_id</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>before <span class="op">=</span> <span class="bu">len</span>(df)</span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>after <span class="op">=</span> <span class="bu">len</span>(pd.merge(df, courses, on<span class="op">=</span><span class="st">"course_id"</span>, how<span class="op">=</span><span class="st">"left"</span>))</span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Before merge: </span><span class="sc">{</span>before<span class="sc">}</span><span class="ss"> rows"</span>)</span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"After  merge: </span><span class="sc">{</span>after<span class="sc">}</span><span class="ss"> rows"</span>)</span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Difference  : </span><span class="sc">{</span>after <span class="op">-</span> before<span class="sc">}</span><span class="ss"> extra rows (students with multiple course matches)"</span>)</span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Diagnose: how many course_ids appear more than once in courses?</span></span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>dupe_courses <span class="op">=</span> courses[courses.duplicated(<span class="st">"course_id"</span>, keep<span class="op">=</span><span class="va">False</span>)]</span>
-<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">Duplicate course_ids in courses.csv: </span><span class="sc">{</span>dupe_courses[<span class="st">'course_id'</span>]<span class="sc">.</span>nunique()<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="25" class="cell" data-execution_count="8">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Verify: check how many rows the real df gains after merging on course_id</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>before <span class="op">=</span> <span class="bu">len</span>(df)</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>after <span class="op">=</span> <span class="bu">len</span>(pd.merge(df, courses, on<span class="op">=</span><span class="st">"course_id"</span>, how<span class="op">=</span><span class="st">"left"</span>))</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Before merge: </span><span class="sc">{</span>before<span class="sc">}</span><span class="ss"> rows"</span>)</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"After  merge: </span><span class="sc">{</span>after<span class="sc">}</span><span class="ss"> rows"</span>)</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Difference  : </span><span class="sc">{</span>after <span class="op">-</span> before<span class="sc">}</span><span class="ss"> extra rows (students with multiple course matches)"</span>)</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Diagnose: how many course_ids appear more than once in courses?</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>dupe_courses <span class="op">=</span> courses[courses.duplicated(<span class="st">"course_id"</span>, keep<span class="op">=</span><span class="va">False</span>)]</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">Duplicate course_ids in courses.csv: </span><span class="sc">{</span>dupe_courses[<span class="st">'course_id'</span>]<span class="sc">.</span>nunique()<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Before merge: 2400 rows
 After  merge: 2400 rows
@@ -1103,30 +996,24 @@ assert len(merged) == before, f"Unexpected fan-out: {before} -&gt; {len(merged)}
 <pre style="background:#FFF8E1;padding:10px;border-radius:4px;font-size:0.9em">merged = pd.merge(df, courses, on="course_id", how="left")
 merged["department"].value_counts()</pre>
 </div>
-<div id="27" class="cell" data-execution_count="10">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: merge df with courses (how="left"), then value_counts on department</span></span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="28" class="cell" data-execution_count="9">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: merge df with courses (how="left"), then value_counts on department</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 </section>
 <section id="group-by-operations" class="level2">
 <h2 class="anchored" data-anchor-id="group-by-operations">3. Group By Operations</h2>
 <p><code>groupby</code> splits a dataset into groups by a key, applies a function to each group independently, and combines the results back into one table, one row per group:</p>
-<div id="29" class="cell" data-execution_count="11">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> ark.plot.diagrams <span class="im">import</span> groupby_split_apply_combine_diagram</span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>groupby_split_apply_combine_diagram()<span class="op">;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display">
-<div>
+<div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="10-combining-reshaping_files/figure-html/cell-12-output-1.png" width="854" height="374" class="figure-img"></p>
+<p><img src="figs/groupby-split-apply-combine.svg" class="img-fluid figure-img" alt="Three-stage diagram. Left: full DataFrame with program and avg_marks columns, rows color-coded by group. Centre: three small group tables with mean() annotation. Right: result Series with one row per program."></p>
+<figcaption>groupby split-apply-combine pattern. A full DataFrame is split into three group sub-tables (CS, DS, IT), mean() is applied to each group independently, and the results are combined into a one-row-per-group Series.</figcaption>
 </figure>
 </div>
-</div>
-</div>
-<div id="30" class="cell" data-execution_count="12">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>df.groupby(<span class="st">"program"</span>)[<span class="st">"average_marks"</span>].mean()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="12">
+<div id="31" class="cell" data-execution_count="10">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>df.groupby(<span class="st">"program"</span>)[<span class="st">"average_marks"</span>].mean()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="10">
 <pre><code>program
 Computer Science          62.001468
 Data Science              63.685264
@@ -1139,9 +1026,9 @@ Name: average_marks, dtype: float64</code></pre>
 <p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-info-circle-fill"></i> Key Concept: <code>groupby</code> computes nothing until you aggregate</span><br><br> <code>df.groupby(“program”)</code> on its own returns a <code>DataFrameGroupBy</code> object, a plan for splitting the data, not a result. Nothing is actually computed until a method like <code>.mean()</code>, <code>.sum()</code>, or <code>.agg()</code> is called on it, the same lazy-then-compute pattern you will see again in Part 11’s Polars notebook.</p>
 </div>
 <p><code>.agg()</code> works after <code>groupby</code> exactly as it did in Part 2, computing several statistics per group in one call:</p>
-<div id="33" class="cell" data-execution_count="13">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>df.groupby(<span class="st">"program"</span>)[<span class="st">"average_marks"</span>].agg([<span class="st">"mean"</span>, <span class="st">"std"</span>, <span class="st">"count"</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="13">
+<div id="34" class="cell" data-execution_count="11">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>df.groupby(<span class="st">"program"</span>)[<span class="st">"average_marks"</span>].agg([<span class="st">"mean"</span>, <span class="st">"std"</span>, <span class="st">"count"</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="11">
 <div>
 
 
@@ -1192,9 +1079,9 @@ Name: average_marks, dtype: float64</code></pre>
 </div>
 </div>
 <p>Grouping by more than one column splits into one group per combination, here gender within caste:</p>
-<div id="35" class="cell" data-execution_count="14">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>df.groupby([<span class="st">"program"</span>, <span class="st">"gender"</span>])[<span class="st">"average_marks"</span>].mean()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="14">
+<div id="36" class="cell" data-execution_count="12">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>df.groupby([<span class="st">"program"</span>, <span class="st">"gender"</span>])[<span class="st">"average_marks"</span>].mean()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="12">
 <pre><code>program                 gender
 Computer Science        F         61.961067
                         M         61.872101
@@ -1218,17 +1105,17 @@ Name: average_marks, dtype: float64</code></pre>
 <b>Goal:</b> Group <code>df</code> by <code>caste</code> and compute, for each group, what fraction of students have <code>continue_drop == “drop”</code>. <code>(series == “drop”).mean()</code> gives a fraction directly, no separate count and divide needed.
 <pre style="background:#FFF8E1;padding:10px;border-radius:4px;font-size:0.9em">df.groupby("program")["continue_drop"].apply(lambda s: (s == "drop").mean())</pre>
 </div>
-<div id="38" class="cell" data-execution_count="15">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: group by program, compute the pass fraction per program</span></span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="39" class="cell" data-execution_count="13">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: group by program, compute the pass fraction per program</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="pivoting-data" class="level2">
 <h2 class="anchored" data-anchor-id="pivoting-data">4. Pivoting Data</h2>
 <p><code>pivot_table</code> is <code>groupby</code> plus a reshape, in one call: it groups by one column, splits further by another, and lays the second grouping out as columns instead of stacking it into more rows, much easier to scan as a summary:</p>
-<div id="40" class="cell" data-execution_count="16">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>pd.pivot_table(df, index<span class="op">=</span><span class="st">"program"</span>, columns<span class="op">=</span><span class="st">"gender"</span>, values<span class="op">=</span><span class="st">"average_marks"</span>, aggfunc<span class="op">=</span><span class="st">"mean"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="16">
+<div id="41" class="cell" data-execution_count="14">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>pd.pivot_table(df, index<span class="op">=</span><span class="st">"program"</span>, columns<span class="op">=</span><span class="st">"gender"</span>, values<span class="op">=</span><span class="st">"average_marks"</span>, aggfunc<span class="op">=</span><span class="st">"mean"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="14">
 <div>
 
 
@@ -1282,9 +1169,9 @@ Name: average_marks, dtype: float64</code></pre>
 <p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-info-circle-fill"></i> Key Concept: <code>pivot_table</code> is <code>groupby</code> with a different output shape</span><br><br> <code>df.groupby([“program”, “gender”])[“average_marks”].mean()</code> from Sec. 3 and the <code>pivot_table</code> call above compute the exact same numbers. <code>groupby</code> returns them stacked into a long Series with a two-level index; <code>pivot_table</code> lays the second key out across columns instead. Reach for <code>pivot_table</code> specifically when the result is meant to be read by a person, not processed further by code.</p>
 </div>
 <p><code>aggfunc</code> accepts a list too, giving more than one statistic per cell:</p>
-<div id="43" class="cell" data-execution_count="17">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>pd.pivot_table(df, index<span class="op">=</span><span class="st">"program"</span>, columns<span class="op">=</span><span class="st">"gender"</span>, values<span class="op">=</span><span class="st">"average_marks"</span>, aggfunc<span class="op">=</span>[<span class="st">"mean"</span>, <span class="st">"count"</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="17">
+<div id="44" class="cell" data-execution_count="15">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>pd.pivot_table(df, index<span class="op">=</span><span class="st">"program"</span>, columns<span class="op">=</span><span class="st">"gender"</span>, values<span class="op">=</span><span class="st">"average_marks"</span>, aggfunc<span class="op">=</span>[<span class="st">"mean"</span>, <span class="st">"count"</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="15">
 <div>
 
 
@@ -1363,9 +1250,9 @@ Name: average_marks, dtype: float64</code></pre>
 <pre style="background:#FFF8E1;padding:10px;border-radius:4px;font-size:0.9em">merged = pd.merge(df, courses, on="course_id", how="left")
 pd.pivot_table(merged, index="region", columns="program", values="average_marks", aggfunc="mean")</pre>
 </div>
-<div id="45" class="cell" data-execution_count="18">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: merge with courses, then pivot region x program on mean final_score</span></span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="46" class="cell" data-execution_count="16">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: merge with courses, then pivot region x program on mean final_score</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="capstone-regional-performance-report" class="level2">
@@ -1394,32 +1281,42 @@ regional_summary = merged.groupby("region").agg(
 
 region_caste_pivot = pd.pivot_table(merged, index="region", columns="program", values="average_marks", aggfunc="mean")</pre>
 </div>
-<div id="48" class="cell" data-execution_count="19">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: build the regional performance report described above</span></span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="49" class="cell" data-execution_count="17">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: build the regional performance report described above</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="time-series-data" class="level2">
 <h2 class="anchored" data-anchor-id="time-series-data">5. Time Series Data</h2>
 <p>The student exam results dataset has no date column. The attendance dataset does: daily records for five schools across a full school term. Loading it alongside the exam data gives Part 10 two tables to work with and shows how the same pandas idioms scale to a new problem shape.</p>
-<div id="50" class="cell" data-execution_count="20">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>attendance <span class="op">=</span> pd.read_csv(<span class="st">"data/daily_attendance.csv"</span>)</span>
-<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>attendance.dtypes</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="20">
+<div style="background:#EAF3FA;border-left:5px solid #0369A1;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-key-fill"></i> Key Concept: A time-series dataset has one row per point in time and uses a datetime column as its natural key</span><br><br> Most DataFrames start with a date column stored as plain text (<code>object</code> dtype). Before you can filter by date, compute time deltas, or resample, you must convert it with <code>pd.to_datetime()</code>. Once converted, the column holds <code>Timestamp</code> values – pandas’ equivalent of <code>datetime.datetime</code> – and arithmetic like <code>date + pd.Timedelta('7 days')</code> works directly.</p>
+</div>
+<div id="52" class="cell" data-execution_count="18">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>attendance <span class="op">=</span> pd.read_csv(<span class="st">"data/daily_attendance.csv"</span>)</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>attendance.dtypes</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="18">
 <pre><code>date                   str
 school_id            int64
 attendance_rate    float64
 dtype: object</code></pre>
 </div>
 </div>
+<div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 5a - Explore the Attendance Dataset</span><br><br> <b>Goal:</b> Get a quick feel for the time-series dataset before converting dates.<br><br> <b>TODO:</b> Print the shape of <code>attendance</code>, the range of <code>date</code> values (first and last), and how many unique schools are in <code>school_id</code>. No date conversion yet – just exploration.</p>
+</div>
+<div id="54" class="cell" data-execution_count="19">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: print shape, first and last date value, and number of unique schools</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
 </section>
 <section id="date-and-time-data-types" class="level2">
 <h2 class="anchored" data-anchor-id="date-and-time-data-types">6. Date and Time Data Types</h2>
 <p>The <code>date</code> column above read in as plain text, <code>str</code> dtype, not a date pandas can do arithmetic on. <code>pd.to_datetime</code> converts it to pandas’ dedicated datetime dtype, <code>datetime64</code>:</p>
-<div id="52" class="cell" data-execution_count="21">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>attendance[<span class="st">"date"</span>] <span class="op">=</span> pd.to_datetime(attendance[<span class="st">"date"</span>])</span>
-<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>attendance.dtypes</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="21">
+<div id="56" class="cell" data-execution_count="20">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>attendance[<span class="st">"date"</span>] <span class="op">=</span> pd.to_datetime(attendance[<span class="st">"date"</span>])</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>attendance.dtypes</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="20">
 <pre><code>date               datetime64[us]
 school_id                   int64
 attendance_rate           float64
@@ -1430,10 +1327,10 @@ dtype: object</code></pre>
 <p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-info-circle-fill"></i> Key Concept: Pandas 3 infers the resolution it needs, not always nanoseconds</span><br><br> Earlier pandas versions always stored datetimes as <code>datetime64[ns]</code>, nanosecond precision, whether the data needed it or not. Pandas 3’s <code>to_datetime</code> infers a resolution from what is actually in the data: day-level strings like the ones here become <code>datetime64[s]</code> or coarser, not nanoseconds. <code>attendance[“date”].dtype</code> shows whichever resolution was inferred for this column.</p>
 </div>
 <p>A single value out of a datetime column is a <code>Timestamp</code>, pandas’ equivalent of Python’s <code>datetime.datetime</code>, with the same year, month, day, and weekday attributes:</p>
-<div id="55" class="cell" data-execution_count="22">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>first_day <span class="op">=</span> attendance[<span class="st">"date"</span>].iloc[<span class="dv">0</span>]</span>
-<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="bu">type</span>(first_day))</span>
-<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"year=</span><span class="sc">{</span>first_day<span class="sc">.</span>year<span class="sc">}</span><span class="ss">, month=</span><span class="sc">{</span>first_day<span class="sc">.</span>month<span class="sc">}</span><span class="ss">, day_name=</span><span class="sc">{</span>first_day<span class="sc">.</span>day_name()<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="59" class="cell" data-execution_count="21">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>first_day <span class="op">=</span> attendance[<span class="st">"date"</span>].iloc[<span class="dv">0</span>]</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="bu">type</span>(first_day))</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"year=</span><span class="sc">{</span>first_day<span class="sc">.</span>year<span class="sc">}</span><span class="ss">, month=</span><span class="sc">{</span>first_day<span class="sc">.</span>month<span class="sc">}</span><span class="ss">, day_name=</span><span class="sc">{</span>first_day<span class="sc">.</span>day_name()<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>&lt;class 'pandas.Timestamp'&gt;
 year=2025, month=1, day_name=Monday</code></pre>
@@ -1446,18 +1343,21 @@ year=2025, month=1, day_name=Monday</code></pre>
 for d in dates:
     print(d.day_name())</pre>
 </div>
-<div id="57" class="cell" data-execution_count="23">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: convert the three date strings and print each day name</span></span>
-<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="61" class="cell" data-execution_count="22">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: convert the three date strings and print each day name</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="the-datetimeindex" class="level2">
 <h2 class="anchored" data-anchor-id="the-datetimeindex">7. The <code>DatetimeIndex</code></h2>
 <p>Setting a datetime column as the index turns it into a <code>DatetimeIndex</code>, which unlocks date-based slicing instead of only position-based or exact-label lookups. Each school’s rows are pulled out first, since a <code>DatetimeIndex</code> only makes sense for one time series at a time:</p>
-<div id="59" class="cell" data-execution_count="24">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>school_300 <span class="op">=</span> attendance[attendance[<span class="st">"school_id"</span>] <span class="op">==</span> <span class="dv">300</span>].set_index(<span class="st">"date"</span>)</span>
-<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>school_300.index</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="24">
+<div style="background:#EAF3FA;border-left:5px solid #0369A1;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-key-fill"></i> Key Concept: Setting a datetime column as the index creates a <code>DatetimeIndex</code> that unlocks date-based slicing</span><br><br> Once you call <code>.set_index('date')</code> on a datetime column, the result has a <code>DatetimeIndex</code>. You can then use partial date strings in <code>.loc</code> – <code>school.loc['2025-02']</code> selects every row in February without spelling out start and end times. Without a <code>DatetimeIndex</code>, <code>.loc</code> requires an exact label match; with one, it understands ranges.</p>
+</div>
+<div id="64" class="cell" data-execution_count="23">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>school_300 <span class="op">=</span> attendance[attendance[<span class="st">"school_id"</span>] <span class="op">==</span> <span class="dv">300</span>].set_index(<span class="st">"date"</span>)</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>school_300.index</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="23">
 <pre><code>DatetimeIndex(['2025-01-06', '2025-01-07', '2025-01-08', '2025-01-09',
                '2025-01-10', '2025-01-13', '2025-01-14', '2025-01-15',
                '2025-01-16', '2025-01-17', '2025-01-20', '2025-01-21',
@@ -1485,17 +1385,20 @@ for d in dates:
 <pre style="background:#FFF8E1;padding:10px;border-radius:4px;font-size:0.9em">school_302 = attendance[attendance["school_id"] == 302].set_index("date")
 isinstance(school_302.index, pd.DatetimeIndex)</pre>
 </div>
-<div id="62" class="cell" data-execution_count="25">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: filter to school_id 302, set date as index, confirm DatetimeIndex</span></span>
-<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="67" class="cell" data-execution_count="24">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: filter to school_id 302, set date as index, confirm DatetimeIndex</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="selecting-data-from-a-time-series" class="level2">
 <h2 class="anchored" data-anchor-id="selecting-data-from-a-time-series">8. Selecting Data from a Time Series</h2>
 <p>A <code>DatetimeIndex</code> accepts a partial date string in <code>.loc</code>, matching every row that falls inside it. <code>"2025-02"</code> selects the whole month without spelling out the first and last day:</p>
-<div id="64" class="cell" data-execution_count="26">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>school_300.loc[<span class="st">"2025-02"</span>].head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="26">
+<div style="background:#EAF3FA;border-left:5px solid #0369A1;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-key-fill"></i> Key Concept: A <code>DatetimeIndex</code> accepts partial date strings in <code>.loc</code>, matching every row in the period</span><br><br> <code>school.loc['2025-02']</code> returns all rows in February 2025. <code>school.loc['2025-02-01':'2025-02-07']</code> returns a week-long slice, inclusive of both endpoints. This partial-string matching works at year, month, or day granularity – you never need to construct explicit <code>datetime</code> objects for basic slicing.</p>
+</div>
+<div id="70" class="cell" data-execution_count="25">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>school_300.loc[<span class="st">"2025-02"</span>].head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="25">
 <div>
 
 
@@ -1545,9 +1448,9 @@ isinstance(school_302.index, pd.DatetimeIndex)</pre>
 </div>
 </div>
 <p>A slice with two partial dates selects everything between them, inclusive of both ends:</p>
-<div id="66" class="cell" data-execution_count="27">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>school_300.loc[<span class="st">"2025-02-01"</span>:<span class="st">"2025-02-07"</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="27">
+<div id="72" class="cell" data-execution_count="26">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>school_300.loc[<span class="st">"2025-02-01"</span>:<span class="st">"2025-02-07"</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="26">
 <div>
 
 
@@ -1599,9 +1502,9 @@ isinstance(school_302.index, pd.DatetimeIndex)</pre>
 <div style="background:#EAF7F0;border-left:5px solid #059669;padding:14px 18px;border-radius:6px;margin:16px 0">
 <p><span style="color:#059669;font-weight:bold"><i class="bi bi-journal-code"></i> Example: Comparing the size of two date ranges</span><br><br> <code>len(school_300.loc[“2025-01”])</code> against <code>len(school_300.loc[“2025-02”])</code> confirms the row count for each month matches its number of business days, the same <code>bdate_range</code> weekday-only pattern used to build this dataset in the first place.</p>
 </div>
-<div id="68" class="cell" data-execution_count="28">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"January business days  : </span><span class="sc">{</span><span class="bu">len</span>(school_300.loc[<span class="st">'2025-01'</span>])<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"February business days : </span><span class="sc">{</span><span class="bu">len</span>(school_300.loc[<span class="st">'2025-02'</span>])<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="74" class="cell" data-execution_count="27">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"January business days  : </span><span class="sc">{</span><span class="bu">len</span>(school_300.loc[<span class="st">'2025-01'</span>])<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"February business days : </span><span class="sc">{</span><span class="bu">len</span>(school_300.loc[<span class="st">'2025-02'</span>])<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>January business days  : 20
 February business days : 20</code></pre>
@@ -1613,18 +1516,18 @@ February business days : 20</code></pre>
 <pre style="background:#FFF8E1;padding:10px;border-radius:4px;font-size:0.9em">last_two_weeks = school_300.loc["2025-03-15":"2025-03-28"]
 last_two_weeks["attendance_rate"].mean()</pre>
 </div>
-<div id="70" class="cell" data-execution_count="29">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: select 2025-03-15 through 2025-03-28 and print the mean attendance_rate</span></span>
-<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="76" class="cell" data-execution_count="28">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: select 2025-03-15 through 2025-03-28 and print the mean attendance_rate</span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="the-power-of-pandas-resample" class="level2">
 <h2 class="anchored" data-anchor-id="the-power-of-pandas-resample">9. The Power of Pandas: <code>resample</code></h2>
 <p><code>resample</code> changes the time granularity of a series: daily data summarized into weekly or monthly figures, the same split-apply-combine idea from Part 3’s <code>groupby</code>, except the groups are time intervals instead of category values:</p>
-<div id="72" class="cell" data-execution_count="30">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>weekly_attendance <span class="op">=</span> school_300[<span class="st">"attendance_rate"</span>].resample(<span class="st">"W"</span>).mean()</span>
-<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>weekly_attendance.head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="30">
+<div id="78" class="cell" data-execution_count="29">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>weekly_attendance <span class="op">=</span> school_300[<span class="st">"attendance_rate"</span>].resample(<span class="st">"W"</span>).mean()</span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>weekly_attendance.head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="29">
 <pre><code>date
 2025-01-12    0.8896
 2025-01-19    0.9044
@@ -1638,10 +1541,10 @@ Freq: W-SUN, Name: attendance_rate, dtype: float64</code></pre>
 <p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-info-circle-fill"></i> Key Concept: <code>resample</code> groups by time interval, <code>groupby</code> groups by value</span><br><br> <code>df.groupby(“program”)</code> (Part 3) splits rows by whatever value is already in the <code>caste</code> column. <code>series.resample(“W”)</code> splits rows by which week their <code>DatetimeIndex</code> label falls into, intervals that did not exist as a column at all until <code>resample</code> created them. Both still end with an aggregation like <code>.mean()</code> to combine each group into one number.</p>
 </div>
 <p>Monthly resampling on the same series needs only a different frequency string. In pandas 3 the old <code>"M"</code> alias was removed; the replacement is <code>"ME"</code> (month-end), which anchors each bucket to the last calendar day of the month:</p>
-<div id="75" class="cell" data-execution_count="31">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>monthly_attendance <span class="op">=</span> school_300[<span class="st">"attendance_rate"</span>].resample(<span class="st">"ME"</span>).mean()</span>
-<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>monthly_attendance</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="31">
+<div id="81" class="cell" data-execution_count="30">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb42"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>monthly_attendance <span class="op">=</span> school_300[<span class="st">"attendance_rate"</span>].resample(<span class="st">"ME"</span>).mean()</span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>monthly_attendance</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="30">
 <pre><code>date
 2025-01-31    0.90345
 2025-02-28    0.90985
@@ -1657,9 +1560,9 @@ Freq: ME, Name: attendance_rate, dtype: float64</code></pre>
 <b>Goal:</b> Set <code>date</code> as the index on the full <code>attendance</code> table, group by <code>school_id</code>, and resample to monthly means in one chained call. Use <code>“ME”</code> (month-end): the pandas 3 replacement for the old <code>“M”</code> alias.
 <pre style="background:#FFF8E1;padding:10px;border-radius:4px;font-size:0.9em">attendance.set_index("date").groupby("school_id")["attendance_rate"].resample("ME").mean()</pre>
 </div>
-<div id="78" class="cell" data-execution_count="32">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb45"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: set date as index, group by school_id, resample monthly, take the mean</span></span>
-<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="84" class="cell" data-execution_count="31">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb44"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: set date as index, group by school_id, resample monthly, take the mean</span></span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="capstone-term-end-attendance-report" class="level2">
@@ -1689,9 +1592,9 @@ last_week = weekly.loc[:, "2025-03-24":"2025-03-28"]
 drop_per_school = first_week.groupby("school_id").mean() - last_week.groupby("school_id").mean()
 drop_per_school.sort_values(ascending=False)</pre>
 </div>
-<div id="81" class="cell" data-execution_count="33">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb46"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: build the term-end attendance report described above</span></span>
-<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="87" class="cell" data-execution_count="32">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb45"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: build the term-end attendance report described above</span></span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="further-reading" class="level2">

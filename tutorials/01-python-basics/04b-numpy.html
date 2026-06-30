@@ -608,103 +608,22 @@ new per-feature mean (~0): [ 0.  0. -0.]</code></pre>
 </div>
 </div>
 <p>The rule is: align shapes from the right. Dimensions of size 1 stretch to match. Everything else must match exactly or NumPy raises an error.</p>
-<div id="10" class="cell" data-execution_count="3">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> matplotlib.patches <span class="im">import</span> FancyBboxPatch</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>BG <span class="op">=</span> <span class="st">"#F8FAFC"</span></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>BLUE <span class="op">=</span> <span class="st">"#0369A1"</span></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>GREEN <span class="op">=</span> <span class="st">"#059669"</span></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>AMBER <span class="op">=</span> <span class="st">"#B45309"</span></span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>GRAY <span class="op">=</span> <span class="st">"#94A3B8"</span></span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">9</span>, <span class="fl">3.4</span>))</span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>fig.patch.set_facecolor(BG)</span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>ax.set_facecolor(BG)</span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>ax.set_xlim(<span class="dv">0</span>, <span class="dv">9</span>)</span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>ax.set_ylim(<span class="dv">0</span>, <span class="dv">1</span>)</span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>ax.axis(<span class="st">"off"</span>)</span>
-<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> draw_grid(ax, x0, y0, rows, cols, values, color, label, stretch<span class="op">=</span><span class="va">False</span>):</span>
-<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>    w, h <span class="op">=</span> <span class="fl">0.55</span>, <span class="fl">0.18</span></span>
-<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> r <span class="kw">in</span> <span class="bu">range</span>(rows):</span>
-<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> c <span class="kw">in</span> <span class="bu">range</span>(cols):</span>
-<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>            fc <span class="op">=</span> <span class="st">"#FEF3C7"</span> <span class="cf">if</span> stretch <span class="cf">else</span> (<span class="st">"#D1FAE5"</span> <span class="cf">if</span> color <span class="op">==</span> GREEN <span class="cf">else</span> <span class="st">"#DBEAFE"</span>)</span>
-<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>            ec <span class="op">=</span> AMBER <span class="cf">if</span> stretch <span class="cf">else</span> color</span>
-<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>            ax.add_patch(</span>
-<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>                FancyBboxPatch(</span>
-<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>                    (x0 <span class="op">+</span> c <span class="op">*</span> w, y0 <span class="op">+</span> r <span class="op">*</span> h),</span>
-<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>                    w <span class="op">-</span> <span class="fl">0.02</span>,</span>
-<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>                    h <span class="op">-</span> <span class="fl">0.02</span>,</span>
-<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>                    boxstyle<span class="op">=</span><span class="st">"round,pad=0.01"</span>,</span>
-<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>                    facecolor<span class="op">=</span>fc,</span>
-<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>                    edgecolor<span class="op">=</span>ec,</span>
-<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a>                    lw<span class="op">=</span><span class="fl">1.5</span>,</span>
-<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a>                    zorder<span class="op">=</span><span class="dv">2</span>,</span>
-<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a>                )</span>
-<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a>            )</span>
-<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a>            val <span class="op">=</span> values[r <span class="op">%</span> <span class="bu">len</span>(values)][c <span class="op">%</span> <span class="bu">len</span>(values[<span class="dv">0</span>])]</span>
-<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a>            ax.text(</span>
-<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a>                x0 <span class="op">+</span> c <span class="op">*</span> w <span class="op">+</span> w <span class="op">/</span> <span class="dv">2</span> <span class="op">-</span> <span class="fl">0.01</span>,</span>
-<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a>                y0 <span class="op">+</span> r <span class="op">*</span> h <span class="op">+</span> h <span class="op">/</span> <span class="dv">2</span>,</span>
-<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a>                <span class="bu">str</span>(val),</span>
-<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a>                ha<span class="op">=</span><span class="st">"center"</span>,</span>
-<span id="cb5-42"><a href="#cb5-42" aria-hidden="true" tabindex="-1"></a>                va<span class="op">=</span><span class="st">"center"</span>,</span>
-<span id="cb5-43"><a href="#cb5-43" aria-hidden="true" tabindex="-1"></a>                fontsize<span class="op">=</span><span class="dv">9</span>,</span>
-<span id="cb5-44"><a href="#cb5-44" aria-hidden="true" tabindex="-1"></a>                color<span class="op">=</span><span class="st">"#1E293B"</span>,</span>
-<span id="cb5-45"><a href="#cb5-45" aria-hidden="true" tabindex="-1"></a>                zorder<span class="op">=</span><span class="dv">3</span>,</span>
-<span id="cb5-46"><a href="#cb5-46" aria-hidden="true" tabindex="-1"></a>            )</span>
-<span id="cb5-47"><a href="#cb5-47" aria-hidden="true" tabindex="-1"></a>    ax.text(</span>
-<span id="cb5-48"><a href="#cb5-48" aria-hidden="true" tabindex="-1"></a>        x0 <span class="op">+</span> cols <span class="op">*</span> w <span class="op">/</span> <span class="dv">2</span> <span class="op">-</span> <span class="fl">0.01</span>,</span>
-<span id="cb5-49"><a href="#cb5-49" aria-hidden="true" tabindex="-1"></a>        y0 <span class="op">+</span> rows <span class="op">*</span> h <span class="op">+</span> <span class="fl">0.07</span>,</span>
-<span id="cb5-50"><a href="#cb5-50" aria-hidden="true" tabindex="-1"></a>        label,</span>
-<span id="cb5-51"><a href="#cb5-51" aria-hidden="true" tabindex="-1"></a>        ha<span class="op">=</span><span class="st">"center"</span>,</span>
-<span id="cb5-52"><a href="#cb5-52" aria-hidden="true" tabindex="-1"></a>        fontsize<span class="op">=</span><span class="dv">10</span>,</span>
-<span id="cb5-53"><a href="#cb5-53" aria-hidden="true" tabindex="-1"></a>        fontweight<span class="op">=</span><span class="st">"bold"</span>,</span>
-<span id="cb5-54"><a href="#cb5-54" aria-hidden="true" tabindex="-1"></a>        color<span class="op">=</span>AMBER <span class="cf">if</span> stretch <span class="cf">else</span> color,</span>
-<span id="cb5-55"><a href="#cb5-55" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb5-56"><a href="#cb5-56" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-57"><a href="#cb5-57" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-58"><a href="#cb5-58" aria-hidden="true" tabindex="-1"></a>draw_grid(ax, <span class="fl">0.2</span>, <span class="fl">0.15</span>, <span class="dv">3</span>, <span class="dv">3</span>, [[<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>], [<span class="dv">4</span>, <span class="dv">5</span>, <span class="dv">6</span>], [<span class="dv">7</span>, <span class="dv">8</span>, <span class="dv">9</span>]], BLUE, <span class="st">"(5, 3)  X"</span>)</span>
-<span id="cb5-59"><a href="#cb5-59" aria-hidden="true" tabindex="-1"></a>ax.text(<span class="fl">2.15</span>, <span class="fl">0.48</span>, <span class="st">"+"</span>, fontsize<span class="op">=</span><span class="dv">20</span>, ha<span class="op">=</span><span class="st">"center"</span>, va<span class="op">=</span><span class="st">"center"</span>, color<span class="op">=</span>GRAY)</span>
-<span id="cb5-60"><a href="#cb5-60" aria-hidden="true" tabindex="-1"></a>draw_grid(ax, <span class="fl">2.5</span>, <span class="fl">0.33</span>, <span class="dv">1</span>, <span class="dv">3</span>, [[<span class="fl">0.1</span>, <span class="fl">0.2</span>, <span class="fl">0.3</span>]], AMBER, <span class="st">"(3,)  mean"</span>, stretch<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb5-61"><a href="#cb5-61" aria-hidden="true" tabindex="-1"></a>ax.annotate(</span>
-<span id="cb5-62"><a href="#cb5-62" aria-hidden="true" tabindex="-1"></a>    <span class="st">""</span>,</span>
-<span id="cb5-63"><a href="#cb5-63" aria-hidden="true" tabindex="-1"></a>    xy<span class="op">=</span>(<span class="fl">3.35</span>, <span class="fl">0.33</span>),</span>
-<span id="cb5-64"><a href="#cb5-64" aria-hidden="true" tabindex="-1"></a>    xytext<span class="op">=</span>(<span class="fl">3.35</span>, <span class="fl">0.18</span>),</span>
-<span id="cb5-65"><a href="#cb5-65" aria-hidden="true" tabindex="-1"></a>    arrowprops<span class="op">=</span>{<span class="st">"arrowstyle"</span>: <span class="st">"-|&gt;"</span>, <span class="st">"color"</span>: AMBER, <span class="st">"lw"</span>: <span class="fl">1.5</span>, <span class="st">"linestyle"</span>: <span class="st">"dashed"</span>},</span>
-<span id="cb5-66"><a href="#cb5-66" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb5-67"><a href="#cb5-67" aria-hidden="true" tabindex="-1"></a>ax.text(<span class="fl">3.35</span>, <span class="fl">0.10</span>, <span class="st">"stretched x3"</span>, ha<span class="op">=</span><span class="st">"center"</span>, fontsize<span class="op">=</span><span class="dv">8</span>, color<span class="op">=</span>AMBER, style<span class="op">=</span><span class="st">"italic"</span>)</span>
-<span id="cb5-68"><a href="#cb5-68" aria-hidden="true" tabindex="-1"></a>ax.text(<span class="fl">4.65</span>, <span class="fl">0.48</span>, <span class="st">"="</span>, fontsize<span class="op">=</span><span class="dv">20</span>, ha<span class="op">=</span><span class="st">"center"</span>, va<span class="op">=</span><span class="st">"center"</span>, color<span class="op">=</span>GRAY)</span>
-<span id="cb5-69"><a href="#cb5-69" aria-hidden="true" tabindex="-1"></a>draw_grid(ax, <span class="fl">5.0</span>, <span class="fl">0.15</span>, <span class="dv">3</span>, <span class="dv">3</span>, [[<span class="fl">1.1</span>, <span class="fl">2.2</span>, <span class="fl">3.3</span>], [<span class="fl">4.1</span>, <span class="fl">5.2</span>, <span class="fl">6.3</span>], [<span class="fl">7.1</span>, <span class="fl">8.2</span>, <span class="fl">9.3</span>]], GREEN, <span class="st">"(5, 3)  result"</span>)</span>
-<span id="cb5-70"><a href="#cb5-70" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-71"><a href="#cb5-71" aria-hidden="true" tabindex="-1"></a>ax.set_title(</span>
-<span id="cb5-72"><a href="#cb5-72" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Broadcasting: NumPy stretches the (3,) vector along rows to match the (5, 3) matrix"</span>,</span>
-<span id="cb5-73"><a href="#cb5-73" aria-hidden="true" tabindex="-1"></a>    fontsize<span class="op">=</span><span class="fl">10.5</span>,</span>
-<span id="cb5-74"><a href="#cb5-74" aria-hidden="true" tabindex="-1"></a>    color<span class="op">=</span><span class="st">"#0F172A"</span>,</span>
-<span id="cb5-75"><a href="#cb5-75" aria-hidden="true" tabindex="-1"></a>    pad<span class="op">=</span><span class="dv">10</span>,</span>
-<span id="cb5-76"><a href="#cb5-76" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb5-77"><a href="#cb5-77" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
-<span id="cb5-78"><a href="#cb5-78" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display">
-<div>
+<div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="04b-numpy_files/figure-html/cell-4-output-1.png" width="854" height="317" class="figure-img"></p>
+<p><img src="figs/broadcasting.svg" class="img-fluid figure-img" alt="Left: blue 5x3 grid. Center: plus sign. Right: green 1x3 vector with ghost rows showing it stretches to 5x3. Arrow to purple 5x3 result grid."></p>
+<figcaption>NumPy broadcasting: a (5,3) matrix plus a (3,) vector. The vector is stretched to (5,3) by repeating it across rows, producing a (5,3) result.</figcaption>
 </figure>
-</div>
-</div>
 </div>
 <div style="background:#FEF2F2;border-left:5px solid #DC2626;padding:14px 18px;border-radius:6px;margin:16px 0">
 <p><span style="color:#991B1B;font-weight:bold"><i class="bi bi-bug-fill"></i> Common Mistake: Broadcasting a (5,) array against a (5, 3) matrix fails for a subtle reason</span><br><br> If you instead compute <code>per_student_mean = X.mean(axis=1)</code> (shape <code>(5,)</code>) and try <code>X - per_student_mean</code>, NumPy raises <code>ValueError: operands could not be broadcast together</code>. It is comparing the trailing dimensions <code>3</code> vs <code>5</code>, not what you meant. Fix it by giving the per-row result an explicit column shape with <code>keepdims=True</code>: <code>X.mean(axis=1, keepdims=True)</code> has shape <code>(5, 1)</code>, which broadcasts correctly against <code>(5, 3)</code>.</p>
 </div>
-<div id="12" class="cell" data-execution_count="4">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>row_mean <span class="op">=</span> X.mean(axis<span class="op">=</span><span class="dv">1</span>, keepdims<span class="op">=</span><span class="va">True</span>)  <span class="co"># shape (5, 1), NOT (5,)</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"row_mean.shape : </span><span class="sc">{</span>row_mean<span class="sc">.</span>shape<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="co"># (5, 3) - (5, 1) broadcasts the per-row mean across every column</span></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>centered_per_row <span class="op">=</span> X <span class="op">-</span> row_mean</span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"centered_per_row:</span><span class="ch">\n</span><span class="sc">{</span>centered_per_row<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="12" class="cell" data-execution_count="3">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>row_mean <span class="op">=</span> X.mean(axis<span class="op">=</span><span class="dv">1</span>, keepdims<span class="op">=</span><span class="va">True</span>)  <span class="co"># shape (5, 1), NOT (5,)</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"row_mean.shape : </span><span class="sc">{</span>row_mean<span class="sc">.</span>shape<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co"># (5, 3) - (5, 1) broadcasts the per-row mean across every column</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>centered_per_row <span class="op">=</span> X <span class="op">-</span> row_mean</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"centered_per_row:</span><span class="ch">\n</span><span class="sc">{</span>centered_per_row<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>row_mean.shape : (5, 1)
 centered_per_row:
@@ -721,21 +640,21 @@ centered_per_row:
 <pre style="background:#FCE8DA;padding:10px;border-radius:4px;font-size:0.9em">X_scaled.min(axis=0)  # -&gt; array([0., 0., 0.])
 X_scaled.max(axis=0)  # -&gt; array([1., 1., 1.])</pre>
 </div>
-<div id="14" class="cell" data-execution_count="5">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> np.array(</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    [</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>        [<span class="fl">12.0</span>, <span class="fl">85.0</span>, <span class="fl">3.1</span>],</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>        [<span class="fl">5.0</span>, <span class="fl">60.0</span>, <span class="fl">2.4</span>],</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>        [<span class="fl">18.0</span>, <span class="fl">95.0</span>, <span class="fl">3.8</span>],</span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>        [<span class="fl">9.0</span>, <span class="fl">70.0</span>, <span class="fl">2.9</span>],</span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>        [<span class="fl">22.0</span>, <span class="fl">98.0</span>, <span class="fl">3.9</span>],</span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    ]</span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>X_scaled <span class="op">=</span> ...  <span class="co"># </span><span class="al">TODO</span><span class="co">: min-max scale every column to [0, 1]</span></span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a><span class="co"># print(f"min per column: {X_scaled.min(axis=0)}")</span></span>
-<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a><span class="co"># print(f"max per column: {X_scaled.max(axis=0)}")</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="14" class="cell" data-execution_count="4">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> np.array(</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    [</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>        [<span class="fl">12.0</span>, <span class="fl">85.0</span>, <span class="fl">3.1</span>],</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>        [<span class="fl">5.0</span>, <span class="fl">60.0</span>, <span class="fl">2.4</span>],</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>        [<span class="fl">18.0</span>, <span class="fl">95.0</span>, <span class="fl">3.8</span>],</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>        [<span class="fl">9.0</span>, <span class="fl">70.0</span>, <span class="fl">2.9</span>],</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>        [<span class="fl">22.0</span>, <span class="fl">98.0</span>, <span class="fl">3.9</span>],</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    ]</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>X_scaled <span class="op">=</span> ...  <span class="co"># </span><span class="al">TODO</span><span class="co">: min-max scale every column to [0, 1]</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="co"># print(f"min per column: {X_scaled.min(axis=0)}")</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a><span class="co"># print(f"max per column: {X_scaled.max(axis=0)}")</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="vectorisation-vs.-python-loops" class="level2">
@@ -744,34 +663,34 @@ X_scaled.max(axis=0)  # -&gt; array([1., 1., 1.])</pre>
 <div style="background:#EFF6FF;border-left:5px solid #0369A1;padding:14px 18px;border-radius:6px;margin:16px 0">
 <p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-key-fill"></i> Key Concept: Replace loops with vectorised expressions: 10-100x faster</span><br><br> A Python loop over one million floats takes ~500ms. The same operation as <code>(arr - arr.mean()) / arr.std()</code> takes ~5ms. NumPy calls compiled C code – the Python interpreter never enters the inner loop. The speedup grows with array size.</p>
 </div>
-<div id="17" class="cell" data-execution_count="6">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> time</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>big <span class="op">=</span> np.random.default_rng(<span class="dv">0</span>).normal(size<span class="op">=</span><span class="dv">1_000_000</span>)</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> zscore_loop(values: np.ndarray) <span class="op">-&gt;</span> <span class="bu">list</span>[<span class="bu">float</span>]:</span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    mean <span class="op">=</span> <span class="bu">sum</span>(values) <span class="op">/</span> <span class="bu">len</span>(values)</span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    variance <span class="op">=</span> <span class="bu">sum</span>((v <span class="op">-</span> mean) <span class="op">**</span> <span class="dv">2</span> <span class="cf">for</span> v <span class="kw">in</span> values) <span class="op">/</span> <span class="bu">len</span>(values)</span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>    std <span class="op">=</span> variance<span class="op">**</span><span class="fl">0.5</span></span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> [(v <span class="op">-</span> mean) <span class="op">/</span> std <span class="cf">for</span> v <span class="kw">in</span> values]</span>
-<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>start <span class="op">=</span> time.perf_counter()</span>
-<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> zscore_loop(big)</span>
-<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>loop_time <span class="op">=</span> time.perf_counter() <span class="op">-</span> start</span>
-<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>start <span class="op">=</span> time.perf_counter()</span>
-<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> (big <span class="op">-</span> big.mean()) <span class="op">/</span> big.std()</span>
-<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>vector_time <span class="op">=</span> time.perf_counter() <span class="op">-</span> start</span>
-<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Python loop time : </span><span class="sc">{</span>loop_time<span class="sc">:.4f}</span><span class="ss">s"</span>)</span>
-<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Vectorised time  : </span><span class="sc">{</span>vector_time<span class="sc">:.4f}</span><span class="ss">s"</span>)</span>
-<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Speedup          : </span><span class="sc">{</span>loop_time <span class="op">/</span> vector_time<span class="sc">:,.0f}</span><span class="ss">x"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="17" class="cell" data-execution_count="5">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> time</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>big <span class="op">=</span> np.random.default_rng(<span class="dv">0</span>).normal(size<span class="op">=</span><span class="dv">1_000_000</span>)</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> zscore_loop(values: np.ndarray) <span class="op">-&gt;</span> <span class="bu">list</span>[<span class="bu">float</span>]:</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    mean <span class="op">=</span> <span class="bu">sum</span>(values) <span class="op">/</span> <span class="bu">len</span>(values)</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    variance <span class="op">=</span> <span class="bu">sum</span>((v <span class="op">-</span> mean) <span class="op">**</span> <span class="dv">2</span> <span class="cf">for</span> v <span class="kw">in</span> values) <span class="op">/</span> <span class="bu">len</span>(values)</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    std <span class="op">=</span> variance<span class="op">**</span><span class="fl">0.5</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> [(v <span class="op">-</span> mean) <span class="op">/</span> std <span class="cf">for</span> v <span class="kw">in</span> values]</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>start <span class="op">=</span> time.perf_counter()</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> zscore_loop(big)</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>loop_time <span class="op">=</span> time.perf_counter() <span class="op">-</span> start</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>start <span class="op">=</span> time.perf_counter()</span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> (big <span class="op">-</span> big.mean()) <span class="op">/</span> big.std()</span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>vector_time <span class="op">=</span> time.perf_counter() <span class="op">-</span> start</span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Python loop time : </span><span class="sc">{</span>loop_time<span class="sc">:.4f}</span><span class="ss">s"</span>)</span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Vectorised time  : </span><span class="sc">{</span>vector_time<span class="sc">:.4f}</span><span class="ss">s"</span>)</span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Speedup          : </span><span class="sc">{</span>loop_time <span class="op">/</span> vector_time<span class="sc">:,.0f}</span><span class="ss">x"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Python loop time : 0.4380s
-Vectorised time  : 0.0137s
-Speedup          : 32x</code></pre>
+<pre><code>Python loop time : 0.4305s
+Vectorised time  : 0.0150s
+Speedup          : 29x</code></pre>
 </div>
 </div>
 <div style="background:#F5F3FF;border-left:5px solid #7C3AED;padding:14px 18px;border-radius:6px;margin:16px 0">
@@ -787,39 +706,39 @@ Speedup          : 32x</code></pre>
 <div style="background:#EFF6FF;border-left:5px solid #0369A1;padding:14px 18px;border-radius:6px;margin:16px 0">
 <p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-key-fill"></i> Key Concept: @ is matrix multiplication – use it, never loop</span><br><br> <code>X @ w</code> computes every row’s dot product with <code>w</code> in one call. Manually looping <code>for row in X: sum(row * w)</code> is correct but 100x slower. Every linear model, transformer attention layer, and PCA uses <code>@</code> internally.</p>
 </div>
-<div id="22" class="cell" data-execution_count="7">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> np.array(</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    [</span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>        [<span class="fl">12.0</span>, <span class="fl">85.0</span>, <span class="fl">3.1</span>],</span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>        [<span class="fl">5.0</span>, <span class="fl">60.0</span>, <span class="fl">2.4</span>],</span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>        [<span class="fl">18.0</span>, <span class="fl">95.0</span>, <span class="fl">3.8</span>],</span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>        [<span class="fl">9.0</span>, <span class="fl">70.0</span>, <span class="fl">2.9</span>],</span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>        [<span class="fl">22.0</span>, <span class="fl">98.0</span>, <span class="fl">3.9</span>],</span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>    ]</span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>)  <span class="co"># shape (5 students, 3 features)</span></span>
-<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Suppose a (already-fitted) linear model has these learned weights and bias</span></span>
-<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>weights <span class="op">=</span> np.array([<span class="fl">1.5</span>, <span class="fl">0.3</span>, <span class="fl">8.0</span>])  <span class="co"># one weight per feature, shape (3,)</span></span>
-<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>bias <span class="op">=</span> <span class="fl">10.0</span></span>
-<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a><span class="co"># X @ weights: (5, 3) @ (3,) -&gt; (5,) -- one prediction per student</span></span>
-<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>predicted_scores <span class="op">=</span> X <span class="op">@</span> weights <span class="op">+</span> bias</span>
-<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"predicted_scores: </span><span class="sc">{</span>predicted_scores<span class="sc">.</span><span class="bu">round</span>(<span class="dv">1</span>)<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="22" class="cell" data-execution_count="6">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> np.array(</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    [</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>        [<span class="fl">12.0</span>, <span class="fl">85.0</span>, <span class="fl">3.1</span>],</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>        [<span class="fl">5.0</span>, <span class="fl">60.0</span>, <span class="fl">2.4</span>],</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>        [<span class="fl">18.0</span>, <span class="fl">95.0</span>, <span class="fl">3.8</span>],</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>        [<span class="fl">9.0</span>, <span class="fl">70.0</span>, <span class="fl">2.9</span>],</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>        [<span class="fl">22.0</span>, <span class="fl">98.0</span>, <span class="fl">3.9</span>],</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>    ]</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>)  <span class="co"># shape (5 students, 3 features)</span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Suppose a (already-fitted) linear model has these learned weights and bias</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>weights <span class="op">=</span> np.array([<span class="fl">1.5</span>, <span class="fl">0.3</span>, <span class="fl">8.0</span>])  <span class="co"># one weight per feature, shape (3,)</span></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>bias <span class="op">=</span> <span class="fl">10.0</span></span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a><span class="co"># X @ weights: (5, 3) @ (3,) -&gt; (5,) -- one prediction per student</span></span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>predicted_scores <span class="op">=</span> X <span class="op">@</span> weights <span class="op">+</span> bias</span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"predicted_scores: </span><span class="sc">{</span>predicted_scores<span class="sc">.</span><span class="bu">round</span>(<span class="dv">1</span>)<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>predicted_scores: [ 78.3  54.7  95.9  67.7 103.6]</code></pre>
 </div>
 </div>
 <p><code>@</code> on a matrix and a vector is shorthand for: for each row, multiply element-wise by <code>weights</code> and sum: exactly <code>(X * weights).sum(axis=1)</code>. Verify the two are equivalent, then measure prediction error against the true scores with <code>np.linalg.norm</code> (the Euclidean / RMS-style distance):</p>
-<div id="24" class="cell" data-execution_count="8">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># @ is equivalent to elementwise multiply + sum along axis=1</span></span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>manual <span class="op">=</span> (X <span class="op">*</span> weights).<span class="bu">sum</span>(axis<span class="op">=</span><span class="dv">1</span>) <span class="op">+</span> bias</span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"@ matches manual sum: </span><span class="sc">{</span>np<span class="sc">.</span>allclose(predicted_scores, manual)<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>actual_scores <span class="op">=</span> np.array([<span class="fl">88.0</span>, <span class="fl">65.0</span>, <span class="fl">95.0</span>, <span class="fl">78.0</span>, <span class="fl">99.0</span>])</span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>errors <span class="op">=</span> predicted_scores <span class="op">-</span> actual_scores</span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>rmse <span class="op">=</span> np.linalg.norm(errors) <span class="op">/</span> np.sqrt(<span class="bu">len</span>(errors))</span>
-<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"errors : </span><span class="sc">{</span>errors<span class="sc">.</span><span class="bu">round</span>(<span class="dv">1</span>)<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"RMSE   : </span><span class="sc">{</span>rmse<span class="sc">:.2f}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="24" class="cell" data-execution_count="7">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># @ is equivalent to elementwise multiply + sum along axis=1</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>manual <span class="op">=</span> (X <span class="op">*</span> weights).<span class="bu">sum</span>(axis<span class="op">=</span><span class="dv">1</span>) <span class="op">+</span> bias</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"@ matches manual sum: </span><span class="sc">{</span>np<span class="sc">.</span>allclose(predicted_scores, manual)<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>actual_scores <span class="op">=</span> np.array([<span class="fl">88.0</span>, <span class="fl">65.0</span>, <span class="fl">95.0</span>, <span class="fl">78.0</span>, <span class="fl">99.0</span>])</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>errors <span class="op">=</span> predicted_scores <span class="op">-</span> actual_scores</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>rmse <span class="op">=</span> np.linalg.norm(errors) <span class="op">/</span> np.sqrt(<span class="bu">len</span>(errors))</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"errors : </span><span class="sc">{</span>errors<span class="sc">.</span><span class="bu">round</span>(<span class="dv">1</span>)<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"RMSE   : </span><span class="sc">{</span>rmse<span class="sc">:.2f}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>@ matches manual sum: True
 errors : [ -9.7 -10.3   0.9 -10.3   4.6]
@@ -839,36 +758,36 @@ RMSE   : 8.10</code></pre>
 <div style="background:#EFF6FF;border-left:5px solid #0369A1;padding:14px 18px;border-radius:6px;margin:16px 0">
 <p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-key-fill"></i> Key Concept: Use .npy for one array, .npz for multiple</span><br><br> <code>np.save(‘X.npy’, X)</code> and <code>np.load(‘X.npy’)</code> preserve dtype and shape exactly. <code>np.savez(‘data.npz’, X=X, y=y)</code> bundles multiple arrays in one file. Both load in microseconds – much faster than re-parsing a CSV.</p>
 </div>
-<div id="29" class="cell" data-execution_count="9">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pathlib <span class="im">import</span> Path</span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>tmp_dir <span class="op">=</span> Path(<span class="st">"tmp_numpy_activity"</span>)</span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>tmp_dir.mkdir(exist_ok<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> np.array([[<span class="fl">12.0</span>, <span class="fl">85.0</span>, <span class="fl">3.1</span>], [<span class="fl">5.0</span>, <span class="fl">60.0</span>, <span class="fl">2.4</span>], [<span class="fl">18.0</span>, <span class="fl">95.0</span>, <span class="fl">3.8</span>]])</span>
-<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> np.array([<span class="fl">88.0</span>, <span class="fl">65.0</span>, <span class="fl">95.0</span>])</span>
-<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Save a single array</span></span>
-<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>np.save(tmp_dir <span class="op">/</span> <span class="st">"X.npy"</span>, X)</span>
-<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>X_loaded <span class="op">=</span> np.load(tmp_dir <span class="op">/</span> <span class="st">"X.npy"</span>)</span>
-<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"round-trip equal: </span><span class="sc">{</span>np<span class="sc">.</span>array_equal(X, X_loaded)<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Save several named arrays together in one file</span></span>
-<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>np.savez(tmp_dir <span class="op">/</span> <span class="st">"dataset.npz"</span>, features<span class="op">=</span>X, target<span class="op">=</span>y)</span>
-<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>bundle <span class="op">=</span> np.load(tmp_dir <span class="op">/</span> <span class="st">"dataset.npz"</span>)</span>
-<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"keys   : </span><span class="sc">{</span><span class="bu">list</span>(bundle.keys())<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"target : </span><span class="sc">{</span>bundle[<span class="st">'target'</span>]<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="29" class="cell" data-execution_count="8">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pathlib <span class="im">import</span> Path</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>tmp_dir <span class="op">=</span> Path(<span class="st">"tmp_numpy_activity"</span>)</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>tmp_dir.mkdir(exist_ok<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> np.array([[<span class="fl">12.0</span>, <span class="fl">85.0</span>, <span class="fl">3.1</span>], [<span class="fl">5.0</span>, <span class="fl">60.0</span>, <span class="fl">2.4</span>], [<span class="fl">18.0</span>, <span class="fl">95.0</span>, <span class="fl">3.8</span>]])</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> np.array([<span class="fl">88.0</span>, <span class="fl">65.0</span>, <span class="fl">95.0</span>])</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Save a single array</span></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>np.save(tmp_dir <span class="op">/</span> <span class="st">"X.npy"</span>, X)</span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>X_loaded <span class="op">=</span> np.load(tmp_dir <span class="op">/</span> <span class="st">"X.npy"</span>)</span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"round-trip equal: </span><span class="sc">{</span>np<span class="sc">.</span>array_equal(X, X_loaded)<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Save several named arrays together in one file</span></span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>np.savez(tmp_dir <span class="op">/</span> <span class="st">"dataset.npz"</span>, features<span class="op">=</span>X, target<span class="op">=</span>y)</span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>bundle <span class="op">=</span> np.load(tmp_dir <span class="op">/</span> <span class="st">"dataset.npz"</span>)</span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"keys   : </span><span class="sc">{</span><span class="bu">list</span>(bundle.keys())<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"target : </span><span class="sc">{</span>bundle[<span class="st">'target'</span>]<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>round-trip equal: True
 keys   : ['features', 'target']
 target : [88. 65. 95.]</code></pre>
 </div>
 </div>
-<div id="30" class="cell" data-execution_count="10">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> shutil</span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>shutil.rmtree(tmp_dir)</span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"cleaned up: </span><span class="sc">{</span>tmp_dir<span class="sc">.</span>exists()<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="30" class="cell" data-execution_count="9">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> shutil</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>shutil.rmtree(tmp_dir)</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"cleaned up: </span><span class="sc">{</span>tmp_dir<span class="sc">.</span>exists()<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>cleaned up: False</code></pre>
 </div>
@@ -880,46 +799,46 @@ target : [88. 65. 95.]</code></pre>
 <div style="background:#EFF6FF;border-left:5px solid #0369A1;padding:14px 18px;border-radius:6px;margin:16px 0">
 <p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-key-fill"></i> Key Concept: Three gotchas that never raise an exception</span><br><br> 1. <b>View vs copy</b>: <code>sub = X[:2]</code> shares memory – mutating <code>sub</code> mutates <code>X</code>. Fix: <code>X[:2].copy()</code>.<br>2. <b>Integer overflow</b>: <code>np.array([120, 10], dtype=np.int8)</code> wraps silently. Fix: check dtype before arithmetic.<br>3. <b>Shape mismatch in broadcasting</b>: <code>(5, 3) - (3, 5)</code> may broadcast unexpectedly. Always check shapes before subtracting.</p>
 </div>
-<div id="33" class="cell" data-execution_count="11">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># GOTCHA 1: basic slicing returns a VIEW, not a copy</span></span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>scores <span class="op">=</span> np.array([<span class="dv">62</span>, <span class="dv">78</span>, <span class="dv">85</span>, <span class="dv">91</span>, <span class="dv">55</span>])</span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>top_three <span class="op">=</span> scores[:<span class="dv">3</span>]</span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>top_three[<span class="dv">0</span>] <span class="op">=</span> <span class="dv">0</span>  <span class="co"># mutating the "slice"...</span></span>
-<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"top_three : </span><span class="sc">{</span>top_three<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"scores    : </span><span class="sc">{</span>scores<span class="sc">}</span><span class="ss">"</span>)  <span class="co"># ...changed the original too!</span></span>
-<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Fix: copy explicitly when you need an independent array</span></span>
-<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>safe_copy <span class="op">=</span> scores[:<span class="dv">3</span>].copy()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="33" class="cell" data-execution_count="10">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># GOTCHA 1: basic slicing returns a VIEW, not a copy</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>scores <span class="op">=</span> np.array([<span class="dv">62</span>, <span class="dv">78</span>, <span class="dv">85</span>, <span class="dv">91</span>, <span class="dv">55</span>])</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>top_three <span class="op">=</span> scores[:<span class="dv">3</span>]</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>top_three[<span class="dv">0</span>] <span class="op">=</span> <span class="dv">0</span>  <span class="co"># mutating the "slice"...</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"top_three : </span><span class="sc">{</span>top_three<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"scores    : </span><span class="sc">{</span>scores<span class="sc">}</span><span class="ss">"</span>)  <span class="co"># ...changed the original too!</span></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Fix: copy explicitly when you need an independent array</span></span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>safe_copy <span class="op">=</span> scores[:<span class="dv">3</span>].copy()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>top_three : [ 0 78 85]
 scores    : [ 0 78 85 91 55]</code></pre>
 </div>
 </div>
-<div id="34" class="cell" data-execution_count="12">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># GOTCHA 2: integer dtype truncates on division-like ops, and can overflow</span></span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>small <span class="op">=</span> np.array([<span class="dv">120</span>, <span class="dv">10</span>], dtype<span class="op">=</span>np.int8)</span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"int8 + 50 : </span><span class="sc">{</span>small <span class="op">+</span> <span class="dv">50</span><span class="sc">}</span><span class="ss">"</span>)  <span class="co"># 120 + 50 = 170, overflows int8's max of 127!</span></span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Fix: use a wide-enough dtype, or let NumPy infer (default is int64/float64)</span></span>
-<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>safe <span class="op">=</span> small.astype(np.int64) <span class="op">+</span> <span class="dv">50</span></span>
-<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"int64 + 50: </span><span class="sc">{</span>safe<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="34" class="cell" data-execution_count="11">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># GOTCHA 2: integer dtype truncates on division-like ops, and can overflow</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>small <span class="op">=</span> np.array([<span class="dv">120</span>, <span class="dv">10</span>], dtype<span class="op">=</span>np.int8)</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"int8 + 50 : </span><span class="sc">{</span>small <span class="op">+</span> <span class="dv">50</span><span class="sc">}</span><span class="ss">"</span>)  <span class="co"># 120 + 50 = 170, overflows int8's max of 127!</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Fix: use a wide-enough dtype, or let NumPy infer (default is int64/float64)</span></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>safe <span class="op">=</span> small.astype(np.int64) <span class="op">+</span> <span class="dv">50</span></span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"int64 + 50: </span><span class="sc">{</span>safe<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>int8 + 50 : [-86  60]
 int64 + 50: [170  60]</code></pre>
 </div>
 </div>
-<div id="35" class="cell" data-execution_count="13">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># GOTCHA 3: {} is a dict, not a set -- same trap as in plain Python (Part 3, Sec. 8)</span></span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>empty_dict <span class="op">=</span> {}</span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>empty_set <span class="op">=</span> <span class="bu">set</span>()</span>
-<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"type(</span><span class="ch">{{}}</span><span class="ss">)   : </span><span class="sc">{</span><span class="bu">type</span>(empty_dict)<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"type(set()) : </span><span class="sc">{</span><span class="bu">type</span>(empty_set)<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a><span class="co"># GOTCHA 4: comparing floats with == (see Sec. 9 for the fix: np.allclose)</span></span>
-<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>a <span class="op">=</span> np.array([<span class="fl">0.1</span> <span class="op">+</span> <span class="fl">0.2</span>])</span>
-<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"0.1 + 0.2 == 0.3 : </span><span class="sc">{</span>a <span class="op">==</span> <span class="fl">0.3</span><span class="sc">}</span><span class="ss">"</span>)  <span class="co"># False! 0.30000000000000004 != 0.3</span></span>
-<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"np.allclose      : </span><span class="sc">{</span>np<span class="sc">.</span>allclose(a, <span class="fl">0.3</span>)<span class="sc">}</span><span class="ss">"</span>)  <span class="co"># True: tolerant comparison</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="35" class="cell" data-execution_count="12">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># GOTCHA 3: {} is a dict, not a set -- same trap as in plain Python (Part 3, Sec. 8)</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>empty_dict <span class="op">=</span> {}</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>empty_set <span class="op">=</span> <span class="bu">set</span>()</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"type(</span><span class="ch">{{}}</span><span class="ss">)   : </span><span class="sc">{</span><span class="bu">type</span>(empty_dict)<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"type(set()) : </span><span class="sc">{</span><span class="bu">type</span>(empty_set)<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a><span class="co"># GOTCHA 4: comparing floats with == (see Sec. 9 for the fix: np.allclose)</span></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>a <span class="op">=</span> np.array([<span class="fl">0.1</span> <span class="op">+</span> <span class="fl">0.2</span>])</span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"0.1 + 0.2 == 0.3 : </span><span class="sc">{</span>a <span class="op">==</span> <span class="fl">0.3</span><span class="sc">}</span><span class="ss">"</span>)  <span class="co"># False! 0.30000000000000004 != 0.3</span></span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"np.allclose      : </span><span class="sc">{</span>np<span class="sc">.</span>allclose(a, <span class="fl">0.3</span>)<span class="sc">}</span><span class="ss">"</span>)  <span class="co"># True: tolerant comparison</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>type({})   : &lt;class 'dict'&gt;
 type(set()) : &lt;class 'set'&gt;
@@ -938,18 +857,18 @@ np.allclose      : True</code></pre>
 # Expected: reading 39.5 (index 5) flagged as anomaly</pre>
 <p><b>Hint:</b> <code>z = (readings - readings.mean()) / readings.std()</code>, then mask <code>np.abs(z) &gt; 2</code>.</p>
 </div>
-<div id="38" class="cell" data-execution_count="14">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>readings <span class="op">=</span> np.array([<span class="fl">36.5</span>, <span class="fl">36.7</span>, <span class="fl">36.8</span>, <span class="fl">36.6</span>, <span class="fl">36.9</span>, <span class="fl">39.5</span>, <span class="fl">36.7</span>, <span class="fl">36.8</span>])</span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>z_scores <span class="op">=</span> ...  <span class="co"># </span><span class="al">TODO</span></span>
-<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>anomaly_mask <span class="op">=</span> ...  <span class="co"># </span><span class="al">TODO</span></span>
-<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> z_scores <span class="kw">is</span> <span class="kw">not</span> ...:</span>
-<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"z_scores      : </span><span class="sc">{</span>z_scores<span class="sc">.</span><span class="bu">round</span>(<span class="dv">2</span>)<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"anomaly_mask  : </span><span class="sc">{</span>anomaly_mask<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"anomalies     : </span><span class="sc">{</span>readings[anomaly_mask]<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span>:</span>
-<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"(implement z_scores and anomaly_mask above to see output)"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="38" class="cell" data-execution_count="13">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>readings <span class="op">=</span> np.array([<span class="fl">36.5</span>, <span class="fl">36.7</span>, <span class="fl">36.8</span>, <span class="fl">36.6</span>, <span class="fl">36.9</span>, <span class="fl">39.5</span>, <span class="fl">36.7</span>, <span class="fl">36.8</span>])</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>z_scores <span class="op">=</span> ...  <span class="co"># </span><span class="al">TODO</span></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>anomaly_mask <span class="op">=</span> ...  <span class="co"># </span><span class="al">TODO</span></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> z_scores <span class="kw">is</span> <span class="kw">not</span> ...:</span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"z_scores      : </span><span class="sc">{</span>z_scores<span class="sc">.</span><span class="bu">round</span>(<span class="dv">2</span>)<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"anomaly_mask  : </span><span class="sc">{</span>anomaly_mask<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"anomalies     : </span><span class="sc">{</span>readings[anomaly_mask]<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span>:</span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"(implement z_scores and anomaly_mask above to see output)"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>(implement z_scores and anomaly_mask above to see output)</code></pre>
 </div>
@@ -1002,24 +921,24 @@ np.allclose      : True</code></pre>
 <div style="background:#F5F3FF;border-left:5px solid #7C3AED;padding:14px 18px;border-radius:6px;margin:16px 0">
 <p><span style="color:#5B21B6;font-weight:bold"><i class="bi bi-lightbulb-fill"></i> Pro Tip: Use <code>np.float64</code> not <code>np.float</code> in new code</span><br><br> If you see a <code>module ‘numpy’ has no attribute ‘float’</code> error, the codebase was written against NumPy 1.x. A global search-and-replace of <code>np.float</code> → <code>np.float64</code> (and so on for the others in the table) is the complete fix.</p>
 </div>
-<div id="40" class="cell" data-execution_count="15">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
-<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Old aliases are REMOVED in NumPy 2.0: this would raise AttributeError:</span></span>
-<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a><span class="co"># arr = np.array([1, 2, 3], dtype=np.float)   # ❌</span></span>
-<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Use the explicit dtype names instead:</span></span>
-<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>arr <span class="op">=</span> np.array([<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>], dtype<span class="op">=</span>np.float64)  <span class="co"># ✅</span></span>
-<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"dtype: </span><span class="sc">{</span>arr<span class="sc">.</span>dtype<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a><span class="co"># StringDType: variable-length strings, efficient UTF-8 storage (NumPy 2.0+)</span></span>
-<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>names <span class="op">=</span> np.array([<span class="st">"Alice"</span>, <span class="st">"Bob"</span>, <span class="st">"Charlie"</span>], dtype<span class="op">=</span>np.dtypes.StringDType())</span>
-<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"names : </span><span class="sc">{</span>names<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"dtype : </span><span class="sc">{</span>names<span class="sc">.</span>dtype<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a><span class="co"># The old fixed-width str_ is still available but StringDType is the modern choice</span></span>
-<span id="cb27-16"><a href="#cb27-16" aria-hidden="true" tabindex="-1"></a>old_style <span class="op">=</span> np.array([<span class="st">"Alice"</span>, <span class="st">"Bob"</span>, <span class="st">"Charlie"</span>])  <span class="co"># infers str_ (fixed width)</span></span>
-<span id="cb27-17"><a href="#cb27-17" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"old dtype: </span><span class="sc">{</span>old_style<span class="sc">.</span>dtype<span class="sc">}</span><span class="ss">"</span>)  <span class="co"># &lt;U7 means Unicode, 7 chars wide</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="40" class="cell" data-execution_count="14">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Old aliases are REMOVED in NumPy 2.0: this would raise AttributeError:</span></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a><span class="co"># arr = np.array([1, 2, 3], dtype=np.float)   # ❌</span></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Use the explicit dtype names instead:</span></span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>arr <span class="op">=</span> np.array([<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>], dtype<span class="op">=</span>np.float64)  <span class="co"># ✅</span></span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"dtype: </span><span class="sc">{</span>arr<span class="sc">.</span>dtype<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a><span class="co"># StringDType: variable-length strings, efficient UTF-8 storage (NumPy 2.0+)</span></span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a>names <span class="op">=</span> np.array([<span class="st">"Alice"</span>, <span class="st">"Bob"</span>, <span class="st">"Charlie"</span>], dtype<span class="op">=</span>np.dtypes.StringDType())</span>
+<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"names : </span><span class="sc">{</span>names<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"dtype : </span><span class="sc">{</span>names<span class="sc">.</span>dtype<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a><span class="co"># The old fixed-width str_ is still available but StringDType is the modern choice</span></span>
+<span id="cb26-16"><a href="#cb26-16" aria-hidden="true" tabindex="-1"></a>old_style <span class="op">=</span> np.array([<span class="st">"Alice"</span>, <span class="st">"Bob"</span>, <span class="st">"Charlie"</span>])  <span class="co"># infers str_ (fixed width)</span></span>
+<span id="cb26-17"><a href="#cb26-17" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"old dtype: </span><span class="sc">{</span>old_style<span class="sc">.</span>dtype<span class="sc">}</span><span class="ss">"</span>)  <span class="co"># &lt;U7 means Unicode, 7 chars wide</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>dtype: float64
 names : ['Alice' 'Bob' 'Charlie']
@@ -1032,20 +951,20 @@ old dtype: &lt;U7</code></pre>
 <h3 class="anchored" data-anchor-id="np.strings-vectorised-string-operations"><code>np.strings</code>: Vectorised String Operations</h3>
 <p>NumPy 2.0 ships a dedicated <code>np.strings</code> module for vectorised string operations on <code>np.ndarray</code> values backed by <code>StringDType</code>. Before this module existed, string operations on object arrays required Python-level loops or <code>np.vectorize</code>, both of which are slow. <code>np.strings</code> routes each operation through a compiled C loop, making it roughly 10x faster on large arrays than the equivalent Python loop.</p>
 <p>The module mirrors the Python <code>str</code> method set: <code>np.strings.upper()</code>, <code>np.strings.lower()</code>, <code>np.strings.split()</code>, <code>np.strings.startswith()</code>, <code>np.strings.replace()</code>, and others all work element-wise, broadcasting across the entire array in one call.</p>
-<div id="42" class="cell" data-execution_count="16">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
-<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a StringDType array of course codes</span></span>
-<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>course_arr <span class="op">=</span> np.array([<span class="st">"DATA101"</span>, <span class="st">"MATH201"</span>, <span class="st">"STATS301"</span>, <span class="st">"ML401"</span>], dtype<span class="op">=</span>np.dtypes.StringDType())</span>
-<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a><span class="co"># np.strings.upper() broadcasts across the whole array in one compiled call</span></span>
-<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>upper <span class="op">=</span> np.strings.upper(course_arr)</span>
-<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"upper:"</span>, upper)</span>
-<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a><span class="co"># np.strings.startswith() returns a boolean array, usable as a mask</span></span>
-<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a>prefix_mask <span class="op">=</span> np.strings.startswith(course_arr, <span class="st">"DATA"</span>)</span>
-<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"DATA prefix mask:"</span>, prefix_mask)</span>
-<span id="cb29-13"><a href="#cb29-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"courses starting with 'DATA':"</span>, course_arr[prefix_mask])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="42" class="cell" data-execution_count="15">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a StringDType array of course codes</span></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>course_arr <span class="op">=</span> np.array([<span class="st">"DATA101"</span>, <span class="st">"MATH201"</span>, <span class="st">"STATS301"</span>, <span class="st">"ML401"</span>], dtype<span class="op">=</span>np.dtypes.StringDType())</span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a><span class="co"># np.strings.upper() broadcasts across the whole array in one compiled call</span></span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>upper <span class="op">=</span> np.strings.upper(course_arr)</span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"upper:"</span>, upper)</span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a><span class="co"># np.strings.startswith() returns a boolean array, usable as a mask</span></span>
+<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a>prefix_mask <span class="op">=</span> np.strings.startswith(course_arr, <span class="st">"DATA"</span>)</span>
+<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"DATA prefix mask:"</span>, prefix_mask)</span>
+<span id="cb28-13"><a href="#cb28-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"courses starting with 'DATA':"</span>, course_arr[prefix_mask])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>upper: ['DATA101' 'MATH201' 'STATS301' 'ML401']
 DATA prefix mask: [ True False False False]

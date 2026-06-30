@@ -108,9 +108,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   }
 }</script>
 <style>html{ scroll-behavior: smooth; }</style>
-<script src="../../site_libs/quarto-diagram/mermaid.min.js"></script>
-<script src="../../site_libs/quarto-diagram/mermaid-init.js"></script>
-<link href="../../site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.min.js" integrity="sha384-c9c+LnTbwQ3aujuU7ULEPVvgLs+Fn6fJUvIGTsuu1ZcCf11fiEubah0ttpca4ntM sha384-6V1/AdqZRWk1KAlWbKBlGhN7VG4iE/yAZcO6NZPMF8od0vukrvr0tg4qY6NSrItx" crossorigin="anonymous"></script>
 
 <script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
@@ -427,8 +424,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">In this chapter</h2>
    
   <ul>
-  <li><a href="#before-you-begin" id="toc-before-you-begin" class="nav-link active" data-scroll-target="#before-you-begin">Before you begin</a></li>
-  <li><a href="#when-pandas-is-not-enough" id="toc-when-pandas-is-not-enough" class="nav-link" data-scroll-target="#when-pandas-is-not-enough">When pandas Is Not Enough</a>
+  <li><a href="#when-pandas-is-not-enough" id="toc-when-pandas-is-not-enough" class="nav-link active" data-scroll-target="#when-pandas-is-not-enough">When pandas Is Not Enough</a>
   <ul class="collapse">
   <li><a href="#how-it-compares" id="toc-how-it-compares" class="nav-link" data-scroll-target="#how-it-compares">How it compares</a></li>
   <li><a href="#already-in-your-environment" id="toc-already-in-your-environment" class="nav-link" data-scroll-target="#already-in-your-environment">Already in your environment</a></li>
@@ -474,69 +470,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 <p><a href="https://colab.research.google.com/github/sambaiga/ds-mlops-path/blob/main/tutorials/01-python-basics/11-polars.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open In Colab"></a> <a href="https://raw.githubusercontent.com/sambaiga/ds-mlops-path/main/tutorials/01-python-basics/11-polars.ipynb"><img src="https://img.shields.io/badge/Download-Notebook-blue.svg?logo=jupyter&amp;logoColor=white" class="img-fluid" alt="Download Notebook"></a></p>
-<p><strong>DS-MLOps Data Analysis</strong></p>
-<p><strong>Python 3.12+ | Author: Anthony Faustine</strong></p>
-<section id="before-you-begin" class="level2">
-<h2 class="anchored" data-anchor-id="before-you-begin">Before you begin</h2>
-<p>This notebook continues from Part 10 (<code>10-combining-reshaping.ipynb</code>). You should be comfortable with pandas DataFrames, <code>groupby</code>, merging, and time-indexed data before starting here.</p>
-<p>Polars is a modern DataFrame library written in Rust. It uses an expression-based API and a lazy evaluation model that lets it optimize queries before running them. The same two datasets from Parts 8-10 are used here so you can compare pandas and Polars syntax on familiar ground.</p>
-<div class="callout callout-style-default callout-note no-icon callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Topics covered
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-1" class="callout-1-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<table class="caption-top table">
-<colgroup>
-<col style="width: 50%">
-<col style="width: 50%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Topic</th>
-<th>Why it matters</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><strong>DataFrame construction</strong></td>
-<td>Polars and pandas share the concept; the API differs in key ways</td>
-</tr>
-<tr class="even">
-<td><strong>Expression API</strong></td>
-<td><code>pl.col()</code> expressions replace bracket indexing and make queries composable</td>
-</tr>
-<tr class="odd">
-<td><strong>GroupBy and aggregation</strong></td>
-<td>Same split-apply-combine logic, cleaner syntax</td>
-</tr>
-<tr class="even">
-<td><strong>LazyFrame</strong></td>
-<td>Defer execution and let Polars optimize the query plan before running</td>
-</tr>
-<tr class="odd">
-<td><strong>Date/time</strong></td>
-<td>Polars parses and handles dates natively, no <code>.dt</code> accessor for most operations</td>
-</tr>
-<tr class="even">
-<td><strong>Migration patterns</strong></td>
-<td>Side-by-side pandas-to-Polars translations for the operations you already know</td>
-</tr>
-<tr class="odd">
-<td><strong><code>over()</code> and streaming</strong></td>
-<td>Group-aware window stats without reducing rows; process files larger than RAM in chunks</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-</div>
+<p>Your pandas pipeline handles 10,000 rows without complaint. Then the dataset grows to 10 million rows and a <code>groupby</code> that used to finish instantly now takes 40 seconds. Polars is the answer: a DataFrame library written in Rust that uses lazy evaluation to optimize queries before reading a single byte – and parallel execution to make full use of every CPU core.</p>
+<p>Part 10 (<code>10-combining-reshaping.ipynb</code>) built the multi-table foundation you’ll translate here. The same two datasets are used so every operation can be compared directly. Polars concepts carry forward into the MLOps section and streaming pipelines in Part 7.</p>
 <blockquote class="blockquote">
 <p>Callout markers used throughout this notebook are explained on the <a href="../../index.html#callout-guide">book cover page</a>.</p>
 </blockquote>
@@ -709,7 +644,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
-</section>
 <section id="when-pandas-is-not-enough" class="level2">
 <h2 class="anchored" data-anchor-id="when-pandas-is-not-enough">When pandas Is Not Enough</h2>
 <p>Your pandas pipeline works perfectly at 50,000 rows. The <code>groupby</code> runs in a second, the merge finishes before you blink, and everything fits in memory with room to spare. Then someone drops a 10-million-row export on your desk. The same pipeline now takes three minutes, swaps to disk halfway through, and your laptop fan starts spinning like it is trying to take off.</p>
@@ -775,7 +709,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> add polars          <span class="co"># for a standalone project</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Official docs and user guide: <a href="https://docs.pola.rs/">docs.pola.rs</a></p>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon no-icon"></i>
 </div>
@@ -784,7 +718,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>By the end of Part 11 (Polars) you will be able to:</p>
 <table class="caption-top table">
@@ -1735,37 +1669,11 @@ df.select(cs.string())</pre>
 <section id="lazyframe-and-lazy-evaluation" class="level2">
 <h2 class="anchored" data-anchor-id="lazyframe-and-lazy-evaluation">4. LazyFrame and Lazy Evaluation</h2>
 <p>Every Polars operation above ran eagerly: it computed the result immediately and returned a new DataFrame. <code>df.lazy()</code> switches to lazy mode. In lazy mode, operations build a <em>query plan</em> instead of executing immediately. <code>.collect()</code> runs the optimized plan.</p>
-<blockquote class="blockquote">
-<p><strong>Lazy evaluation: plan builds up, data reads only on .collect()</strong></p>
-</blockquote>
-<div class="cell" data-layout-align="default">
-<div class="cell-output-display">
-<div>
-<p></p><figure class="figure"><p></p>
-<div>
-<pre class="mermaid mermaid-js">flowchart LR
-    A["scan_csv('file.csv')
-no data read yet"] --&gt; B["filter(col &gt; 60)
-adds predicate"]
-    B --&gt; C["group_by('program')
-adds aggregation"]
-    C --&gt; D["select(['program','mean'])
-projects columns"]
-    D --&gt;|".collect()"| E["query optimised:
-1. predicate pushdown
-2. projection pruning
-3. execute in chunks"]
-    E --&gt; F["DataFrame
-only now in memory"]
-
-    style A fill:#F5F3FF,stroke:#7C3AED,color:#3B0764
-    style E fill:#EAF3FA,stroke:#0369A1,color:#0C4A6E
-    style F fill:#EBF5F0,stroke:#059669,color:#065F46
-</pre>
-</div>
-<p></p></figure><p></p>
-</div>
-</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="figs/polars-lazy-evaluation.svg" class="img-fluid figure-img" alt="Five boxes connected by arrows: scan_csv (purple dashed), filter (purple dashed), group_by (purple dashed), Query Optimizer (blue), DataFrame result (green). .collect() label on the arrow into the optimizer. Two annotation boxes below explain why lazy evaluation matters and the eager vs lazy distinction."></p>
+<figcaption>Polars lazy evaluation: scan_csv, filter, and group_by each add a step to the query plan without reading data. Calling .collect() triggers the query optimizer, which applies predicate pushdown and projection pruning before executing a single parallel read.</figcaption>
+</figure>
 </div>
 <div id="45" class="cell" data-execution_count="14">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Build a query plan -- nothing executes yet</span></span>
