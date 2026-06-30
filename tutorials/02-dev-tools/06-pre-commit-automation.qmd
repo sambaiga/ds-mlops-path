@@ -9,6 +9,10 @@ title: "Part 18: Automation with pre-commit"
 
 **Python 3.12+ | Author: Anthony Faustine**
 
+You push a commit. CI fails because ruff found an unused import you missed. You fix it and push again. CI fails again -- the commit message format is wrong. Each round trip costs five minutes and breaks your focus. `pre-commit` runs every quality check automatically the moment you type `git commit`, so the CI pipeline never fails for something a script could have caught locally.
+
+Part 17 (`05-pytest-testing.qmd`) added tests. This chapter automates ruff, pytest, and commit-message validation as git hooks. Part 19 (`07-pydantic-validation.ipynb`) introduces runtime data validation.
+
 ::: {.callout-note collapse="true" icon=false}
 ## Before you begin
 
@@ -55,20 +59,7 @@ By the end of Part 18 you will be able to:
 
 Without pre-commit, quality checks are optional. With pre-commit, they are automatic: the checks run before every commit and block it if they fail. You cannot forget to run ruff, and your colleagues cannot skip it.
 
-```{mermaid}
-flowchart LR
-    A["git commit -m '...'"] --> B["pre-commit\nhooks run"]
-    B --> C{ruff check}
-    C -->|"auto-fixed"| D["file changed\ngit add + retry"]
-    D --> B
-    C -->|"no findings"| E{commitizen\ncommit-msg}
-    E -->|"invalid format"| F["commit BLOCKED"]
-    E -->|"valid format"| G["commit sealed"]
-
-    style G fill:#EBF5F0,stroke:#059669,color:#065F46
-    style F fill:#FEF2F2,stroke:#DC2626,color:#991B1B
-    style D fill:#EAF3FA,stroke:#0369A1,color:#0C4A6E
-```
+![pre-commit flow: git commit triggers hooks. ruff check either auto-fixes and retries or passes to commitizen. commitizen either blocks the commit for an invalid message format or seals it.](figs/precommit-flow.svg){fig-alt="Flow diagram. git commit (blue) to pre-commit hooks (blue). Diamond: ruff check. Auto-fixed path (amber): file changed, git add, retry. No-findings path to second diamond: commitizen. Invalid format (red): commit BLOCKED. Valid format (green): commit sealed."}
 
 ### Install pre-commit
 

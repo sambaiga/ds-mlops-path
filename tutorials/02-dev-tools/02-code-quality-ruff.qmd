@@ -9,6 +9,10 @@ title: "Part 14: Code Quality with ruff"
 
 **Python 3.12+ | Author: Anthony Faustine**
 
+Your code works on your machine. A colleague checks it out and immediately hits an import error -- your editor sorts imports one way, theirs another, and the difference breaks the pipeline. `ruff` enforces one standard automatically: consistent formatting with `ruff format` and 700+ correctness rules with `ruff check`, both running in milliseconds before any code ships.
+
+Part 14 (`01-uv-project-setup.qmd`) built the `grade-predictor` project. This chapter runs ruff on it and wires ruff into your editor. Pre-commit in Part 18 (`06-pre-commit-automation.qmd`) will automate ruff on every commit.
+
 ::: {.callout-note collapse="true" icon=false}
 ## Before you begin
 
@@ -57,20 +61,7 @@ A **linter** reads the code and flags patterns that are wrong, suspicious, or li
 
 Ruff handles both. They are separate commands with separate jobs: `ruff format` for layout, `ruff check` for correctness. Running format first is the usual order: get the code looking clean, then read what the linter flags.
 
-```{mermaid}
-flowchart LR
-    A[source code] --> B["ruff format\nindentation, quotes,\nline length"]
-    B --> C[formatted code]
-    C --> D["ruff check\nAST rules: unused imports,\nmutable defaults, etc."]
-    D --> E{findings?}
-    E -->|"--fix: auto-fixable"| F["ruff applies fix\nre-stage the file"]
-    F --> D
-    E -->|"none"| G["ready to commit"]
-
-    style G fill:#EBF5F0,stroke:#059669,color:#065F46
-    style B fill:#F5F3FF,stroke:#7C3AED,color:#3B0764
-    style D fill:#EAF3FA,stroke:#0369A1,color:#0C4A6E
-```
+![ruff pipeline: source code passes through ruff format for style, then ruff check for correctness. If findings exist, ruff applies auto-fixes and re-checks. When no findings remain, the code is ready to commit.](figs/ruff-pipeline.svg){fig-alt="Linear flow: source code (gray) to ruff format (purple) to formatted code to ruff check (blue) to a diamond decision. Yes path (amber): ruff applies fix and loops back. No path (green): ready to commit."}
 
 <div class='ark-concept'>
 <span class='ark-concept-title'><i class="bi bi-info-circle-fill"></i> Key Concept: Formatting is about style. Linting is about correctness.</span><br><br>

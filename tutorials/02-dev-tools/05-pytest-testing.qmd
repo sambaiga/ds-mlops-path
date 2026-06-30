@@ -9,6 +9,10 @@ title: "Part 17: Testing DS Code with pytest"
 
 **Python 3.12+ | Author: Anthony Faustine**
 
+Your function returns the right answer on the three examples you tested by hand. A colleague adds one line two months later and it silently returns the wrong answer for weeks. A test suite runs every time the code changes and reports the breakage in seconds -- not after it reaches production.
+
+Part 16 (`04-git-github.qmd`) versioned the `grade-predictor` project. This chapter writes tests for it using pytest. Part 18 (`06-pre-commit-automation.qmd`) will run those tests automatically before every commit.
+
 ::: {.callout-note collapse="true" icon=false}
 ## Before you begin
 
@@ -58,14 +62,7 @@ By the end of Part 17 you will be able to:
 
 Python ships with a built-in test runner called `unittest`. It works, but it forces you to subclass `TestCase`, call `self.assertEqual(...)` instead of `assert`, and write substantial boilerplate before a single assertion runs. pytest is the community standard for a reason: it discovers tests automatically, uses plain `assert` statements, and provides richer output with no extra effort.
 
-```{mermaid}
-flowchart LR
-    A["unittest"] -->|"subclass TestCase\nself.assertEqual\nsetUp / tearDown"| B["works\nbut verbose"]
-    C["pytest"] -->|"plain assert\nautodiscovery\nrich output"| D["same tests\nhalf the code"]
-
-    style B fill:#FEF2F2,stroke:#DC2626,color:#991B1B
-    style D fill:#EBF5F0,stroke:#059669,color:#065F46
-```
+![pytest vs unittest: unittest requires subclassing TestCase, self.assertEqual, and setUp/tearDown. pytest uses plain assert statements, autodiscovery, and fixtures. Both run the same tests; pytest needs half the code.](figs/pytest-vs-unittest.svg){fig-alt="Two panels. Left red panel: unittest with four bullet points of boilerplate. Right green panel: pytest with four bullet points of cleaner syntax. A center bridge arrow reads same tests."}
 
 Install pytest and the two plugins you will use throughout this chapter:
 
@@ -92,19 +89,7 @@ A normalization function applied after the train/test split instead of before. A
 
 In DS, silent bugs are the hard ones. A test suite converts "I think this is right" into "this is verifiably correct, and stays correct when the code changes."
 
-```{mermaid}
-flowchart LR
-    A["pytest discovers\ntest_*.py files"] --> B["run @pytest.fixture\nsetup phase"]
-    B --> C["execute test body\nassert statements"]
-    C --> D{assert passes?}
-    D -->|yes| E["PASSED"]
-    D -->|no| F["FAILED\nfull traceback"]
-    E & F --> G["teardown\n(yield fixtures)"]
-    G --> H["next test"]
-
-    style E fill:#EBF5F0,stroke:#059669,color:#065F46
-    style F fill:#FEF2F2,stroke:#DC2626,color:#991B1B
-```
+![pytest test execution lifecycle: discover test files, run fixtures for setup, execute the test body, check whether the assert passes (PASSED in green, FAILED with traceback in red), run teardown, then move to the next test.](figs/pytest-lifecycle.svg){fig-alt="Linear flow with six stages. Discover (gray), fixture setup (blue), test body (blue), assert diamond (PASSED green / FAILED red), teardown (gray), next test (gray with loop arc)."}
 
 Here is the simplest possible test for `compute_grade`:
 
@@ -369,19 +354,7 @@ A missing line on a trivial <code>return self._name</code> property is not worth
 
 The standard structure for a DS project follows the test pyramid: many fast unit tests at the base, fewer integration tests in the middle, and a small number of end-to-end tests at the top.
 
-```{mermaid}
-flowchart TD
-    E2E["End-to-End\nfull pipeline: CSV in, report out\nfew, slow, run in CI only"]
-    INT["Integration\nmodule boundaries: pipeline + io\nsome, seconds, run pre-push"]
-    UNIT["Unit\nsingle functions: compute_grade, flag_at_risk\nmany, milliseconds, run on every save"]
-
-    UNIT -->|"build confidence"| INT
-    INT -->|"build confidence"| E2E
-
-    style E2E fill:#FEF2F2,stroke:#DC2626,color:#991B1B
-    style INT fill:#EAF3FA,stroke:#0369A1,color:#0C4A6E
-    style UNIT fill:#EBF5F0,stroke:#059669,color:#065F46
-```
+![Test pyramid: unit tests at the base (many, milliseconds each, run on every save), integration tests in the middle (some, seconds each, run pre-push), end-to-end tests at the top (few, minutes each, run in CI only).](figs/pytest-pyramid.svg){fig-alt="Triangle divided into three horizontal layers. Base (green): Unit tests. Middle (blue): Integration tests. Top (red): End-to-End tests. Side labels: speed increases downward, confidence increases upward."}
 
 ```text
 tests/

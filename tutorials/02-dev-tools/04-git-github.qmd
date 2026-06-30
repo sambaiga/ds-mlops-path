@@ -9,6 +9,10 @@ title: "Part 16: Git and GitHub for Data Science"
 
 **Python 3.12+ | Author: Anthony Faustine**
 
+You rename a function and the rest of the pipeline breaks. You want to undo it -- but you saved over the original. Git is your time machine: every commit is a checkpoint you can return to, and every branch is an isolated experiment that only merges when it succeeds. On a team, it is also what keeps two people from overwriting each other's work.
+
+Part 15 (`03-type-annotations.ipynb`) left the `grade-predictor` project typed and linted. This chapter puts it under version control and connects it to GitHub. Part 17 (`05-pytest-testing.qmd`) then adds a test suite to that versioned project.
+
 ::: {.callout-note collapse="true" icon=false}
 ## Before you begin
 
@@ -222,17 +226,7 @@ git commit -m "feat(core): add compute_grade function"
 git log --oneline                                  # inspect history
 ```
 
-```{mermaid}
-flowchart LR
-    W["Working Tree\non disk"] -->|"git add file"| S["Staging Area\n(index)"]
-    S -->|"git commit -m '...'"| H["Commit History\n(permanent)"]
-    H -->|"git restore file"| W
-    S -->|"git restore --staged file"| W
-
-    style H fill:#EBF5F0,stroke:#059669,color:#065F46
-    style S fill:#EAF3FA,stroke:#0369A1,color:#0C4A6E
-    style W fill:#F5F3FF,stroke:#7C3AED,color:#3B0764
-```
+![Git three-zone model: Working Tree (files on disk) connects to Staging Area via git add, Staging Area connects to Commit History via git commit. Reverse arrows show git restore for undoing staged or committed changes.](figs/git-areas.svg){fig-alt="Three boxes: Working Tree (purple dashed), Staging Area (blue), Commit History (green). Forward arrows: git add, git commit. Reverse arrows: git restore --staged, git restore."}
 
 The flow: make changes in the working tree, select which changes belong in this commit with `git add`, then seal them into history with `git commit`. Changes left unstaged are visible in the working tree but invisible to the next commit.
 
@@ -306,17 +300,7 @@ git merge experiment/ridge-regression
 git branch -d experiment/ridge-regression      # clean up after merging
 ```
 
-```{mermaid}
-gitGraph
-    commit id: "feat: initial setup"
-    branch experiment/ridge
-    checkout experiment/ridge
-    commit id: "feat: ridge baseline"
-    commit id: "test: parametrize"
-    checkout main
-    merge experiment/ridge id: "merge: ridge (RMSE=9.2)"
-    commit id: "chore: update deps"
-```
+![Feature branch workflow: a feature branch forks from main, accumulates two commits, then merges back into main. The merge commit is green. The feature branch commits are purple. Main branch commits are blue.](figs/git-branches.svg){fig-alt="Horizontal timeline. Main branch (blue circles): initial setup, merge ridge, update deps. Feature branch (purple circles) forks after initial setup: ridge baseline, parametrize. Merges back at the green merge commit."}
 
 Naming conventions that work well for DS projects:
 

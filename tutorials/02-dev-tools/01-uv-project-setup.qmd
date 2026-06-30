@@ -9,6 +9,10 @@ title: "Part 13: Project Setup with uv"
 
 **Python 3.12+ | Author: Anthony Faustine**
 
+You install `scikit-learn` for one project. Three weeks later a second project breaks because a shared dependency updated. The fix is per-project isolation -- and `uv` delivers it in one tool: project init, dependency tracking, reproducible lockfiles, and script running, all faster than `pip` alone.
+
+Part 12 (`00-vscode-setup.qmd`) set up your editor. The project you build here carries through every remaining Dev Tools chapter -- ruff will lint it in Part 15, git will version it in Part 16, and pytest will test it in Part 17.
+
 ::: {.callout-note collapse="true" icon=false}
 ## Before you begin
 
@@ -56,18 +60,7 @@ Ask five Python developers how they manage dependencies and you will get five di
 
 `uv` is a Python package and project manager written in Rust, built by [Astral](https://astral.sh), the same team behind `ruff`. It replaces a stack of tools that most Python developers use separately: `pip`, `venv`, `pip-tools`, and parts of `Poetry` or `conda`. One binary, one configuration file, one command prefix (`uv run`).
 
-```{mermaid}
-flowchart LR
-    A["uv init --package\nproject-name"] --> B["pyproject.toml\n[project] metadata"]
-    B --> C["uv add pandas\nuv add --optional dev ruff"]
-    C --> D["uv.lock\nfull dependency tree\npinned & reproducible"]
-    D --> E["uv sync\n.venv created"]
-    E --> F["uv run script.py\nno activation needed"]
-
-    style D fill:#EBF5F0,stroke:#059669,color:#065F46
-    style E fill:#EAF3FA,stroke:#0369A1,color:#0C4A6E
-    style F fill:#EAF3FA,stroke:#0369A1,color:#0C4A6E
-```
+![uv project setup pipeline: uv init creates the project, pyproject.toml holds metadata, uv add installs dependencies, uv.lock pins the full tree reproducibly, uv sync creates the .venv, uv run executes scripts without manual activation.](figs/uv-workflow.svg){fig-alt="Six boxes left to right: uv init (gray), pyproject.toml (amber), uv add (blue), uv.lock (green, emphasized), uv sync (blue), uv run (blue). Arrows connect each step."}
 
 ### How uv compares to the alternatives
 
