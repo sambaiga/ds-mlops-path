@@ -1,0 +1,2093 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.38">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Part 3b: Python Patterns – Classes, Exceptions, and Defensive Code – From Data to Impact</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<link href="../../tutorials/01-python-basics/04a-numpy.html" rel="next">
+<link href="../../tutorials/01-python-basics/03a-python-patterns.html" rel="prev">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-de63f62b328812d8e578a4d74e282472.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-beae7f006aa19e5949bb4641e0a5dd6e.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<style>html{ scroll-behavior: smooth; }</style>
+
+
+</head>
+
+<body class="nav-sidebar floating nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">From Data to Impact</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="mailto:sambaiga@gmail.com"> <i class="bi bi-envelope-at" role="img" aria-label="Email Anthony Faustine">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://www.linkedin.com/in/sambaiga"> <i class="bi bi-linkedin" role="img" aria-label="LinkedIn">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/sambaiga/ds-mlops-path"> <i class="bi bi-github" role="img" aria-label="View source on GitHub">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+    <a href="https://github.com/sambaiga/ds-mlops-path" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <a class="flex-grow-1 no-decor" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+          <h1 class="quarto-secondary-nav-title"><span class="chapter-title">Part 3b: Python Patterns – Classes, Exceptions, and Defensive Code</span></h1>
+        </a>     
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../index.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Welcome</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../preface.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Why Another ML Book?</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../about.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">About the Author</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Part 1: Foundations</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/01-python-core.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 1: Language Core (Data &amp; Types)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/02-control-flow.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 2: Language Core (Control Flow &amp; Comprehensions)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/03a-python-patterns.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 3a: Python Patterns – Functions and Code Reuse</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/03b-python-patterns.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">Part 3b: Python Patterns – Classes, Exceptions, and Defensive Code</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/04a-numpy.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 4a: NumPy Fundamentals</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/04b-numpy.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 4b: NumPy Advanced Operations</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/05-matplotlib.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 5: Matplotlib and Its Ecosystem</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/06-lets-plot.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 6: Grammar of Graphics with Lets-Plot</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/07-data-storytelling.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 7: Data Storytelling and House Style</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false">
+ <span class="menu-text">Part 2: Data Analysis</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/08-pandas-core.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 8: Pandas Core</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/09-pandas-operations.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 9: Pandas Operations</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/10-combining-reshaping.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 10: Combining, Reshaping &amp; Time Series</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/11-time-series.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 11: Time Series</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/11-polars.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 11: Polars &amp; the Expression API</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/12-great-tables.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 12: Presenting Data with Great Tables</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false">
+ <span class="menu-text">Part 3: Dev Tools</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/02-dev-tools/00-vscode-setup.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 12: IDE Setup with VS Code</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/02-dev-tools/01-uv-project-setup.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 13: Project Setup with uv</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/02-dev-tools/02-code-quality-ruff.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 14: Code Quality with ruff</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/02-dev-tools/03-type-annotations.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 15: Type Annotations</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/02-dev-tools/04-git-github.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 16: Git and GitHub for Data Science</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/02-dev-tools/05-pytest-testing.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 17: Testing DS Code with pytest</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/02-dev-tools/06-pre-commit-automation.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 18: Automation with pre-commit</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/02-dev-tools/07-pydantic-validation.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 19: Data Validation with Pydantic</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/02-dev-tools/08-pandera-schema-validation.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Data Schema Validation with Pandera</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/02-dev-tools/09-logging.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 21: Logging for ML Projects</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false">
+ <span class="menu-text">Part 4: ML Landscape</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/04-ml-intro/01-ml-introduction.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 22: The AI Landscape</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/04-ml-intro/02-ml-what-is-ml.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 23: What Is Machine Learning?</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/04-ml-intro/03-ml-workflow.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 24: The ML Workflow and Problem Framing</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/04-ml-intro/04a-sklearn-core.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 25a: Scikit-learn Core – Foundations</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/04-ml-intro/04b-sklearn-core.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 25b: Scikit-learn Core – Validation and Modern Features</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/04-ml-intro/05a-sklearn-pipeline.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 26a: sklearn Pipeline – Foundations</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/04-ml-intro/05b-sklearn-pipeline.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 26b: sklearn Pipeline – Hyperparameter Search and Evaluation</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <span class="sidebar-item-text sidebar-link text-start">
+ <span class="menu-text">Part 5: Deep Learning</span></span>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <span class="sidebar-item-text sidebar-link text-start">
+ <span class="menu-text">Part 6: LLMs</span></span>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <span class="sidebar-item-text sidebar-link text-start">
+ <span class="menu-text">Part 7: MLOps</span></span>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <span class="sidebar-item-text sidebar-link text-start">
+ <span class="menu-text">Part 8: Production Monitoring</span></span>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <span class="sidebar-item-text sidebar-link text-start">
+ <span class="menu-text">Part 9: ML System Design</span></span>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <span class="sidebar-item-text sidebar-link text-start">
+ <span class="menu-text">Part 10: Value-driven AI</span></span>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">In this chapter</h2>
+   
+  <ul>
+  <li><a href="#classes" id="toc-classes" class="nav-link active" data-scroll-target="#classes">1. Classes</a>
+  <ul class="collapse">
+  <li><a href="#init__-and-__repr__" id="toc-init__-and-__repr__" class="nav-link" data-scroll-target="#init__-and-__repr__"><code>__init__</code> and <code>__repr__</code></a></li>
+  <li><a href="#property-computed-attributes" id="toc-property-computed-attributes" class="nav-link" data-scroll-target="#property-computed-attributes"><code>@property</code>: Computed Attributes</a></li>
+  <li><a href="#classmethod-factory-methods" id="toc-classmethod-factory-methods" class="nav-link" data-scroll-target="#classmethod-factory-methods"><code>@classmethod</code> Factory Methods</a></li>
+  <li><a href="#inheritance-and-abstract-base-classes" id="toc-inheritance-and-abstract-base-classes" class="nav-link" data-scroll-target="#inheritance-and-abstract-base-classes">Inheritance and Abstract Base Classes</a></li>
+  </ul></li>
+  <li><a href="#exception-handling" id="toc-exception-handling" class="nav-link" data-scroll-target="#exception-handling">2. Exception Handling</a>
+  <ul class="collapse">
+  <li><a href="#custom-exception-classes" id="toc-custom-exception-classes" class="nav-link" data-scroll-target="#custom-exception-classes">Custom Exception Classes</a></li>
+  </ul></li>
+  <li><a href="#file-io-with-pathlib" id="toc-file-io-with-pathlib" class="nav-link" data-scroll-target="#file-io-with-pathlib">3. File I/O with pathlib</a>
+  <ul class="collapse">
+  <li><a href="#reading-writing-files" id="toc-reading-writing-files" class="nav-link" data-scroll-target="#reading-writing-files">Reading &amp; Writing Files</a></li>
+  <li><a href="#finding-files" id="toc-finding-files" class="nav-link" data-scroll-target="#finding-files">Finding Files</a></li>
+  <li><a href="#creating-checking-directories" id="toc-creating-checking-directories" class="nav-link" data-scroll-target="#creating-checking-directories">Creating &amp; Checking Directories</a></li>
+  </ul></li>
+  <li><a href="#python-gotchas" id="toc-python-gotchas" class="nav-link" data-scroll-target="#python-gotchas">4. Python Gotchas</a></li>
+  <li><a href="#capstone-exercise" id="toc-capstone-exercise" class="nav-link" data-scroll-target="#capstone-exercise">Capstone Exercise</a></li>
+  <li><a href="#further-reading" id="toc-further-reading" class="nav-link" data-scroll-target="#further-reading">Further Reading</a></li>
+  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary">Summary</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.dev/sambaiga/ds-mlops-path/blob/main/tutorials/01-python-basics/03b-python-patterns.ipynb" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/sambaiga/ds-mlops-path/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li><li><a href="https://github.com/sambaiga/ds-mlops-path/blob/main/tutorials/01-python-basics/03b-python-patterns.ipynb" class="toc-action"><i class="bi empty"></i>View source</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block"><span class="chapter-title">Part 3b: Python Patterns – Classes, Exceptions, and Defensive Code</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p><a href="https://colab.research.google.com/github/sambaiga/ds-mlops-path/blob/main/tutorials/01-python-basics/03b-python-patterns.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open In Colab"></a> <a href="https://raw.githubusercontent.com/sambaiga/ds-mlops-path/main/tutorials/01-python-basics/03b-python-patterns.ipynb"><img src="https://img.shields.io/badge/Download-Notebook-blue.svg?logo=jupyter&amp;logoColor=white" class="img-fluid" alt="Download Notebook"></a></p>
+<p><strong>DS-MLOps Python Foundations</strong></p>
+<p><strong>Python 3.12+ | Author: Anthony Faustine</strong></p>
+<p>You have three functions that belong together: one that computes a student average, one that assigns a letter grade, and one that loads a student record from a CSV row. They all operate on the same data. Right now they live at module level, unconnected, and every caller has to know to call all three in the right order.</p>
+<p>A class puts that relationship in code. It names the concept, bundles the data and the behaviour, and makes the contract explicit: every <code>StudentRecord</code> always knows its average and its grade, regardless of who created it or when.</p>
+<p>Part 3a covered functions, lambdas, and dataclasses – reusable code units. A class goes one step further: it bundles the data and the operations on it into a single named object. By the end of this notebook you’ll have the full Python vocabulary needed for Part 4: NumPy arrays and vectorised computation.</p>
+<blockquote class="blockquote">
+<p>Callout markers: <a href="../../index.html#callout-guide">book cover page</a>.</p>
+</blockquote>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Before You Begin
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>This notebook follows directly from Part 3a (<code>03a-python-patterns.ipynb</code>). You should be comfortable with functions, <code>*args</code>/<code>**kwargs</code>, and <code>@dataclass</code> before continuing.</p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Learning Objectives
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>#</th>
+<th>Skill</th>
+<th>Covered in</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td>Define classes with <code>__init__</code>, <code>__repr__</code>, <code>@property</code>, <code>@classmethod</code></td>
+<td>Sec. 1</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td>Enforce interfaces with Abstract Base Classes</td>
+<td>Sec. 1</td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td>Handle exceptions with <code>try/except/else/finally</code> and custom exception classes</td>
+<td>Sec. 2</td>
+</tr>
+<tr class="even">
+<td>4</td>
+<td>Read, write, and navigate files with <code>pathlib.Path</code></td>
+<td>Sec. 3</td>
+</tr>
+<tr class="odd">
+<td>5</td>
+<td>Recognise and avoid the five most common Python gotchas</td>
+<td>Sec. 4</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<section id="classes" class="level2">
+<h2 class="anchored" data-anchor-id="classes">1. Classes</h2>
+<p>A <strong>class</strong> is a blueprint for creating objects. Each object (instance) bundles its own data (attributes) with the functions (methods) that operate on it. You create the blueprint once with <code>class</code>, then stamp out as many instances as you need.</p>
+<p>Three things make a class useful rather than just a namespace: - <code>__init__</code>: sets the initial state of each instance - <code>__repr__</code>: returns a readable string when you print or inspect the object - <strong>methods</strong>: functions that always have access to the instance’s data via <code>self</code></p>
+<section id="init__-and-__repr__" class="level3">
+<h3 class="anchored" data-anchor-id="init__-and-__repr__"><code>__init__</code> and <code>__repr__</code></h3>
+<p>Every class needs two methods before it is useful in interactive work. <code>__init__</code> runs the moment you create an instance: it receives the raw data and stores it on <code>self</code>. <code>__repr__</code> is what Python prints when you inspect the object in the REPL or call <code>print()</code> on it.</p>
+<p>Without <code>__repr__</code>, Python shows something like <code>&lt;__main__.StudentRecord object at 0x7f3a2c1d4e50&gt;</code>. That address tells you nothing. With a good <code>__repr__</code> you can see the name, program, and average in one glance, which makes debugging feel like reading, not guessing.</p>
+<p>The rule: <code>__repr__</code> should produce a string that is both human-readable and, where possible, copy-pasteable back into Python to re-create the object.</p>
+<div id="6" class="cell" data-execution_count="1">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> StudentRecord:</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""A single student's academic record.</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co">    Args:</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co">        name: Student's full name.</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co">        scores: List of numeric assessment scores (0-100).</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co">        program: Degree program name.</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>,</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>        name: <span class="bu">str</span>,</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>        scores: <span class="bu">list</span>[<span class="bu">float</span>] <span class="op">|</span> <span class="va">None</span> <span class="op">=</span> <span class="va">None</span>,</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>        program: <span class="bu">str</span> <span class="op">=</span> <span class="st">"Undeclared"</span>,</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    ) <span class="op">-&gt;</span> <span class="va">None</span>:</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.name <span class="op">=</span> name</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.scores: <span class="bu">list</span>[<span class="bu">float</span>] <span class="op">=</span> scores <span class="cf">if</span> scores <span class="kw">is</span> <span class="kw">not</span> <span class="va">None</span> <span class="cf">else</span> []</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.program <span class="op">=</span> program</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__repr__</span>(<span class="va">self</span>) <span class="op">-&gt;</span> <span class="bu">str</span>:</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>        avg <span class="op">=</span> <span class="bu">sum</span>(<span class="va">self</span>.scores) <span class="op">/</span> <span class="bu">len</span>(<span class="va">self</span>.scores) <span class="cf">if</span> <span class="va">self</span>.scores <span class="cf">else</span> <span class="fl">0.0</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="ss">f"StudentRecord(name=</span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>name<span class="sc">!r}</span><span class="ss">, program=</span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>program<span class="sc">!r}</span><span class="ss">, avg=</span><span class="sc">{</span>avg<span class="sc">:.1f}</span><span class="ss">)"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="7" class="cell" data-execution_count="2">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>alice <span class="op">=</span> StudentRecord(</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    name<span class="op">=</span><span class="st">"Alice Kamau"</span>,</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    scores<span class="op">=</span>[<span class="fl">88.0</span>, <span class="fl">92.0</span>, <span class="fl">85.0</span>, <span class="fl">90.0</span>],</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    program<span class="op">=</span><span class="st">"Computer Science"</span>,</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>bob <span class="op">=</span> StudentRecord(</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    name<span class="op">=</span><span class="st">"Bob Mwangi"</span>,</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    scores<span class="op">=</span>[<span class="fl">62.0</span>, <span class="fl">70.0</span>, <span class="fl">58.0</span>, <span class="fl">74.0</span>],</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    program<span class="op">=</span><span class="st">"Mathematics"</span>,</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(alice)  <span class="co"># __repr__ in action: no print formatting needed</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(bob)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>StudentRecord(name='Alice Kamau', program='Computer Science', avg=88.8)
+StudentRecord(name='Bob Mwangi', program='Mathematics', avg=66.0)</code></pre>
+</div>
+</div>
+</section>
+<section id="property-computed-attributes" class="level3">
+<h3 class="anchored" data-anchor-id="property-computed-attributes"><code>@property</code>: Computed Attributes</h3>
+<p>You could store the average as an attribute set in <code>__init__</code>: <code>self.average = sum(scores) / len(scores)</code>. The problem is stale state. If someone appends a score later – <code>student.scores.append(95.0)</code> – the stored average is now wrong, and nothing tells you.</p>
+<p>A <code>@property</code> computes the value fresh every time you access it. From the caller’s side it looks exactly like reading a plain attribute: <code>student.average</code>, no parentheses. Under the hood Python calls the method. You get the right answer regardless of when scores were added.</p>
+<p>Use <code>@property</code> for any value that is derived from other attributes. Store it explicitly only if the computation is genuinely expensive and you have a caching strategy.</p>
+<div id="9" class="cell" data-execution_count="3">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> StudentRecord:</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""A single student's academic record with computed grade properties.</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co">    Args:</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co">        name: Student's full name.</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="co">        scores: List of numeric assessment scores (0-100).</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="co">        program: Degree program name.</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>,</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>        name: <span class="bu">str</span>,</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>        scores: <span class="bu">list</span>[<span class="bu">float</span>] <span class="op">|</span> <span class="va">None</span> <span class="op">=</span> <span class="va">None</span>,</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>        program: <span class="bu">str</span> <span class="op">=</span> <span class="st">"Undeclared"</span>,</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>    ) <span class="op">-&gt;</span> <span class="va">None</span>:</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.name <span class="op">=</span> name</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.scores: <span class="bu">list</span>[<span class="bu">float</span>] <span class="op">=</span> scores <span class="cf">if</span> scores <span class="kw">is</span> <span class="kw">not</span> <span class="va">None</span> <span class="cf">else</span> []</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.program <span class="op">=</span> program</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__repr__</span>(<span class="va">self</span>) <span class="op">-&gt;</span> <span class="bu">str</span>:</span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="ss">f"StudentRecord(name=</span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>name<span class="sc">!r}</span><span class="ss">, program=</span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>program<span class="sc">!r}</span><span class="ss">, avg=</span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>average<span class="sc">:.1f}</span><span class="ss">)"</span></span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">@property</span></span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> average(<span class="va">self</span>) <span class="op">-&gt;</span> <span class="bu">float</span>:</span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>        <span class="co">"""Mean of all scores; 0.0 if no scores recorded."""</span></span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="bu">sum</span>(<span class="va">self</span>.scores) <span class="op">/</span> <span class="bu">len</span>(<span class="va">self</span>.scores) <span class="cf">if</span> <span class="va">self</span>.scores <span class="cf">else</span> <span class="fl">0.0</span></span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">@property</span></span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> letter_grade(<span class="va">self</span>) <span class="op">-&gt;</span> <span class="bu">str</span>:</span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>        <span class="co">"""Letter grade derived from current average."""</span></span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a>        avg <span class="op">=</span> <span class="va">self</span>.average</span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> avg <span class="op">&gt;=</span> <span class="dv">90</span>:</span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="st">"A"</span></span>
+<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> avg <span class="op">&gt;=</span> <span class="dv">80</span>:</span>
+<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="st">"B"</span></span>
+<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> avg <span class="op">&gt;=</span> <span class="dv">70</span>:</span>
+<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="st">"C"</span></span>
+<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> avg <span class="op">&gt;=</span> <span class="dv">60</span>:</span>
+<span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="st">"D"</span></span>
+<span id="cb4-40"><a href="#cb4-40" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="st">"F"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="10" class="cell" data-execution_count="4">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>alice <span class="op">=</span> StudentRecord(<span class="st">"Alice Kamau"</span>, [<span class="fl">88.0</span>, <span class="fl">92.0</span>, <span class="fl">85.0</span>], <span class="st">"Computer Science"</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Before: avg=</span><span class="sc">{</span>alice<span class="sc">.</span>average<span class="sc">:.1f}</span><span class="ss">  grade=</span><span class="sc">{</span>alice<span class="sc">.</span>letter_grade<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Add a new score: the property recomputes on the fly</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>alice.scores.append(<span class="fl">95.0</span>)</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"After : avg=</span><span class="sc">{</span>alice<span class="sc">.</span>average<span class="sc">:.1f}</span><span class="ss">  grade=</span><span class="sc">{</span>alice<span class="sc">.</span>letter_grade<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(alice)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Before: avg=88.3  grade=B
+After : avg=90.0  grade=A
+StudentRecord(name='Alice Kamau', program='Computer Science', avg=90.0)</code></pre>
+</div>
+</div>
+</section>
+<section id="classmethod-factory-methods" class="level3">
+<h3 class="anchored" data-anchor-id="classmethod-factory-methods"><code>@classmethod</code> Factory Methods</h3>
+<p>pandas provides <code>DataFrame.from_dict()</code>. scikit-learn provides <code>Pipeline.from_config()</code>. These are factory methods: alternative constructors that build an instance from a different kind of input without requiring the caller to know the internal constructor signature.</p>
+<p>The pattern is useful whenever your data arrives in a format different from what <code>__init__</code> expects. A CSV row is a <code>dict[str, str]</code> where every value is a string. Putting the parsing logic inside a <code>@classmethod</code> keeps <code>__init__</code> clean and makes the intent explicit at the call site: <code>StudentRecord.from_dict(row)</code> reads like documentation.</p>
+<div id="12" class="cell" data-execution_count="5">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> StudentRecord:</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""A student record with factory method support.</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co">    Args:</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="co">        name: Student's full name.</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="co">        scores: List of numeric assessment scores (0-100).</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="co">        program: Degree program name.</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>,</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>        name: <span class="bu">str</span>,</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>        scores: <span class="bu">list</span>[<span class="bu">float</span>] <span class="op">|</span> <span class="va">None</span> <span class="op">=</span> <span class="va">None</span>,</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>        program: <span class="bu">str</span> <span class="op">=</span> <span class="st">"Undeclared"</span>,</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>    ) <span class="op">-&gt;</span> <span class="va">None</span>:</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.name <span class="op">=</span> name</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.scores: <span class="bu">list</span>[<span class="bu">float</span>] <span class="op">=</span> scores <span class="cf">if</span> scores <span class="kw">is</span> <span class="kw">not</span> <span class="va">None</span> <span class="cf">else</span> []</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.program <span class="op">=</span> program</span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__repr__</span>(<span class="va">self</span>) <span class="op">-&gt;</span> <span class="bu">str</span>:</span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="ss">f"StudentRecord(name=</span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>name<span class="sc">!r}</span><span class="ss">, program=</span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>program<span class="sc">!r}</span><span class="ss">, avg=</span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>average<span class="sc">:.1f}</span><span class="ss">)"</span></span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">@property</span></span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> average(<span class="va">self</span>) <span class="op">-&gt;</span> <span class="bu">float</span>:</span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>        <span class="co">"""Mean of all scores; 0.0 if no scores recorded."""</span></span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="bu">sum</span>(<span class="va">self</span>.scores) <span class="op">/</span> <span class="bu">len</span>(<span class="va">self</span>.scores) <span class="cf">if</span> <span class="va">self</span>.scores <span class="cf">else</span> <span class="fl">0.0</span></span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">@property</span></span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> letter_grade(<span class="va">self</span>) <span class="op">-&gt;</span> <span class="bu">str</span>:</span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>        <span class="co">"""Letter grade derived from current average."""</span></span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>        avg <span class="op">=</span> <span class="va">self</span>.average</span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> avg <span class="op">&gt;=</span> <span class="dv">90</span>:</span>
+<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="st">"A"</span></span>
+<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> avg <span class="op">&gt;=</span> <span class="dv">80</span>:</span>
+<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="st">"B"</span></span>
+<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> avg <span class="op">&gt;=</span> <span class="dv">70</span>:</span>
+<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="st">"C"</span></span>
+<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> avg <span class="op">&gt;=</span> <span class="dv">60</span>:</span>
+<span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="st">"D"</span></span>
+<span id="cb7-40"><a href="#cb7-40" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="st">"F"</span></span>
+<span id="cb7-41"><a href="#cb7-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-42"><a href="#cb7-42" aria-hidden="true" tabindex="-1"></a>    <span class="at">@classmethod</span></span>
+<span id="cb7-43"><a href="#cb7-43" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> from_dict(cls, record: <span class="bu">dict</span>[<span class="bu">str</span>, <span class="bu">object</span>]) <span class="op">-&gt;</span> <span class="st">"StudentRecord"</span>:</span>
+<span id="cb7-44"><a href="#cb7-44" aria-hidden="true" tabindex="-1"></a>        <span class="co">"""Construct a StudentRecord from a raw CSV row dict.</span></span>
+<span id="cb7-45"><a href="#cb7-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-46"><a href="#cb7-46" aria-hidden="true" tabindex="-1"></a><span class="co">        Args:</span></span>
+<span id="cb7-47"><a href="#cb7-47" aria-hidden="true" tabindex="-1"></a><span class="co">            record: Dict with keys 'name', 'scores' (comma-separated string</span></span>
+<span id="cb7-48"><a href="#cb7-48" aria-hidden="true" tabindex="-1"></a><span class="co">                or list of floats), and 'program'.</span></span>
+<span id="cb7-49"><a href="#cb7-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-50"><a href="#cb7-50" aria-hidden="true" tabindex="-1"></a><span class="co">        Returns:</span></span>
+<span id="cb7-51"><a href="#cb7-51" aria-hidden="true" tabindex="-1"></a><span class="co">            A new StudentRecord instance.</span></span>
+<span id="cb7-52"><a href="#cb7-52" aria-hidden="true" tabindex="-1"></a><span class="co">        """</span></span>
+<span id="cb7-53"><a href="#cb7-53" aria-hidden="true" tabindex="-1"></a>        raw_scores <span class="op">=</span> record.get(<span class="st">"scores"</span>, <span class="st">""</span>)</span>
+<span id="cb7-54"><a href="#cb7-54" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="bu">isinstance</span>(raw_scores, <span class="bu">str</span>):</span>
+<span id="cb7-55"><a href="#cb7-55" aria-hidden="true" tabindex="-1"></a>            scores <span class="op">=</span> [<span class="bu">float</span>(s.strip()) <span class="cf">for</span> s <span class="kw">in</span> raw_scores.split(<span class="st">","</span>) <span class="cf">if</span> s.strip()]</span>
+<span id="cb7-56"><a href="#cb7-56" aria-hidden="true" tabindex="-1"></a>        <span class="cf">else</span>:</span>
+<span id="cb7-57"><a href="#cb7-57" aria-hidden="true" tabindex="-1"></a>            scores <span class="op">=</span> <span class="bu">list</span>(raw_scores)  <span class="co"># type: ignore[arg-type]</span></span>
+<span id="cb7-58"><a href="#cb7-58" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> cls(</span>
+<span id="cb7-59"><a href="#cb7-59" aria-hidden="true" tabindex="-1"></a>            name<span class="op">=</span><span class="bu">str</span>(record.get(<span class="st">"name"</span>, <span class="st">""</span>)),</span>
+<span id="cb7-60"><a href="#cb7-60" aria-hidden="true" tabindex="-1"></a>            scores<span class="op">=</span>scores,</span>
+<span id="cb7-61"><a href="#cb7-61" aria-hidden="true" tabindex="-1"></a>            program<span class="op">=</span><span class="bu">str</span>(record.get(<span class="st">"program"</span>, <span class="st">"Undeclared"</span>)),</span>
+<span id="cb7-62"><a href="#cb7-62" aria-hidden="true" tabindex="-1"></a>        )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="13" class="cell" data-execution_count="6">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulated rows as they would arrive from csv.DictReader</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>raw_rows: <span class="bu">list</span>[<span class="bu">dict</span>[<span class="bu">str</span>, <span class="bu">object</span>]] <span class="op">=</span> [</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"name"</span>: <span class="st">"Carol Osei"</span>, <span class="st">"scores"</span>: <span class="st">"91.0, 95.0, 89.0"</span>, <span class="st">"program"</span>: <span class="st">"Data Science"</span>},</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"name"</span>: <span class="st">"Dan Kimani"</span>, <span class="st">"scores"</span>: <span class="st">"74.0, 68.0, 80.0"</span>, <span class="st">"program"</span>: <span class="st">"Mathematics"</span>},</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>]</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>records <span class="op">=</span> [StudentRecord.from_dict(row) <span class="cf">for</span> row <span class="kw">in</span> raw_rows]</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> r <span class="kw">in</span> records:</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(r)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>StudentRecord(name='Carol Osei', program='Data Science', avg=91.7)
+StudentRecord(name='Dan Kimani', program='Mathematics', avg=74.0)</code></pre>
+</div>
+</div>
+</section>
+<section id="inheritance-and-abstract-base-classes" class="level3">
+<h3 class="anchored" data-anchor-id="inheritance-and-abstract-base-classes">Inheritance and Abstract Base Classes</h3>
+<p>Inheritance is often introduced as a code-reuse tool: put shared logic in a parent class. That is true, but it misses the more important use case in ML engineering: enforcing a contract.</p>
+<p>When you define an Abstract Base Class (ABC), you are saying: any class that claims to be a <code>BaseMetric</code> must implement <code>compute(y_true, y_pred)</code>. Python will refuse to instantiate a subclass that forgets to implement it. This is not a convention or a code review comment – it is a runtime guarantee.</p>
+<p>This is how scikit-learn’s <code>BaseEstimator</code> enforces that every estimator has <code>.fit()</code> and <code>.predict()</code>, and how PyTorch’s <code>nn.Module</code> enforces <code>forward()</code>. You will implement the same pattern here for evaluation metrics.</p>
+<p>The inheritance chain makes the contract visible. <code>BaseMetric</code> declares what every metric must implement; concrete classes fill in the details. Python refuses to instantiate <code>BaseMetric</code> directly – you can only create <code>AccuracyMetric</code> or <code>F1Metric</code>.</p>
+<div id="16" class="cell" data-execution_count="7">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.patches <span class="im">as</span> mpatches</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> matplotlib.patches <span class="im">import</span> FancyArrowPatch, FancyBboxPatch</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>BG <span class="op">=</span> <span class="st">"#F8FAFC"</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>BLUE <span class="op">=</span> <span class="st">"#0369A1"</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>GREEN <span class="op">=</span> <span class="st">"#059669"</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>PURPLE <span class="op">=</span> <span class="st">"#7C3AED"</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>GRAY <span class="op">=</span> <span class="st">"#64748B"</span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="fl">4.0</span>))</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>fig.patch.set_facecolor(BG)</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>ax.set_facecolor(BG)</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>ax.set_xlim(<span class="dv">0</span>, <span class="dv">8</span>)</span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>ax.set_ylim(<span class="dv">0</span>, <span class="dv">4</span>)</span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>ax.axis(<span class="st">"off"</span>)</span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> box(ax, x, y, w, h, label, sublabel, bg, border):</span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>    ax.add_patch(</span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>        FancyBboxPatch(</span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a>            (x <span class="op">-</span> w <span class="op">/</span> <span class="dv">2</span>, y <span class="op">-</span> h <span class="op">/</span> <span class="dv">2</span>),</span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>            w,</span>
+<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a>            h,</span>
+<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a>            boxstyle<span class="op">=</span><span class="st">"round,pad=0.04"</span>,</span>
+<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a>            facecolor<span class="op">=</span>bg,</span>
+<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a>            edgecolor<span class="op">=</span>border,</span>
+<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a>            linewidth<span class="op">=</span><span class="dv">2</span>,</span>
+<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a>            zorder<span class="op">=</span><span class="dv">2</span>,</span>
+<span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb10-31"><a href="#cb10-31" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb10-32"><a href="#cb10-32" aria-hidden="true" tabindex="-1"></a>    ax.text(</span>
+<span id="cb10-33"><a href="#cb10-33" aria-hidden="true" tabindex="-1"></a>        x,</span>
+<span id="cb10-34"><a href="#cb10-34" aria-hidden="true" tabindex="-1"></a>        y <span class="op">+</span> <span class="fl">0.12</span>,</span>
+<span id="cb10-35"><a href="#cb10-35" aria-hidden="true" tabindex="-1"></a>        label,</span>
+<span id="cb10-36"><a href="#cb10-36" aria-hidden="true" tabindex="-1"></a>        ha<span class="op">=</span><span class="st">"center"</span>,</span>
+<span id="cb10-37"><a href="#cb10-37" aria-hidden="true" tabindex="-1"></a>        va<span class="op">=</span><span class="st">"center"</span>,</span>
+<span id="cb10-38"><a href="#cb10-38" aria-hidden="true" tabindex="-1"></a>        fontsize<span class="op">=</span><span class="dv">11</span>,</span>
+<span id="cb10-39"><a href="#cb10-39" aria-hidden="true" tabindex="-1"></a>        fontweight<span class="op">=</span><span class="st">"bold"</span>,</span>
+<span id="cb10-40"><a href="#cb10-40" aria-hidden="true" tabindex="-1"></a>        color<span class="op">=</span>border,</span>
+<span id="cb10-41"><a href="#cb10-41" aria-hidden="true" tabindex="-1"></a>        fontfamily<span class="op">=</span><span class="st">"monospace"</span>,</span>
+<span id="cb10-42"><a href="#cb10-42" aria-hidden="true" tabindex="-1"></a>        zorder<span class="op">=</span><span class="dv">3</span>,</span>
+<span id="cb10-43"><a href="#cb10-43" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb10-44"><a href="#cb10-44" aria-hidden="true" tabindex="-1"></a>    ax.text(x, y <span class="op">-</span> <span class="fl">0.22</span>, sublabel, ha<span class="op">=</span><span class="st">"center"</span>, va<span class="op">=</span><span class="st">"center"</span>, fontsize<span class="op">=</span><span class="fl">8.5</span>, color<span class="op">=</span>GRAY, zorder<span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb10-45"><a href="#cb10-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-46"><a href="#cb10-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-47"><a href="#cb10-47" aria-hidden="true" tabindex="-1"></a><span class="co"># Abstract base class</span></span>
+<span id="cb10-48"><a href="#cb10-48" aria-hidden="true" tabindex="-1"></a>box(ax, <span class="fl">4.0</span>, <span class="fl">3.2</span>, <span class="fl">3.4</span>, <span class="fl">0.9</span>, <span class="st">"BaseMetric(ABC)"</span>, <span class="st">"abstractmethod: compute(y_true, y_pred)"</span>, <span class="st">"#EFF6FF"</span>, BLUE)</span>
+<span id="cb10-49"><a href="#cb10-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-50"><a href="#cb10-50" aria-hidden="true" tabindex="-1"></a><span class="co"># Concrete classes</span></span>
+<span id="cb10-51"><a href="#cb10-51" aria-hidden="true" tabindex="-1"></a>box(ax, <span class="fl">2.0</span>, <span class="fl">1.4</span>, <span class="fl">3.0</span>, <span class="fl">0.9</span>, <span class="st">"AccuracyMetric"</span>, <span class="st">"compute() -&gt; correct / total"</span>, <span class="st">"#D1FAE5"</span>, GREEN)</span>
+<span id="cb10-52"><a href="#cb10-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-53"><a href="#cb10-53" aria-hidden="true" tabindex="-1"></a>box(ax, <span class="fl">6.0</span>, <span class="fl">1.4</span>, <span class="fl">3.0</span>, <span class="fl">0.9</span>, <span class="st">"F1Metric"</span>, <span class="st">"compute() -&gt; harmonic mean(P, R)"</span>, <span class="st">"#EDE9FE"</span>, PURPLE)</span>
+<span id="cb10-54"><a href="#cb10-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-55"><a href="#cb10-55" aria-hidden="true" tabindex="-1"></a><span class="co"># Arrows: base -&gt; concrete</span></span>
+<span id="cb10-56"><a href="#cb10-56" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> tx <span class="kw">in</span> [<span class="fl">2.0</span>, <span class="fl">6.0</span>]:</span>
+<span id="cb10-57"><a href="#cb10-57" aria-hidden="true" tabindex="-1"></a>    ax.annotate(<span class="st">""</span>, xy<span class="op">=</span>(tx, <span class="fl">1.9</span>), xytext<span class="op">=</span>(<span class="fl">4.0</span>, <span class="fl">2.75</span>), arrowprops<span class="op">=</span>{<span class="st">"arrowstyle"</span>: <span class="st">"-|&gt;"</span>, <span class="st">"color"</span>: GRAY, <span class="st">"lw"</span>: <span class="fl">1.8</span>})</span>
+<span id="cb10-58"><a href="#cb10-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-59"><a href="#cb10-59" aria-hidden="true" tabindex="-1"></a><span class="co"># Labels on arrows</span></span>
+<span id="cb10-60"><a href="#cb10-60" aria-hidden="true" tabindex="-1"></a>ax.text(<span class="fl">2.6</span>, <span class="fl">2.38</span>, <span class="st">"inherits"</span>, fontsize<span class="op">=</span><span class="fl">8.5</span>, color<span class="op">=</span>GRAY, rotation<span class="op">=</span><span class="dv">30</span>)</span>
+<span id="cb10-61"><a href="#cb10-61" aria-hidden="true" tabindex="-1"></a>ax.text(<span class="fl">5.0</span>, <span class="fl">2.38</span>, <span class="st">"inherits"</span>, fontsize<span class="op">=</span><span class="fl">8.5</span>, color<span class="op">=</span>GRAY, rotation<span class="op">=-</span><span class="dv">30</span>)</span>
+<span id="cb10-62"><a href="#cb10-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-63"><a href="#cb10-63" aria-hidden="true" tabindex="-1"></a><span class="co"># Enforcement note</span></span>
+<span id="cb10-64"><a href="#cb10-64" aria-hidden="true" tabindex="-1"></a>ax.text(</span>
+<span id="cb10-65"><a href="#cb10-65" aria-hidden="true" tabindex="-1"></a>    <span class="fl">4.0</span>,</span>
+<span id="cb10-66"><a href="#cb10-66" aria-hidden="true" tabindex="-1"></a>    <span class="fl">0.5</span>,</span>
+<span id="cb10-67"><a href="#cb10-67" aria-hidden="true" tabindex="-1"></a>    <span class="st">"BaseMetric() raises TypeError -- you must subclass and implement compute()"</span>,</span>
+<span id="cb10-68"><a href="#cb10-68" aria-hidden="true" tabindex="-1"></a>    ha<span class="op">=</span><span class="st">"center"</span>,</span>
+<span id="cb10-69"><a href="#cb10-69" aria-hidden="true" tabindex="-1"></a>    va<span class="op">=</span><span class="st">"center"</span>,</span>
+<span id="cb10-70"><a href="#cb10-70" aria-hidden="true" tabindex="-1"></a>    fontsize<span class="op">=</span><span class="dv">9</span>,</span>
+<span id="cb10-71"><a href="#cb10-71" aria-hidden="true" tabindex="-1"></a>    color<span class="op">=</span><span class="st">"#DC2626"</span>,</span>
+<span id="cb10-72"><a href="#cb10-72" aria-hidden="true" tabindex="-1"></a>    style<span class="op">=</span><span class="st">"italic"</span>,</span>
+<span id="cb10-73"><a href="#cb10-73" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb10-74"><a href="#cb10-74" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-75"><a href="#cb10-75" aria-hidden="true" tabindex="-1"></a>ax.set_title(</span>
+<span id="cb10-76"><a href="#cb10-76" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Abstract Base Class enforces a shared interface across all metric implementations"</span>,</span>
+<span id="cb10-77"><a href="#cb10-77" aria-hidden="true" tabindex="-1"></a>    fontsize<span class="op">=</span><span class="fl">10.5</span>,</span>
+<span id="cb10-78"><a href="#cb10-78" aria-hidden="true" tabindex="-1"></a>    color<span class="op">=</span><span class="st">"#0F172A"</span>,</span>
+<span id="cb10-79"><a href="#cb10-79" aria-hidden="true" tabindex="-1"></a>    pad<span class="op">=</span><span class="dv">10</span>,</span>
+<span id="cb10-80"><a href="#cb10-80" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb10-81"><a href="#cb10-81" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb10-82"><a href="#cb10-82" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="03b-python-patterns_files/figure-html/cell-8-output-1.png" width="758" height="374" class="figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<div id="17" class="cell" data-execution_count="8">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> abc <span class="im">import</span> ABC, abstractmethod</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> BaseMetric(ABC):</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Abstract base class for all evaluation metrics.</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="co">    Subclasses must implement `compute`; Python will refuse to instantiate</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="co">    any subclass that does not.</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">@abstractmethod</span></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> compute(<span class="va">self</span>, y_true: <span class="bu">list</span>[<span class="bu">int</span>], y_pred: <span class="bu">list</span>[<span class="bu">int</span>]) <span class="op">-&gt;</span> <span class="bu">float</span>:</span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>        <span class="co">"""Compute the metric value.</span></span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a><span class="co">        Args:</span></span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a><span class="co">            y_true: Ground-truth labels.</span></span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a><span class="co">            y_pred: Predicted labels.</span></span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a><span class="co">        Returns:</span></span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a><span class="co">            Scalar metric value.</span></span>
+<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a><span class="co">        """</span></span>
+<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> AccuracyMetric(BaseMetric):</span>
+<span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Fraction of predictions that match the ground truth."""</span></span>
+<span id="cb11-26"><a href="#cb11-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-27"><a href="#cb11-27" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> compute(<span class="va">self</span>, y_true: <span class="bu">list</span>[<span class="bu">int</span>], y_pred: <span class="bu">list</span>[<span class="bu">int</span>]) <span class="op">-&gt;</span> <span class="bu">float</span>:</span>
+<span id="cb11-28"><a href="#cb11-28" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="kw">not</span> y_true:</span>
+<span id="cb11-29"><a href="#cb11-29" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="fl">0.0</span></span>
+<span id="cb11-30"><a href="#cb11-30" aria-hidden="true" tabindex="-1"></a>        correct <span class="op">=</span> <span class="bu">sum</span>(t <span class="op">==</span> p <span class="cf">for</span> t, p <span class="kw">in</span> <span class="bu">zip</span>(y_true, y_pred, strict<span class="op">=</span><span class="va">False</span>))</span>
+<span id="cb11-31"><a href="#cb11-31" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> correct <span class="op">/</span> <span class="bu">len</span>(y_true)</span>
+<span id="cb11-32"><a href="#cb11-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-33"><a href="#cb11-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-34"><a href="#cb11-34" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> F1Metric(BaseMetric):</span>
+<span id="cb11-35"><a href="#cb11-35" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Binary F1 score: harmonic mean of precision and recall."""</span></span>
+<span id="cb11-36"><a href="#cb11-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-37"><a href="#cb11-37" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> compute(<span class="va">self</span>, y_true: <span class="bu">list</span>[<span class="bu">int</span>], y_pred: <span class="bu">list</span>[<span class="bu">int</span>]) <span class="op">-&gt;</span> <span class="bu">float</span>:</span>
+<span id="cb11-38"><a href="#cb11-38" aria-hidden="true" tabindex="-1"></a>        tp <span class="op">=</span> <span class="bu">sum</span>(t <span class="op">==</span> <span class="dv">1</span> <span class="kw">and</span> p <span class="op">==</span> <span class="dv">1</span> <span class="cf">for</span> t, p <span class="kw">in</span> <span class="bu">zip</span>(y_true, y_pred, strict<span class="op">=</span><span class="va">False</span>))</span>
+<span id="cb11-39"><a href="#cb11-39" aria-hidden="true" tabindex="-1"></a>        fp <span class="op">=</span> <span class="bu">sum</span>(t <span class="op">==</span> <span class="dv">0</span> <span class="kw">and</span> p <span class="op">==</span> <span class="dv">1</span> <span class="cf">for</span> t, p <span class="kw">in</span> <span class="bu">zip</span>(y_true, y_pred, strict<span class="op">=</span><span class="va">False</span>))</span>
+<span id="cb11-40"><a href="#cb11-40" aria-hidden="true" tabindex="-1"></a>        fn <span class="op">=</span> <span class="bu">sum</span>(t <span class="op">==</span> <span class="dv">1</span> <span class="kw">and</span> p <span class="op">==</span> <span class="dv">0</span> <span class="cf">for</span> t, p <span class="kw">in</span> <span class="bu">zip</span>(y_true, y_pred, strict<span class="op">=</span><span class="va">False</span>))</span>
+<span id="cb11-41"><a href="#cb11-41" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> tp <span class="op">==</span> <span class="dv">0</span>:</span>
+<span id="cb11-42"><a href="#cb11-42" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="fl">0.0</span></span>
+<span id="cb11-43"><a href="#cb11-43" aria-hidden="true" tabindex="-1"></a>        precision <span class="op">=</span> tp <span class="op">/</span> (tp <span class="op">+</span> fp)</span>
+<span id="cb11-44"><a href="#cb11-44" aria-hidden="true" tabindex="-1"></a>        recall <span class="op">=</span> tp <span class="op">/</span> (tp <span class="op">+</span> fn)</span>
+<span id="cb11-45"><a href="#cb11-45" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="dv">2</span> <span class="op">*</span> precision <span class="op">*</span> recall <span class="op">/</span> (precision <span class="op">+</span> recall)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="18" class="cell" data-execution_count="9">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>y_true <span class="op">=</span> [<span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>]</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>y_pred <span class="op">=</span> [<span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">0</span>]</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>metrics: <span class="bu">list</span>[BaseMetric] <span class="op">=</span> [AccuracyMetric(), F1Metric()]</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> metric <span class="kw">in</span> metrics:</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    score <span class="op">=</span> metric.compute(y_true, y_pred)</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span>metric<span class="sc">.</span><span class="va">__class__</span><span class="sc">.</span><span class="va">__name__</span><span class="sc">:&lt;18}</span><span class="ss">: </span><span class="sc">{</span>score<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Demonstrate the ABC contract: Python refuses to instantiate BaseMetric directly</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span>:</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>    _ <span class="op">=</span> BaseMetric()  <span class="co"># type: ignore[abstract]</span></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a><span class="cf">except</span> <span class="pp">TypeError</span> <span class="im">as</span> exc:</span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">ABC contract enforced: </span><span class="sc">{</span>exc<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>AccuracyMetric    : 0.7500
+F1Metric          : 0.7500
+
+ABC contract enforced: Can't instantiate abstract class BaseMetric without an implementation for abstract method 'compute'</code></pre>
+</div>
+</div>
+<div style="background:#EAF3FA;border-left:5px solid #0369A1;padding:14px 18px;border-radius:6px;margin:16px 0">
+<span style="color:#0369A1;font-weight:bold"><i class="bi bi-info-circle-fill"></i> Key Concept: class vs <span class="citation" data-cites="dataclass">@dataclass</span> – When to Use Which</span><br><br>Both are classes. The difference is how much Python generates for you.<br><br>
+<table style="border-collapse:collapse;width:100%">
+<tbody><tr style="background:#d0e8f5">
+<th style="padding:6px 12px;text-align:left">
+Need
+</th>
+<th style="padding:6px 12px;text-align:left">
+Reach for
+</th>
+</tr>
+<tr>
+<td style="padding:6px 12px">
+Store fields, get free <code><strong>repr</strong></code> and <code><strong>eq</strong></code>
+</td>
+<td style="padding:6px 12px">
+<code><span class="citation" data-cites="dataclass">@dataclass</span></code>
+</td>
+</tr>
+<tr style="background:#f0f7fc">
+<td style="padding:6px 12px">
+Computed properties (<code><span class="citation" data-cites="property">@property</span></code>)
+</td>
+<td style="padding:6px 12px">
+<code>class</code>
+</td>
+</tr>
+<tr>
+<td style="padding:6px 12px">
+Alternative constructors (<code><span class="citation" data-cites="classmethod">@classmethod</span></code>)
+</td>
+<td style="padding:6px 12px">
+<code>class</code>
+</td>
+</tr>
+<tr style="background:#f0f7fc">
+<td style="padding:6px 12px">
+Enforce an interface (ABC)
+</td>
+<td style="padding:6px 12px">
+<code>class</code>
+</td>
+</tr>
+<tr>
+<td style="padding:6px 12px">
+Immutable, hashable record
+</td>
+<td style="padding:6px 12px">
+<code><span class="citation" data-cites="dataclass">@dataclass</span>(frozen=True)</code>
+</td>
+</tr>
+</tbody></table>
+<br>They can coexist: a <code><span class="citation" data-cites="dataclass">@dataclass</span></code> can have <code><span class="citation" data-cites="property">@property</span></code> methods and <code><span class="citation" data-cites="classmethod">@classmethod</span></code> factories. Start with <code><span class="citation" data-cites="dataclass">@dataclass</span></code> when you only need structured storage; graduate to a plain <code>class</code> when you need the full toolkit shown in this section.
+</div>
+<div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
+<span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 1 - ModelCard Class</span><br><br><b>Goal:</b> Define a <code>ModelCard</code> class (not a dataclass) that stores <code>model_name: str</code>, <code>accuracy: float</code>, and <code>n_params: int</code>. Add a <code><span class="citation" data-cites="property">@property</span> summary</code> that returns a formatted one-line string like <code>‘LogisticRegression | accuracy=0.923 | params=1_024’</code>. Add a <code><span class="citation" data-cites="classmethod">@classmethod</span> from_sklearn(cls, name, model, accuracy)</code> that records the param count via <code>len(model.get_params())</code>. Instantiate two cards and print their summaries.
+</div>
+<div id="21" class="cell" data-execution_count="10">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: define ModelCard</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>...</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="co"># card1 = ModelCard('LogisticRegression', accuracy=0.923, n_params=1024)</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="co"># print(card1.summary)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+</section>
+<section id="exception-handling" class="level2">
+<h2 class="anchored" data-anchor-id="exception-handling">2. Exception Handling</h2>
+<p>An <strong>exception</strong> is an error that occurs while your program is running. By default, Python stops immediately and prints a traceback. Exception handling lets you catch the error, respond to it gracefully, and keep the program running.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Without handling - program crashes:</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="bu">int</span>(<span class="st">"abc"</span>)   <span class="co"># ValueError: invalid literal for int() with base 10: 'abc'</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="co"># With handling - program continues:</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span>:</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>    <span class="bu">int</span>(<span class="st">"abc"</span>)</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="cf">except</span> <span class="pp">ValueError</span>:</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"That was not a number, skipping"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>In data pipelines and ML training loops, unhandled exceptions can discard hours of computation. Always handle errors at system boundaries (user input, file I/O, APIs).</p>
+<div style="background:#EAF3FA;border-left:5px solid #0369A1;padding:14px 18px;border-radius:6px;margin:16px 0">
+<span style="color:#0369A1;font-weight:bold"><i class="bi bi-info-circle-fill"></i> Key Concept: try / except / else / finally</span><br><br>
+<ul>
+<li>
+<code>try</code>: code that might raise an exception
+</li>
+<li>
+<code>except ExcType as e</code>: handle a specific exception
+</li>
+<li>
+<code>else</code>: runs only if NO exception was raised in <code>try</code>
+</li>
+<li>
+<code>finally</code>: always runs, even if an exception propagates (use for cleanup)
+</li>
+</ul>
+<p>Catch the most specific exception you can. Bare <code>except:</code> or <code>except Exception:</code> hides bugs and silences keyboard interrupts.</p>
+</div>
+<div id="23" class="cell" data-execution_count="11">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> parse_score(raw: <span class="bu">str</span>) <span class="op">-&gt;</span> <span class="bu">float</span>:</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Parse a score string and validate it is in [0, 100].</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="co">    Args:</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="co">        raw: String representation of a numeric score.</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a><span class="co">    Returns:</span></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a><span class="co">        Validated float score.</span></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a><span class="co">    Raises:</span></span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a><span class="co">        ValueError: If raw is not numeric or out of range.</span></span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span>:</span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>        value <span class="op">=</span> <span class="bu">float</span>(raw)</span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">except</span> <span class="pp">ValueError</span>:</span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a>        <span class="cf">raise</span> <span class="pp">ValueError</span>(<span class="ss">f"</span><span class="sc">{</span>raw<span class="sc">!r}</span><span class="ss"> is not a valid number"</span>) <span class="im">from</span> <span class="va">None</span></span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="kw">not</span> <span class="dv">0</span> <span class="op">&lt;=</span> value <span class="op">&lt;=</span> <span class="dv">100</span>:</span>
+<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a>        <span class="cf">raise</span> <span class="pp">ValueError</span>(<span class="ss">f"Score </span><span class="sc">{</span>value<span class="sc">}</span><span class="ss"> is out of range [0, 100]"</span>)</span>
+<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> value</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Test <code>parse_score()</code> against a range of inputs: valid numbers, out-of-range values, and non-numeric strings. The <code>else</code> clause runs only on the <strong>success</strong> path:</p>
+<div id="25" class="cell" data-execution_count="12">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Test parse_score against valid and invalid inputs</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>test_inputs: <span class="bu">list</span>[<span class="bu">str</span>] <span class="op">=</span> [<span class="st">"87.5"</span>, <span class="st">"105"</span>, <span class="st">"abc"</span>, <span class="st">"-3"</span>, <span class="st">"72"</span>]</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> raw <span class="kw">in</span> test_inputs:</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span>:</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>        score <span class="op">=</span> parse_score(raw)</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">except</span> <span class="pp">ValueError</span> <span class="im">as</span> exc:</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f"  </span><span class="sc">{</span>raw<span class="sc">!r:&lt;8}</span><span class="ss"> -&gt; ERROR: </span><span class="sc">{</span>exc<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f"  </span><span class="sc">{</span>raw<span class="sc">!r:&lt;8}</span><span class="ss"> -&gt; OK: </span><span class="sc">{</span>score<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  '87.5'   -&gt; OK: 87.5
+  '105'    -&gt; ERROR: Score 105.0 is out of range [0, 100]
+  'abc'    -&gt; ERROR: 'abc' is not a valid number
+  '-3'     -&gt; ERROR: Score -3.0 is out of range [0, 100]
+  '72'     -&gt; OK: 72.0</code></pre>
+</div>
+</div>
+<p><code>finally</code> runs regardless of whether an exception occurred or was handled. Use it for cleanup code (closing files, releasing connections) that must execute either way. This example illustrates the pattern using explicit <code>open</code>/<code>close</code>; in practice, always use <code>with open(...) as fh</code> instead (shown in Sec. 7):</p>
+<div id="27" class="cell" data-execution_count="13">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># else runs ONLY when try succeeds; finally ALWAYS runs (cleanup guarantee)</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> load_scores(filepath: <span class="bu">str</span>) <span class="op">-&gt;</span> <span class="bu">list</span>[<span class="bu">float</span>]:</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Load numeric scores from a text file, one per line."""</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>    fh <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span>:</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>        fh <span class="op">=</span> <span class="bu">open</span>(filepath, encoding<span class="op">=</span><span class="st">"utf-8"</span>)  <span class="co"># noqa: SIM115, PTH123</span></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>        lines <span class="op">=</span> fh.readlines()</span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">except</span> <span class="pp">FileNotFoundError</span>:</span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f"File not found: </span><span class="sc">{</span>filepath<span class="sc">!r}</span><span class="ss">"</span>)</span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> []</span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">except</span> <span class="pp">PermissionError</span> <span class="im">as</span> exc:</span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f"Permission denied: </span><span class="sc">{</span>exc<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> []</span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f"Loaded </span><span class="sc">{</span><span class="bu">len</span>(lines)<span class="sc">}</span><span class="ss"> lines successfully"</span>)</span>
+<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> [<span class="bu">float</span>(line.strip()) <span class="cf">for</span> line <span class="kw">in</span> lines <span class="cf">if</span> line.strip()]</span>
+<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">finally</span>:</span>
+<span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> fh <span class="kw">is</span> <span class="kw">not</span> <span class="va">None</span>:</span>
+<span id="cb19-19"><a href="#cb19-19" aria-hidden="true" tabindex="-1"></a>            fh.close()</span>
+<span id="cb19-20"><a href="#cb19-20" aria-hidden="true" tabindex="-1"></a>            <span class="bu">print</span>(<span class="st">"File handle closed"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><code>finally</code> guarantees the file handle is closed even when the file does not exist: no resource leak is possible:</p>
+<div id="29" class="cell" data-execution_count="14">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">NOTE</span><span class="co">: prefer `with open(...) as fh` in practice (shown in Sec. 7).</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="co"># This example uses explicit open/close to make else/finally visible.</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>result <span class="op">=</span> load_scores(<span class="st">"nonexistent.txt"</span>)</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Result: </span><span class="sc">{</span>result<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>File not found: 'nonexistent.txt'
+Result: []</code></pre>
+</div>
+</div>
+<section id="custom-exception-classes" class="level3">
+<h3 class="anchored" data-anchor-id="custom-exception-classes">Custom Exception Classes</h3>
+<p>Subclass a built-in exception to give callers a <strong>specific type</strong> to catch. Store the structured context as instance attributes for programmatic access:</p>
+<div id="31" class="cell" data-execution_count="15">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Custom exception classes give callers something specific to catch</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> DataValidationError(<span class="pp">ValueError</span>):</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Raised when a data record fails validation."""</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, field: <span class="bu">str</span>, value: <span class="bu">object</span>, reason: <span class="bu">str</span>) <span class="op">-&gt;</span> <span class="va">None</span>:</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.field <span class="op">=</span> field</span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.value <span class="op">=</span> value</span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.reason <span class="op">=</span> reason</span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>        <span class="bu">super</span>().<span class="fu">__init__</span>(<span class="ss">f"Validation failed for </span><span class="sc">{</span>field<span class="sc">!r}</span><span class="ss">=</span><span class="sc">{</span>value<span class="sc">!r}</span><span class="ss">: </span><span class="sc">{</span>reason<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Define a validator that raises <code>DataValidationError</code> with field-level context, then test it. The <code>except DataValidationError</code> clause catches only your custom type – not any accidental <code>ValueError</code> from elsewhere in the code:</p>
+<div id="33" class="cell" data-execution_count="16">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> validate_student(record: <span class="bu">dict</span>[<span class="bu">str</span>, <span class="bu">object</span>]) <span class="op">-&gt;</span> <span class="va">None</span>:</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Validate a student record dict against required field constraints."""</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>    gpa <span class="op">=</span> record.get(<span class="st">"gpa"</span>)</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="kw">not</span> <span class="bu">isinstance</span>(gpa, <span class="bu">int</span> <span class="op">|</span> <span class="bu">float</span>):</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>        <span class="cf">raise</span> DataValidationError(<span class="st">"gpa"</span>, gpa, <span class="st">"must be numeric"</span>)</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="kw">not</span> <span class="fl">0.0</span> <span class="op">&lt;=</span> <span class="bu">float</span>(gpa) <span class="op">&lt;=</span> <span class="fl">4.0</span>:</span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>        <span class="cf">raise</span> DataValidationError(<span class="st">"gpa"</span>, gpa, <span class="st">"must be in [0.0, 4.0]"</span>)</span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>    name <span class="op">=</span> record.get(<span class="st">"name"</span>, <span class="st">""</span>)</span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="kw">not</span> <span class="bu">isinstance</span>(name, <span class="bu">str</span>) <span class="kw">or</span> <span class="kw">not</span> name.strip():</span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>        <span class="cf">raise</span> DataValidationError(<span class="st">"name"</span>, name, <span class="st">"must be a non-empty string"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Test against valid and invalid records. The custom exception prints exactly which field failed and why:</p>
+<div id="35" class="cell" data-execution_count="17">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>test_records: <span class="bu">list</span>[<span class="bu">dict</span>[<span class="bu">str</span>, <span class="bu">object</span>]] <span class="op">=</span> [</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"name"</span>: <span class="st">"Alice"</span>, <span class="st">"gpa"</span>: <span class="fl">3.95</span>},  <span class="co"># valid</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"name"</span>: <span class="st">"Bob"</span>, <span class="st">"gpa"</span>: <span class="fl">5.0</span>},  <span class="co"># GPA out of range</span></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"name"</span>: <span class="st">""</span>, <span class="st">"gpa"</span>: <span class="fl">3.5</span>},  <span class="co"># empty name</span></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>]</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> rec <span class="kw">in</span> test_records:</span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span>:</span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>        validate_student(rec)</span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f"  </span><span class="sc">{</span>rec[<span class="st">'name'</span>]<span class="sc">!r:&lt;10}</span><span class="ss"> -&gt; valid"</span>)</span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">except</span> DataValidationError <span class="im">as</span> exc:</span>
+<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f"  </span><span class="sc">{</span>rec<span class="sc">.</span>get(<span class="st">'name'</span>)<span class="sc">!r:&lt;10}</span><span class="ss"> -&gt; </span><span class="sc">{</span>exc<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  'Alice'    -&gt; valid
+  'Bob'      -&gt; Validation failed for 'gpa'=5.0: must be in [0.0, 4.0]
+  ''         -&gt; Validation failed for 'name'='': must be a non-empty string</code></pre>
+</div>
+</div>
+<div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
+<span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 4 - Safe Batch Parser</span><br><br> <b>Goal:</b> Write <code>parse_batch(rows)</code> that returns <code>(valid, errors)</code>: a list of successfully parsed floats and a list of error messages.
+<pre style="background:#FCE8DA;padding:10px;border-radius:4px;font-size:0.9em">rows = ['85.0', '92', 'n/a', '-5', '78.5', '110', '63']
+
+valid, errors = parse_batch(rows)
+# valid  = [85.0, 92.0, 78.5, 63.0]
+# errors = ["'n/a' is not a valid number",
+#           "'-5' out of range [0, 100]",
+#           "'110' out of range [0, 100]"]</pre>
+</div>
+<div id="37" class="cell" data-execution_count="18">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> parse_batch(rows: <span class="bu">list</span>[<span class="bu">str</span>]) <span class="op">-&gt;</span> <span class="bu">tuple</span>[<span class="bu">list</span>[<span class="bu">float</span>], <span class="bu">list</span>[<span class="bu">str</span>]]:</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Parse a batch of score strings, separating valid from invalid.</span></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a><span class="co">    Args:</span></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a><span class="co">        rows: List of raw score strings.</span></span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a><span class="co">    Returns:</span></span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a><span class="co">        Tuple of (valid_scores, error_messages).</span></span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a>    valid: <span class="bu">list</span>[<span class="bu">float</span>] <span class="op">=</span> []</span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a>    errors: <span class="bu">list</span>[<span class="bu">str</span>] <span class="op">=</span> []</span>
+<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a>    <span class="co"># </span><span class="al">TODO</span><span class="co">: iterate rows, use parse_score from above, collect results</span></span>
+<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> valid, errors</span>
+<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-16"><a href="#cb26-16" aria-hidden="true" tabindex="-1"></a>rows: <span class="bu">list</span>[<span class="bu">str</span>] <span class="op">=</span> [<span class="st">"85.0"</span>, <span class="st">"92"</span>, <span class="st">"n/a"</span>, <span class="st">"-5"</span>, <span class="st">"78.5"</span>, <span class="st">"110"</span>, <span class="st">"63"</span>]</span>
+<span id="cb26-17"><a href="#cb26-17" aria-hidden="true" tabindex="-1"></a>valid, errors <span class="op">=</span> parse_batch(rows)</span>
+<span id="cb26-18"><a href="#cb26-18" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"valid  = </span><span class="sc">{</span>valid<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb26-19"><a href="#cb26-19" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"errors = </span><span class="sc">{</span>errors<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>valid  = []
+errors = []</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="file-io-with-pathlib" class="level2">
+<h2 class="anchored" data-anchor-id="file-io-with-pathlib">3. File I/O with pathlib</h2>
+<p><strong>File I/O</strong> (Input/Output) means reading data from files on disk and writing results back. Almost every data science workflow starts by loading a CSV, JSON, or Parquet file and ends by saving results somewhere.</p>
+<p><code>pathlib.Path</code> is the modern Python way to work with file paths. It is cross-platform (works on Windows, macOS, and Linux without changes) and composable:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pathlib <span class="im">import</span> Path</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>data_dir  <span class="op">=</span> Path(<span class="st">'tutorials'</span>) <span class="op">/</span> <span class="st">'data'</span>        <span class="co"># / joins path parts</span></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>csv_file  <span class="op">=</span> data_dir <span class="op">/</span> <span class="st">'students.csv'</span></span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(csv_file)   <span class="co"># tutorials/data/students.csv</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div style="background:#EAF3FA;border-left:5px solid #0369A1;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-info-circle-fill"></i> Key Concept: pathlib.Path, the Modern Way to Handle Paths</span><br><br> Since Python 3.4, <code>pathlib.Path</code> is the standard for file-system work. It is cross-platform, composable with <code>/</code>, and carries methods for existence checks, directory creation, and reading/writing, all in one object. <br><br> Always use <code>with open(…) as fh</code> (context manager) so the file is closed automatically, even if an exception occurs.</p>
+</div>
+<div style="background:#FEF2F2;border-left:5px solid #DC2626;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#991B1B;font-weight:bold"><i class="bi bi-bug-fill"></i> Common Mistake: Bare String Paths</span><br><br> <code>open(‘data/file.csv’)</code> works but gives you no path-manipulation methods and is fragile on Windows vs.&nbsp;macOS/Linux. Use <code>Path(‘data’) / ‘file.csv’</code> instead.</p>
+</div>
+<div id="39" class="cell" data-execution_count="19">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pathlib <span class="im">import</span> Path</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Path composition: / operator joins parts, cross-platform</span></span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>project_root: Path <span class="op">=</span> Path()</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>data_dir: Path <span class="op">=</span> project_root <span class="op">/</span> <span class="st">"data"</span></span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>output_file: Path <span class="op">=</span> data_dir <span class="op">/</span> <span class="st">"results"</span> <span class="op">/</span> <span class="st">"run_001.json"</span></span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"data_dir    : </span><span class="sc">{</span>data_dir<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"output_file : </span><span class="sc">{</span>output_file<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>data_dir    : data
+output_file : data/results/run_001.json</code></pre>
+</div>
+</div>
+<p>Every <code>Path</code> object knows its own parts: no string slicing to extract a filename or extension. <code>mkdir(exist_ok=True)</code> is the safest way to create a directory (no error if it already exists):</p>
+<div id="41" class="cell" data-execution_count="20">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Path properties: inspect parts of a path without string slicing</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>p <span class="op">=</span> Path(<span class="st">"tutorials/03-data-analysis/data/primary.csv"</span>)</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"p.name   : </span><span class="sc">{</span>p<span class="sc">.</span>name<span class="sc">}</span><span class="ss">"</span>)  <span class="co"># 'primary.csv'</span></span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"p.stem   : </span><span class="sc">{</span>p<span class="sc">.</span>stem<span class="sc">}</span><span class="ss">"</span>)  <span class="co"># 'primary'</span></span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"p.suffix : </span><span class="sc">{</span>p<span class="sc">.</span>suffix<span class="sc">}</span><span class="ss">"</span>)  <span class="co"># '.csv'</span></span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"p.parent : </span><span class="sc">{</span>p<span class="sc">.</span>parent<span class="sc">}</span><span class="ss">"</span>)  <span class="co"># 'tutorials/03-data-analysis/data'</span></span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"p.parts  : </span><span class="sc">{</span>p<span class="sc">.</span>parts<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Safe directory creation: no error if it already exists</span></span>
+<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a>tmp_dir <span class="op">=</span> Path(<span class="st">"tmp_activity"</span>)</span>
+<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a>tmp_dir.mkdir(exist_ok<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb31-12"><a href="#cb31-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">tmp_dir exists: </span><span class="sc">{</span>tmp_dir<span class="sc">.</span>exists()<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>p.name   : primary.csv
+p.stem   : primary
+p.suffix : .csv
+p.parent : tutorials/03-data-analysis/data
+p.parts  : ('tutorials', '03-data-analysis', 'data', 'primary.csv')
+
+tmp_dir exists: True</code></pre>
+</div>
+</div>
+<section id="reading-writing-files" class="level3">
+<h3 class="anchored" data-anchor-id="reading-writing-files">Reading &amp; Writing Files</h3>
+<p>Always use the <code>with</code> statement. It closes the file automatically, even if an exception occurs. <code>DictWriter</code> writes rows as dicts keyed by column name:</p>
+<div id="43" class="cell" data-execution_count="21">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> csv</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pathlib <span class="im">import</span> Path</span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>tmp <span class="op">=</span> Path(<span class="st">"tmp_activity"</span>)</span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>tmp.mkdir(exist_ok<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>csv_path <span class="op">=</span> tmp <span class="op">/</span> <span class="st">"students.csv"</span></span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a>rows: <span class="bu">list</span>[<span class="bu">dict</span>[<span class="bu">str</span>, <span class="bu">object</span>]] <span class="op">=</span> [</span>
+<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"name"</span>: <span class="st">"Alice Kamau"</span>, <span class="st">"gpa"</span>: <span class="fl">3.95</span>, <span class="st">"major"</span>: <span class="st">"CS"</span>},</span>
+<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"name"</span>: <span class="st">"Bob Mwangi"</span>, <span class="st">"gpa"</span>: <span class="fl">3.45</span>, <span class="st">"major"</span>: <span class="st">"Math"</span>},</span>
+<span id="cb33-11"><a href="#cb33-11" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"name"</span>: <span class="st">"Carol Osei"</span>, <span class="st">"gpa"</span>: <span class="fl">3.88</span>, <span class="st">"major"</span>: <span class="st">"CS"</span>},</span>
+<span id="cb33-12"><a href="#cb33-12" aria-hidden="true" tabindex="-1"></a>]</span>
+<span id="cb33-13"><a href="#cb33-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-14"><a href="#cb33-14" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> csv_path.<span class="bu">open</span>(<span class="st">"w"</span>, newline<span class="op">=</span><span class="st">""</span>, encoding<span class="op">=</span><span class="st">"utf-8"</span>) <span class="im">as</span> fh:</span>
+<span id="cb33-15"><a href="#cb33-15" aria-hidden="true" tabindex="-1"></a>    writer <span class="op">=</span> csv.DictWriter(fh, fieldnames<span class="op">=</span>[<span class="st">"name"</span>, <span class="st">"gpa"</span>, <span class="st">"major"</span>])</span>
+<span id="cb33-16"><a href="#cb33-16" aria-hidden="true" tabindex="-1"></a>    writer.writeheader()</span>
+<span id="cb33-17"><a href="#cb33-17" aria-hidden="true" tabindex="-1"></a>    writer.writerows(rows)</span>
+<span id="cb33-18"><a href="#cb33-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-19"><a href="#cb33-19" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Wrote: </span><span class="sc">{</span>csv_path<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Wrote: tmp_activity/students.csv</code></pre>
+</div>
+</div>
+<p><code>DictReader</code> reads each row back as a <code>dict</code> keyed by header names, with no positional index access needed:</p>
+<div id="45" class="cell" data-execution_count="22">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> csv</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pathlib <span class="im">import</span> Path</span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>csv_path <span class="op">=</span> Path(<span class="st">"tmp_activity"</span>) <span class="op">/</span> <span class="st">"students.csv"</span></span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> csv_path.<span class="bu">open</span>(encoding<span class="op">=</span><span class="st">"utf-8"</span>) <span class="im">as</span> fh:</span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>    reader <span class="op">=</span> csv.DictReader(fh)</span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>    loaded: <span class="bu">list</span>[<span class="bu">dict</span>[<span class="bu">str</span>, <span class="bu">str</span>]] <span class="op">=</span> <span class="bu">list</span>(reader)</span>
+<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> row <span class="kw">in</span> loaded:</span>
+<span id="cb35-11"><a href="#cb35-11" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"  </span><span class="sc">{</span>row[<span class="st">'name'</span>]<span class="sc">:&lt;15}</span><span class="ss"> GPA=</span><span class="sc">{</span>row[<span class="st">'gpa'</span>]<span class="sc">}</span><span class="ss">  </span><span class="sc">{</span>row[<span class="st">'major'</span>]<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Alice Kamau     GPA=3.95  CS
+  Bob Mwangi      GPA=3.45  Math
+  Carol Osei      GPA=3.88  CS</code></pre>
+</div>
+</div>
+<p>For single-document JSON files, <code>Path.write_text()</code> + <code>json.dumps()</code> and <code>Path.read_text()</code> + <code>json.loads()</code> is the most concise round-trip:</p>
+<div id="47" class="cell" data-execution_count="23">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> json</span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pathlib <span class="im">import</span> Path</span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>tmp <span class="op">=</span> Path(<span class="st">"tmp_activity"</span>)</span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>json_path <span class="op">=</span> tmp <span class="op">/</span> <span class="st">"run_result.json"</span></span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>run_data <span class="op">=</span> {<span class="st">"run_id"</span>: <span class="st">"exp-001"</span>, <span class="st">"accuracy"</span>: <span class="fl">0.923</span>, <span class="st">"tags"</span>: [<span class="st">"baseline"</span>]}</span>
+<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Write: write_text is the cleanest one-liner for JSON</span></span>
+<span id="cb37-9"><a href="#cb37-9" aria-hidden="true" tabindex="-1"></a>json_path.write_text(json.dumps(run_data, indent<span class="op">=</span><span class="dv">2</span>), encoding<span class="op">=</span><span class="st">"utf-8"</span>)</span>
+<span id="cb37-10"><a href="#cb37-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Wrote: </span><span class="sc">{</span>json_path<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb37-11"><a href="#cb37-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-12"><a href="#cb37-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Read: read_text + json.loads</span></span>
+<span id="cb37-13"><a href="#cb37-13" aria-hidden="true" tabindex="-1"></a>reloaded: <span class="bu">dict</span>[<span class="bu">str</span>, <span class="bu">object</span>] <span class="op">=</span> json.loads(json_path.read_text(encoding<span class="op">=</span><span class="st">"utf-8"</span>))</span>
+<span id="cb37-14"><a href="#cb37-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Read back: </span><span class="sc">{</span>reloaded<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Wrote: tmp_activity/run_result.json
+Read back: {'run_id': 'exp-001', 'accuracy': 0.923, 'tags': ['baseline']}</code></pre>
+</div>
+</div>
+<div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
+<span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 2 - Experiment Log</span><br><br><b>Goal:</b> Write a function <code>save_experiment(result: dict, log_dir: Path) -&gt; Path</code> that saves a result dict as a timestamped JSON file (<code>run_20240101_120000.json</code>) inside <code>log_dir</code>, creating the directory if it does not exist. Return the path to the written file. Then read it back and verify the round-trip.<br><br><b>Hint:</b> Use <code>datetime.now(tz=UTC).strftime(‘%Y%m%d_%H%M%S’)</code> for the timestamp and <code>Path.mkdir(parents=True, exist_ok=True)</code> for the directory.
+</div>
+<div id="49" class="cell" data-execution_count="24">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pathlib <span class="im">import</span> Path</span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: implement save_experiment</span></span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="24">
+<pre><code>Ellipsis</code></pre>
+</div>
+</div>
+</section>
+<section id="finding-files" class="level3">
+<h3 class="anchored" data-anchor-id="finding-files">Finding Files</h3>
+<p><code>Path.iterdir()</code> yields the immediate children of a directory. <code>Path.rglob(pattern)</code> searches the entire subtree recursively:</p>
+<div id="51" class="cell" data-execution_count="25">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>tmp <span class="op">=</span> Path(<span class="st">"tmp_activity"</span>)</span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Files in tmp_activity:"</span>)</span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> f <span class="kw">in</span> <span class="bu">sorted</span>(tmp.iterdir()):</span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>    size <span class="op">=</span> f.stat().st_size</span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"  </span><span class="sc">{</span>f<span class="sc">.</span>name<span class="sc">:&lt;30}</span><span class="ss"> </span><span class="sc">{</span>size<span class="sc">:&gt;6}</span><span class="ss"> bytes"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Files in tmp_activity:
+  run_result.json                    78 bytes
+  students.csv                       79 bytes</code></pre>
+</div>
+</div>
+<p><code>rglob('*.ipynb')</code> finds all matching files at any depth. After exploring, clean up the temporary directory with <code>shutil.rmtree()</code>:</p>
+<div id="53" class="cell" data-execution_count="26">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> shutil</span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a><span class="co"># rglob: recursive search by pattern</span></span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>notebooks <span class="op">=</span> <span class="bu">list</span>(Path(<span class="st">"tutorials"</span>).rglob(<span class="st">"*.ipynb"</span>))</span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Notebooks found: </span><span class="sc">{</span><span class="bu">len</span>(notebooks)<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> nb <span class="kw">in</span> <span class="bu">sorted</span>(notebooks)[:<span class="dv">5</span>]:</span>
+<span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"  </span><span class="sc">{</span>nb<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb43-8"><a href="#cb43-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-9"><a href="#cb43-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Clean up tmp directory</span></span>
+<span id="cb43-10"><a href="#cb43-10" aria-hidden="true" tabindex="-1"></a>tmp <span class="op">=</span> Path(<span class="st">"tmp_activity"</span>)</span>
+<span id="cb43-11"><a href="#cb43-11" aria-hidden="true" tabindex="-1"></a>shutil.rmtree(tmp)</span>
+<span id="cb43-12"><a href="#cb43-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">Cleaned up: </span><span class="sc">{</span>tmp<span class="sc">}</span><span class="ss"> exists = </span><span class="sc">{</span>tmp<span class="sc">.</span>exists()<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Notebooks found: 0
+
+Cleaned up: tmp_activity exists = False</code></pre>
+</div>
+</div>
+</section>
+<section id="creating-checking-directories" class="level3">
+<h3 class="anchored" data-anchor-id="creating-checking-directories">Creating &amp; Checking Directories</h3>
+<p><code>Path.mkdir()</code> creates directories; <code>Path.exists()</code> and <code>Path.is_dir()</code> check state without raising an error. Always prefer <code>mkdir(parents=True, exist_ok=True)</code> over conditionally calling <code>os.makedirs()</code>:</p>
+<div id="55" class="cell" data-execution_count="27">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb45"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>results_dir <span class="op">=</span> Path(<span class="st">"results"</span>) <span class="op">/</span> <span class="st">"experiment_001"</span></span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Exists before : </span><span class="sc">{</span>results_dir<span class="sc">.</span>exists()<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a><span class="co"># parents=True creates any missing parent directories</span></span>
+<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a><span class="co"># exist_ok=True is silent if the directory already exists</span></span>
+<span id="cb45-6"><a href="#cb45-6" aria-hidden="true" tabindex="-1"></a>results_dir.mkdir(parents<span class="op">=</span><span class="va">True</span>, exist_ok<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb45-7"><a href="#cb45-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Exists after  : </span><span class="sc">{</span>results_dir<span class="sc">.</span>exists()<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb45-8"><a href="#cb45-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Is directory  : </span><span class="sc">{</span>results_dir<span class="sc">.</span>is_dir()<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb45-9"><a href="#cb45-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-10"><a href="#cb45-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Write a file into the new directory</span></span>
+<span id="cb45-11"><a href="#cb45-11" aria-hidden="true" tabindex="-1"></a>log_file <span class="op">=</span> results_dir <span class="op">/</span> <span class="st">"metrics.txt"</span></span>
+<span id="cb45-12"><a href="#cb45-12" aria-hidden="true" tabindex="-1"></a>log_file.write_text(<span class="st">"accuracy=0.923</span><span class="ch">\n</span><span class="st">val_loss=0.218</span><span class="ch">\n</span><span class="st">"</span>)</span>
+<span id="cb45-13"><a href="#cb45-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Log file size : </span><span class="sc">{</span>log_file<span class="sc">.</span>stat()<span class="sc">.</span>st_size<span class="sc">}</span><span class="ss"> bytes"</span>)</span>
+<span id="cb45-14"><a href="#cb45-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-15"><a href="#cb45-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Clean up</span></span>
+<span id="cb45-16"><a href="#cb45-16" aria-hidden="true" tabindex="-1"></a>log_file.unlink()</span>
+<span id="cb45-17"><a href="#cb45-17" aria-hidden="true" tabindex="-1"></a>results_dir.rmdir()</span>
+<span id="cb45-18"><a href="#cb45-18" aria-hidden="true" tabindex="-1"></a>results_dir.parent.rmdir()</span>
+<span id="cb45-19"><a href="#cb45-19" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Cleaned up"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Exists before : False
+Exists after  : True
+Is directory  : True
+Log file size : 30 bytes
+Cleaned up</code></pre>
+</div>
+</div>
+<div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
+<span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 5 - Experiment Logger</span><br><br> <b>Goal:</b> Write a function that appends an experiment result as a JSON line to a log file, then reads and prints all logged runs.
+<pre style="background:#FCE8DA;padding:10px;border-radius:4px;font-size:0.9em">log_experiment(Path('runs.jsonl'), run_id='run-001', accuracy=0.901, loss=0.312)
+log_experiment(Path('runs.jsonl'), run_id='run-002', accuracy=0.923, loss=0.218)
+
+# runs.jsonl contents:
+# {"run_id": "run-001", "accuracy": 0.901, "loss": 0.312}
+# {"run_id": "run-002", "accuracy": 0.923, "loss": 0.218}</pre>
+<p><b>Hint:</b> JSONL (JSON Lines), one JSON object per line, is the standard format for streaming experiment logs. Use <code>mode=‘a’</code> to append.</p>
+</div>
+<div id="57" class="cell" data-execution_count="28">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb47"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> json</span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pathlib <span class="im">import</span> Path</span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> log_experiment(log_path: Path, <span class="op">**</span>metrics: <span class="bu">object</span>) <span class="op">-&gt;</span> <span class="va">None</span>:</span>
+<span id="cb47-6"><a href="#cb47-6" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Append an experiment result as a JSON line to log_path.</span></span>
+<span id="cb47-7"><a href="#cb47-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-8"><a href="#cb47-8" aria-hidden="true" tabindex="-1"></a><span class="co">    Args:</span></span>
+<span id="cb47-9"><a href="#cb47-9" aria-hidden="true" tabindex="-1"></a><span class="co">        log_path: Path to the .jsonl log file (created if absent).</span></span>
+<span id="cb47-10"><a href="#cb47-10" aria-hidden="true" tabindex="-1"></a><span class="co">        **metrics: Any metric name/value pairs to record.</span></span>
+<span id="cb47-11"><a href="#cb47-11" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb47-12"><a href="#cb47-12" aria-hidden="true" tabindex="-1"></a>    ...  <span class="co"># </span><span class="al">TODO</span></span>
+<span id="cb47-13"><a href="#cb47-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-14"><a href="#cb47-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-15"><a href="#cb47-15" aria-hidden="true" tabindex="-1"></a>log_path <span class="op">=</span> Path(<span class="st">"runs.jsonl"</span>)</span>
+<span id="cb47-16"><a href="#cb47-16" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> log_path.exists():</span>
+<span id="cb47-17"><a href="#cb47-17" aria-hidden="true" tabindex="-1"></a>    log_path.unlink()  <span class="co"># start fresh for this activity</span></span>
+<span id="cb47-18"><a href="#cb47-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-19"><a href="#cb47-19" aria-hidden="true" tabindex="-1"></a>log_experiment(log_path, run_id<span class="op">=</span><span class="st">"run-001"</span>, accuracy<span class="op">=</span><span class="fl">0.901</span>, loss<span class="op">=</span><span class="fl">0.312</span>)</span>
+<span id="cb47-20"><a href="#cb47-20" aria-hidden="true" tabindex="-1"></a>log_experiment(log_path, run_id<span class="op">=</span><span class="st">"run-002"</span>, accuracy<span class="op">=</span><span class="fl">0.923</span>, loss<span class="op">=</span><span class="fl">0.218</span>)</span>
+<span id="cb47-21"><a href="#cb47-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-22"><a href="#cb47-22" aria-hidden="true" tabindex="-1"></a><span class="co"># Read back and print all runs</span></span>
+<span id="cb47-23"><a href="#cb47-23" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> log_path.exists():</span>
+<span id="cb47-24"><a href="#cb47-24" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Logged runs:"</span>)</span>
+<span id="cb47-25"><a href="#cb47-25" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> line <span class="kw">in</span> log_path.read_text(encoding<span class="op">=</span><span class="st">"utf-8"</span>).splitlines():</span>
+<span id="cb47-26"><a href="#cb47-26" aria-hidden="true" tabindex="-1"></a>        run <span class="op">=</span> json.loads(line)</span>
+<span id="cb47-27"><a href="#cb47-27" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f"  </span><span class="sc">{</span>run<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb47-28"><a href="#cb47-28" aria-hidden="true" tabindex="-1"></a>    log_path.unlink()</span>
+<span id="cb47-29"><a href="#cb47-29" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span>:</span>
+<span id="cb47-30"><a href="#cb47-30" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"(implement log_experiment above to see output)"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>(implement log_experiment above to see output)</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="python-gotchas" class="level2">
+<h2 class="anchored" data-anchor-id="python-gotchas">4. Python Gotchas</h2>
+<p>You have seen these bugs. A function returns something different on the second call than on the first, even though you passed the same arguments. A list you never touched has changed. Division gives the wrong answer in exactly the edge case your test missed.</p>
+<p>These are not random bugs: they follow five reproducible patterns. Every experienced Python developer has been bitten by each one. This section names them so you can recognise them on sight.</p>
+<div style="background:#EFF6FF;border-left:5px solid #0369A1;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-key-fill"></i> Key Concept: Python’s most dangerous bugs don’t crash – they silently give wrong answers</span><br><br> Three gotchas account for most silent data bugs in Python:<br>1. <b>Mutable default arguments</b>: <code>def f(x=[]):</code> – the list is created once and shared across all calls. Use <code>None</code> as the sentinel instead.<br>2. <b><code>is</code> vs <code>==</code></b>: <code>is</code> tests object identity (same object in memory); <code>==</code> tests value equality. Use <code>==</code> for values, <code>is</code> only for <code>None</code>.<br>3. <b>Late-binding closures</b>: a <code>lambda</code> inside a loop captures the variable, not its value at that moment. The loop ends, the variable has its final value, and every lambda returns the same thing.</p>
+</div>
+<div id="60" class="cell" data-execution_count="29">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb49"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="co"># GOTCHA 1: Mutable default argument</span></span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a><span class="co"># The default [] is created ONCE at function definition time - shared across all calls!</span></span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> append_score_bad(score: <span class="bu">float</span>, history: <span class="bu">list</span>[<span class="bu">float</span>] <span class="op">=</span> []) <span class="op">-&gt;</span> <span class="bu">list</span>[<span class="bu">float</span>]:  <span class="co"># noqa: B006</span></span>
+<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a>    history.append(score)</span>
+<span id="cb49-5"><a href="#cb49-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> history</span>
+<span id="cb49-6"><a href="#cb49-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-7"><a href="#cb49-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-8"><a href="#cb49-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Bad default: the list leaks between calls:"</span>)</span>
+<span id="cb49-9"><a href="#cb49-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(append_score_bad(<span class="fl">82.0</span>))  <span class="co"># [82.0]          expected</span></span>
+<span id="cb49-10"><a href="#cb49-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(append_score_bad(<span class="fl">91.0</span>))  <span class="co"># [82.0, 91.0]    WRONG: previous call leaked in!</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Bad default: the list leaks between calls:
+[82.0]
+[82.0, 91.0]</code></pre>
+</div>
+</div>
+<p>The fix: use <code>None</code> as the default sentinel and create a fresh list inside the function body on each call:</p>
+<div id="62" class="cell" data-execution_count="30">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb51"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> append_score(score: <span class="bu">float</span>, history: <span class="bu">list</span>[<span class="bu">float</span>] <span class="op">|</span> <span class="va">None</span> <span class="op">=</span> <span class="va">None</span>) <span class="op">-&gt;</span> <span class="bu">list</span>[<span class="bu">float</span>]:</span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> history <span class="kw">is</span> <span class="va">None</span>:</span>
+<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a>        history <span class="op">=</span> []  <span class="co"># new list created on every call where history is not provided</span></span>
+<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a>    history.append(score)</span>
+<span id="cb51-5"><a href="#cb51-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> history</span>
+<span id="cb51-6"><a href="#cb51-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-7"><a href="#cb51-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-8"><a href="#cb51-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Fixed: independent list each time:"</span>)</span>
+<span id="cb51-9"><a href="#cb51-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(append_score(<span class="fl">82.0</span>))  <span class="co"># [82.0]</span></span>
+<span id="cb51-10"><a href="#cb51-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(append_score(<span class="fl">91.0</span>))  <span class="co"># [91.0]   fresh list</span></span>
+<span id="cb51-11"><a href="#cb51-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-12"><a href="#cb51-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Rule: never use a mutable object (list, dict, set) as a default argument value.</span></span>
+<span id="cb51-13"><a href="#cb51-13" aria-hidden="true" tabindex="-1"></a><span class="co"># With @dataclass use field(default_factory=list) instead (shown in Sec. 4).</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Fixed: independent list each time:
+[82.0]
+[91.0]</code></pre>
+</div>
+</div>
+<p><strong>Gotcha 2: assignment is not a copy.</strong> <code>b = a</code> creates a second name for the <strong>same</strong> list. Shallow <code>.copy()</code> creates a new outer container but inner objects are still shared. Use <code>copy.deepcopy()</code> for fully independent nested structures:</p>
+<div id="64" class="cell" data-execution_count="31">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb53"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="co"># GOTCHA 2: Assignment is NOT a copy</span></span>
+<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a><span class="co"># For nested structures, .copy() is a SHALLOW copy: inner objects are still shared.</span></span>
+<span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb53-4"><a href="#cb53-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> copy</span>
+<span id="cb53-5"><a href="#cb53-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb53-6"><a href="#cb53-6" aria-hidden="true" tabindex="-1"></a>original: <span class="bu">list</span>[<span class="bu">list</span>[<span class="bu">int</span>]] <span class="op">=</span> [[<span class="dv">1</span>, <span class="dv">2</span>], [<span class="dv">3</span>, <span class="dv">4</span>]]</span>
+<span id="cb53-7"><a href="#cb53-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb53-8"><a href="#cb53-8" aria-hidden="true" tabindex="-1"></a>ref <span class="op">=</span> original  <span class="co"># same object</span></span>
+<span id="cb53-9"><a href="#cb53-9" aria-hidden="true" tabindex="-1"></a>shallow_copy <span class="op">=</span> original.copy()  <span class="co"># new outer list, shared inner lists</span></span>
+<span id="cb53-10"><a href="#cb53-10" aria-hidden="true" tabindex="-1"></a>deep_copy <span class="op">=</span> copy.deepcopy(original)  <span class="co"># completely independent</span></span>
+<span id="cb53-11"><a href="#cb53-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb53-12"><a href="#cb53-12" aria-hidden="true" tabindex="-1"></a>original[<span class="dv">0</span>].append(<span class="dv">99</span>)</span>
+<span id="cb53-13"><a href="#cb53-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"original     : </span><span class="sc">{</span>original<span class="sc">}</span><span class="ss">"</span>)  <span class="co"># [[1, 2, 99], [3, 4]]</span></span>
+<span id="cb53-14"><a href="#cb53-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"ref          : </span><span class="sc">{</span>ref<span class="sc">}</span><span class="ss">"</span>)  <span class="co"># [[1, 2, 99], [3, 4]] : same object</span></span>
+<span id="cb53-15"><a href="#cb53-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"shallow_copy : </span><span class="sc">{</span>shallow_copy<span class="sc">}</span><span class="ss">"</span>)  <span class="co"># [[1, 2, 99], [3, 4]] : inner list shared!</span></span>
+<span id="cb53-16"><a href="#cb53-16" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"deep_copy    : </span><span class="sc">{</span>deep_copy<span class="sc">}</span><span class="ss">"</span>)  <span class="co"># [[1, 2], [3, 4]]     : fully independent</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>original     : [[1, 2, 99], [3, 4]]
+ref          : [[1, 2, 99], [3, 4]]
+shallow_copy : [[1, 2, 99], [3, 4]]
+deep_copy    : [[1, 2], [3, 4]]</code></pre>
+</div>
+</div>
+<p><strong>Gotcha 3: <code>/</code> vs <code>//</code>.</strong> Both divide, but <code>//</code> floors toward negative infinity, not toward zero. Note that <code>//</code> on floats returns a float, not an int:</p>
+<div id="66" class="cell" data-execution_count="32">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb55"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="co"># GOTCHA 3: / vs //: easy to confuse</span></span>
+<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"7 / 2   = </span><span class="sc">{</span><span class="dv">7</span> <span class="op">/</span> <span class="dv">2</span><span class="sc">}</span><span class="ss">"</span>)  <span class="co"># 3.5  : true division, always float</span></span>
+<span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"7 // 2  = </span><span class="sc">{</span><span class="dv">7</span> <span class="op">//</span> <span class="dv">2</span><span class="sc">}</span><span class="ss">"</span>)  <span class="co"># 3    : floor, NOT truncate</span></span>
+<span id="cb55-4"><a href="#cb55-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"-7 // 2 = </span><span class="sc">{</span><span class="op">-</span><span class="dv">7</span> <span class="op">//</span> <span class="dv">2</span><span class="sc">}</span><span class="ss">"</span>)  <span class="co"># -4   : floors toward negative infinity</span></span>
+<span id="cb55-5"><a href="#cb55-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"7.5//2  = </span><span class="sc">{</span><span class="fl">7.5</span> <span class="op">//</span> <span class="dv">2</span><span class="sc">}</span><span class="ss">"</span>)  <span class="co"># 3.0  : floor of float is still float</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>7 / 2   = 3.5
+7 // 2  = 3
+-7 // 2 = -4
+7.5//2  = 3.0</code></pre>
+</div>
+</div>
+<p><strong>Gotcha 4 &amp; 5: <code>{}</code> is a dict, and truthiness is not <code>None</code>-ness.</strong> Python treats <code>0</code>, <code>0.0</code>, <code>None</code>, <code>[]</code>, and <code>''</code> all as falsy, which silently breaks the common <code>value or default</code> pattern when <code>0.0</code> is a legitimate result:</p>
+<div id="68" class="cell" data-execution_count="33">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb57"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="co"># GOTCHA 4: {} creates a dict, not a set</span></span>
+<span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a>empty1 <span class="op">=</span> {}</span>
+<span id="cb57-3"><a href="#cb57-3" aria-hidden="true" tabindex="-1"></a>empty2 <span class="op">=</span> <span class="bu">set</span>()</span>
+<span id="cb57-4"><a href="#cb57-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"type(</span><span class="ch">{{}}</span><span class="ss">)   : </span><span class="sc">{</span><span class="bu">type</span>(empty1)<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb57-5"><a href="#cb57-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"type(set()) : </span><span class="sc">{</span><span class="bu">type</span>(empty2)<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb57-6"><a href="#cb57-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-7"><a href="#cb57-7" aria-hidden="true" tabindex="-1"></a><span class="co"># GOTCHA 5: Boolean short-circuit: 0.0, None, '', [] are all falsy</span></span>
+<span id="cb57-8"><a href="#cb57-8" aria-hidden="true" tabindex="-1"></a>score: <span class="bu">float</span> <span class="op">|</span> <span class="va">None</span> <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb57-9"><a href="#cb57-9" aria-hidden="true" tabindex="-1"></a>result <span class="op">=</span> score <span class="kw">or</span> <span class="fl">0.0</span>  <span class="co"># 0.0: but breaks if score is legitimately 0.0!</span></span>
+<span id="cb57-10"><a href="#cb57-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'</span><span class="ch">\n</span><span class="ss">0.0 or "default" : </span><span class="sc">{</span><span class="fl">0.0</span> <span class="kw">or</span> <span class="st">"default"</span><span class="sc">}</span><span class="ss">'</span>)  <span class="co"># noqa: SIM222</span></span>
+<span id="cb57-11"><a href="#cb57-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-12"><a href="#cb57-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Prefer an explicit None check</span></span>
+<span id="cb57-13"><a href="#cb57-13" aria-hidden="true" tabindex="-1"></a>result2 <span class="op">=</span> score <span class="cf">if</span> score <span class="kw">is</span> <span class="kw">not</span> <span class="va">None</span> <span class="cf">else</span> <span class="fl">0.0</span></span>
+<span id="cb57-14"><a href="#cb57-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Explicit check   : </span><span class="sc">{</span>result2<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>type({})   : &lt;class 'dict'&gt;
+type(set()) : &lt;class 'set'&gt;
+
+0.0 or "default" : default
+Explicit check   : 0.0</code></pre>
+</div>
+</div>
+</section>
+<section id="capstone-exercise" class="level2">
+<h2 class="anchored" data-anchor-id="capstone-exercise">Capstone Exercise</h2>
+<p>This exercise ties together Classes (Sec. 1), Exception Handling (Sec. 2), and File I/O (Sec. 3).</p>
+<div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
+<span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Exercise - Student Registry</span><br><br><b>Goal:</b> Build a <code>StudentRegistry</code> class that:<br>
+<ol>
+<li>
+Stores a list of <code>StudentRecord</code> objects (from Sec. 1).
+</li>
+<li>
+Has a method <code>add(record: StudentRecord) -&gt; None</code>.
+</li>
+<li>
+Has a method <code>top_n(n: int = 3) -&gt; list[StudentRecord]</code> that returns the top <code>n</code> students by average.
+</li>
+<li>
+Has a <code><span class="citation" data-cites="classmethod">@classmethod</span> from_csv(cls, path: Path) -&gt; ‘StudentRegistry’</code> that reads a CSV file and populates the registry using <code>StudentRecord.from_dict()</code>, raising a <code>DataLoadError</code> (custom exception) if the file does not exist.
+</li>
+<li>
+Has a method <code>save_report(path: Path) -&gt; None</code> that writes a JSON summary of all students to disk.
+</li>
+</ol>
+<b>Test it</b> by creating a CSV file from the university dataset, loading the registry, printing the top 3 students, and saving a report.
+</div>
+<div id="71" class="cell" data-execution_count="34">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb59"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pathlib <span class="im">import</span> Path</span>
+<span id="cb59-2"><a href="#cb59-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb59-3"><a href="#cb59-3" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: define DataLoadError and StudentRegistry</span></span>
+<span id="cb59-4"><a href="#cb59-4" aria-hidden="true" tabindex="-1"></a>...</span>
+<span id="cb59-5"><a href="#cb59-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb59-6"><a href="#cb59-6" aria-hidden="true" tabindex="-1"></a><span class="co"># registry = StudentRegistry.from_csv(Path('data/students.csv'))</span></span>
+<span id="cb59-7"><a href="#cb59-7" aria-hidden="true" tabindex="-1"></a><span class="co"># print(registry.top_n(3))</span></span>
+<span id="cb59-8"><a href="#cb59-8" aria-hidden="true" tabindex="-1"></a><span class="co"># registry.save_report(Path('data/report.json'))</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="34">
+<pre><code>Ellipsis</code></pre>
+</div>
+</div>
+</section>
+<section id="further-reading" class="level2">
+<h2 class="anchored" data-anchor-id="further-reading">Further Reading</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Resource</th>
+<th>Why it matters</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><a href="https://docs.python.org/3/reference/datamodel.html">Python Data Model</a></td>
+<td>Complete reference for <code>__repr__</code>, <code>__eq__</code>, and all dunder methods</td>
+</tr>
+<tr class="even">
+<td><a href="https://docs.python.org/3/library/abc.html">ABC module docs</a></td>
+<td><code>abstractmethod</code>, <code>ABCMeta</code>, and <code>@abstractproperty</code></td>
+</tr>
+<tr class="odd">
+<td>Gamma, E. et al.&nbsp;(1994). <em>Design Patterns</em>.</td>
+<td>Factory Method and Template Method patterns underpinning classmethod factories and ABCs</td>
+</tr>
+<tr class="even">
+<td><a href="https://docs.python.org/3/library/exceptions.html">Python exceptions hierarchy</a></td>
+<td>Full exception tree; shows which exceptions to catch and at what level</td>
+</tr>
+<tr class="odd">
+<td><a href="https://docs.python.org/3/library/pathlib.html">pathlib docs</a></td>
+<td>Complete reference for Path; covers <code>glob</code>, <code>walk</code>, <code>chmod</code>, and more</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="summary" class="level2">
+<h2 class="anchored" data-anchor-id="summary">Summary</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Concept</th>
+<th>Key rule</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>__init__</code></td>
+<td>Receives raw data and stores it on <code>self</code>; never compute derived values here</td>
+</tr>
+<tr class="even">
+<td><code>__repr__</code></td>
+<td>Return a human-readable, ideally re-creatable string; it is your first debugging tool</td>
+</tr>
+<tr class="odd">
+<td><code>@property</code></td>
+<td>Compute derived values fresh each access; avoids stale state</td>
+</tr>
+<tr class="even">
+<td><code>@classmethod</code></td>
+<td>Alternative constructor for different input formats; keeps <code>__init__</code> clean</td>
+</tr>
+<tr class="odd">
+<td>ABC</td>
+<td>Enforce a contract at instantiation time, not at code review time</td>
+</tr>
+<tr class="even">
+<td>Exceptions</td>
+<td><code>except SpecificError</code> not bare <code>except</code>; <code>else</code> for success path; <code>finally</code> for cleanup</td>
+</tr>
+<tr class="odd">
+<td><code>pathlib.Path</code></td>
+<td>Cross-platform paths; compose with <code>/</code>; read with <code>.read_text()</code>, write with <code>.write_text()</code></td>
+</tr>
+<tr class="even">
+<td>Context manager</td>
+<td><code>with open(...) as fh</code> always; file closes automatically</td>
+</tr>
+<tr class="odd">
+<td>Gotchas</td>
+<td>Mutable defaults, <code>=</code> is not copy, <code>//</code> floors, <code>{}</code> is dict, <code>None</code> is not <code>False</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Next:</strong> <code>04-numpy.ipynb</code> – arrays, broadcasting, and vectorised operations.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/sambaiga\.github\.io\/ds-mlops-path\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../../tutorials/01-python-basics/03a-python-patterns.html" class="pagination-link" aria-label="Part 3a: Python Patterns -- Functions and Code Reuse">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">Part 3a: Python Patterns – Functions and Code Reuse</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../../tutorials/01-python-basics/04a-numpy.html" class="pagination-link" aria-label="Part 4a: NumPy Fundamentals">
+        <span class="nav-page-text"><span class="chapter-title">Part 4a: NumPy Fundamentals</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p><span class="faux-block">© 2025–2026 <a href="https://sambaiga.github.io/">Anthony Faustine</a></span> <span class="faux-block">Code licensed under <a href="https://www.apache.org/licenses/LICENSE-2.0">Apache 2.0</a></span></p>
+</div>   
+    <div class="nav-footer-center">
+<div class="footer-social">
+<p><a href="mailto:sambaiga@gmail.com" title="Email"><i class="bi bi-envelope-at-fill"></i></a> <a href="https://github.com/sambaiga" title="GitHub"><i class="bi bi-github"></i></a> <a href="https://www.linkedin.com/in/sambaiga" title="LinkedIn"><i class="bi bi-linkedin"></i></a></p>
+</div>
+<div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.dev/sambaiga/ds-mlops-path/blob/main/tutorials/01-python-basics/03b-python-patterns.ipynb" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/sambaiga/ds-mlops-path/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li><li><a href="https://github.com/sambaiga/ds-mlops-path/blob/main/tutorials/01-python-basics/03b-python-patterns.ipynb" class="toc-action"><i class="bi empty"></i>View source</a></li></ul></div></div>
+    <div class="nav-footer-right">
+<p><span class="faux-block">Made with <a href="https://quarto.org">Quarto</a></span> <span class="faux-block"><a href="https://github.com/sambaiga/ds-mlops-path"><i class="bi bi-github"></i> View source</a></span></p>
+</div>
+  </div>
+</footer>
+
+
+
+
+<script src="../../site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>

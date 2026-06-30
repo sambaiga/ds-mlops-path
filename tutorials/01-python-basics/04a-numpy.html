@@ -1,0 +1,1780 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.38">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Part 4a: NumPy Fundamentals – From Data to Impact</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<link href="../../tutorials/01-python-basics/04b-numpy.html" rel="next">
+<link href="../../tutorials/01-python-basics/03b-python-patterns.html" rel="prev">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-de63f62b328812d8e578a4d74e282472.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-beae7f006aa19e5949bb4641e0a5dd6e.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<style>html{ scroll-behavior: smooth; }</style>
+
+
+</head>
+
+<body class="nav-sidebar floating nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">From Data to Impact</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="mailto:sambaiga@gmail.com"> <i class="bi bi-envelope-at" role="img" aria-label="Email Anthony Faustine">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://www.linkedin.com/in/sambaiga"> <i class="bi bi-linkedin" role="img" aria-label="LinkedIn">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/sambaiga/ds-mlops-path"> <i class="bi bi-github" role="img" aria-label="View source on GitHub">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+    <a href="https://github.com/sambaiga/ds-mlops-path" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <a class="flex-grow-1 no-decor" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+          <h1 class="quarto-secondary-nav-title"><span class="chapter-title">Part 4a: NumPy Fundamentals</span></h1>
+        </a>     
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../index.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Welcome</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../preface.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Why Another ML Book?</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../about.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">About the Author</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Part 1: Foundations</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/01-python-core.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 1: Language Core (Data &amp; Types)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/02-control-flow.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 2: Language Core (Control Flow &amp; Comprehensions)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/03a-python-patterns.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 3a: Python Patterns – Functions and Code Reuse</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/03b-python-patterns.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 3b: Python Patterns – Classes, Exceptions, and Defensive Code</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/04a-numpy.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">Part 4a: NumPy Fundamentals</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/04b-numpy.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 4b: NumPy Advanced Operations</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/05-matplotlib.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 5: Matplotlib and Its Ecosystem</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/06-lets-plot.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 6: Grammar of Graphics with Lets-Plot</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/07-data-storytelling.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 7: Data Storytelling and House Style</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false">
+ <span class="menu-text">Part 2: Data Analysis</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/08-pandas-core.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 8: Pandas Core</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/09-pandas-operations.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 9: Pandas Operations</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/10-combining-reshaping.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 10: Combining, Reshaping &amp; Time Series</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/11-time-series.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 11: Time Series</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/11-polars.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 11: Polars &amp; the Expression API</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/12-great-tables.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 12: Presenting Data with Great Tables</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false">
+ <span class="menu-text">Part 3: Dev Tools</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/02-dev-tools/00-vscode-setup.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 12: IDE Setup with VS Code</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/02-dev-tools/01-uv-project-setup.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 13: Project Setup with uv</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/02-dev-tools/02-code-quality-ruff.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 14: Code Quality with ruff</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/02-dev-tools/03-type-annotations.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 15: Type Annotations</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/02-dev-tools/04-git-github.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 16: Git and GitHub for Data Science</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/02-dev-tools/05-pytest-testing.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 17: Testing DS Code with pytest</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/02-dev-tools/06-pre-commit-automation.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 18: Automation with pre-commit</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/02-dev-tools/07-pydantic-validation.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 19: Data Validation with Pydantic</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/02-dev-tools/08-pandera-schema-validation.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Data Schema Validation with Pandera</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/02-dev-tools/09-logging.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 21: Logging for ML Projects</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false">
+ <span class="menu-text">Part 4: ML Landscape</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/04-ml-intro/01-ml-introduction.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 22: The AI Landscape</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/04-ml-intro/02-ml-what-is-ml.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 23: What Is Machine Learning?</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/04-ml-intro/03-ml-workflow.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 24: The ML Workflow and Problem Framing</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/04-ml-intro/04a-sklearn-core.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 25a: Scikit-learn Core – Foundations</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/04-ml-intro/04b-sklearn-core.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 25b: Scikit-learn Core – Validation and Modern Features</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/04-ml-intro/05a-sklearn-pipeline.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 26a: sklearn Pipeline – Foundations</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/04-ml-intro/05b-sklearn-pipeline.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 26b: sklearn Pipeline – Hyperparameter Search and Evaluation</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <span class="sidebar-item-text sidebar-link text-start">
+ <span class="menu-text">Part 5: Deep Learning</span></span>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <span class="sidebar-item-text sidebar-link text-start">
+ <span class="menu-text">Part 6: LLMs</span></span>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <span class="sidebar-item-text sidebar-link text-start">
+ <span class="menu-text">Part 7: MLOps</span></span>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <span class="sidebar-item-text sidebar-link text-start">
+ <span class="menu-text">Part 8: Production Monitoring</span></span>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <span class="sidebar-item-text sidebar-link text-start">
+ <span class="menu-text">Part 9: ML System Design</span></span>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <span class="sidebar-item-text sidebar-link text-start">
+ <span class="menu-text">Part 10: Value-driven AI</span></span>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">In this chapter</h2>
+   
+  <ul>
+  <li><a href="#meet-numpy" id="toc-meet-numpy" class="nav-link active" data-scroll-target="#meet-numpy">Meet NumPy</a>
+  <ul class="collapse">
+  <li><a href="#how-it-compares" id="toc-how-it-compares" class="nav-link" data-scroll-target="#how-it-compares">How it compares</a></li>
+  <li><a href="#already-in-your-environment" id="toc-already-in-your-environment" class="nav-link" data-scroll-target="#already-in-your-environment">Already in your environment</a></li>
+  </ul></li>
+  <li><a href="#why-numpy-the-ndarray" id="toc-why-numpy-the-ndarray" class="nav-link" data-scroll-target="#why-numpy-the-ndarray">1. Why NumPy? The <code>ndarray</code></a></li>
+  <li><a href="#creating-arrays" id="toc-creating-arrays" class="nav-link" data-scroll-target="#creating-arrays">2. Creating Arrays</a>
+  <ul class="collapse">
+  <li><a href="#random-data-with-a-generator" id="toc-random-data-with-a-generator" class="nav-link" data-scroll-target="#random-data-with-a-generator">Random Data with a <code>Generator</code></a></li>
+  </ul></li>
+  <li><a href="#shape-size-and-dtype" id="toc-shape-size-and-dtype" class="nav-link" data-scroll-target="#shape-size-and-dtype">3. Shape, Size, and dtype</a>
+  <ul class="collapse">
+  <li><a href="#reshaping" id="toc-reshaping" class="nav-link" data-scroll-target="#reshaping">Reshaping</a></li>
+  <li><a href="#combining-arrays-column_stack-hstack-vstack" id="toc-combining-arrays-column_stack-hstack-vstack" class="nav-link" data-scroll-target="#combining-arrays-column_stack-hstack-vstack">Combining Arrays: <code>column_stack</code>, <code>hstack</code>, <code>vstack</code></a></li>
+  </ul></li>
+  <li><a href="#indexing-and-slicing" id="toc-indexing-and-slicing" class="nav-link" data-scroll-target="#indexing-and-slicing">4. Indexing and Slicing</a></li>
+  <li><a href="#boolean-masking-vectorised-conditionals" id="toc-boolean-masking-vectorised-conditionals" class="nav-link" data-scroll-target="#boolean-masking-vectorised-conditionals">5. Boolean Masking &amp; Vectorised Conditionals</a></li>
+  <li><a href="#aggregations-along-an-axis" id="toc-aggregations-along-an-axis" class="nav-link" data-scroll-target="#aggregations-along-an-axis">6. Aggregations Along an Axis</a></li>
+  <li><a href="#capstone-exercises" id="toc-capstone-exercises" class="nav-link" data-scroll-target="#capstone-exercises">12. Capstone Exercises</a></li>
+  <li><a href="#further-reading" id="toc-further-reading" class="nav-link" data-scroll-target="#further-reading">Further Reading</a></li>
+  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary">Summary</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.dev/sambaiga/ds-mlops-path/blob/main/tutorials/01-python-basics/04a-numpy.ipynb" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/sambaiga/ds-mlops-path/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li><li><a href="https://github.com/sambaiga/ds-mlops-path/blob/main/tutorials/01-python-basics/04a-numpy.ipynb" class="toc-action"><i class="bi empty"></i>View source</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block"><span class="chapter-title">Part 4a: NumPy Fundamentals</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p><a href="https://colab.research.google.com/github/sambaiga/ds-mlops-path/blob/main/tutorials/01-python-basics/04a-numpy.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open In Colab"></a> <a href="https://raw.githubusercontent.com/sambaiga/ds-mlops-path/main/tutorials/01-python-basics/04a-numpy.ipynb"><img src="https://img.shields.io/badge/Download-Notebook-blue.svg?logo=jupyter&amp;logoColor=white" class="img-fluid" alt="Download Notebook"></a></p>
+<p><strong>DS-MLOps Python Foundations</strong></p>
+<p><strong>Python 3.12+ | Author: Anthony Faustine</strong></p>
+<p>You have 2,400 exam scores. You need to subtract the mean and divide by the standard deviation – across three columns at once. A Python loop would work. It would also be thirty lines, ten seconds, and nothing like the code your teammates expect to read.</p>
+<p>NumPy solves this with one expression: <code>(X - X.mean(axis=0)) / X.std(axis=0)</code>. No loop. No temporary variables. Just the operation, stated directly.</p>
+<p>Part 3b built the full Python vocabulary: classes, exceptions, and file I/O. This notebook applies that vocabulary to arrays – the data structure that underlies every ML library you will use. Part 4b (<code>04b-numpy.ipynb</code>) continues with broadcasting, vectorisation, and linear algebra.</p>
+<blockquote class="blockquote">
+<p>Callout markers: <a href="../../index.html#callout-guide">book cover page</a>.</p>
+</blockquote>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Before You Begin
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>This notebook follows Parts 1-3. You should be comfortable with functions, list comprehensions, and <code>@dataclass</code>. NumPy is imported as <code>import numpy as np</code> throughout.</p>
+</div>
+</div>
+</div>
+<section id="meet-numpy" class="level2">
+<h2 class="anchored" data-anchor-id="meet-numpy">Meet NumPy</h2>
+<p>You have written Python for three chapters. You can loop, slice, and unpack. Now imagine you need to normalise 2,400 exam scores: subtract the mean, divide by the standard deviation, do it across three columns. A Python <code>for</code> loop would work. It would also be slow, verbose, and nothing like the code your colleagues expect to read.</p>
+<p>NumPy (<a href="https://numpy.org">numpy.org</a>) was created in 2005 by Travis Oliphant to give Python scientists the numeric performance of Fortran and C without leaving the language. The idea was simple: store numbers in a contiguous block of memory with a fixed type, and let a thin Python wrapper call heavily optimised C and Fortran routines on that block. Two decades later, nearly every numerical computing library in Python (pandas, scikit-learn, PyTorch, TensorFlow) uses NumPy arrays as its currency.</p>
+<section id="how-it-compares" class="level3">
+<h3 class="anchored" data-anchor-id="how-it-compares">How it compares</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Approach</th>
+<th>Speed on large arrays</th>
+<th>Readable math</th>
+<th>When to use</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Python <code>list</code> + loop</td>
+<td>Slow (Python objects, GIL)</td>
+<td>Verbose</td>
+<td>Small collections, mixed types</td>
+</tr>
+<tr class="even">
+<td><strong>NumPy <code>ndarray</code></strong></td>
+<td><strong>Fast (C/Fortran, contiguous)</strong></td>
+<td><strong>Concise (<code>a * 2</code>)</strong></td>
+<td><strong>Numeric data of any size</strong></td>
+</tr>
+<tr class="odd">
+<td>PyTorch <code>Tensor</code></td>
+<td>Fast (optionally GPU)</td>
+<td>Similar to NumPy</td>
+<td>Deep learning, autodiff</td>
+</tr>
+<tr class="even">
+<td>JAX <code>Array</code></td>
+<td>Very fast (XLA, JIT, GPU/TPU)</td>
+<td>NumPy-compatible</td>
+<td>Research, differentiable programs</td>
+</tr>
+<tr class="odd">
+<td>CuPy <code>ndarray</code></td>
+<td>GPU only</td>
+<td>NumPy-compatible</td>
+<td>Large-scale GPU computing</td>
+</tr>
+</tbody>
+</table>
+<p>For everything up to classical ML on a laptop, NumPy is the right level of abstraction. PyTorch and JAX add complexity (device management, gradient tracking) that you do not need yet.</p>
+</section>
+<section id="already-in-your-environment" class="level3">
+<h3 class="anchored" data-anchor-id="already-in-your-environment">Already in your environment</h3>
+<p>NumPy is included in <code>pyproject.toml</code>. If you ever start a standalone project:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> add numpy          <span class="co"># or: pip install numpy</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Official docs and API reference: <a href="https://numpy.org/doc/stable/">numpy.org/doc</a></p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Learning Objectives
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>#</th>
+<th>Skill</th>
+<th>Covered in</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td>Explain why NumPy arrays outperform Python lists for numeric data</td>
+<td>Sec. 1</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td>Create arrays with <code>array</code>, <code>arange</code>, <code>zeros</code>, <code>ones</code>, and a <code>Generator</code></td>
+<td>Sec. 2</td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td>Inspect and reshape arrays using <code>shape</code>, <code>dtype</code>, <code>reshape</code>, and stacking</td>
+<td>Sec. 3</td>
+</tr>
+<tr class="even">
+<td>4</td>
+<td>Select data with integer indexing, slicing, and fancy indexing</td>
+<td>Sec. 4</td>
+</tr>
+<tr class="odd">
+<td>5</td>
+<td>Filter arrays with boolean masks and <code>np.where</code></td>
+<td>Sec. 5</td>
+</tr>
+<tr class="even">
+<td>6</td>
+<td>Compute per-feature and per-sample statistics with <code>axis</code></td>
+<td>Sec. 6</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="why-numpy-the-ndarray" class="level2">
+<h2 class="anchored" data-anchor-id="why-numpy-the-ndarray">1. Why NumPy? The <code>ndarray</code></h2>
+<p>A Python <code>list</code> can hold anything (mixed types, nested objects), which makes it flexible but slow for numeric work: every element is a separate Python object, and arithmetic on a list means a Python-level loop.</p>
+<p>A NumPy <strong><code>ndarray</code></strong> (“n-dimensional array”) is different: it stores <strong>one fixed dtype</strong> in a single contiguous block of memory. That uniformity lets NumPy hand the math off to compiled C/Fortran loops instead of the Python interpreter, often 10-100x faster, and with far less memory per element.</p>
+<div id="6" class="cell" data-execution_count="1">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>study_hours <span class="op">=</span> [<span class="dv">12</span>, <span class="dv">5</span>, <span class="dv">18</span>, <span class="dv">9</span>, <span class="dv">22</span>]</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co"># A Python list has no element-wise arithmetic: this is string repetition, not math!</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"list  * 2 :"</span>, study_hours <span class="op">*</span> <span class="dv">2</span>)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>hours <span class="op">=</span> np.array(study_hours)</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"array * 2 :"</span>, hours <span class="op">*</span> <span class="dv">2</span>)  <span class="co"># element-wise multiplication</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>list  * 2 : [12, 5, 18, 9, 22, 12, 5, 18, 9, 22]
+array * 2 : [24 10 36 18 44]</code></pre>
+</div>
+</div>
+<div id="7" class="cell" data-execution_count="2">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> matplotlib.patches <span class="im">import</span> FancyBboxPatch</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>BG <span class="op">=</span> <span class="st">"#F8FAFC"</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>BLUE <span class="op">=</span> <span class="st">"#0369A1"</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>GREEN <span class="op">=</span> <span class="st">"#059669"</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>GRAY <span class="op">=</span> <span class="st">"#94A3B8"</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>fig, (ax_py, ax_np) <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">2</span>, figsize<span class="op">=</span>(<span class="dv">9</span>, <span class="fl">3.2</span>))</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>fig.patch.set_facecolor(BG)</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> ax <span class="kw">in</span> (ax_py, ax_np):</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    ax.set_facecolor(BG)</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>    ax.set_xlim(<span class="dv">0</span>, <span class="dv">1</span>)</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>    ax.set_ylim(<span class="dv">0</span>, <span class="dv">1</span>)</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>    ax.axis(<span class="st">"off"</span>)</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>ax_py.text(<span class="fl">0.5</span>, <span class="fl">0.93</span>, <span class="st">"Python list  [ ]"</span>, ha<span class="op">=</span><span class="st">"center"</span>, fontsize<span class="op">=</span><span class="dv">11</span>, fontweight<span class="op">=</span><span class="st">"bold"</span>, color<span class="op">=</span>BLUE)</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>ax_py.add_patch(</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>    FancyBboxPatch((<span class="fl">0.1</span>, <span class="fl">0.55</span>), <span class="fl">0.8</span>, <span class="fl">0.28</span>, boxstyle<span class="op">=</span><span class="st">"round,pad=0.02"</span>, facecolor<span class="op">=</span><span class="st">"#DBEAFE"</span>, edgecolor<span class="op">=</span>BLUE, lw<span class="op">=</span><span class="dv">2</span>)</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>ax_py.text(<span class="fl">0.5</span>, <span class="fl">0.69</span>, <span class="st">"list object</span><span class="ch">\n</span><span class="st">[ptr0, ptr1, ptr2, ptr3]"</span>, ha<span class="op">=</span><span class="st">"center"</span>, va<span class="op">=</span><span class="st">"center"</span>, fontsize<span class="op">=</span><span class="dv">9</span>, color<span class="op">=</span>BLUE)</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>positions <span class="op">=</span> [<span class="fl">0.05</span>, <span class="fl">0.30</span>, <span class="fl">0.55</span>, <span class="fl">0.78</span>]</span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>vals <span class="op">=</span> [<span class="dv">78</span>, <span class="dv">85</span>, <span class="dv">92</span>, <span class="dv">91</span>]</span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> k, x <span class="kw">in</span> <span class="bu">enumerate</span>(positions):</span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>    ax_py.add_patch(</span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>        FancyBboxPatch((x, <span class="fl">0.12</span>), <span class="fl">0.17</span>, <span class="fl">0.28</span>, boxstyle<span class="op">=</span><span class="st">"round,pad=0.02"</span>, facecolor<span class="op">=</span><span class="st">"#EFF6FF"</span>, edgecolor<span class="op">=</span>BLUE, lw<span class="op">=</span><span class="fl">1.5</span>)</span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>    ax_py.text(x <span class="op">+</span> <span class="fl">0.085</span>, <span class="fl">0.30</span>, <span class="st">"int"</span>, ha<span class="op">=</span><span class="st">"center"</span>, fontsize<span class="op">=</span><span class="dv">8</span>, color<span class="op">=</span>GRAY)</span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>    ax_py.text(x <span class="op">+</span> <span class="fl">0.085</span>, <span class="fl">0.20</span>, <span class="bu">str</span>(vals[k]), ha<span class="op">=</span><span class="st">"center"</span>, fontsize<span class="op">=</span><span class="dv">9</span>, fontweight<span class="op">=</span><span class="st">"bold"</span>, color<span class="op">=</span>BLUE)</span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>    ax_py.annotate(</span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a>        <span class="st">""</span>,</span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>        xy<span class="op">=</span>(x <span class="op">+</span> <span class="fl">0.085</span>, <span class="fl">0.40</span>),</span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a>        xytext<span class="op">=</span>(<span class="fl">0.15</span> <span class="op">+</span> k <span class="op">*</span> <span class="fl">0.2</span>, <span class="fl">0.55</span>),</span>
+<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a>        arrowprops<span class="op">=</span>{<span class="st">"arrowstyle"</span>: <span class="st">"-&gt;"</span>, <span class="st">"color"</span>: GRAY, <span class="st">"lw"</span>: <span class="fl">1.2</span>},</span>
+<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a>ax_py.text(</span>
+<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a>    <span class="fl">0.5</span>, <span class="fl">0.04</span>, <span class="st">"Each element: a Python object (28+ bytes)"</span>, ha<span class="op">=</span><span class="st">"center"</span>, fontsize<span class="op">=</span><span class="dv">8</span>, color<span class="op">=</span><span class="st">"#DC2626"</span>, style<span class="op">=</span><span class="st">"italic"</span></span>
+<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-40"><a href="#cb4-40" aria-hidden="true" tabindex="-1"></a>ax_np.text(<span class="fl">0.5</span>, <span class="fl">0.93</span>, <span class="st">"NumPy ndarray  [ ]"</span>, ha<span class="op">=</span><span class="st">"center"</span>, fontsize<span class="op">=</span><span class="dv">11</span>, fontweight<span class="op">=</span><span class="st">"bold"</span>, color<span class="op">=</span>GREEN)</span>
+<span id="cb4-41"><a href="#cb4-41" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> k <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">4</span>):</span>
+<span id="cb4-42"><a href="#cb4-42" aria-hidden="true" tabindex="-1"></a>    x <span class="op">=</span> <span class="fl">0.08</span> <span class="op">+</span> k <span class="op">*</span> <span class="fl">0.21</span></span>
+<span id="cb4-43"><a href="#cb4-43" aria-hidden="true" tabindex="-1"></a>    ax_np.add_patch(</span>
+<span id="cb4-44"><a href="#cb4-44" aria-hidden="true" tabindex="-1"></a>        FancyBboxPatch((x, <span class="fl">0.38</span>), <span class="fl">0.19</span>, <span class="fl">0.35</span>, boxstyle<span class="op">=</span><span class="st">"round,pad=0.01"</span>, facecolor<span class="op">=</span><span class="st">"#D1FAE5"</span>, edgecolor<span class="op">=</span>GREEN, lw<span class="op">=</span><span class="dv">2</span>)</span>
+<span id="cb4-45"><a href="#cb4-45" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb4-46"><a href="#cb4-46" aria-hidden="true" tabindex="-1"></a>    ax_np.text(x <span class="op">+</span> <span class="fl">0.095</span>, <span class="fl">0.555</span>, <span class="bu">str</span>(vals[k]), ha<span class="op">=</span><span class="st">"center"</span>, fontsize<span class="op">=</span><span class="dv">12</span>, fontweight<span class="op">=</span><span class="st">"bold"</span>, color<span class="op">=</span>GREEN)</span>
+<span id="cb4-47"><a href="#cb4-47" aria-hidden="true" tabindex="-1"></a>    ax_np.text(x <span class="op">+</span> <span class="fl">0.095</span>, <span class="fl">0.43</span>, <span class="st">"float64"</span>, ha<span class="op">=</span><span class="st">"center"</span>, fontsize<span class="op">=</span><span class="fl">7.5</span>, color<span class="op">=</span>GRAY)</span>
+<span id="cb4-48"><a href="#cb4-48" aria-hidden="true" tabindex="-1"></a>ax_np.annotate(<span class="st">""</span>, xy<span class="op">=</span>(<span class="fl">0.92</span>, <span class="fl">0.56</span>), xytext<span class="op">=</span>(<span class="fl">0.08</span>, <span class="fl">0.56</span>), arrowprops<span class="op">=</span>{<span class="st">"arrowstyle"</span>: <span class="st">"&lt;-&gt;"</span>, <span class="st">"color"</span>: GREEN, <span class="st">"lw"</span>: <span class="fl">1.5</span>})</span>
+<span id="cb4-49"><a href="#cb4-49" aria-hidden="true" tabindex="-1"></a>ax_np.text(<span class="fl">0.5</span>, <span class="fl">0.22</span>, <span class="st">"contiguous block in memory"</span>, ha<span class="op">=</span><span class="st">"center"</span>, fontsize<span class="op">=</span><span class="dv">9</span>, color<span class="op">=</span>GREEN, fontweight<span class="op">=</span><span class="st">"bold"</span>)</span>
+<span id="cb4-50"><a href="#cb4-50" aria-hidden="true" tabindex="-1"></a>ax_np.text(</span>
+<span id="cb4-51"><a href="#cb4-51" aria-hidden="true" tabindex="-1"></a>    <span class="fl">0.5</span>, <span class="fl">0.08</span>, <span class="st">"Each element: 8 bytes (float64), no overhead"</span>, ha<span class="op">=</span><span class="st">"center"</span>, fontsize<span class="op">=</span><span class="dv">8</span>, color<span class="op">=</span>GREEN, style<span class="op">=</span><span class="st">"italic"</span></span>
+<span id="cb4-52"><a href="#cb4-52" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-53"><a href="#cb4-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-54"><a href="#cb4-54" aria-hidden="true" tabindex="-1"></a>fig.suptitle(</span>
+<span id="cb4-55"><a href="#cb4-55" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Python list: scattered objects   vs   NumPy ndarray: contiguous typed block"</span>,</span>
+<span id="cb4-56"><a href="#cb4-56" aria-hidden="true" tabindex="-1"></a>    fontsize<span class="op">=</span><span class="fl">10.5</span>,</span>
+<span id="cb4-57"><a href="#cb4-57" aria-hidden="true" tabindex="-1"></a>    color<span class="op">=</span><span class="st">"#0F172A"</span>,</span>
+<span id="cb4-58"><a href="#cb4-58" aria-hidden="true" tabindex="-1"></a>    y<span class="op">=</span><span class="fl">1.02</span>,</span>
+<span id="cb4-59"><a href="#cb4-59" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-60"><a href="#cb4-60" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb4-61"><a href="#cb4-61" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="04a-numpy_files/figure-html/cell-3-output-1.png" width="854" height="318" class="figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<div style="background:#EAF3FA;border-left:5px solid #0369A1;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-info-circle-fill"></i> Key Concept: ndarray = dtype + shape + contiguous memory</span><br><br> A NumPy array is homogeneous (one <code>dtype</code> for every element) and has a fixed <code>shape</code>. Because elements sit next to each other in memory, NumPy can vectorise operations: apply one compiled loop to the whole array instead of looping in Python.<br><br>Lists are general-purpose containers; arrays are <b>numeric data structures</b>. Use a list for a heterogeneous bag of objects, an array for a column of numbers.</p>
+</div>
+<div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 1 - ndarray vs list arithmetic</span><br><br> <b>Goal:</b> Feel the difference between Python lists and NumPy arrays.<br><br><b>Steps:</b><br>1. Create <code>scores_list = [78, 85, 92, 91, 55]</code> and <code>scores_arr = np.array(scores_list)</code>.<br>2. Compute the z-score: <code>(scores_arr - scores_arr.mean()) / scores_arr.std()</code>.<br>3. Confirm the result has mean ~0 and std ~1 using <code>.mean()</code> and <code>.std()</code>.<br>4. Try <code>scores_list - scores_list[0]</code> and note the error.<br><br><b>Expected:</b> z-scores around <code>[-0.3, 0.3, 1.1, 0.9, -2.0]</code>.</p>
+</div>
+</section>
+<section id="creating-arrays" class="level2">
+<h2 class="anchored" data-anchor-id="creating-arrays">2. Creating Arrays</h2>
+<p>The most direct way to create an array is <code>np.array()</code> from a Python list (or list of lists, for 2D data). For larger or synthetic data, NumPy provides dedicated creation functions so you never have to type out values by hand.</p>
+<div style="background:#EFF6FF;border-left:5px solid #0369A1;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-key-fill"></i> Key Concept: Use default_rng, not the legacy random API</span><br><br> <code>rng = np.random.default_rng(42)</code> creates an independent, reproducible stream. The legacy <code>np.random.seed(42)</code> sets global state shared by every library in your process – a hidden coupling that makes results hard to reproduce. Prefer <code>default_rng</code> for all new code.</p>
+</div>
+<div id="12" class="cell" data-execution_count="3">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 1D array: one feature for five students</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>study_hours <span class="op">=</span> np.array([<span class="dv">12</span>, <span class="dv">5</span>, <span class="dv">18</span>, <span class="dv">9</span>, <span class="dv">22</span>])</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 2D array: rows = students, columns = features</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co"># columns: [study_hours, attendance_pct, prior_gpa]</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>features <span class="op">=</span> np.array(</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    [</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>        [<span class="dv">12</span>, <span class="dv">85</span>, <span class="fl">3.1</span>],</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>        [<span class="dv">5</span>, <span class="dv">60</span>, <span class="fl">2.4</span>],</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>        [<span class="dv">18</span>, <span class="dv">95</span>, <span class="fl">3.8</span>],</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>        [<span class="dv">9</span>, <span class="dv">70</span>, <span class="fl">2.9</span>],</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>        [<span class="dv">22</span>, <span class="dv">98</span>, <span class="fl">3.9</span>],</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>    ]</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(features)</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"shape: </span><span class="sc">{</span>features<span class="sc">.</span>shape<span class="sc">}</span><span class="ss">"</span>)  <span class="co"># (5 students, 3 features)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[[12.  85.   3.1]
+ [ 5.  60.   2.4]
+ [18.  95.   3.8]
+ [ 9.  70.   2.9]
+ [22.  98.   3.9]]
+shape: (5, 3)</code></pre>
+</div>
+</div>
+<p>For larger arrays, typing out every value is impractical. These functions build arrays from a rule instead of a literal list:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Function</th>
+<th>Produces</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>np.arange(start, stop, step)</code></td>
+<td>Evenly spaced integers/floats, like <code>range()</code></td>
+</tr>
+<tr class="even">
+<td><code>np.linspace(start, stop, n)</code></td>
+<td><code>n</code> evenly spaced floats, <strong>inclusive</strong> of both ends</td>
+</tr>
+<tr class="odd">
+<td><code>np.zeros(shape)</code> / <code>np.ones(shape)</code></td>
+<td>Array filled with <code>0.0</code> / <code>1.0</code></td>
+</tr>
+<tr class="even">
+<td><code>np.full(shape, value)</code></td>
+<td>Array filled with a constant</td>
+</tr>
+<tr class="odd">
+<td><code>np.eye(n)</code></td>
+<td><code>n x n</code> identity matrix</td>
+</tr>
+</tbody>
+</table>
+<div id="14" class="cell" data-execution_count="4">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"arange(0, 10)       :"</span>, np.arange(<span class="dv">0</span>, <span class="dv">10</span>))</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"arange(0, 10, 2)    :"</span>, np.arange(<span class="dv">0</span>, <span class="dv">10</span>, <span class="dv">2</span>))</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"linspace(0, 1, 5)   :"</span>, np.linspace(<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">5</span>))</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"zeros((2, 3))       :</span><span class="ch">\n</span><span class="st">"</span>, np.zeros((<span class="dv">2</span>, <span class="dv">3</span>)))</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"ones(3)             :"</span>, np.ones(<span class="dv">3</span>))</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"full((2, 2), 7)     :</span><span class="ch">\n</span><span class="st">"</span>, np.full((<span class="dv">2</span>, <span class="dv">2</span>), <span class="dv">7</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>arange(0, 10)       : [0 1 2 3 4 5 6 7 8 9]
+arange(0, 10, 2)    : [0 2 4 6 8]
+linspace(0, 1, 5)   : [0.   0.25 0.5  0.75 1.  ]
+zeros((2, 3))       :
+ [[0. 0. 0.]
+ [0. 0. 0.]]
+ones(3)             : [1. 1. 1.]
+full((2, 2), 7)     :
+ [[7 7]
+ [7 7]]</code></pre>
+</div>
+</div>
+<section id="random-data-with-a-generator" class="level3">
+<h3 class="anchored" data-anchor-id="random-data-with-a-generator">Random Data with a <code>Generator</code></h3>
+<p>Synthetic data and simulations need reproducible randomness. Modern NumPy (1.17+) recommends <code>np.random.default_rng(seed)</code> over the legacy <code>np.random.seed(...)</code>. A <code>Generator</code> object is self-contained, so two generators never interfere with each other’s state (unlike the old global <code>np.random.seed</code>, which silently affects every call anywhere in the program).</p>
+<div id="16" class="cell" data-execution_count="5">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>rng <span class="op">=</span> np.random.default_rng(seed<span class="op">=</span><span class="dv">42</span>)  <span class="co"># one independent, reproducible stream</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"uniform [0, 1)      :"</span>, rng.random(<span class="dv">3</span>))</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"normal(mean=0,std=1):"</span>, rng.normal(<span class="dv">0</span>, <span class="dv">1</span>, size<span class="op">=</span><span class="dv">3</span>))</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"integers [60, 100)  :"</span>, rng.integers(<span class="dv">60</span>, <span class="dv">100</span>, size<span class="op">=</span><span class="dv">5</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>uniform [0, 1)      : [0.77395605 0.43887844 0.85859792]
+normal(mean=0,std=1): [ 0.94056472 -1.95103519 -1.30217951]
+integers [60, 100)  : [89 90 88 91 80]</code></pre>
+</div>
+</div>
+<div style="background:#F5F3FF;border-left:5px solid #7C3AED;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#5B21B6;font-weight:bold"><i class="bi bi-lightbulb-fill"></i> Pro Tip: Prefer <code>default_rng</code> over <code>np.random.seed</code></span><br><br> <code>np.random.seed(42)</code> mutates a single <b>global</b> random state shared by your whole program. Any other code (or library) calling <code>np.random.*</code> shifts that shared state and breaks your reproducibility. <code>rng = np.random.default_rng(42)</code> gives you an isolated generator: pass it around explicitly, and your results stay reproducible no matter what else runs.</p>
+</div>
+<div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 2 - Build a Synthetic Student Dataset</span><br><br></p>
+<b>Goal:</b> Using <code>rng = np.random.default_rng(7)</code>, generate a feature matrix <code>X</code> of shape <code>(50, 3)</code> for 50 students with columns:<br><br>
+<ul>
+<li>
+<code>study_hours</code>: <code>rng.uniform(0, 25, size=50)</code>
+</li>
+<li>
+<code>attendance_pct</code>: <code>rng.uniform(50, 100, size=50)</code>
+</li>
+<li>
+<code>prior_gpa</code>: <code>rng.uniform(2.0, 4.0, size=50)</code>
+</li>
+</ul>
+Combine the three 1D arrays into one <code>(50, 3)</code> array with <code>np.column_stack</code>.
+<pre style="background:#FCE8DA;padding:10px;border-radius:4px;font-size:0.9em">X.shape  # -&gt; (50, 3)
+X[0]     # -&gt; array([study_hours_0, attendance_pct_0, prior_gpa_0])</pre>
+<p><b>Hint:</b> <code>np.column_stack([a, b, c])</code> stacks 1D arrays as columns of a 2D array.</p>
+</div>
+<div id="19" class="cell" data-execution_count="6">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>rng <span class="op">=</span> np.random.default_rng(<span class="dv">7</span>)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>study_hours <span class="op">=</span> rng.uniform(<span class="dv">0</span>, <span class="dv">25</span>, size<span class="op">=</span><span class="dv">50</span>)</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>attendance_pct <span class="op">=</span> rng.uniform(<span class="dv">50</span>, <span class="dv">100</span>, size<span class="op">=</span><span class="dv">50</span>)</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>prior_gpa <span class="op">=</span> rng.uniform(<span class="fl">2.0</span>, <span class="fl">4.0</span>, size<span class="op">=</span><span class="dv">50</span>)</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> ...  <span class="co"># </span><span class="al">TODO</span><span class="co">: combine the three arrays into one (50, 3) feature matrix</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="co"># print(f"X.shape : {X.shape}")</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="co"># print(f"X[0]    : {X[0]}")</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+</section>
+<section id="shape-size-and-dtype" class="level2">
+<h2 class="anchored" data-anchor-id="shape-size-and-dtype">3. Shape, Size, and dtype</h2>
+<p>Every array carries metadata you should check before trusting a computation: <code>shape</code> (size along each dimension), <code>ndim</code> (number of dimensions), <code>size</code> (total element count), and <code>dtype</code> (the single data type of every element).</p>
+<div style="background:#EFF6FF;border-left:5px solid #0369A1;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-key-fill"></i> Key Concept: Check .shape and .dtype before any computation</span><br><br> Shape mismatches and dtype surprises are the most common silent NumPy bugs. A <code>(5, 3)</code> array minus a <code>(3, 5)</code> array either errors or broadcasts in a way you did not intend. Print <code>arr.shape, arr.dtype</code> whenever a result looks wrong.</p>
+</div>
+<div id="22" class="cell" data-execution_count="7">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> np.array(</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    [</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>        [<span class="fl">12.0</span>, <span class="fl">85.0</span>, <span class="fl">3.1</span>],</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>        [<span class="fl">5.0</span>, <span class="fl">60.0</span>, <span class="fl">2.4</span>],</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>        [<span class="fl">18.0</span>, <span class="fl">95.0</span>, <span class="fl">3.8</span>],</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>        [<span class="fl">9.0</span>, <span class="fl">70.0</span>, <span class="fl">2.9</span>],</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    ]</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"shape : </span><span class="sc">{</span>X<span class="sc">.</span>shape<span class="sc">}</span><span class="ss">"</span>)  <span class="co"># (rows, columns)</span></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"ndim  : </span><span class="sc">{</span>X<span class="sc">.</span>ndim<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"size  : </span><span class="sc">{</span>X<span class="sc">.</span>size<span class="sc">}</span><span class="ss">"</span>)  <span class="co"># rows * columns</span></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"dtype : </span><span class="sc">{</span>X<span class="sc">.</span>dtype<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>shape : (4, 3)
+ndim  : 2
+size  : 12
+dtype : float64</code></pre>
+</div>
+</div>
+<div style="background:#FEF2F2;border-left:5px solid #DC2626;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#991B1B;font-weight:bold"><i class="bi bi-bug-fill"></i> Common Mistake: Mixed int/float input silently upcasts</span><br><br> <code>np.array([1, 2, 3.5])</code> produces a <code>float64</code> array, not a mix of <code>int</code> and <code>float</code>. NumPy must pick <b>one</b> dtype for the whole array and silently widens every element to fit. This is usually harmless, but <code>np.array([1, 2, 3], dtype=np.int32) / 2</code> truncating, or an unexpected <code>int8</code> overflowing past 127, are the same root cause: always check <code>.dtype</code> when results look wrong.</p>
+</div>
+<section id="reshaping" class="level3">
+<h3 class="anchored" data-anchor-id="reshaping">Reshaping</h3>
+<p><code>reshape()</code> returns the <strong>same data</strong> viewed with a different shape. It does not copy or reorder values, so the total element count (<code>size</code>) must stay the same. <code>-1</code> tells NumPy “infer this dimension from the others”:</p>
+<div id="25" class="cell" data-execution_count="8">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> np.arange(<span class="dv">12</span>)</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"x          : </span><span class="sc">{</span>x<span class="sc">}</span><span class="ss">  shape=</span><span class="sc">{</span>x<span class="sc">.</span>shape<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>x_grid <span class="op">=</span> x.reshape(<span class="dv">3</span>, <span class="dv">4</span>)</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"reshape(3,4):</span><span class="ch">\n</span><span class="sc">{</span>x_grid<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="co"># -1 means "figure this dimension out for me"</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>x_col <span class="op">=</span> x.reshape(<span class="op">-</span><span class="dv">1</span>, <span class="dv">1</span>)  <span class="co"># turn a 1D array into a single column</span></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"reshape(-1,1) shape: </span><span class="sc">{</span>x_col<span class="sc">.</span>shape<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>x_flat <span class="op">=</span> x_grid.flatten()  <span class="co"># back to 1D - always returns a COPY</span></span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"flatten()   : </span><span class="sc">{</span>x_flat<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>x          : [ 0  1  2  3  4  5  6  7  8  9 10 11]  shape=(12,)
+reshape(3,4):
+[[ 0  1  2  3]
+ [ 4  5  6  7]
+ [ 8  9 10 11]]
+reshape(-1,1) shape: (12, 1)
+flatten()   : [ 0  1  2  3  4  5  6  7  8  9 10 11]</code></pre>
+</div>
+</div>
+<div style="background:#FEF2F2;border-left:5px solid #DC2626;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#991B1B;font-weight:bold"><i class="bi bi-bug-fill"></i> Common Mistake: <code>reshape()</code> returns a view, <code>flatten()</code> returns a copy</span><br><br> Mutating the result of <code>.reshape()</code> mutates the <b>original</b> array too. They share the same underlying memory. <code>.flatten()</code> always copies, so mutating it is safe. This distinction (view vs.&nbsp;copy) comes up constantly in NumPy; Sec. 11 covers it in more depth.</p>
+</div>
+<div id="27" class="cell" data-execution_count="9">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>original <span class="op">=</span> np.arange(<span class="dv">6</span>)</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>view <span class="op">=</span> original.reshape(<span class="dv">2</span>, <span class="dv">3</span>)</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>view[<span class="dv">0</span>, <span class="dv">0</span>] <span class="op">=</span> <span class="dv">99</span>  <span class="co"># mutating the reshaped VIEW...</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"view     :</span><span class="ch">\n</span><span class="sc">{</span>view<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"original : </span><span class="sc">{</span>original<span class="sc">}</span><span class="ss">"</span>)  <span class="co"># ...also changed the original!</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>view     :
+[[99  1  2]
+ [ 3  4  5]]
+original : [99  1  2  3  4  5]</code></pre>
+</div>
+</div>
+</section>
+<section id="combining-arrays-column_stack-hstack-vstack" class="level3">
+<h3 class="anchored" data-anchor-id="combining-arrays-column_stack-hstack-vstack">Combining Arrays: <code>column_stack</code>, <code>hstack</code>, <code>vstack</code></h3>
+<p>Feature engineering often means assembling separate 1D feature vectors into one 2D matrix, or stacking two matrices together. Use the right function for the shape change you want:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Function</th>
+<th>Effect</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>np.column_stack([a, b, ...])</code></td>
+<td>1D arrays -&gt; columns of a 2D array</td>
+</tr>
+<tr class="even">
+<td><code>np.hstack([a, b])</code></td>
+<td>Join side-by-side (same number of rows)</td>
+</tr>
+<tr class="odd">
+<td><code>np.vstack([a, b])</code></td>
+<td>Stack on top of each other (same number of columns)</td>
+</tr>
+<tr class="even">
+<td><code>np.concatenate([a, b], axis=...)</code></td>
+<td>General join along a chosen axis</td>
+</tr>
+</tbody>
+</table>
+<div id="29" class="cell" data-execution_count="10">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>gpa <span class="op">=</span> np.array([<span class="fl">3.1</span>, <span class="fl">2.4</span>, <span class="fl">3.8</span>, <span class="fl">2.9</span>])</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>attendance <span class="op">=</span> np.array([<span class="dv">85</span>, <span class="dv">60</span>, <span class="dv">95</span>, <span class="dv">70</span>])</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Two 1D feature vectors -&gt; one (4, 2) matrix</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>combined <span class="op">=</span> np.column_stack([gpa, attendance])</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"column_stack:</span><span class="ch">\n</span><span class="sc">{</span>combined<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Two (4, 2) batches of students -&gt; one (8, 2) matrix</span></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>more_students <span class="op">=</span> np.array([[<span class="fl">3.5</span>, <span class="dv">90</span>], [<span class="fl">2.0</span>, <span class="dv">55</span>]])</span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>all_students <span class="op">=</span> np.vstack([combined, more_students])</span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"vstack shape: </span><span class="sc">{</span>all_students<span class="sc">.</span>shape<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>column_stack:
+[[ 3.1 85. ]
+ [ 2.4 60. ]
+ [ 3.8 95. ]
+ [ 2.9 70. ]]
+vstack shape: (6, 2)</code></pre>
+</div>
+</div>
+<div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 3 - Build a feature matrix</span><br><br> <b>Goal:</b> Stack 1D arrays into a 2D feature matrix and inspect its metadata.<br><br><code>study_hours = np.array([12, 5, 18, 9, 22])</code><br><code>attendance = np.array([85, 60, 95, 70, 98])</code><br><code>gpa = np.array([3.1, 2.4, 3.8, 2.9, 3.9])</code><br><br><b>Steps:</b><br>1. Stack them into a <code>(5, 3)</code> matrix with <code>np.column_stack</code>.<br>2. Print <code>.shape</code> and <code>.dtype</code>.<br>3. Reshape to <code>(3, 5)</code> and confirm shapes swapped.<br><br><b>Expected:</b> original shape <code>(5, 3)</code>, reshaped <code>(3, 5)</code>.</p>
+</div>
+</section>
+</section>
+<section id="indexing-and-slicing" class="level2">
+<h2 class="anchored" data-anchor-id="indexing-and-slicing">4. Indexing and Slicing</h2>
+<p>NumPy indexing extends Python’s list slicing to multiple dimensions. For a 2D array, the convention is <code>array[rows, columns]</code>, and negative indices still count from the end.</p>
+<div style="background:#EFF6FF;border-left:5px solid #0369A1;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-key-fill"></i> Key Concept: Basic slices return views, not copies</span><br><br> Writing <code>sub = X[:2]</code> does not copy data – <code>sub</code> shares memory with <code>X</code>. Modifying <code>sub[0, 0] = 99</code> also changes <code>X[0, 0]</code>. Call <code>.copy()</code> when you need an independent array.</p>
+</div>
+<div id="33" class="cell" data-execution_count="11">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>scores <span class="op">=</span> np.array([<span class="dv">62</span>, <span class="dv">78</span>, <span class="dv">85</span>, <span class="dv">91</span>, <span class="dv">55</span>, <span class="dv">73</span>, <span class="dv">88</span>, <span class="dv">95</span>, <span class="dv">67</span>, <span class="dv">80</span>])</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"first three   : </span><span class="sc">{</span>scores[:<span class="dv">3</span>]<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"last three    : </span><span class="sc">{</span>scores[<span class="op">-</span><span class="dv">3</span>:]<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"between 3 &amp; 7 : </span><span class="sc">{</span>scores[<span class="dv">3</span>:<span class="dv">7</span>]<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"every other   : </span><span class="sc">{</span>scores[::<span class="dv">2</span>]<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"reversed      : </span><span class="sc">{</span>scores[::<span class="op">-</span><span class="dv">1</span>]<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>first three   : [62 78 85]
+last three    : [95 67 80]
+between 3 &amp; 7 : [91 55 73 88]
+every other   : [62 85 55 88 67]
+reversed      : [80 67 95 88 73 55 91 85 78 62]</code></pre>
+</div>
+</div>
+<div id="34" class="cell" data-execution_count="12">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> np.array(</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>    [</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>        [<span class="dv">12</span>, <span class="dv">85</span>, <span class="fl">3.1</span>],</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>        [<span class="dv">5</span>, <span class="dv">60</span>, <span class="fl">2.4</span>],</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>        [<span class="dv">18</span>, <span class="dv">95</span>, <span class="fl">3.8</span>],</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>        [<span class="dv">9</span>, <span class="dv">70</span>, <span class="fl">2.9</span>],</span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>        [<span class="dv">22</span>, <span class="dv">98</span>, <span class="fl">3.9</span>],</span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>    ]</span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"row 0              : </span><span class="sc">{</span>X[<span class="dv">0</span>]<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"column 1 (all rows): </span><span class="sc">{</span>X[:, <span class="dv">1</span>]<span class="sc">}</span><span class="ss">"</span>)  <span class="co"># every row, attendance column</span></span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"rows 1-3, col 0 &amp; 2: </span><span class="ch">\n</span><span class="sc">{</span>X[<span class="dv">1</span>:<span class="dv">4</span>, [<span class="dv">0</span>, <span class="dv">2</span>]]<span class="sc">}</span><span class="ss">"</span>)  <span class="co"># fancy column indexing</span></span>
+<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"single cell [2, 1] : </span><span class="sc">{</span>X[<span class="dv">2</span>, <span class="dv">1</span>]<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>row 0              : [12.  85.   3.1]
+column 1 (all rows): [85. 60. 95. 70. 98.]
+rows 1-3, col 0 &amp; 2: 
+[[ 5.   2.4]
+ [18.   3.8]
+ [ 9.   2.9]]
+single cell [2, 1] : 95.0</code></pre>
+</div>
+</div>
+<div style="background:#FEF2F2;border-left:5px solid #DC2626;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#991B1B;font-weight:bold"><i class="bi bi-bug-fill"></i> Common Mistake: Basic slices are views; fancy/boolean indexing copies</span><br><br> <code>X[:, 1]</code> (a slice) returns a <b>view</b>: mutating it mutates <code>X</code>. <code>X[1:4, [0, 2]]</code> (a list of indices, known as “fancy indexing”) always returns a <b>copy</b>. If you need an independent array from a slice, call <code>.copy()</code> explicitly: <code>col = X[:, 1].copy()</code>.</p>
+</div>
+<div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 4 - Select Top Performers</span><br><br></p>
+<b>Goal:</b> Given the <code>X</code> feature matrix above (columns: study_hours, attendance_pct, prior_gpa), use slicing to print:<br><br>
+<ol>
+<li>
+The <code>prior_gpa</code> column (all rows)
+</li>
+<li>
+The first two rows, all columns
+</li>
+<li>
+The <code>study_hours</code> and <code>prior_gpa</code> columns (skip attendance) for every row
+</li>
+</ol>
+<p><b>Hint:</b> For (3), use fancy column indexing: <code>X[:, [0, 2]]</code>.</p>
+</div>
+<div id="37" class="cell" data-execution_count="13">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> np.array(</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>    [</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>        [<span class="dv">12</span>, <span class="dv">85</span>, <span class="fl">3.1</span>],</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>        [<span class="dv">5</span>, <span class="dv">60</span>, <span class="fl">2.4</span>],</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>        [<span class="dv">18</span>, <span class="dv">95</span>, <span class="fl">3.8</span>],</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>        [<span class="dv">9</span>, <span class="dv">70</span>, <span class="fl">2.9</span>],</span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>        [<span class="dv">22</span>, <span class="dv">98</span>, <span class="fl">3.9</span>],</span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>    ]</span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>gpa_column <span class="op">=</span> ...  <span class="co"># </span><span class="al">TODO</span></span>
+<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a>first_two_rows <span class="op">=</span> ...  <span class="co"># </span><span class="al">TODO</span></span>
+<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a>hours_and_gpa <span class="op">=</span> ...  <span class="co"># </span><span class="al">TODO</span></span>
+<span id="cb24-14"><a href="#cb24-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-15"><a href="#cb24-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"gpa_column     : </span><span class="sc">{</span>gpa_column<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb24-16"><a href="#cb24-16" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"first_two_rows :</span><span class="ch">\n</span><span class="sc">{</span>first_two_rows<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb24-17"><a href="#cb24-17" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"hours_and_gpa  :</span><span class="ch">\n</span><span class="sc">{</span>hours_and_gpa<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>gpa_column     : Ellipsis
+first_two_rows :
+Ellipsis
+hours_and_gpa  :
+Ellipsis</code></pre>
+</div>
+</div>
+</section>
+<section id="boolean-masking-vectorised-conditionals" class="level2">
+<h2 class="anchored" data-anchor-id="boolean-masking-vectorised-conditionals">5. Boolean Masking &amp; Vectorised Conditionals</h2>
+<p>Comparing an array to a value produces a <strong>boolean array</strong> of the same shape: a “mask.” Using that mask to index the original array keeps only the <code>True</code> positions. This replaces <code>if</code>/<code>for</code> filtering loops entirely.</p>
+<div style="background:#EFF6FF;border-left:5px solid #0369A1;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-key-fill"></i> Key Concept: Use &amp; and | for array logic, not and / or</span><br><br> <code>scores &gt;= 70 and attendance &gt;= 80</code> raises <code>ValueError</code> on arrays. Write <code>(scores &gt;= 70) &amp; (attendance &gt;= 80)</code>. The parentheses matter because <code>&amp;</code> binds tighter than <code>&gt;=</code>.</p>
+</div>
+<div id="40" class="cell" data-execution_count="14">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>scores <span class="op">=</span> np.array([<span class="dv">62</span>, <span class="dv">78</span>, <span class="dv">85</span>, <span class="dv">91</span>, <span class="dv">55</span>, <span class="dv">73</span>, <span class="dv">88</span>, <span class="dv">95</span>, <span class="dv">67</span>, <span class="dv">80</span>])</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>passing_mask <span class="op">=</span> scores <span class="op">&gt;=</span> <span class="dv">70</span></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"mask     : </span><span class="sc">{</span>passing_mask<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"passing  : </span><span class="sc">{</span>scores[passing_mask]<span class="sc">}</span><span class="ss">"</span>)  <span class="co"># boolean indexing: keeps True positions</span></span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"n passing: </span><span class="sc">{</span>passing_mask<span class="sc">.</span><span class="bu">sum</span>()<span class="sc">}</span><span class="ss">"</span>)  <span class="co"># True counts as 1, False as 0</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>mask     : [False  True  True  True False  True  True  True False  True]
+passing  : [78 85 91 73 88 95 80]
+n passing: 7</code></pre>
+</div>
+</div>
+<p>Combine conditions with <code>&amp;</code> (and) / <code>|</code> (or), <strong>not</strong> Python’s <code>and</code>/<code>or</code>, which only work on single booleans, not arrays. Each side needs its own parentheses because <code>&amp;</code>/<code>|</code> bind tighter than comparison operators:</p>
+<div id="42" class="cell" data-execution_count="15">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>attendance <span class="op">=</span> np.array([<span class="dv">85</span>, <span class="dv">60</span>, <span class="dv">95</span>, <span class="dv">70</span>, <span class="dv">98</span>, <span class="dv">45</span>, <span class="dv">88</span>, <span class="dv">92</span>, <span class="dv">55</span>, <span class="dv">80</span>])</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>scores <span class="op">=</span> np.array([<span class="dv">62</span>, <span class="dv">78</span>, <span class="dv">85</span>, <span class="dv">91</span>, <span class="dv">55</span>, <span class="dv">73</span>, <span class="dv">88</span>, <span class="dv">95</span>, <span class="dv">67</span>, <span class="dv">80</span>])</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Parentheses are required: &amp; binds tighter than &gt;= without them</span></span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>at_risk <span class="op">=</span> (scores <span class="op">&lt;</span> <span class="dv">70</span>) <span class="op">&amp;</span> (attendance <span class="op">&lt;</span> <span class="dv">70</span>)</span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"at_risk mask : </span><span class="sc">{</span>at_risk<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"n at risk    : </span><span class="sc">{</span>at_risk<span class="sc">.</span><span class="bu">sum</span>()<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>at_risk mask : [False False False False False False False False  True False]
+n at risk    : 1</code></pre>
+</div>
+</div>
+<p><code>np.where(condition, if_true, if_false)</code> builds a new array by choosing between two values element-wise: the vectorised equivalent of a ternary expression inside a loop:</p>
+<div id="44" class="cell" data-execution_count="16">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>labels <span class="op">=</span> np.where(scores <span class="op">&gt;=</span> <span class="dv">70</span>, <span class="st">"pass"</span>, <span class="st">"fail"</span>)</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(labels)</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a><span class="co"># np.select handles more than two outcomes</span></span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>grade <span class="op">=</span> np.select(</span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>    [scores <span class="op">&gt;=</span> <span class="dv">90</span>, scores <span class="op">&gt;=</span> <span class="dv">80</span>, scores <span class="op">&gt;=</span> <span class="dv">70</span>, scores <span class="op">&gt;=</span> <span class="dv">60</span>],</span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>    [<span class="st">"A"</span>, <span class="st">"B"</span>, <span class="st">"C"</span>, <span class="st">"D"</span>],</span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>    default<span class="op">=</span><span class="st">"F"</span>,</span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(grade)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>['fail' 'pass' 'pass' 'pass' 'fail' 'pass' 'pass' 'pass' 'fail' 'pass']
+['D' 'C' 'B' 'A' 'F' 'C' 'B' 'A' 'D' 'B']</code></pre>
+</div>
+</div>
+<div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 5 - Flag Students Needing Intervention</span><br><br></p>
+<b>Goal:</b> Given <code>scores</code> and <code>attendance</code> arrays, build a boolean mask <code>needs_help</code> that flags students with <code>score &lt; 70</code> <b>or</b> <code>attendance &lt; 60</code>, then print how many students were flagged and their scores.
+<pre style="background:#FCE8DA;padding:10px;border-radius:4px;font-size:0.9em">scores     = [62, 78, 85, 91, 55, 73, 88, 95, 67, 80]
+attendance = [85, 60, 95, 70, 98, 45, 88, 92, 55, 80]
+# needs_help -&gt; True at indices 0, 4, 5, 8  (score&lt;70 OR attendance&lt;60)</pre>
+</div>
+<div id="46" class="cell" data-execution_count="17">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>scores <span class="op">=</span> np.array([<span class="dv">62</span>, <span class="dv">78</span>, <span class="dv">85</span>, <span class="dv">91</span>, <span class="dv">55</span>, <span class="dv">73</span>, <span class="dv">88</span>, <span class="dv">95</span>, <span class="dv">67</span>, <span class="dv">80</span>])</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>attendance <span class="op">=</span> np.array([<span class="dv">85</span>, <span class="dv">60</span>, <span class="dv">95</span>, <span class="dv">70</span>, <span class="dv">98</span>, <span class="dv">45</span>, <span class="dv">88</span>, <span class="dv">92</span>, <span class="dv">55</span>, <span class="dv">80</span>])</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>needs_help <span class="op">=</span> ...  <span class="co"># </span><span class="al">TODO</span><span class="co">: boolean mask, score &lt; 70 OR attendance &lt; 60</span></span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"needs_help        : </span><span class="sc">{</span>needs_help<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a><span class="co"># print(f"n flagged         : {needs_help.sum()}")</span></span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a><span class="co"># print(f"flagged scores    : {scores[needs_help]}")</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>needs_help        : Ellipsis</code></pre>
+</div>
+</div>
+</section>
+<section id="aggregations-along-an-axis" class="level2">
+<h2 class="anchored" data-anchor-id="aggregations-along-an-axis">6. Aggregations Along an Axis</h2>
+<p><code>mean()</code>, <code>sum()</code>, <code>std()</code>, <code>min()</code>, <code>max()</code> collapse an array to a single number by default. On a 2D matrix, the <code>axis</code> argument controls <strong>which dimension gets collapsed</strong> : this is the single most common source of “right function, wrong number” bugs in DS/ML code, so get the convention straight now:</p>
+<ul>
+<li><strong><code>axis=0</code></strong> collapses <strong>rows</strong> -&gt; one result <strong>per column</strong> (per feature)</li>
+<li><strong><code>axis=1</code></strong> collapses <strong>columns</strong> -&gt; one result <strong>per row</strong> (per sample)</li>
+</ul>
+<div style="background:#EFF6FF;border-left:5px solid #0369A1;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-key-fill"></i> Key Concept: axis=0 collapses rows, axis=1 collapses columns</span><br><br> <code>X.mean(axis=0)</code> gives one value per column – per-feature statistics. <code>X.mean(axis=1)</code> gives one value per row – per-sample statistics. Omitting <code>axis</code> collapses everything to a single scalar.</p>
+</div>
+<div id="49" class="cell" data-execution_count="18">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> np.array(</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>    [</span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>        [<span class="fl">12.0</span>, <span class="fl">85.0</span>, <span class="fl">3.1</span>],</span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>        [<span class="fl">5.0</span>, <span class="fl">60.0</span>, <span class="fl">2.4</span>],</span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>        [<span class="fl">18.0</span>, <span class="fl">95.0</span>, <span class="fl">3.8</span>],</span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>        [<span class="fl">9.0</span>, <span class="fl">70.0</span>, <span class="fl">2.9</span>],</span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>        [<span class="fl">22.0</span>, <span class="fl">98.0</span>, <span class="fl">3.9</span>],</span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>    ]</span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-11"><a href="#cb34-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"overall mean        : </span><span class="sc">{</span>X<span class="sc">.</span>mean()<span class="sc">:.2f}</span><span class="ss">"</span>)  <span class="co"># one number, all 15 values</span></span>
+<span id="cb34-12"><a href="#cb34-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"per-feature mean    : </span><span class="sc">{</span>X<span class="sc">.</span>mean(axis<span class="op">=</span><span class="dv">0</span>)<span class="sc">}</span><span class="ss">"</span>)  <span class="co"># shape (3,): one per column</span></span>
+<span id="cb34-13"><a href="#cb34-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"per-student mean    : </span><span class="sc">{</span>X<span class="sc">.</span>mean(axis<span class="op">=</span><span class="dv">1</span>)<span class="sc">}</span><span class="ss">"</span>)  <span class="co"># shape (5,): one per row</span></span>
+<span id="cb34-14"><a href="#cb34-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"per-feature std     : </span><span class="sc">{</span>X<span class="sc">.</span>std(axis<span class="op">=</span><span class="dv">0</span>)<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb34-15"><a href="#cb34-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"per-feature min/max : </span><span class="sc">{</span>X<span class="sc">.</span><span class="bu">min</span>(axis<span class="op">=</span><span class="dv">0</span>)<span class="sc">}</span><span class="ss"> / </span><span class="sc">{</span>X<span class="sc">.</span><span class="bu">max</span>(axis<span class="op">=</span><span class="dv">0</span>)<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>overall mean        : 32.67
+per-feature mean    : [13.2  81.6   3.22]
+per-student mean    : [33.36666667 22.46666667 38.93333333 27.3        41.3       ]
+per-feature std     : [ 6.11228272 14.56845908  0.56356011]
+per-feature min/max : [ 5.  60.   2.4] / [22.  98.   3.9]</code></pre>
+</div>
+</div>
+<div style="background:#F5F3FF;border-left:5px solid #7C3AED;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#5B21B6;font-weight:bold"><i class="bi bi-lightbulb-fill"></i> Pro Tip: Say the axis name out loud</span><br><br> “<code>axis=0</code>” is easy to misremember. Read it as: “collapse <b>axis 0</b> (the row axis): what’s left is one value per column.” If you want one statistic per <i>feature</i> (the usual case before normalising a feature matrix), that is always <code>axis=0</code>.</p>
+</div>
+<div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 6 - Per-feature and per-sample statistics</span><br><br> <b>Goal:</b> Compute aggregations along both axes.<br><br>Using the feature matrix <code>X</code> from Activity 3:<br>1. Compute the mean and std of each feature (<code>axis=0</code>).<br>2. Compute each student’s mean score across all features (<code>axis=1</code>).<br>3. Z-score normalise the entire matrix with one expression:<br><code>X_z = (X - X.mean(axis=0)) / X.std(axis=0)</code><br>4. Confirm <code>X_z.mean(axis=0)</code> is all zeros (within floating-point tolerance).</p>
+</div>
+<div style="background:#EFF6FF;border-left:5px solid #0369A1;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-arrow-right-circle-fill"></i> What’s Next</span><br><br> Part 4a covered the NumPy fundamentals: creating arrays, shapes, indexing, masking, and aggregations. <b>Part 4b</b> (<code>04b-numpy.ipynb</code>) builds on these with the four topics that make NumPy genuinely powerful: broadcasting, vectorisation, linear algebra, and common gotchas.</p>
+</div>
+</section>
+<section id="capstone-exercises" class="level2">
+<h2 class="anchored" data-anchor-id="capstone-exercises">12. Capstone Exercises</h2>
+<p>Apply everything from this notebook together. Each exercise is self-contained.</p>
+<div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 7 - Build, Normalise, and Predict</span><br><br></p>
+<b>Goal:</b> Using the <code>students</code> dataset below:<br><br>
+<ol>
+<li>
+Build a <code>(6, 3)</code> feature matrix <code>X</code> with <code>np.column_stack</code>
+</li>
+<li>
+Z-score normalise <code>X</code> (Sec. 7)
+</li>
+<li>
+Predict <code>exam_score</code> with the given <code>weights</code>/<code>bias</code> using <code>@</code> (Sec. 9), applied to the <b>normalised</b> features
+</li>
+<li>
+Compute the RMSE against <code>actual_scores</code> using <code>np.linalg.norm</code>
+</li>
+</ol>
+</div>
+<div id="55" class="cell" data-execution_count="19">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>study_hours <span class="op">=</span> np.array([<span class="dv">12</span>, <span class="dv">5</span>, <span class="dv">18</span>, <span class="dv">9</span>, <span class="dv">22</span>, <span class="dv">14</span>])</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>attendance_pct <span class="op">=</span> np.array([<span class="dv">85</span>, <span class="dv">60</span>, <span class="dv">95</span>, <span class="dv">70</span>, <span class="dv">98</span>, <span class="dv">80</span>])</span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>prior_gpa <span class="op">=</span> np.array([<span class="fl">3.1</span>, <span class="fl">2.4</span>, <span class="fl">3.8</span>, <span class="fl">2.9</span>, <span class="fl">3.9</span>, <span class="fl">3.3</span>])</span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>actual_scores <span class="op">=</span> np.array([<span class="fl">88.0</span>, <span class="fl">65.0</span>, <span class="fl">95.0</span>, <span class="fl">78.0</span>, <span class="fl">99.0</span>, <span class="fl">84.0</span>])</span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>weights <span class="op">=</span> np.array([<span class="fl">0.8</span>, <span class="fl">0.5</span>, <span class="fl">6.0</span>])</span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>bias <span class="op">=</span> <span class="fl">55.0</span></span>
+<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: 1) build X, 2) normalise it, 3) predict, 4) compute RMSE</span></span>
+<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> ...</span>
+<span id="cb36-11"><a href="#cb36-11" aria-hidden="true" tabindex="-1"></a>X_normalised <span class="op">=</span> ...</span>
+<span id="cb36-12"><a href="#cb36-12" aria-hidden="true" tabindex="-1"></a>predicted <span class="op">=</span> ...</span>
+<span id="cb36-13"><a href="#cb36-13" aria-hidden="true" tabindex="-1"></a>rmse <span class="op">=</span> ...</span>
+<span id="cb36-14"><a href="#cb36-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-15"><a href="#cb36-15" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> rmse <span class="kw">is</span> <span class="kw">not</span> ...:</span>
+<span id="cb36-16"><a href="#cb36-16" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"predicted: </span><span class="sc">{</span>predicted<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb36-17"><a href="#cb36-17" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"RMSE     : </span><span class="sc">{</span>rmse<span class="sc">:.2f}</span><span class="ss">"</span>)</span>
+<span id="cb36-18"><a href="#cb36-18" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span>:</span>
+<span id="cb36-19"><a href="#cb36-19" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"(complete the TODO above to see output)"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>(complete the TODO above to see output)</code></pre>
+</div>
+</div>
+</section>
+<section id="further-reading" class="level2">
+<h2 class="anchored" data-anchor-id="further-reading">Further Reading</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Resource</th>
+<th>Why it matters</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Harris, C.R. et al.&nbsp;(2020). <a href="https://doi.org/10.1038/s41586-020-2649-2">Array programming with NumPy</a>. <em>Nature</em> 585, 357–362.</td>
+<td>The primary citation for NumPy; the paper explains the design decisions behind broadcasting and ufuncs</td>
+</tr>
+<tr class="even">
+<td>VanderPlas, J. (2016). <em>Python Data Science Handbook</em>, Ch. 2. O’Reilly.</td>
+<td>Free online: the most readable treatment of fancy indexing, broadcasting, and structured arrays</td>
+</tr>
+<tr class="odd">
+<td><a href="https://numpy.org/doc/stable/user/basics.broadcasting.html">NumPy documentation: Broadcasting</a></td>
+<td>Official broadcasting rules with diagrams; bookmark for the next time the shapes don’t align</td>
+</tr>
+<tr class="even">
+<td><a href="https://numpy.org/doc/stable/user/basics.indexing.html">NumPy documentation: Indexing</a></td>
+<td>Covers basic, advanced, and boolean indexing in one place</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="summary" class="level2">
+<h2 class="anchored" data-anchor-id="summary">Summary</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Concept</th>
+<th>Key rule</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>ndarray</code></td>
+<td>One dtype, contiguous memory, fast because it skips the Python interpreter</td>
+</tr>
+<tr class="even">
+<td>Creation</td>
+<td><code>np.array</code>, <code>arange</code>, <code>linspace</code>, <code>zeros</code>/<code>ones</code>; <code>np.random.default_rng(seed)</code> for reproducible random data</td>
+</tr>
+<tr class="odd">
+<td><code>shape</code>/<code>dtype</code></td>
+<td>Always check before trusting a result; mixed-type input silently upcasts</td>
+</tr>
+<tr class="even">
+<td><code>reshape</code></td>
+<td>Returns a <strong>view</strong>, same data, same <code>size</code>, different shape</td>
+</tr>
+<tr class="odd">
+<td><code>flatten</code></td>
+<td>Always returns a <strong>copy</strong></td>
+</tr>
+<tr class="even">
+<td>Slicing</td>
+<td>Basic slices (<code>X[:, 0]</code>) are views; fancy/boolean indexing always copies</td>
+</tr>
+<tr class="odd">
+<td>Boolean masks</td>
+<td><code>&amp;</code> / <code>\|</code> (not <code>and</code>/<code>or</code>) on arrays, each side parenthesised</td>
+</tr>
+<tr class="even">
+<td><code>np.where</code> / <code>np.select</code></td>
+<td>Vectorised if/else and multi-branch labelling</td>
+</tr>
+<tr class="odd">
+<td><code>axis=0</code> vs <code>axis=1</code></td>
+<td>0 collapses rows -&gt; one value per <strong>column</strong>; 1 collapses columns -&gt; one value per <strong>row</strong></td>
+</tr>
+<tr class="even">
+<td>Broadcasting</td>
+<td>Compare shapes right-to-left; dims match if equal or one is <code>1</code>; use <code>keepdims=True</code> to broadcast a per-row stat</td>
+</tr>
+<tr class="odd">
+<td>Vectorisation</td>
+<td>A NumPy expression beats a Python loop by 10-100x, look for one before writing <code>for</code></td>
+</tr>
+<tr class="even">
+<td><code>@</code> / <code>np.dot</code></td>
+<td>Matrix multiplication: <code>X @ weights</code> predicts every row in one call</td>
+</tr>
+<tr class="odd">
+<td><code>np.allclose</code></td>
+<td>Always compare floats with a tolerance, never <code>==</code></td>
+</tr>
+<tr class="even">
+<td><code>.npy</code> / <code>.npz</code></td>
+<td>Compact, dtype/shape-preserving array storage between pipeline stages</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Next:</strong> <code>05-matplotlib.ipynb</code>, covering how to visualise arrays and DataFrames with matplotlib.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/sambaiga\.github\.io\/ds-mlops-path\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../../tutorials/01-python-basics/03b-python-patterns.html" class="pagination-link" aria-label="Part 3b: Python Patterns -- Classes, Exceptions, and Defensive Code">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">Part 3b: Python Patterns – Classes, Exceptions, and Defensive Code</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../../tutorials/01-python-basics/04b-numpy.html" class="pagination-link" aria-label="Part 4b: NumPy Advanced Operations">
+        <span class="nav-page-text"><span class="chapter-title">Part 4b: NumPy Advanced Operations</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p><span class="faux-block">© 2025–2026 <a href="https://sambaiga.github.io/">Anthony Faustine</a></span> <span class="faux-block">Code licensed under <a href="https://www.apache.org/licenses/LICENSE-2.0">Apache 2.0</a></span></p>
+</div>   
+    <div class="nav-footer-center">
+<div class="footer-social">
+<p><a href="mailto:sambaiga@gmail.com" title="Email"><i class="bi bi-envelope-at-fill"></i></a> <a href="https://github.com/sambaiga" title="GitHub"><i class="bi bi-github"></i></a> <a href="https://www.linkedin.com/in/sambaiga" title="LinkedIn"><i class="bi bi-linkedin"></i></a></p>
+</div>
+<div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.dev/sambaiga/ds-mlops-path/blob/main/tutorials/01-python-basics/04a-numpy.ipynb" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/sambaiga/ds-mlops-path/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li><li><a href="https://github.com/sambaiga/ds-mlops-path/blob/main/tutorials/01-python-basics/04a-numpy.ipynb" class="toc-action"><i class="bi empty"></i>View source</a></li></ul></div></div>
+    <div class="nav-footer-right">
+<p><span class="faux-block">Made with <a href="https://quarto.org">Quarto</a></span> <span class="faux-block"><a href="https://github.com/sambaiga/ds-mlops-path"><i class="bi bi-github"></i> View source</a></span></p>
+</div>
+  </div>
+</footer>
+
+
+
+
+<script src="../../site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>

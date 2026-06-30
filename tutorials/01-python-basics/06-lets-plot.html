@@ -207,12 +207,22 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../tutorials/01-python-basics/03-python-patterns.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 3: Patterns for Data Science &amp; ML</span></a>
+  <a href="../../tutorials/01-python-basics/03a-python-patterns.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 3a: Python Patterns – Functions and Code Reuse</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../tutorials/01-python-basics/04-numpy.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 4: NumPy for Data &amp; ML</span></a>
+  <a href="../../tutorials/01-python-basics/03b-python-patterns.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 3b: Python Patterns – Classes, Exceptions, and Defensive Code</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/04a-numpy.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 4a: NumPy Fundamentals</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/04b-numpy.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 4b: NumPy Advanced Operations</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -360,12 +370,22 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../tutorials/04-ml-intro/04-sklearn-core.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 25: Scikit-learn Core API</span></a>
+  <a href="../../tutorials/04-ml-intro/04a-sklearn-core.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 25a: Scikit-learn Core – Foundations</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../tutorials/04-ml-intro/05-sklearn-pipeline.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 26: Sklearn Pipeline and Hyperparameter Search</span></a>
+  <a href="../../tutorials/04-ml-intro/04b-sklearn-core.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 25b: Scikit-learn Core – Validation and Modern Features</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/04-ml-intro/05a-sklearn-pipeline.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 26a: sklearn Pipeline – Foundations</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/04-ml-intro/05b-sklearn-pipeline.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 26b: sklearn Pipeline – Hyperparameter Search and Evaluation</span></a>
   </div>
 </li>
       </ul>
@@ -404,8 +424,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">In this chapter</h2>
    
   <ul>
-  <li><a href="#before-you-begin" id="toc-before-you-begin" class="nav-link active" data-scroll-target="#before-you-begin">Before you begin</a></li>
-  <li><a href="#why-grammar-of-graphics" id="toc-why-grammar-of-graphics" class="nav-link" data-scroll-target="#why-grammar-of-graphics">0. Why Grammar of Graphics?</a>
+  <li><a href="#why-grammar-of-graphics" id="toc-why-grammar-of-graphics" class="nav-link active" data-scroll-target="#why-grammar-of-graphics">Why Grammar of Graphics?</a>
   <ul class="collapse">
   <li><a href="#alternatives-that-use-the-same-grammar" id="toc-alternatives-that-use-the-same-grammar" class="nav-link" data-scroll-target="#alternatives-that-use-the-same-grammar">Alternatives that use the same grammar</a></li>
   <li><a href="#already-in-your-environment" id="toc-already-in-your-environment" class="nav-link" data-scroll-target="#already-in-your-environment">Already in your environment</a></li>
@@ -447,66 +466,70 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p><a href="https://colab.research.google.com/github/sambaiga/ds-mlops-path/blob/main/tutorials/01-python-basics/06-lets-plot.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open In Colab"></a> <a href="https://raw.githubusercontent.com/sambaiga/ds-mlops-path/main/tutorials/01-python-basics/06-lets-plot.ipynb"><img src="https://img.shields.io/badge/Download-Notebook-blue.svg?logo=jupyter&amp;logoColor=white" class="img-fluid" alt="Download Notebook"></a></p>
 <p><strong>DS-MLOps Python Foundations</strong></p>
 <p><strong>Python 3.12+ | Author: Anthony Faustine</strong></p>
-<section id="before-you-begin" class="level2">
-<h2 class="anchored" data-anchor-id="before-you-begin">Before you begin</h2>
-<p>This notebook assumes you have completed Part 5 (<code>05-matplotlib.ipynb</code>). If you have not, start there: this notebook rebuilds several of its charts on purpose, so the contrast between the two ways of thinking about a plot is concrete rather than abstract.</p>
-<p>Part 5 was <strong>imperative</strong>: you told matplotlib exactly which method to call, in which order, for every piece of the chart. This part is <strong>declarative</strong>: you describe the data and the mapping you want, and the library works out how to draw it. This style is called the <strong>grammar of graphics</strong>, and <strong>lets-plot</strong> implements it in Python the way ggplot2 implements it in R. Part 7 (<code>07-data-storytelling.ipynb</code>) covers what makes a chart good and applies this project’s house style to both libraries.</p>
+<p>Part 5 built charts by calling functions: <code>ax.scatter()</code>, <code>ax.bar()</code>, <code>ax.set_title()</code>. Each call added one thing and you kept track of the order. It worked. But ask yourself: if you want to colour the points by course, where does that information go? Into <code>scatter()</code> as <code>c=</code>. If you want a trend line too? That’s a separate <code>ax.plot()</code> call with manually smoothed data.</p>
+<p>The grammar of graphics flips this. You describe <em>what the data means</em> and let the library decide how to draw it. <code>aes(color='course')</code> says ‘colour represents course’ – the library picks the palette, maps it, and adds the legend automatically. The trend line is just <code>+ geom_smooth()</code>: one more layer, no manual computation.</p>
+<p>This notebook covers lets-plot, a Python port of R’s ggplot2. By the end you will be able to build any chart by composing three parts: data, aesthetics, and geometry. Part 7 (<code>07-data-storytelling.ipynb</code>) then applies a house style to both libraries.</p>
+<blockquote class="blockquote">
+<p>Callout markers: <a href="../../index.html#callout-guide">book cover page</a>.</p>
+</blockquote>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Topics covered
+<span class="screen-reader-only">Note</span>Before You Begin
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
 <div id="callout-1" class="callout-1-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
+<p>This notebook follows Part 5 (<code>05-matplotlib.ipynb</code>). It intentionally rebuilds several of those charts so the contrast between imperative and declarative plotting is concrete. Install lets-plot with <code>pip install lets-plot</code>.</p>
+</div>
+</div>
+</div>
+<section id="why-grammar-of-graphics" class="level2">
+<h2 class="anchored" data-anchor-id="why-grammar-of-graphics">Why Grammar of Graphics?</h2>
+<p>You have already drawn scatter plots with Matplotlib. You called <code>ax.scatter(x, y, c=color, s=size)</code>. If you wanted a different geom, you called a different method. If you wanted a trend line, you called yet another. The plot grew by accumulating function calls, each one doing something slightly different.</p>
+<p>There is another way to think about it. A chart is not a list of drawing commands: it is a <strong>mapping</strong> from data columns to visual channels (position, colour, shape, size). State that mapping once, and the library figures out how to draw it. Add a layer (a trend line, a rug, a label) and you extend the mapping rather than calling a new drawing function. This is the Grammar of Graphics, introduced by Leland Wilkinson in 1999 and popularised by Hadley Wickham’s <strong>ggplot2</strong> for R.</p>
+<p><strong>Lets-Plot</strong> (<a href="https://lets-plot.org">lets-plot.org</a>) is JetBrains’ Python implementation of the same grammar. Its API mirrors ggplot2 so closely that R users can read Lets-Plot code without a translation guide. It renders to HTML in Jupyter, to PNG for reports, and (in its Pro edition) to interactive Datalore dashboards.</p>
+<section id="alternatives-that-use-the-same-grammar" class="level3">
+<h3 class="anchored" data-anchor-id="alternatives-that-use-the-same-grammar">Alternatives that use the same grammar</h3>
 <table class="caption-top table">
-<colgroup>
-<col style="width: 50%">
-<col style="width: 50%">
-</colgroup>
 <thead>
 <tr class="header">
-<th>Topic</th>
-<th>Why it matters</th>
+<th>Library</th>
+<th>Language</th>
+<th>Notes</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td><strong>Declarative vs.&nbsp;imperative</strong></td>
-<td>The mental model shift that makes the rest of this notebook click</td>
+<td><strong>ggplot2</strong> (<a href="https://ggplot2.tidyverse.org">ggplot2.tidyverse.org</a>)</td>
+<td>R</td>
+<td>The original; Lets-Plot mirrors it deliberately</td>
 </tr>
 <tr class="even">
-<td><strong><code>ggplot</code> + <code>aes</code> + <code>geom</code></strong></td>
-<td>The three pieces every lets-plot chart is built from</td>
+<td><strong>plotnine</strong> (<a href="https://plotnine.org">plotnine.org</a>)</td>
+<td>Python</td>
+<td>ggplot2 port; similar API, Matplotlib backend</td>
 </tr>
 <tr class="odd">
-<td><strong>Mapping vs.&nbsp;setting</strong></td>
-<td>The single most common mistake in any grammar of graphics</td>
+<td><strong>Lets-Plot</strong> (<a href="https://lets-plot.org">lets-plot.org</a>)</td>
+<td>Python / Kotlin</td>
+<td>HTML-first output, fast, maintained by JetBrains</td>
 </tr>
 <tr class="even">
-<td><strong>Layering</strong></td>
-<td>Adding a statistical summary on top of raw data, declaratively</td>
-</tr>
-<tr class="odd">
-<td><strong>Faceting</strong></td>
-<td>One line to replace a whole manual subplot loop</td>
-</tr>
-<tr class="even">
-<td><strong>Titles, labels, and scales</strong></td>
-<td>Communicating clearly: naming axes, renaming legends, controlling colours</td>
+<td><strong>Vega-Altair</strong> (<a href="https://altair-viz.github.io">altair-viz.github.io</a>)</td>
+<td>Python</td>
+<td>Different grammar (Vega-Lite), interactive</td>
 </tr>
 </tbody>
 </table>
-</div>
-</div>
-</div>
-<blockquote class="blockquote">
-<p>Callout markers used throughout this notebook are explained on the <a href="../../index.html#callout-guide">book cover page</a>.</p>
-</blockquote>
+</section>
+<section id="already-in-your-environment" class="level3">
+<h3 class="anchored" data-anchor-id="already-in-your-environment">Already in your environment</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> add lets-plot          <span class="co"># for a standalone project</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
@@ -570,49 +593,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </section>
-<section id="why-grammar-of-graphics" class="level2">
-<h2 class="anchored" data-anchor-id="why-grammar-of-graphics">0. Why Grammar of Graphics?</h2>
-<p>You have already drawn scatter plots with Matplotlib. You called <code>ax.scatter(x, y, c=color, s=size)</code>. If you wanted a different geom, you called a different method. If you wanted a trend line, you called yet another. The plot grew by accumulating function calls, each one doing something slightly different.</p>
-<p>There is another way to think about it. A chart is not a list of drawing commands: it is a <strong>mapping</strong> from data columns to visual channels (position, colour, shape, size). State that mapping once, and the library figures out how to draw it. Add a layer (a trend line, a rug, a label) and you extend the mapping rather than calling a new drawing function. This is the Grammar of Graphics, introduced by Leland Wilkinson in 1999 and popularised by Hadley Wickham’s <strong>ggplot2</strong> for R.</p>
-<p><strong>Lets-Plot</strong> (<a href="https://lets-plot.org">lets-plot.org</a>) is JetBrains’ Python implementation of the same grammar. Its API mirrors ggplot2 so closely that R users can read Lets-Plot code without a translation guide. It renders to HTML in Jupyter, to PNG for reports, and (in its Pro edition) to interactive Datalore dashboards.</p>
-<section id="alternatives-that-use-the-same-grammar" class="level3">
-<h3 class="anchored" data-anchor-id="alternatives-that-use-the-same-grammar">Alternatives that use the same grammar</h3>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th>Library</th>
-<th>Language</th>
-<th>Notes</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><strong>ggplot2</strong> (<a href="https://ggplot2.tidyverse.org">ggplot2.tidyverse.org</a>)</td>
-<td>R</td>
-<td>The original; Lets-Plot mirrors it deliberately</td>
-</tr>
-<tr class="even">
-<td><strong>plotnine</strong> (<a href="https://plotnine.org">plotnine.org</a>)</td>
-<td>Python</td>
-<td>ggplot2 port; similar API, Matplotlib backend</td>
-</tr>
-<tr class="odd">
-<td><strong>Lets-Plot</strong> (<a href="https://lets-plot.org">lets-plot.org</a>)</td>
-<td>Python / Kotlin</td>
-<td>HTML-first output, fast, maintained by JetBrains</td>
-</tr>
-<tr class="even">
-<td><strong>Vega-Altair</strong> (<a href="https://altair-viz.github.io">altair-viz.github.io</a>)</td>
-<td>Python</td>
-<td>Different grammar (Vega-Lite), interactive</td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="already-in-your-environment" class="level3">
-<h3 class="anchored" data-anchor-id="already-in-your-environment">Already in your environment</h3>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> add lets-plot          <span class="co"># for a standalone project</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</section>
 </section>
 <section id="declarative-vs.-imperative" class="level2">
 <h2 class="anchored" data-anchor-id="declarative-vs.-imperative">1. Declarative vs.&nbsp;Imperative</h2>
@@ -623,7 +603,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>LetsPlot.setup_html()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 
-            <div id="5lrxEt"></div>
+            <div id="zGxq0F"></div>
             <script type="text/javascript" data-lets-plot-script="library">
                 if(!window.letsPlotCallQueue) {
                     window.letsPlotCallQueue = [];
@@ -647,9 +627,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
                         var div = document.createElement("div");
                         div.style.color = 'darkred';
                         div.textContent = 'Error loading Lets-Plot JS';
-                        document.getElementById("5lrxEt").appendChild(div);
+                        document.getElementById("zGxq0F").appendChild(div);
                     };
-                    var e = document.getElementById("5lrxEt");
+                    var e = document.getElementById("zGxq0F");
                     e.appendChild(script);
                 })()
             </script>
@@ -749,7 +729,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>ggplot(results, aes(x<span class="op">=</span><span class="st">"study_hours"</span>, y<span class="op">=</span><span class="st">"exam_score"</span>)) <span class="op">+</span> geom_point(alpha<span class="op">=</span><span class="fl">0.4</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="3">
-   <div id="b0ZTyL"></div>
+   <div id="2vezQi"></div>
    <script type="text/javascript" data-lets-plot-script="plot">
    
    (function() {
@@ -774,7 +754,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
        };
    }
    
-   const containerDiv = document.getElementById("b0ZTyL");
+   const containerDiv = document.getElementById("2vezQi");
    let fig = null;
    
    function renderPlot() {
@@ -864,18 +844,24 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div style="background:#EAF3FA;border-left:5px solid #0369A1;padding:14px 18px;border-radius:6px;margin:16px 0">
 <p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-info-circle-fill"></i> Key Concept: The Grammar of Graphics</span><br><br> Every lets-plot chart is built from the same three pieces, combined with <code>+</code>: <code>ggplot(data, aes(…))</code> declares the dataset and which columns map to which visual property, and one or more <code>geom_<em>()</em></code><em> layers say what shape to draw with that mapping. Change the <code>geom_</code></em><code>()</code> and the same <code>aes()</code> mapping produces a completely different chart type, often without touching anything else.</p>
 </div>
+<div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 1 - Rewrite a Scatter Plot Declaratively</span><br><br> <b>Goal:</b> Take Part 5’s matplotlib scatter and express it in three lets-plot layers.<br><br><b>Setup:</b> reuse the <code>results</code> DataFrame from this notebook.<br><br>1. Write <code>ggplot(results, aes(x=‘study_hours’, y=‘exam_score’))</code>.<br>2. Add <code>+ geom_point(alpha=0.5)</code>.<br>3. Add <code>+ geom_smooth(se=False)</code> for a trend line.<br>4. Compare: how many lines did the matplotlib version take for the same result?<br><br><b>Expected:</b> scatter with trend line in 3 lines of grammar.</p>
+</div>
 </section>
 <section id="the-grammar-ggplot-aes-geom" class="level2">
 <h2 class="anchored" data-anchor-id="the-grammar-ggplot-aes-geom">2. The Grammar: <code>ggplot</code>, <code>aes</code>, <code>geom</code></h2>
 <p><code>aes()</code> (short for “aesthetics”) maps DataFrame columns to visual properties: <code>x</code>, <code>y</code>, <code>color</code>, <code>fill</code>, <code>size</code>. The <code>geom_*()</code> you add decides what shape represents each row. Swapping <code>geom_point()</code> for <code>geom_line()</code> or <code>geom_bar()</code> is often the only change needed to turn one chart type into another:</p>
-<div id="13" class="cell" data-execution_count="4">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> lets_plot <span class="im">import</span> geom_bar</span>
+<div style="background:#EFF6FF;border-left:5px solid #0369A1;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-key-fill"></i> Key Concept: Three parts make every chart: ggplot, aes, geom</span><br><br> <code>ggplot(data, aes(…))</code> owns the data and the default aesthetic mappings. <code>aes()</code> maps DataFrame columns to visual channels (x, y, color, size). <code>geom_*()</code> decides the shape (point, line, bar, histogram). Every chart you build in lets-plot is some combination of exactly these three.</p>
+</div>
+<div id="15" class="cell" data-execution_count="4">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> lets_plot <span class="im">import</span> coord_flip, geom_bar, geom_lollipop, scale_y_continuous</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>course_means <span class="op">=</span> results.groupby(<span class="st">"course"</span>, as_index<span class="op">=</span><span class="va">False</span>)[<span class="st">"exam_score"</span>].mean()</span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>ggplot(course_means, aes(x<span class="op">=</span><span class="st">"course"</span>, y<span class="op">=</span><span class="st">"exam_score"</span>)) <span class="op">+</span> geom_bar(stat<span class="op">=</span><span class="st">"identity"</span>, fill<span class="op">=</span><span class="st">"#4477AA"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="4">
-   <div id="aDG6Ru"></div>
+   <div id="kxui3P"></div>
    <script type="text/javascript" data-lets-plot-script="plot">
    
    (function() {
@@ -900,7 +886,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
        };
    }
    
-   const containerDiv = document.getElementById("aDG6Ru");
+   const containerDiv = document.getElementById("kxui3P");
    let fig = null;
    
    function renderPlot() {
@@ -984,7 +970,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <p><code>stat="identity"</code> tells <code>geom_bar()</code> to plot the <code>exam_score</code> column exactly as given, rather than its default behaviour of counting rows per category. Compare this to Part 5’s bar chart: the data preparation (<code>groupby().mean()</code>) is identical, only the drawing step changed shape.</p>
 <p><code>position="dodge"</code> places bars for each group side by side instead of stacking them, useful when you want to compare values across two grouping variables at once. The data needs a category column on <code>x</code> and a group column on <code>fill</code>:</p>
-<div id="16" class="cell" data-execution_count="5">
+<div id="18" class="cell" data-execution_count="5">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>course_semester_means <span class="op">=</span> results.groupby([<span class="st">"course"</span>, <span class="st">"semester"</span>], as_index<span class="op">=</span><span class="va">False</span>)[<span class="st">"exam_score"</span>].mean()</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>(</span>
@@ -992,7 +978,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> geom_bar(stat<span class="op">=</span><span class="st">"identity"</span>, position<span class="op">=</span><span class="st">"dodge"</span>)</span>
 <span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="5">
-   <div id="mrvLEv"></div>
+   <div id="u7weqE"></div>
    <script type="text/javascript" data-lets-plot-script="plot">
    
    (function() {
@@ -1017,7 +1003,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
        };
    }
    
-   const containerDiv = document.getElementById("mrvLEv");
+   const containerDiv = document.getElementById("u7weqE");
    let fig = null;
    
    function renderPlot() {
@@ -1105,23 +1091,41 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 <div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
-<p><span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 1 - Histogram, Declaratively</span><br><br></p>
+<p><span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 2 - Histogram, Declaratively</span><br><br></p>
 <b>Goal:</b> Rebuild the Part 5 histogram of <code>exam_score</code> using <code>geom_histogram()</code>. Map <code>x=“exam_score”</code> in <code>aes()</code>, and pass <code>bins=20</code> to <code>geom_histogram()</code>.
 <pre style="background:#FFF8E1;padding:10px;border-radius:4px;font-size:0.9em">ggplot(results, aes(x="exam_score")) + geom_histogram(bins=20, fill="#4477AA")</pre>
 </div>
-<div id="18" class="cell" data-execution_count="6">
+<div id="20" class="cell" data-execution_count="6">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: build the histogram described above</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-</section>
-<section id="mapping-vs.-setting" class="level2">
-<h2 class="anchored" data-anchor-id="mapping-vs.-setting">3. Mapping vs.&nbsp;Setting</h2>
-<p><code>aes(color="course")</code> <strong>maps</strong> the <code>course</code> column to colour: each course gets its own colour, chosen automatically, with a legend. <code>color="#4477AA"</code> <strong>sets</strong> every point to the exact same fixed colour, with no legend, because there is nothing left to distinguish. Confusing the two is the single most common mistake when learning any grammar of graphics, in Python or R:</p>
-<div id="20" class="cell" data-execution_count="7">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Mapping: course determines colour, one colour per course, with a legend</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>ggplot(results, aes(x<span class="op">=</span><span class="st">"study_hours"</span>, y<span class="op">=</span><span class="st">"exam_score"</span>, color<span class="op">=</span><span class="st">"course"</span>)) <span class="op">+</span> geom_point(alpha<span class="op">=</span><span class="fl">0.6</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div style="background:#F5F3FF;border-left:5px solid #7C3AED;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#5B21B6;font-weight:bold"><i class="bi bi-lightbulb-fill"></i> Pro Tip: Use <code>geom_lollipop()</code> to reduce ink on ranked comparisons</span><br><br> For ranked comparisons with many categories, lollipop charts reduce ink without losing information. Replace <code>geom_bar()</code> with <code>geom_lollipop()</code>: it draws a dot at the value and a thin stem from the baseline, making individual values easier to read when bars would crowd together.</p>
+</div>
+<div id="22" class="cell" data-execution_count="7">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> lets_plot <span class="im">import</span> labs</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> ark.plot.theme <span class="im">import</span> modern_theme</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> ark.plot.tokens <span class="im">import</span> PRIMARY</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>pass_rate_by_course <span class="op">=</span> (</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    results.groupby(<span class="st">"course"</span>)[<span class="st">"exam_score"</span>]</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    .<span class="bu">apply</span>(<span class="kw">lambda</span> x: (x <span class="op">&gt;=</span> <span class="dv">60</span>).mean())</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    .reset_index()</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>    .rename(columns<span class="op">=</span>{<span class="st">"exam_score"</span>: <span class="st">"pass_rate"</span>})</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>    .sort_values(<span class="st">"pass_rate"</span>)</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>(</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>    ggplot(pass_rate_by_course, aes(x<span class="op">=</span><span class="st">"reorder(course, pass_rate)"</span>, y<span class="op">=</span><span class="st">"pass_rate"</span>))</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> geom_lollipop(size<span class="op">=</span><span class="dv">4</span>, color<span class="op">=</span>PRIMARY)</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> coord_flip()</span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> scale_y_continuous(labels<span class="op">=</span><span class="kw">lambda</span> x: [<span class="ss">f"</span><span class="sc">{</span>v<span class="sc">:.0%}</span><span class="ss">"</span> <span class="cf">for</span> v <span class="kw">in</span> x])</span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> labs(title<span class="op">=</span><span class="st">"Pass Rate by Course"</span>, x<span class="op">=</span><span class="st">""</span>, y<span class="op">=</span><span class="st">"Pass Rate"</span>)</span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> modern_theme()</span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="7">
-   <div id="Sa9oPB"></div>
+   <div id="VcyCXs"></div>
    <script type="text/javascript" data-lets-plot-script="plot">
    
    (function() {
@@ -1146,51 +1150,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
        };
    }
    
-   const containerDiv = document.getElementById("Sa9oPB");
+   const containerDiv = document.getElementById("VcyCXs");
    let fig = null;
    
    function renderPlot() {
        if (fig === null) {
            const plotSpec = {
-"data":{
-"course":["Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics"],
-"exam_score":[71.04717079754431,57.60015893759504,75.50451195806457,77.40564716391214,48.48964811346164,54.97820493137682,69.27840403167285,64.83757407656418,67.83198842495712,59.4695607242642,76.79397974862829,75.77791935428948,68.66030697561216,79.27241206968033,72.67509342252046,59.40707537116762,71.68750784082499,58.411173991710015,76.78450301307272,67.50074089013746,66.15137636454739,61.190704555960586,80.2254133867403,66.45470517931197,63.71672177836893,64.4786644951177,73.32309185553349,71.65444064364078,72.12732611595989,72.30821003007883,89.41647600870462,63.93584983615384,62.87757270928463,59.86227271752122,74.15979422575495,79.28972292720891,66.86052542345125,59.59843523037472,59.755187843087604,74.50592787824701,75.43254171203442,73.43154268305194,61.344902927113054,70.3216132306672,69.16685809140728,70.18688596729012,76.7142877794819,70.23595548774682,74.78913563071895,68.67579069488892,70.89119398689984,74.3128822583854,53.428441801443334,64.80328783642699,63.29627345707205,61.61122151756658,65.24857748773316,82.94941311234396,59.341688843067566,77.68278354591482,55.17130228384195,68.65114970014226,73.62753065105005,77.86222331359278,79.11226579792854,79.93347235199926,68.51274927751562,67.37648207335432,80.57975881257154,70.08695675118385,59.24313676662078,60.66712785996519,62.805477139983886,76.97160744053764,73.42425736070565,78.90485354067768,67.72747353663466,73.58539691076714,78.25590393967337,68.90653460279762,76.56775237557412,65.38074058933348,68.36946153434928,68.18262106001671,60.041603544109606,76.86972480785582,67.30597659797276,72.12494118727687,76.80746658905909,76.46531176029944,78.65385108972787,71.01514515490577,67.76701687955847,71.202817890936,55.1266556604197,57.528875275769124,58.773003876455974,62.027531723985184,75.99774226723437,62.94520944639939,68.21837445960611,84.99228297786065,68.43736028938574,79.37515568467086,62.66382319990123,69.9456244213237,62.49977945089419,68.60966924099438,80.40308137457396,54.726795768076514,76.34423643545857,74.37735602332278,66.05850044303206,57.539421456115456,72.72129507713869,66.70507290936197,74.32676211354703,72.21852145523442,88.01778891320916,69.60644372526976,63.76502507378135,75.79275634956316,76.19996683971765,87.59187575240436,82.35111245914578,77.56871059149509,88.63302891219561,62.11236945677149,67.60248467250253,64.73424058594475,70.10190196844232,60.23313852443691,80.35150946814404,71.77777302901227,59.29193705497342,63.844209187924584,77.13513847450196,82.3812656789438,93.96730891691786,100.0,78.14409433275996,64.10461879968136,52.67953719268691,76.67711462343836,65.87058904689674,69.84642739820315,67.87903200940193,72.59209113583614,84.65980230787643,75.57048567445345,72.41365162961311,63.643462471741884,57.25317055295643,69.13692090926669,73.4621744918168,91.67929913579883,75.30274521472886,83.82739511023058,69.00704401460848,62.150562335829754,64.34883237767627,66.74773935464246,95.28469732435164,65.78613320775614,82.38489203736344,64.97072821912974,83.31573012874244,77.84950966105863,72.4336210234191,73.59237473864566,67.4521230457061,78.4607220148208,69.4501651965922,61.743942362327516,61.22062425680381,75.72587917722119,89.79091256410435,75.59991613573439,72.81361673890117,76.85826139602543,91.06001741706825,80.19382501363856,73.89072769166263,89.06288710059889,82.28756438461613,93.35755991995993,79.83234437221905,65.755309682795,64.31840800754335,94.5092793223125,95.23665720783296,76.204807867174,74.16812678864012,92.61444292242203,66.92954317956512,69.05272981044173,84.43326794689044,74.05394877140411,77.94878133279929,76.36557101475488,81.37574548798933,92.07481861313717,78.90584906901745,84.43938793276858,57.49827898968977,77.51281598069882,69.56769729707129,65.81186939576372,69.21847633071249,74.65876559299188,87.15902542356014,64.73607282260436,78.30631492594418,73.15830566666422,74.72326905638039,88.02757825304604,83.38115437003925,91.37398107442743,76.45494320750099,71.04057388329296,75.761411831195,80.42496791271222,79.76573358453712,67.15611927766633,78.90489781627875,80.28228330138906,100.0,96.7684461128167,69.4675664944118,75.12616638450824,63.36557998162997,72.09292986036513,81.1560500359034,90.05853620888233,70.70916162256391,71.45853559932203,56.52710970261345,76.37334079455093,67.37585588140436,72.70560572633926,62.23139221832412,70.05737445747442,53.42271608643369,56.3295475460901,92.29247112028298,58.125774187259694,60.032144215453606,89.36913528321314,100.0,59.284333711746584,67.31751043211969,74.4155555094051,88.28697644405592,61.131429215717624,68.5472215405789,78.77337576061744,75.34766074466619,67.23843928769901,69.66177035483959,57.25104191630018,68.61826256025334,68.33612509991045,73.32169889626256,65.44672781180984,75.71538522545139,81.12715817819829,72.55429327668466,74.51756408399203,71.53155347577868,71.00084393091414,63.78441966457152,74.16494261673309,70.0271340158651,91.93168308930595,86.73354902475242,74.85846552556501,63.369427903052326,59.87588528016582,82.91142953088865,73.62749225147138,75.80143403391611,53.55414013025808,80.27438481558181,75.54420338214364,59.89569315585522,66.28475192550052,73.6371720435652,71.52466798356244,68.07828814196445,69.9651173193404,68.48022621793115,72.52562512102469,85.71491972993157,45.333415590687025,68.63149735490316,72.76512421372448,73.95993989687099,67.2808541867871,53.43278217521417,74.27995483714109,92.27350214164184,59.66138595083862,83.63828013698188,71.71474776877106,74.38675654171152,64.47101489296051,71.65543827644123,88.00044594698959,80.82655241987707,92.32311605409944,86.77411888977693,79.39086678929576,92.43934526167791,79.38993158738299,83.2798817679706,72.03429046465291,75.66545815859205,68.02576176699723,84.89583934594853,63.21696376885134,82.82350342417661,73.0934894249484,86.71247093467319,82.5086898873126,93.20646157646802,82.30774691138645,59.279597443467594,74.33046827101799,63.27992807405184,69.81720157633725,90.11228433276722,81.37533810897696,68.01069571421253,64.86282633559601,75.3278209287626,62.83439850618872,68.28859722603418,78.12009471551244,86.55312036106696,81.0876147222444,52.087104914019,78.0436672903026,75.72033573232578,79.13890285372693,91.16209681651208,54.36761723195257,69.08896574808894,80.90906322793354,59.184056005460576,89.75949048053509,78.68356612700659,83.46583985843404,69.29056338478206,83.13763689966211,85.68471555989038,77.32878020137169,77.34400892698696,77.70343239281726,66.36654735260618,73.52471319759647],
-"study_hours":[3.9402912156249914,3.6945843135547913,23.403186584393602,10.947600929968832,9.582995569435246,18.24214271693445,13.824826631322498,23.403499670961555,19.507537347734804,11.98423910311351,9.408986837020656,24.66578862310805,17.944005900091085,23.779866500096027,2.961964430426034,21.263341979769564,15.92684709978019,3.0480419583778144,14.706449999230516,17.15240912763622,0.30756714721507095,11.357949046043665,20.63498777990803,7.383975633602247,11.463702044963778,11.05785317669733,7.54818478606229,22.961047387888854,19.532350885787896,2.7647102749027623,24.925866445939327,21.980000607693633,7.097710946600974,20.922414491523455,2.6604882967845715,24.977618261855966,16.64211840266342,16.253125388969924,2.2610181746033184,22.425834972415633,0.7249875801117356,6.0207014510286765,3.5755468791658753,19.419198517305464,4.955105680322447,22.76595567827213,16.406725983187254,0.9040677623674054,0.13574585321751154,1.291447925359973,15.148129441193191,20.037045271485383,5.963820515684712,21.235221073076822,1.4307985038315096,20.024096341041904,23.19488575430701,19.302709977609513,17.45301959946593,20.949505466384576,1.0037824886766606,5.044552767976384,3.123091982641077,12.613274754824664,18.629703208221112,15.750296114409966,21.278277494048375,3.880324811027272,18.36552729837904,4.826037271722602,6.768968782945006,17.747617432032598,24.505119622467046,15.288590149426739,1.36250787478239,15.40772424818832,1.0587637895041775,22.10364278417043,17.739457127515518,4.32819616056258,2.2930251456049517,4.588330722007974,24.50067948885481,11.464016061462246,19.6020237085352,15.91020855269442,14.310328748965933,3.6282563666262426,23.650611338952377,7.533565812867948,14.450430395188555,17.494398614726652,16.230828881132723,23.51486024238796,3.71097474800145,12.708818461173552,10.100859768519149,11.854218237065453,2.9804381549436156,3.3523652468191334,6.951888644531435,7.617615094020783,10.69758034203375,15.274688675915707,15.865727935456576,10.295272414639257,10.219577735717428,5.440713167424049,14.707656210225206,7.926022782930947,0.9014958569340925,10.46000110392151,11.853316877254258,5.639821705105275,14.311448328052892,14.144297510798024,17.550054527759286,16.19871205503025,16.31082641302579,7.905353795601078,19.685805549648848,13.728609589991986,10.785454879497253,15.650312023526428,9.016433361256357,12.818481115168955,18.417642212055508,22.160072168092693,23.02642993237979,12.59082312957748,13.006877868514227,19.996760269095912,7.861267293605032,20.934559058626714,12.353541162935585,2.8964181083817095,1.8014786768235924,21.04983027598658,1.3891979226719475,7.015285903341398,8.353251012538646,4.324861129789845,7.847334245049731,18.56731416812714,0.3670710890017692,20.679335613017162,21.413700589363955,9.306539329788704,3.84032247651587,15.021010198627021,2.991813896622358,9.122984026956313,23.96072952252431,24.88661181459093,19.30262228386464,7.774037748019155,17.191626229152313,17.635159137100317,9.696042379091244,16.022215864653987,0.26819112439190607,5.226441465056037,13.12720757418153,4.093782606457397,4.147671696913341,20.90760726375595,24.728325067090136,13.899235700711209,20.976743272042835,24.758041608156812,3.5398972142193674,11.206140331358776,9.814317896047998,2.0012320911546255,18.883254319868612,10.844475683064825,11.733173354760032,3.7668243453310044,4.523166305771703,22.677590553905375,1.116227224356972,5.821307123592656,7.301483257863209,12.25493856003966,14.661129325369899,12.332249396266665,2.1028833639220506,6.0916863513928385,21.08970961906353,15.939717511961476,16.22872625335686,16.755081383783875,19.072575475988227,1.4527120430361835,9.16520962331531,13.488185881541966,8.461412082433151,21.111971832179663,12.064312714682348,19.215689736484478,21.300387922029227,12.619787072587451,22.738806096783748,14.678098513424514,21.256857470843045,8.514769889788107,12.47042396328713,13.285276025114442,2.6244928974017645,9.963812667538516,22.9334418137919,15.77080600911856,4.437664560924187,8.471390890240125,4.790075241567496,0.6205782949643135,23.186511462600667,11.205183206421786,7.688376810519654,14.961929788943415,0.1828614073253909,6.9505526650203455,17.575836642472314,15.844244326731575,24.545148688563387,15.5089427414511,11.93764684069332,19.03581407960019,22.583196799101326,18.01739866795879,24.08028058873449,19.55012926845443,21.670035956548162,2.8526017795909295,18.31033757484469,11.002217488184215,13.82759506028188,16.35256023705892,24.245377917639235,24.614452035790617,7.205706137197632,18.343837435947904,18.749588448381715,8.662321532826219,3.096744371605525,1.023674007142994,19.433578188229465,12.242493545422647,24.638504237373155,11.624336404841326,24.447924476846005,10.289400054851496,19.842053763999314,2.1204818077958016,13.886542753444097,20.051494674643106,23.117541680497215,20.56457726543579,0.9242681800293556,9.317558532668354,1.2174618078462818,2.7320572778639503,16.882640716687103,17.831454907792455,19.343017068790658,21.63641370139157,18.48578671191275,20.0217898026658,1.2240927455819812,5.863378761032465,15.547444334381144,21.45313261562058,0.11250312349147806,12.865733552908745,16.93218498410993,0.7401822282153303,10.033888938834698,22.39087203459242,16.790320221396467,5.941459084014933,21.319528240797815,8.700785585237858,21.333616778601485,7.473591277972639,14.758006272078724,9.923501693695853,6.870626268876675,22.16393905429673,4.689842048487283,2.1202897808940775,8.54817346364151,17.940978691039188,20.185790149407044,24.96858425166912,7.409051425279123,10.198548778282055,3.4205319507406573,14.371798240575838,24.93950093157293,17.522025253016462,14.880321010334294,9.80922732304485,22.88246900713887,12.422914903258736,3.3591728328265376,9.134461579978337,1.6791667211941723,5.049475942219539,0.4417195249978051,11.331997912504086,15.86350662379493,8.582311559472695,10.509544287631927,23.980231821114398,18.799078039372887,13.521415923623781,7.113521877795631,22.42491996932488,5.877427922016487,8.133568262916926,22.726620360573712,13.23855138212681,18.55794873544942,14.768619854094153,16.33598022523738,7.484582287870639,6.034301540666573,8.062308679216631,3.8860391020855616,21.857859132270185,7.0811733312528515,14.037234860359614,19.79936062853435,19.595602734392838,10.959656464604823,11.906432714668142,24.867543723375622,16.8649369244756,20.365961077947066,22.5638492304808,19.68974590573348,4.62948362383919,14.054268343439306,2.547353932863622,16.32305316409996,23.883735704695276,12.818301607502782,10.82431232169418,0.8960687854540794,23.99436305823051,2.5750671032539696,1.0269773326211733,6.151665287623461,1.6382608479595606,11.37794606029406,12.90219503142781,7.814248725714598,1.2740120643721515,2.7900092062306676,9.612609449748202]
-},
-"mapping":{
-"x":"study_hours",
-"y":"exam_score",
-"color":"course"
-},
-"data_meta":{
-"series_annotations":[{
-"type":"str",
-"column":"course"
-},{
-"type":"str",
-"column":"semester"
-},{
-"type":"float",
-"column":"exam_score"
-},{
-"type":"float",
-"column":"study_hours"
-}]
-},
-"kind":"plot",
-"scales":[],
-"layers":[{
-"geom":"point",
-"mapping":{
-},
-"data_meta":{
-},
-"alpha":0.6,
-"data":{
-}
-}],
-"metainfo_list":[],
-"spec_id":"4"
+"__error_message":"Variable not found: 'reorder(course, pass_rate)'. Variables in data frame: ['course', 'pass_rate']"
 };
            window.letsPlotCall(function() { fig = LetsPlot.buildPlotFromProcessedSpecs(plotSpec, containerDiv, sizing); });
        } else {
@@ -1235,11 +1201,31 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
    </script>
 </div>
 </div>
-<div id="21" class="cell" data-execution_count="8">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Setting: every point is the same fixed colour, no legend needed</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>ggplot(results, aes(x<span class="op">=</span><span class="st">"study_hours"</span>, y<span class="op">=</span><span class="st">"exam_score"</span>)) <span class="op">+</span> geom_point(color<span class="op">=</span><span class="st">"#4477AA"</span>, alpha<span class="op">=</span><span class="fl">0.6</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="8">
-   <div id="TZIhRN"></div>
+<div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 3 - Lollipop vs.&nbsp;Bar</span><br><br></p>
+<b>Goal:</b> Replace <code>geom_lollipop</code> with <code>geom_bar(stat=“identity”)</code> and compare. Which conveys rank more clearly at a glance?
+<pre style="background:#FFF8E1;padding:10px;border-radius:4px;font-size:0.9em">ggplot(pass_rate_by_course, aes(x="reorder(course, pass_rate)", y="pass_rate"))
+    + geom_bar(stat="identity", fill=PRIMARY)
+    + coord_flip()
+    + labs(title="Pass Rate by Course", x="", y="Pass Rate")
+    + modern_theme()</pre>
+</div>
+<div id="24" class="cell" data-execution_count="8">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: replace geom_lollipop with geom_bar(stat="identity") and compare</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="mapping-vs.-setting" class="level2">
+<h2 class="anchored" data-anchor-id="mapping-vs.-setting">3. Mapping vs.&nbsp;Setting</h2>
+<p><code>aes(color="course")</code> <strong>maps</strong> the <code>course</code> column to colour: each course gets its own colour, chosen automatically, with a legend. <code>color="#4477AA"</code> <strong>sets</strong> every point to the exact same fixed colour, with no legend, because there is nothing left to distinguish. Confusing the two is the single most common mistake when learning any grammar of graphics, in Python or R:</p>
+<div style="background:#EFF6FF;border-left:5px solid #0369A1;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-key-fill"></i> Key Concept: Mapping encodes data; Setting hardcodes a constant</span><br><br> <code>aes(color=‘course’)</code> <b>maps</b> the <code>course</code> column to colour: the library assigns one colour per unique value and generates the legend automatically. <code>geom_point(color=‘#0369A1’)</code> <b>sets</b> the colour to a fixed value for all points. Never put a constant inside <code>aes()</code> – that is the most common lets-plot mistake.</p>
+</div>
+<div id="27" class="cell" data-execution_count="9">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Mapping: course determines colour, one colour per course, with a legend</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>ggplot(results, aes(x<span class="op">=</span><span class="st">"study_hours"</span>, y<span class="op">=</span><span class="st">"exam_score"</span>, color<span class="op">=</span><span class="st">"course"</span>)) <span class="op">+</span> geom_point(alpha<span class="op">=</span><span class="fl">0.6</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="9">
+   <div id="CvaXiB"></div>
    <script type="text/javascript" data-lets-plot-script="plot">
    
    (function() {
@@ -1264,19 +1250,21 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
        };
    }
    
-   const containerDiv = document.getElementById("TZIhRN");
+   const containerDiv = document.getElementById("CvaXiB");
    let fig = null;
    
    function renderPlot() {
        if (fig === null) {
            const plotSpec = {
 "data":{
+"course":["Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Machine Learning","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Data Structures","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics","Statistics"],
 "exam_score":[71.04717079754431,57.60015893759504,75.50451195806457,77.40564716391214,48.48964811346164,54.97820493137682,69.27840403167285,64.83757407656418,67.83198842495712,59.4695607242642,76.79397974862829,75.77791935428948,68.66030697561216,79.27241206968033,72.67509342252046,59.40707537116762,71.68750784082499,58.411173991710015,76.78450301307272,67.50074089013746,66.15137636454739,61.190704555960586,80.2254133867403,66.45470517931197,63.71672177836893,64.4786644951177,73.32309185553349,71.65444064364078,72.12732611595989,72.30821003007883,89.41647600870462,63.93584983615384,62.87757270928463,59.86227271752122,74.15979422575495,79.28972292720891,66.86052542345125,59.59843523037472,59.755187843087604,74.50592787824701,75.43254171203442,73.43154268305194,61.344902927113054,70.3216132306672,69.16685809140728,70.18688596729012,76.7142877794819,70.23595548774682,74.78913563071895,68.67579069488892,70.89119398689984,74.3128822583854,53.428441801443334,64.80328783642699,63.29627345707205,61.61122151756658,65.24857748773316,82.94941311234396,59.341688843067566,77.68278354591482,55.17130228384195,68.65114970014226,73.62753065105005,77.86222331359278,79.11226579792854,79.93347235199926,68.51274927751562,67.37648207335432,80.57975881257154,70.08695675118385,59.24313676662078,60.66712785996519,62.805477139983886,76.97160744053764,73.42425736070565,78.90485354067768,67.72747353663466,73.58539691076714,78.25590393967337,68.90653460279762,76.56775237557412,65.38074058933348,68.36946153434928,68.18262106001671,60.041603544109606,76.86972480785582,67.30597659797276,72.12494118727687,76.80746658905909,76.46531176029944,78.65385108972787,71.01514515490577,67.76701687955847,71.202817890936,55.1266556604197,57.528875275769124,58.773003876455974,62.027531723985184,75.99774226723437,62.94520944639939,68.21837445960611,84.99228297786065,68.43736028938574,79.37515568467086,62.66382319990123,69.9456244213237,62.49977945089419,68.60966924099438,80.40308137457396,54.726795768076514,76.34423643545857,74.37735602332278,66.05850044303206,57.539421456115456,72.72129507713869,66.70507290936197,74.32676211354703,72.21852145523442,88.01778891320916,69.60644372526976,63.76502507378135,75.79275634956316,76.19996683971765,87.59187575240436,82.35111245914578,77.56871059149509,88.63302891219561,62.11236945677149,67.60248467250253,64.73424058594475,70.10190196844232,60.23313852443691,80.35150946814404,71.77777302901227,59.29193705497342,63.844209187924584,77.13513847450196,82.3812656789438,93.96730891691786,100.0,78.14409433275996,64.10461879968136,52.67953719268691,76.67711462343836,65.87058904689674,69.84642739820315,67.87903200940193,72.59209113583614,84.65980230787643,75.57048567445345,72.41365162961311,63.643462471741884,57.25317055295643,69.13692090926669,73.4621744918168,91.67929913579883,75.30274521472886,83.82739511023058,69.00704401460848,62.150562335829754,64.34883237767627,66.74773935464246,95.28469732435164,65.78613320775614,82.38489203736344,64.97072821912974,83.31573012874244,77.84950966105863,72.4336210234191,73.59237473864566,67.4521230457061,78.4607220148208,69.4501651965922,61.743942362327516,61.22062425680381,75.72587917722119,89.79091256410435,75.59991613573439,72.81361673890117,76.85826139602543,91.06001741706825,80.19382501363856,73.89072769166263,89.06288710059889,82.28756438461613,93.35755991995993,79.83234437221905,65.755309682795,64.31840800754335,94.5092793223125,95.23665720783296,76.204807867174,74.16812678864012,92.61444292242203,66.92954317956512,69.05272981044173,84.43326794689044,74.05394877140411,77.94878133279929,76.36557101475488,81.37574548798933,92.07481861313717,78.90584906901745,84.43938793276858,57.49827898968977,77.51281598069882,69.56769729707129,65.81186939576372,69.21847633071249,74.65876559299188,87.15902542356014,64.73607282260436,78.30631492594418,73.15830566666422,74.72326905638039,88.02757825304604,83.38115437003925,91.37398107442743,76.45494320750099,71.04057388329296,75.761411831195,80.42496791271222,79.76573358453712,67.15611927766633,78.90489781627875,80.28228330138906,100.0,96.7684461128167,69.4675664944118,75.12616638450824,63.36557998162997,72.09292986036513,81.1560500359034,90.05853620888233,70.70916162256391,71.45853559932203,56.52710970261345,76.37334079455093,67.37585588140436,72.70560572633926,62.23139221832412,70.05737445747442,53.42271608643369,56.3295475460901,92.29247112028298,58.125774187259694,60.032144215453606,89.36913528321314,100.0,59.284333711746584,67.31751043211969,74.4155555094051,88.28697644405592,61.131429215717624,68.5472215405789,78.77337576061744,75.34766074466619,67.23843928769901,69.66177035483959,57.25104191630018,68.61826256025334,68.33612509991045,73.32169889626256,65.44672781180984,75.71538522545139,81.12715817819829,72.55429327668466,74.51756408399203,71.53155347577868,71.00084393091414,63.78441966457152,74.16494261673309,70.0271340158651,91.93168308930595,86.73354902475242,74.85846552556501,63.369427903052326,59.87588528016582,82.91142953088865,73.62749225147138,75.80143403391611,53.55414013025808,80.27438481558181,75.54420338214364,59.89569315585522,66.28475192550052,73.6371720435652,71.52466798356244,68.07828814196445,69.9651173193404,68.48022621793115,72.52562512102469,85.71491972993157,45.333415590687025,68.63149735490316,72.76512421372448,73.95993989687099,67.2808541867871,53.43278217521417,74.27995483714109,92.27350214164184,59.66138595083862,83.63828013698188,71.71474776877106,74.38675654171152,64.47101489296051,71.65543827644123,88.00044594698959,80.82655241987707,92.32311605409944,86.77411888977693,79.39086678929576,92.43934526167791,79.38993158738299,83.2798817679706,72.03429046465291,75.66545815859205,68.02576176699723,84.89583934594853,63.21696376885134,82.82350342417661,73.0934894249484,86.71247093467319,82.5086898873126,93.20646157646802,82.30774691138645,59.279597443467594,74.33046827101799,63.27992807405184,69.81720157633725,90.11228433276722,81.37533810897696,68.01069571421253,64.86282633559601,75.3278209287626,62.83439850618872,68.28859722603418,78.12009471551244,86.55312036106696,81.0876147222444,52.087104914019,78.0436672903026,75.72033573232578,79.13890285372693,91.16209681651208,54.36761723195257,69.08896574808894,80.90906322793354,59.184056005460576,89.75949048053509,78.68356612700659,83.46583985843404,69.29056338478206,83.13763689966211,85.68471555989038,77.32878020137169,77.34400892698696,77.70343239281726,66.36654735260618,73.52471319759647],
 "study_hours":[3.9402912156249914,3.6945843135547913,23.403186584393602,10.947600929968832,9.582995569435246,18.24214271693445,13.824826631322498,23.403499670961555,19.507537347734804,11.98423910311351,9.408986837020656,24.66578862310805,17.944005900091085,23.779866500096027,2.961964430426034,21.263341979769564,15.92684709978019,3.0480419583778144,14.706449999230516,17.15240912763622,0.30756714721507095,11.357949046043665,20.63498777990803,7.383975633602247,11.463702044963778,11.05785317669733,7.54818478606229,22.961047387888854,19.532350885787896,2.7647102749027623,24.925866445939327,21.980000607693633,7.097710946600974,20.922414491523455,2.6604882967845715,24.977618261855966,16.64211840266342,16.253125388969924,2.2610181746033184,22.425834972415633,0.7249875801117356,6.0207014510286765,3.5755468791658753,19.419198517305464,4.955105680322447,22.76595567827213,16.406725983187254,0.9040677623674054,0.13574585321751154,1.291447925359973,15.148129441193191,20.037045271485383,5.963820515684712,21.235221073076822,1.4307985038315096,20.024096341041904,23.19488575430701,19.302709977609513,17.45301959946593,20.949505466384576,1.0037824886766606,5.044552767976384,3.123091982641077,12.613274754824664,18.629703208221112,15.750296114409966,21.278277494048375,3.880324811027272,18.36552729837904,4.826037271722602,6.768968782945006,17.747617432032598,24.505119622467046,15.288590149426739,1.36250787478239,15.40772424818832,1.0587637895041775,22.10364278417043,17.739457127515518,4.32819616056258,2.2930251456049517,4.588330722007974,24.50067948885481,11.464016061462246,19.6020237085352,15.91020855269442,14.310328748965933,3.6282563666262426,23.650611338952377,7.533565812867948,14.450430395188555,17.494398614726652,16.230828881132723,23.51486024238796,3.71097474800145,12.708818461173552,10.100859768519149,11.854218237065453,2.9804381549436156,3.3523652468191334,6.951888644531435,7.617615094020783,10.69758034203375,15.274688675915707,15.865727935456576,10.295272414639257,10.219577735717428,5.440713167424049,14.707656210225206,7.926022782930947,0.9014958569340925,10.46000110392151,11.853316877254258,5.639821705105275,14.311448328052892,14.144297510798024,17.550054527759286,16.19871205503025,16.31082641302579,7.905353795601078,19.685805549648848,13.728609589991986,10.785454879497253,15.650312023526428,9.016433361256357,12.818481115168955,18.417642212055508,22.160072168092693,23.02642993237979,12.59082312957748,13.006877868514227,19.996760269095912,7.861267293605032,20.934559058626714,12.353541162935585,2.8964181083817095,1.8014786768235924,21.04983027598658,1.3891979226719475,7.015285903341398,8.353251012538646,4.324861129789845,7.847334245049731,18.56731416812714,0.3670710890017692,20.679335613017162,21.413700589363955,9.306539329788704,3.84032247651587,15.021010198627021,2.991813896622358,9.122984026956313,23.96072952252431,24.88661181459093,19.30262228386464,7.774037748019155,17.191626229152313,17.635159137100317,9.696042379091244,16.022215864653987,0.26819112439190607,5.226441465056037,13.12720757418153,4.093782606457397,4.147671696913341,20.90760726375595,24.728325067090136,13.899235700711209,20.976743272042835,24.758041608156812,3.5398972142193674,11.206140331358776,9.814317896047998,2.0012320911546255,18.883254319868612,10.844475683064825,11.733173354760032,3.7668243453310044,4.523166305771703,22.677590553905375,1.116227224356972,5.821307123592656,7.301483257863209,12.25493856003966,14.661129325369899,12.332249396266665,2.1028833639220506,6.0916863513928385,21.08970961906353,15.939717511961476,16.22872625335686,16.755081383783875,19.072575475988227,1.4527120430361835,9.16520962331531,13.488185881541966,8.461412082433151,21.111971832179663,12.064312714682348,19.215689736484478,21.300387922029227,12.619787072587451,22.738806096783748,14.678098513424514,21.256857470843045,8.514769889788107,12.47042396328713,13.285276025114442,2.6244928974017645,9.963812667538516,22.9334418137919,15.77080600911856,4.437664560924187,8.471390890240125,4.790075241567496,0.6205782949643135,23.186511462600667,11.205183206421786,7.688376810519654,14.961929788943415,0.1828614073253909,6.9505526650203455,17.575836642472314,15.844244326731575,24.545148688563387,15.5089427414511,11.93764684069332,19.03581407960019,22.583196799101326,18.01739866795879,24.08028058873449,19.55012926845443,21.670035956548162,2.8526017795909295,18.31033757484469,11.002217488184215,13.82759506028188,16.35256023705892,24.245377917639235,24.614452035790617,7.205706137197632,18.343837435947904,18.749588448381715,8.662321532826219,3.096744371605525,1.023674007142994,19.433578188229465,12.242493545422647,24.638504237373155,11.624336404841326,24.447924476846005,10.289400054851496,19.842053763999314,2.1204818077958016,13.886542753444097,20.051494674643106,23.117541680497215,20.56457726543579,0.9242681800293556,9.317558532668354,1.2174618078462818,2.7320572778639503,16.882640716687103,17.831454907792455,19.343017068790658,21.63641370139157,18.48578671191275,20.0217898026658,1.2240927455819812,5.863378761032465,15.547444334381144,21.45313261562058,0.11250312349147806,12.865733552908745,16.93218498410993,0.7401822282153303,10.033888938834698,22.39087203459242,16.790320221396467,5.941459084014933,21.319528240797815,8.700785585237858,21.333616778601485,7.473591277972639,14.758006272078724,9.923501693695853,6.870626268876675,22.16393905429673,4.689842048487283,2.1202897808940775,8.54817346364151,17.940978691039188,20.185790149407044,24.96858425166912,7.409051425279123,10.198548778282055,3.4205319507406573,14.371798240575838,24.93950093157293,17.522025253016462,14.880321010334294,9.80922732304485,22.88246900713887,12.422914903258736,3.3591728328265376,9.134461579978337,1.6791667211941723,5.049475942219539,0.4417195249978051,11.331997912504086,15.86350662379493,8.582311559472695,10.509544287631927,23.980231821114398,18.799078039372887,13.521415923623781,7.113521877795631,22.42491996932488,5.877427922016487,8.133568262916926,22.726620360573712,13.23855138212681,18.55794873544942,14.768619854094153,16.33598022523738,7.484582287870639,6.034301540666573,8.062308679216631,3.8860391020855616,21.857859132270185,7.0811733312528515,14.037234860359614,19.79936062853435,19.595602734392838,10.959656464604823,11.906432714668142,24.867543723375622,16.8649369244756,20.365961077947066,22.5638492304808,19.68974590573348,4.62948362383919,14.054268343439306,2.547353932863622,16.32305316409996,23.883735704695276,12.818301607502782,10.82431232169418,0.8960687854540794,23.99436305823051,2.5750671032539696,1.0269773326211733,6.151665287623461,1.6382608479595606,11.37794606029406,12.90219503142781,7.814248725714598,1.2740120643721515,2.7900092062306676,9.612609449748202]
 },
 "mapping":{
 "x":"study_hours",
-"y":"exam_score"
+"y":"exam_score",
+"color":"course"
 },
 "data_meta":{
 "series_annotations":[{
@@ -1301,7 +1289,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 },
 "data_meta":{
 },
-"color":"#4477AA",
 "alpha":0.6,
 "data":{
 }
@@ -1352,23 +1339,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
    </script>
 </div>
 </div>
-<div style="background:#FEF2F2;border-left:5px solid #DC2626;padding:14px 18px;border-radius:6px;margin:16px 0">
-<p><span style="color:#991B1B;font-weight:bold"><i class="bi bi-bug-fill"></i> Common Mistake: Putting a fixed value inside <code>aes()</code></span><br><br> <code>aes(color=“#4477AA”)</code> tries to map the literal string <code>“#4477AA”</code> as if it were a column name. Lets-plot will either error or, worse, silently treat it as a constant category and draw a one-entry legend that says <code>#4477AA</code>. A fixed value is a <b>setting</b> and belongs as a plain keyword argument to the <code>geom_*()</code>, outside <code>aes()</code>. A column name that should vary per row is a <b>mapping</b> and belongs inside <code>aes()</code>.</p>
-</div>
-</section>
-<section id="layering-raw-data-and-a-statistical-summary-together" class="level2">
-<h2 class="anchored" data-anchor-id="layering-raw-data-and-a-statistical-summary-together">4. Layering: Raw Data and a Statistical Summary Together</h2>
-<p>Because every <code>geom_*()</code> is its own layer, you can stack a raw-data layer and a computed-summary layer on the same <code>aes()</code> mapping. <code>geom_smooth()</code> fits a trend line to the data it is given, with a shaded confidence band, entirely declaratively:</p>
-<div id="24" class="cell" data-execution_count="9">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> lets_plot <span class="im">import</span> geom_smooth</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>(</span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    ggplot(results, aes(x<span class="op">=</span><span class="st">"study_hours"</span>, y<span class="op">=</span><span class="st">"exam_score"</span>))</span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> geom_point(alpha<span class="op">=</span><span class="fl">0.3</span>, color<span class="op">=</span><span class="st">"#4477AA"</span>)</span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> geom_smooth(color<span class="op">=</span><span class="st">"#EE6677"</span>, se<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="9">
-   <div id="ZsVCr0"></div>
+<div id="28" class="cell" data-execution_count="10">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Setting: every point is the same fixed colour, no legend needed</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>ggplot(results, aes(x<span class="op">=</span><span class="st">"study_hours"</span>, y<span class="op">=</span><span class="st">"exam_score"</span>)) <span class="op">+</span> geom_point(color<span class="op">=</span><span class="st">"#4477AA"</span>, alpha<span class="op">=</span><span class="fl">0.6</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="10">
+   <div id="q5mOIr"></div>
    <script type="text/javascript" data-lets-plot-script="plot">
    
    (function() {
@@ -1393,7 +1368,139 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
        };
    }
    
-   const containerDiv = document.getElementById("ZsVCr0");
+   const containerDiv = document.getElementById("q5mOIr");
+   let fig = null;
+   
+   function renderPlot() {
+       if (fig === null) {
+           const plotSpec = {
+"data":{
+"exam_score":[71.04717079754431,57.60015893759504,75.50451195806457,77.40564716391214,48.48964811346164,54.97820493137682,69.27840403167285,64.83757407656418,67.83198842495712,59.4695607242642,76.79397974862829,75.77791935428948,68.66030697561216,79.27241206968033,72.67509342252046,59.40707537116762,71.68750784082499,58.411173991710015,76.78450301307272,67.50074089013746,66.15137636454739,61.190704555960586,80.2254133867403,66.45470517931197,63.71672177836893,64.4786644951177,73.32309185553349,71.65444064364078,72.12732611595989,72.30821003007883,89.41647600870462,63.93584983615384,62.87757270928463,59.86227271752122,74.15979422575495,79.28972292720891,66.86052542345125,59.59843523037472,59.755187843087604,74.50592787824701,75.43254171203442,73.43154268305194,61.344902927113054,70.3216132306672,69.16685809140728,70.18688596729012,76.7142877794819,70.23595548774682,74.78913563071895,68.67579069488892,70.89119398689984,74.3128822583854,53.428441801443334,64.80328783642699,63.29627345707205,61.61122151756658,65.24857748773316,82.94941311234396,59.341688843067566,77.68278354591482,55.17130228384195,68.65114970014226,73.62753065105005,77.86222331359278,79.11226579792854,79.93347235199926,68.51274927751562,67.37648207335432,80.57975881257154,70.08695675118385,59.24313676662078,60.66712785996519,62.805477139983886,76.97160744053764,73.42425736070565,78.90485354067768,67.72747353663466,73.58539691076714,78.25590393967337,68.90653460279762,76.56775237557412,65.38074058933348,68.36946153434928,68.18262106001671,60.041603544109606,76.86972480785582,67.30597659797276,72.12494118727687,76.80746658905909,76.46531176029944,78.65385108972787,71.01514515490577,67.76701687955847,71.202817890936,55.1266556604197,57.528875275769124,58.773003876455974,62.027531723985184,75.99774226723437,62.94520944639939,68.21837445960611,84.99228297786065,68.43736028938574,79.37515568467086,62.66382319990123,69.9456244213237,62.49977945089419,68.60966924099438,80.40308137457396,54.726795768076514,76.34423643545857,74.37735602332278,66.05850044303206,57.539421456115456,72.72129507713869,66.70507290936197,74.32676211354703,72.21852145523442,88.01778891320916,69.60644372526976,63.76502507378135,75.79275634956316,76.19996683971765,87.59187575240436,82.35111245914578,77.56871059149509,88.63302891219561,62.11236945677149,67.60248467250253,64.73424058594475,70.10190196844232,60.23313852443691,80.35150946814404,71.77777302901227,59.29193705497342,63.844209187924584,77.13513847450196,82.3812656789438,93.96730891691786,100.0,78.14409433275996,64.10461879968136,52.67953719268691,76.67711462343836,65.87058904689674,69.84642739820315,67.87903200940193,72.59209113583614,84.65980230787643,75.57048567445345,72.41365162961311,63.643462471741884,57.25317055295643,69.13692090926669,73.4621744918168,91.67929913579883,75.30274521472886,83.82739511023058,69.00704401460848,62.150562335829754,64.34883237767627,66.74773935464246,95.28469732435164,65.78613320775614,82.38489203736344,64.97072821912974,83.31573012874244,77.84950966105863,72.4336210234191,73.59237473864566,67.4521230457061,78.4607220148208,69.4501651965922,61.743942362327516,61.22062425680381,75.72587917722119,89.79091256410435,75.59991613573439,72.81361673890117,76.85826139602543,91.06001741706825,80.19382501363856,73.89072769166263,89.06288710059889,82.28756438461613,93.35755991995993,79.83234437221905,65.755309682795,64.31840800754335,94.5092793223125,95.23665720783296,76.204807867174,74.16812678864012,92.61444292242203,66.92954317956512,69.05272981044173,84.43326794689044,74.05394877140411,77.94878133279929,76.36557101475488,81.37574548798933,92.07481861313717,78.90584906901745,84.43938793276858,57.49827898968977,77.51281598069882,69.56769729707129,65.81186939576372,69.21847633071249,74.65876559299188,87.15902542356014,64.73607282260436,78.30631492594418,73.15830566666422,74.72326905638039,88.02757825304604,83.38115437003925,91.37398107442743,76.45494320750099,71.04057388329296,75.761411831195,80.42496791271222,79.76573358453712,67.15611927766633,78.90489781627875,80.28228330138906,100.0,96.7684461128167,69.4675664944118,75.12616638450824,63.36557998162997,72.09292986036513,81.1560500359034,90.05853620888233,70.70916162256391,71.45853559932203,56.52710970261345,76.37334079455093,67.37585588140436,72.70560572633926,62.23139221832412,70.05737445747442,53.42271608643369,56.3295475460901,92.29247112028298,58.125774187259694,60.032144215453606,89.36913528321314,100.0,59.284333711746584,67.31751043211969,74.4155555094051,88.28697644405592,61.131429215717624,68.5472215405789,78.77337576061744,75.34766074466619,67.23843928769901,69.66177035483959,57.25104191630018,68.61826256025334,68.33612509991045,73.32169889626256,65.44672781180984,75.71538522545139,81.12715817819829,72.55429327668466,74.51756408399203,71.53155347577868,71.00084393091414,63.78441966457152,74.16494261673309,70.0271340158651,91.93168308930595,86.73354902475242,74.85846552556501,63.369427903052326,59.87588528016582,82.91142953088865,73.62749225147138,75.80143403391611,53.55414013025808,80.27438481558181,75.54420338214364,59.89569315585522,66.28475192550052,73.6371720435652,71.52466798356244,68.07828814196445,69.9651173193404,68.48022621793115,72.52562512102469,85.71491972993157,45.333415590687025,68.63149735490316,72.76512421372448,73.95993989687099,67.2808541867871,53.43278217521417,74.27995483714109,92.27350214164184,59.66138595083862,83.63828013698188,71.71474776877106,74.38675654171152,64.47101489296051,71.65543827644123,88.00044594698959,80.82655241987707,92.32311605409944,86.77411888977693,79.39086678929576,92.43934526167791,79.38993158738299,83.2798817679706,72.03429046465291,75.66545815859205,68.02576176699723,84.89583934594853,63.21696376885134,82.82350342417661,73.0934894249484,86.71247093467319,82.5086898873126,93.20646157646802,82.30774691138645,59.279597443467594,74.33046827101799,63.27992807405184,69.81720157633725,90.11228433276722,81.37533810897696,68.01069571421253,64.86282633559601,75.3278209287626,62.83439850618872,68.28859722603418,78.12009471551244,86.55312036106696,81.0876147222444,52.087104914019,78.0436672903026,75.72033573232578,79.13890285372693,91.16209681651208,54.36761723195257,69.08896574808894,80.90906322793354,59.184056005460576,89.75949048053509,78.68356612700659,83.46583985843404,69.29056338478206,83.13763689966211,85.68471555989038,77.32878020137169,77.34400892698696,77.70343239281726,66.36654735260618,73.52471319759647],
+"study_hours":[3.9402912156249914,3.6945843135547913,23.403186584393602,10.947600929968832,9.582995569435246,18.24214271693445,13.824826631322498,23.403499670961555,19.507537347734804,11.98423910311351,9.408986837020656,24.66578862310805,17.944005900091085,23.779866500096027,2.961964430426034,21.263341979769564,15.92684709978019,3.0480419583778144,14.706449999230516,17.15240912763622,0.30756714721507095,11.357949046043665,20.63498777990803,7.383975633602247,11.463702044963778,11.05785317669733,7.54818478606229,22.961047387888854,19.532350885787896,2.7647102749027623,24.925866445939327,21.980000607693633,7.097710946600974,20.922414491523455,2.6604882967845715,24.977618261855966,16.64211840266342,16.253125388969924,2.2610181746033184,22.425834972415633,0.7249875801117356,6.0207014510286765,3.5755468791658753,19.419198517305464,4.955105680322447,22.76595567827213,16.406725983187254,0.9040677623674054,0.13574585321751154,1.291447925359973,15.148129441193191,20.037045271485383,5.963820515684712,21.235221073076822,1.4307985038315096,20.024096341041904,23.19488575430701,19.302709977609513,17.45301959946593,20.949505466384576,1.0037824886766606,5.044552767976384,3.123091982641077,12.613274754824664,18.629703208221112,15.750296114409966,21.278277494048375,3.880324811027272,18.36552729837904,4.826037271722602,6.768968782945006,17.747617432032598,24.505119622467046,15.288590149426739,1.36250787478239,15.40772424818832,1.0587637895041775,22.10364278417043,17.739457127515518,4.32819616056258,2.2930251456049517,4.588330722007974,24.50067948885481,11.464016061462246,19.6020237085352,15.91020855269442,14.310328748965933,3.6282563666262426,23.650611338952377,7.533565812867948,14.450430395188555,17.494398614726652,16.230828881132723,23.51486024238796,3.71097474800145,12.708818461173552,10.100859768519149,11.854218237065453,2.9804381549436156,3.3523652468191334,6.951888644531435,7.617615094020783,10.69758034203375,15.274688675915707,15.865727935456576,10.295272414639257,10.219577735717428,5.440713167424049,14.707656210225206,7.926022782930947,0.9014958569340925,10.46000110392151,11.853316877254258,5.639821705105275,14.311448328052892,14.144297510798024,17.550054527759286,16.19871205503025,16.31082641302579,7.905353795601078,19.685805549648848,13.728609589991986,10.785454879497253,15.650312023526428,9.016433361256357,12.818481115168955,18.417642212055508,22.160072168092693,23.02642993237979,12.59082312957748,13.006877868514227,19.996760269095912,7.861267293605032,20.934559058626714,12.353541162935585,2.8964181083817095,1.8014786768235924,21.04983027598658,1.3891979226719475,7.015285903341398,8.353251012538646,4.324861129789845,7.847334245049731,18.56731416812714,0.3670710890017692,20.679335613017162,21.413700589363955,9.306539329788704,3.84032247651587,15.021010198627021,2.991813896622358,9.122984026956313,23.96072952252431,24.88661181459093,19.30262228386464,7.774037748019155,17.191626229152313,17.635159137100317,9.696042379091244,16.022215864653987,0.26819112439190607,5.226441465056037,13.12720757418153,4.093782606457397,4.147671696913341,20.90760726375595,24.728325067090136,13.899235700711209,20.976743272042835,24.758041608156812,3.5398972142193674,11.206140331358776,9.814317896047998,2.0012320911546255,18.883254319868612,10.844475683064825,11.733173354760032,3.7668243453310044,4.523166305771703,22.677590553905375,1.116227224356972,5.821307123592656,7.301483257863209,12.25493856003966,14.661129325369899,12.332249396266665,2.1028833639220506,6.0916863513928385,21.08970961906353,15.939717511961476,16.22872625335686,16.755081383783875,19.072575475988227,1.4527120430361835,9.16520962331531,13.488185881541966,8.461412082433151,21.111971832179663,12.064312714682348,19.215689736484478,21.300387922029227,12.619787072587451,22.738806096783748,14.678098513424514,21.256857470843045,8.514769889788107,12.47042396328713,13.285276025114442,2.6244928974017645,9.963812667538516,22.9334418137919,15.77080600911856,4.437664560924187,8.471390890240125,4.790075241567496,0.6205782949643135,23.186511462600667,11.205183206421786,7.688376810519654,14.961929788943415,0.1828614073253909,6.9505526650203455,17.575836642472314,15.844244326731575,24.545148688563387,15.5089427414511,11.93764684069332,19.03581407960019,22.583196799101326,18.01739866795879,24.08028058873449,19.55012926845443,21.670035956548162,2.8526017795909295,18.31033757484469,11.002217488184215,13.82759506028188,16.35256023705892,24.245377917639235,24.614452035790617,7.205706137197632,18.343837435947904,18.749588448381715,8.662321532826219,3.096744371605525,1.023674007142994,19.433578188229465,12.242493545422647,24.638504237373155,11.624336404841326,24.447924476846005,10.289400054851496,19.842053763999314,2.1204818077958016,13.886542753444097,20.051494674643106,23.117541680497215,20.56457726543579,0.9242681800293556,9.317558532668354,1.2174618078462818,2.7320572778639503,16.882640716687103,17.831454907792455,19.343017068790658,21.63641370139157,18.48578671191275,20.0217898026658,1.2240927455819812,5.863378761032465,15.547444334381144,21.45313261562058,0.11250312349147806,12.865733552908745,16.93218498410993,0.7401822282153303,10.033888938834698,22.39087203459242,16.790320221396467,5.941459084014933,21.319528240797815,8.700785585237858,21.333616778601485,7.473591277972639,14.758006272078724,9.923501693695853,6.870626268876675,22.16393905429673,4.689842048487283,2.1202897808940775,8.54817346364151,17.940978691039188,20.185790149407044,24.96858425166912,7.409051425279123,10.198548778282055,3.4205319507406573,14.371798240575838,24.93950093157293,17.522025253016462,14.880321010334294,9.80922732304485,22.88246900713887,12.422914903258736,3.3591728328265376,9.134461579978337,1.6791667211941723,5.049475942219539,0.4417195249978051,11.331997912504086,15.86350662379493,8.582311559472695,10.509544287631927,23.980231821114398,18.799078039372887,13.521415923623781,7.113521877795631,22.42491996932488,5.877427922016487,8.133568262916926,22.726620360573712,13.23855138212681,18.55794873544942,14.768619854094153,16.33598022523738,7.484582287870639,6.034301540666573,8.062308679216631,3.8860391020855616,21.857859132270185,7.0811733312528515,14.037234860359614,19.79936062853435,19.595602734392838,10.959656464604823,11.906432714668142,24.867543723375622,16.8649369244756,20.365961077947066,22.5638492304808,19.68974590573348,4.62948362383919,14.054268343439306,2.547353932863622,16.32305316409996,23.883735704695276,12.818301607502782,10.82431232169418,0.8960687854540794,23.99436305823051,2.5750671032539696,1.0269773326211733,6.151665287623461,1.6382608479595606,11.37794606029406,12.90219503142781,7.814248725714598,1.2740120643721515,2.7900092062306676,9.612609449748202]
+},
+"mapping":{
+"x":"study_hours",
+"y":"exam_score"
+},
+"data_meta":{
+"series_annotations":[{
+"type":"str",
+"column":"course"
+},{
+"type":"str",
+"column":"semester"
+},{
+"type":"float",
+"column":"exam_score"
+},{
+"type":"float",
+"column":"study_hours"
+}]
+},
+"kind":"plot",
+"scales":[],
+"layers":[{
+"geom":"point",
+"mapping":{
+},
+"data_meta":{
+},
+"color":"#4477AA",
+"alpha":0.6,
+"data":{
+}
+}],
+"metainfo_list":[],
+"spec_id":"6"
+};
+           window.letsPlotCall(function() { fig = LetsPlot.buildPlotFromProcessedSpecs(plotSpec, containerDiv, sizing); });
+       } else {
+           fig.updateView({});
+       }
+   }
+   
+   const renderImmediately = 
+       forceImmediateRender || (
+           sizing.width_mode === 'FIXED' && 
+           (sizing.height_mode === 'FIXED' || sizing.height_mode === 'SCALED')
+       );
+   
+   if (renderImmediately) {
+       renderPlot();
+   }
+   
+   if (!renderImmediately || responsive) {
+       // Set up observer for initial sizing or continuous monitoring
+       var observer = new ResizeObserver(function(entries) {
+           for (let entry of entries) {
+               if (entry.contentBoxSize && 
+                   entry.contentBoxSize[0].inlineSize > 0) {
+                   if (!responsive && observer) {
+                       observer.disconnect();
+                       observer = null;
+                   }
+                   renderPlot();
+                   if (!responsive) {
+                       break;
+                   }
+               }
+           }
+       });
+       
+       observer.observe(containerDiv);
+   }
+   
+   // ----------
+   })();
+   
+   </script>
+</div>
+</div>
+<div style="background:#FEF2F2;border-left:5px solid #DC2626;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#991B1B;font-weight:bold"><i class="bi bi-bug-fill"></i> Common Mistake: Putting a fixed value inside <code>aes()</code></span><br><br> <code>aes(color=“#4477AA”)</code> tries to map the literal string <code>“#4477AA”</code> as if it were a column name. Lets-plot will either error or, worse, silently treat it as a constant category and draw a one-entry legend that says <code>#4477AA</code>. A fixed value is a <b>setting</b> and belongs as a plain keyword argument to the <code>geom_*()</code>, outside <code>aes()</code>. A column name that should vary per row is a <b>mapping</b> and belongs inside <code>aes()</code>.</p>
+</div>
+<div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 4 - Mapping vs Setting in Practice</span><br><br> <b>Goal:</b> Feel the difference by trying both on the same chart.<br><br>1. Build a scatter of <code>study_hours</code> vs <code>exam_score</code> where <code>color</code> is <b>mapped</b> to <code>‘semester’</code>.<br>2. Now remove the mapping and instead <b>set</b> <code>geom_point(color=‘#0369A1’)</code>.<br>3. Observe: the mapped version gets a legend; the set version does not.<br>4. Try placing <code>‘#0369A1’</code> inside <code>aes(color=‘#0369A1’)</code> and note what goes wrong.<br><br><b>Expected:</b> mapping creates a legend; setting applies one fixed colour.</p>
+</div>
+</section>
+<section id="layering-raw-data-and-a-statistical-summary-together" class="level2">
+<h2 class="anchored" data-anchor-id="layering-raw-data-and-a-statistical-summary-together">4. Layering: Raw Data and a Statistical Summary Together</h2>
+<p>Because every <code>geom_*()</code> is its own layer, you can stack a raw-data layer and a computed-summary layer on the same <code>aes()</code> mapping. <code>geom_smooth()</code> fits a trend line to the data it is given, with a shaded confidence band, entirely declaratively:</p>
+<div id="32" class="cell" data-execution_count="11">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> lets_plot <span class="im">import</span> geom_smooth</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>(</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    ggplot(results, aes(x<span class="op">=</span><span class="st">"study_hours"</span>, y<span class="op">=</span><span class="st">"exam_score"</span>))</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> geom_point(alpha<span class="op">=</span><span class="fl">0.3</span>, color<span class="op">=</span><span class="st">"#4477AA"</span>)</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> geom_smooth(color<span class="op">=</span><span class="st">"#EE6677"</span>, se<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="11">
+   <div id="f4tppP"></div>
+   <script type="text/javascript" data-lets-plot-script="plot">
+   
+   (function() {
+   // ----------
+   
+   const forceImmediateRender = false;
+   const responsive = false;
+   
+   let sizing = {
+       width_mode: "MIN",
+       height_mode: "SCALED",
+       width: null, 
+       height: null 
+   };
+   
+   const preferredWidth = document.body.dataset.letsPlotPreferredWidth;
+   if (preferredWidth !== undefined) {
+       sizing = {
+           width_mode: 'FIXED',
+           height_mode: 'SCALED',
+           width: parseFloat(preferredWidth)
+       };
+   }
+   
+   const containerDiv = document.getElementById("f4tppP");
    let fig = null;
    
    function renderPlot() {
@@ -1450,7 +1557,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 }
 }],
 "metainfo_list":[],
-"spec_id":"6"
+"spec_id":"7"
 };
            window.letsPlotCall(function() { fig = LetsPlot.buildPlotFromProcessedSpecs(plotSpec, containerDiv, sizing); });
        } else {
@@ -1497,20 +1604,36 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <div style="background:#F5F3FF;border-left:5px solid #7C3AED;padding:14px 18px;border-radius:6px;margin:16px 0">
 <p><span style="color:#5B21B6;font-weight:bold"><i class="bi bi-lightbulb-fill"></i> Pro Tip: Use <code>method=‘lm’</code> when you need a straight-line fit</span><br><br> <code>geom_smooth()</code> uses a LOESS (locally weighted) smoother by default, which follows local curves in the data. When you specifically want a linear regression fit, pass <code>method=‘lm’</code>. The confidence band and <code>se=True/False</code> control both methods the same way:</p>
-<pre style="background:#F4F5F6;padding:10px;border-radius:4px;font-size:0.9em"># Default LOESS — follows curves
+<pre style="background:#F4F5F6;padding:10px;border-radius:4px;font-size:0.9em"># Default LOESS: follows curves
 geom_smooth(se=True)
 
-# Linear (OLS) — forces a straight line, shows the parametric fit
+# Linear (OLS): forces a straight line, shows the parametric fit
 geom_smooth(method='lm', se=True)</pre>
 <p>The LOESS smoother needs <code>statsmodels</code> installed; the linear one does not. Both display the 95% confidence band when <code>se=True</code>.</p>
 </div>
-<p><code>geom_density()</code> is the smooth-curve equivalent of a histogram, useful when comparing several distributions that would otherwise overlap into an unreadable stack of bars:</p>
-<div id="27" class="cell" data-execution_count="10">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> lets_plot <span class="im">import</span> geom_density</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>ggplot(results, aes(x<span class="op">=</span><span class="st">"exam_score"</span>, fill<span class="op">=</span><span class="st">"course"</span>)) <span class="op">+</span> geom_density(alpha<span class="op">=</span><span class="fl">0.4</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="10">
-   <div id="R2zyp5"></div>
+<p>Lets-Plot charts rendered in a Jupyter notebook are interactive by default: hovering over a data point shows a tooltip with the underlying values. The <code>layer_tooltips()</code> API lets you control exactly which fields appear and how they are labelled.</p>
+<div id="35" class="cell" data-execution_count="12">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> lets_plot <span class="im">import</span> layer_tooltips</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.read_csv(<span class="st">"data/university_analytics.csv"</span>)</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>(</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>    ggplot(df.sample(<span class="dv">300</span>, random_state<span class="op">=</span><span class="dv">42</span>), aes(x<span class="op">=</span><span class="st">"midterm_score"</span>, y<span class="op">=</span><span class="st">"final_score"</span>, color<span class="op">=</span><span class="st">"program"</span>))</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> geom_point(</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>        tooltips<span class="op">=</span>layer_tooltips()</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>        .line(<span class="st">"Student @student_id"</span>)</span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>        .line(<span class="st">"Program: @program"</span>)</span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>        .line(<span class="st">"Midterm: @midterm_score"</span>)</span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>        .line(<span class="st">"Final: @final_score"</span>),</span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>        size<span class="op">=</span><span class="dv">3</span>,</span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>        alpha<span class="op">=</span><span class="fl">0.7</span>,</span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> labs(title<span class="op">=</span><span class="st">"Score Correlation by Program"</span>, x<span class="op">=</span><span class="st">"Midterm"</span>, y<span class="op">=</span><span class="st">"Final"</span>)</span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> modern_theme()</span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="12">
+   <div id="nQLGvZ"></div>
    <script type="text/javascript" data-lets-plot-script="plot">
    
    (function() {
@@ -1535,7 +1658,300 @@ geom_smooth(method='lm', se=True)</pre>
        };
    }
    
-   const containerDiv = document.getElementById("R2zyp5");
+   const containerDiv = document.getElementById("nQLGvZ");
+   let fig = null;
+   
+   function renderPlot() {
+       if (fig === null) {
+           const plotSpec = {
+"data":{
+"student_id":["S0340","S0330","S0143","S0287","S0337","S0023","S0230","S0286","S0215","S0179","S0285","S0019","S0200","S0252","S0318","S0299","S0030","S0305","S0254","S0261","S0169","S0360","S0171","S0359","S0226","S0088","S0220","S0290","S0217","S0343","S0299","S0187","S0338","S0200","S0199","S0350","S0037","S0078","S0087","S0163","S0075","S0218","S0128","S0096","S0010","S0187","S0336","S0356","S0376","S0185","S0182","S0279","S0071","S0304","S0324","S0380","S0392","S0240","S0226","S0267","S0293","S0157","S0276","S0161","S0297","S0120","S0210","S0070","S0316","S0176","S0235","S0325","S0387","S0278","S0040","S0043","S0370","S0029","S0128","S0243","S0040","S0131","S0303","S0131","S0093","S0146","S0188","S0081","S0017","S0008","S0202","S0109","S0042","S0372","S0257","S0357","S0118","S0219","S0232","S0364","S0212","S0239","S0148","S0223","S0322","S0329","S0202","S0145","S0281","S0242","S0122","S0295","S0368","S0300","S0135","S0074","S0278","S0299","S0194","S0105","S0109","S0264","S0200","S0272","S0318","S0088","S0140","S0374","S0164","S0034","S0357","S0190","S0381","S0059","S0189","S0234","S0340","S0036","S0312","S0137","S0179","S0328","S0225","S0248","S0194","S0386","S0267","S0400","S0350","S0077","S0261","S0353","S0170","S0050","S0274","S0132","S0132","S0155","S0033","S0208","S0308","S0157","S0103","S0005","S0108","S0337","S0256","S0039","S0072","S0032","S0068","S0375","S0295","S0036","S0079","S0115","S0044","S0101","S0359","S0137","S0289","S0047","S0069","S0352","S0283","S0157","S0233","S0290","S0012","S0371","S0220","S0074","S0252","S0167","S0400","S0017","S0048","S0378","S0368","S0270","S0202","S0195","S0155","S0232","S0364","S0167","S0204","S0079","S0070","S0043","S0269","S0074","S0177","S0246","S0042","S0385","S0298","S0341","S0248","S0127","S0151","S0073","S0395","S0228","S0178","S0284","S0107","S0176","S0156","S0253","S0233","S0297","S0159","S0288","S0025","S0035","S0367","S0068","S0391","S0141","S0081","S0229","S0375","S0143","S0170","S0349","S0166","S0372","S0363","S0085","S0065","S0091","S0059","S0230","S0358","S0252","S0204","S0061","S0108","S0009","S0012","S0113","S0009","S0200","S0366","S0395","S0134","S0021","S0081","S0144","S0060","S0368","S0155","S0290","S0106","S0359","S0080","S0147","S0319","S0212","S0073","S0334","S0351","S0041","S0012","S0062","S0073","S0013","S0179","S0367","S0089","S0093","S0297","S0089","S0156","S0027","S0102","S0312","S0309","S0058"],
+"program":["Engineering","Computer Science","Engineering","Computer Science","Computer Science","Engineering","Computer Science","Data Science","Information Technology","Engineering","Data Science","Information Technology","Data Science","Engineering","Information Technology","Information Technology","Information Technology","Engineering","Computer Science","Computer Science","Data Science","Data Science","Computer Science","Data Science","Engineering","Data Science","Data Science","Computer Science","Computer Science","Information Technology","Information Technology","Data Science","Information Technology","Data Science","Computer Science","Computer Science","Computer Science","Information Technology","Information Technology","Computer Science","Computer Science","Computer Science","Computer Science","Data Science","Data Science","Data Science","Data Science","Data Science","Computer Science","Information Technology","Engineering","Engineering","Computer Science","Data Science","Data Science","Information Technology","Computer Science","Computer Science","Engineering","Computer Science","Engineering","Computer Science","Data Science","Computer Science","Engineering","Data Science","Data Science","Data Science","Data Science","Computer Science","Engineering","Information Technology","Information Technology","Data Science","Information Technology","Information Technology","Engineering","Computer Science","Computer Science","Computer Science","Information Technology","Computer Science","Data Science","Computer Science","Data Science","Computer Science","Computer Science","Information Technology","Data Science","Information Technology","Engineering","Computer Science","Information Technology","Computer Science","Information Technology","Information Technology","Information Technology","Engineering","Data Science","Computer Science","Data Science","Computer Science","Data Science","Information Technology","Data Science","Data Science","Engineering","Data Science","Computer Science","Information Technology","Data Science","Information Technology","Information Technology","Data Science","Data Science","Computer Science","Data Science","Information Technology","Information Technology","Information Technology","Computer Science","Computer Science","Data Science","Computer Science","Information Technology","Data Science","Computer Science","Data Science","Computer Science","Data Science","Information Technology","Computer Science","Data Science","Computer Science","Information Technology","Data Science","Engineering","Computer Science","Data Science","Engineering","Engineering","Data Science","Computer Science","Data Science","Information Technology","Engineering","Computer Science","Data Science","Computer Science","Computer Science","Computer Science","Data Science","Engineering","Computer Science","Data Science","Engineering","Engineering","Computer Science","Data Science","Information Technology","Data Science","Computer Science","Computer Science","Computer Science","Computer Science","Computer Science","Information Technology","Computer Science","Data Science","Engineering","Data Science","Computer Science","Information Technology","Computer Science","Data Science","Computer Science","Data Science","Engineering","Data Science","Engineering","Data Science","Data Science","Computer Science","Computer Science","Computer Science","Computer Science","Engineering","Computer Science","Engineering","Information Technology","Data Science","Computer Science","Engineering","Information Technology","Data Science","Data Science","Computer Science","Data Science","Information Technology","Computer Science","Engineering","Computer Science","Computer Science","Data Science","Computer Science","Information Technology","Computer Science","Data Science","Data Science","Information Technology","Computer Science","Computer Science","Data Science","Engineering","Information Technology","Data Science","Information Technology","Computer Science","Data Science","Data Science","Information Technology","Engineering","Computer Science","Data Science","Engineering","Computer Science","Data Science","Computer Science","Information Technology","Data Science","Engineering","Engineering","Information Technology","Data Science","Information Technology","Data Science","Information Technology","Data Science","Data Science","Data Science","Information Technology","Data Science","Computer Science","Engineering","Engineering","Data Science","Data Science","Computer Science","Computer Science","Computer Science","Data Science","Computer Science","Computer Science","Computer Science","Information Technology","Engineering","Computer Science","Information Technology","Computer Science","Computer Science","Engineering","Data Science","Computer Science","Data Science","Data Science","Computer Science","Data Science","Information Technology","Information Technology","Data Science","Computer Science","Information Technology","Computer Science","Computer Science","Information Technology","Data Science","Information Technology","Data Science","Computer Science","Data Science","Engineering","Engineering","Data Science","Data Science","Engineering","Data Science","Engineering","Data Science","Engineering","Information Technology","Computer Science","Data Science","Engineering","Computer Science","Information Technology","Data Science","Information Technology","Data Science","Computer Science","Data Science"],
+"midterm_score":[79.7,60.7,65.0,56.4,62.2,62.9,60.3,63.4,72.9,49.9,52.3,32.2,53.8,54.4,38.5,47.1,58.6,69.4,72.4,60.3,46.0,47.8,52.3,43.4,75.1,62.8,57.0,41.4,92.5,58.4,60.2,62.1,54.0,58.1,56.9,null,71.3,74.9,57.1,58.1,60.7,67.2,62.8,64.2,75.0,67.5,70.7,42.0,62.2,76.3,44.5,67.0,75.1,73.9,null,54.7,59.5,52.4,57.2,70.1,67.1,54.1,75.7,77.9,40.1,86.0,77.4,31.7,56.4,64.4,74.9,53.7,72.5,96.3,57.9,68.8,49.3,56.2,73.7,84.8,36.8,51.0,64.9,48.8,76.3,66.2,83.3,68.1,63.0,70.5,58.0,79.4,49.6,82.2,49.8,62.8,59.1,40.3,52.5,55.9,65.0,59.6,69.8,36.9,50.1,64.8,77.8,52.4,56.0,61.6,57.9,63.1,48.3,67.2,61.6,75.2,59.0,51.5,54.3,null,44.2,43.4,63.5,64.2,46.5,55.9,null,78.2,55.6,84.8,33.4,60.5,64.5,71.6,71.4,71.3,79.8,89.1,45.9,57.0,37.9,49.7,52.2,62.1,60.9,37.0,39.5,68.6,66.1,53.7,55.7,56.9,48.1,77.9,61.4,64.2,57.2,73.3,56.0,71.4,44.1,49.9,49.8,54.9,53.9,53.9,57.8,47.2,52.0,67.7,66.8,73.8,76.1,null,63.9,46.3,63.5,85.2,70.3,69.3,66.0,51.5,47.2,65.5,62.2,54.1,68.0,74.7,65.7,47.0,80.2,53.1,48.5,59.8,58.4,84.3,66.0,53.8,45.7,58.6,43.1,54.5,53.8,62.3,64.1,39.8,65.1,73.3,70.9,78.3,65.0,76.6,36.0,64.5,62.4,63.5,71.9,83.1,45.0,50.7,72.6,52.3,67.0,65.6,50.1,40.5,66.2,84.4,60.0,63.4,47.5,61.0,67.7,55.4,54.4,45.7,57.2,48.3,76.1,49.5,60.5,41.0,55.1,54.8,88.0,67.0,49.0,47.0,56.1,67.4,64.1,67.4,67.9,76.4,53.3,57.9,41.1,63.5,65.6,48.1,83.9,76.5,56.9,76.8,49.6,64.3,56.9,60.7,88.3,39.3,67.6,70.1,82.6,63.3,64.4,null,81.4,64.2,53.0,43.9,null,48.0,85.4,56.3,90.3,50.5,40.1,47.9,null,65.0,62.5,49.7,53.3,66.5,65.3,76.3,40.3,34.0,54.3,77.3],
+"final_score":[76.9,60.6,50.9,50.4,65.5,55.8,61.2,61.5,46.1,57.4,76.8,69.4,58.1,51.6,49.8,37.6,76.5,79.4,94.7,52.2,41.5,54.4,46.4,41.5,50.0,68.9,66.6,64.4,65.9,77.2,35.6,55.3,72.7,75.4,38.3,64.5,45.7,46.7,60.7,80.2,76.9,52.8,78.1,57.6,73.7,68.9,65.4,75.6,79.1,93.6,29.1,42.5,52.8,41.4,42.9,33.3,80.1,43.6,27.9,47.1,49.7,56.6,63.2,47.4,70.2,84.2,54.2,35.9,49.9,58.2,23.9,48.5,70.9,59.6,45.9,58.2,41.6,61.4,57.3,48.4,77.3,49.1,61.6,16.4,77.5,73.9,63.4,73.9,57.7,69.1,53.7,65.8,67.8,52.5,47.8,52.6,45.3,49.3,55.2,80.6,78.5,60.1,52.0,54.6,73.0,74.7,58.6,53.0,57.2,29.8,72.0,43.2,59.8,59.5,63.4,57.3,55.5,43.7,79.2,55.4,51.9,64.0,64.4,59.3,64.4,61.8,74.3,66.8,50.2,74.8,62.4,42.7,64.1,56.2,38.2,73.8,59.4,62.8,39.2,42.3,38.4,63.4,43.0,65.6,60.4,33.6,45.0,71.0,54.8,32.3,65.7,23.8,63.1,61.6,71.4,40.5,64.0,75.6,63.7,70.3,51.9,44.5,69.3,49.4,65.2,50.6,32.8,37.9,57.8,27.8,66.6,61.9,56.1,58.5,49.0,41.0,33.3,69.7,58.8,22.1,43.2,60.7,28.5,71.0,59.6,51.6,91.6,48.4,49.9,41.2,77.2,61.8,60.3,75.7,54.7,55.0,64.5,45.8,27.4,47.7,51.9,41.3,69.9,47.3,90.6,36.6,56.9,41.4,70.7,66.7,64.9,46.5,31.8,41.3,51.3,71.7,38.8,27.4,16.3,72.2,57.6,62.4,30.3,80.8,43.2,73.3,62.8,64.5,75.9,53.8,43.2,53.6,68.9,49.7,51.6,72.8,44.9,38.0,63.4,44.7,86.9,33.8,57.7,50.9,69.4,71.1,80.1,66.1,76.1,53.7,62.5,30.6,48.8,58.5,52.3,56.5,36.4,61.3,65.9,40.5,50.7,64.6,80.7,79.1,35.3,78.2,37.5,68.4,58.7,55.1,67.2,85.9,64.9,62.5,45.2,57.2,35.3,89.2,48.4,78.2,53.3,62.8,48.5,88.8,55.3,71.6,78.4,70.2,38.3,63.8,44.7,58.5,58.2,56.2,55.5,86.5,52.8,37.0,59.9,70.7]
+},
+"mapping":{
+"x":"midterm_score",
+"y":"final_score",
+"color":"program"
+},
+"data_meta":{
+"series_annotations":[{
+"type":"str",
+"column":"student_id"
+},{
+"type":"int",
+"column":"cohort"
+},{
+"type":"str",
+"column":"program"
+},{
+"type":"str",
+"column":"gender"
+},{
+"type":"str",
+"column":"region"
+},{
+"type":"str",
+"column":"guardian"
+},{
+"type":"bool",
+"column":"has_internet"
+},{
+"type":"str",
+"column":"course_id"
+},{
+"type":"str",
+"column":"course"
+},{
+"type":"str",
+"column":"semester"
+},{
+"type":"str",
+"column":"enrollment_date"
+},{
+"type":"float",
+"column":"study_hours"
+},{
+"type":"float",
+"column":"attendance_pct"
+},{
+"type":"float",
+"column":"midterm_score"
+},{
+"type":"float",
+"column":"final_score"
+},{
+"type":"float",
+"column":"project_score"
+},{
+"type":"str",
+"column":"final_grade"
+},{
+"type":"bool",
+"column":"passed"
+}]
+},
+"ggtitle":{
+"text":"Score Correlation by Program"
+},
+"guides":{
+"x":{
+"title":"Midterm"
+},
+"y":{
+"title":"Final"
+}
+},
+"theme":{
+"text":{
+"color":"#2d2d2d",
+"family":"'Libre Franklin', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
+"size":12.0,
+"blank":false
+},
+"axis_title_x":{
+"face":"bold",
+"size":14.0,
+"margin":[10.0,0.0,0.0,0.0],
+"blank":false
+},
+"axis_title_y":{
+"face":"bold",
+"size":14.0,
+"margin":[0.0,10.0,0.0,0.0],
+"blank":false
+},
+"axis_text_x":{
+"color":"#666666",
+"angle":0.0,
+"hjust":0.5,
+"margin":[8.0,0.0,0.0,0.0],
+"blank":false
+},
+"axis_text_y":{
+"color":"#666666",
+"margin":[0.0,0.0,0.0,8.0],
+"blank":false
+},
+"axis_ticks":{
+"color":"#bbbbbb",
+"size":0.75,
+"blank":false
+},
+"axis_line":{
+"color":"#bbbbbb",
+"size":1.0,
+"blank":false
+},
+"legend_background":{
+"blank":true
+},
+"legend_text":{
+"size":12.0,
+"blank":false
+},
+"legend_title":{
+"face":"bold",
+"size":14.0,
+"blank":false
+},
+"legend_position":"top",
+"legend_spacing":10.0,
+"legend_key":{
+"blank":true
+},
+"panel_background":{
+"blank":true
+},
+"panel_border":{
+"blank":true
+},
+"panel_grid_minor":{
+"blank":true
+},
+"panel_grid_major_x":{
+"blank":true
+},
+"panel_grid_major_y":{
+"blank":true
+},
+"plot_background":{
+"blank":true
+},
+"plot_title":{
+"color":"#333333",
+"face":"bold",
+"size":19.0,
+"hjust":0.0,
+"margin":[0.0,0.0,6.0,0.0],
+"blank":false
+},
+"plot_subtitle":{
+"color":"#6b6b6b",
+"size":16.0,
+"hjust":0.0,
+"margin":[0.0,0.0,18.0,0.0],
+"blank":false
+},
+"plot_caption":{
+"color":"#999999",
+"face":"italic",
+"size":9.0,
+"hjust":1.0,
+"margin":[12.0,0.0,0.0,0.0],
+"blank":false
+},
+"plot_margin":[16.0,16.0,10.0,10.0],
+"strip_background":{
+"blank":true
+},
+"strip_text":{
+"family":"'Libre Franklin', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
+"face":"bold",
+"size":12.0,
+"hjust":0.0,
+"blank":false
+}
+},
+"kind":"plot",
+"scales":[],
+"layers":[{
+"geom":"point",
+"mapping":{
+},
+"tooltips":{
+"formats":[],
+"lines":["Student @student_id","Program: @program","Midterm: @midterm_score","Final: @final_score"]
+},
+"data_meta":{
+},
+"size":3.0,
+"alpha":0.7,
+"data":{
+}
+}],
+"metainfo_list":[],
+"spec_id":"8"
+};
+           window.letsPlotCall(function() { fig = LetsPlot.buildPlotFromProcessedSpecs(plotSpec, containerDiv, sizing); });
+       } else {
+           fig.updateView({});
+       }
+   }
+   
+   const renderImmediately = 
+       forceImmediateRender || (
+           sizing.width_mode === 'FIXED' && 
+           (sizing.height_mode === 'FIXED' || sizing.height_mode === 'SCALED')
+       );
+   
+   if (renderImmediately) {
+       renderPlot();
+   }
+   
+   if (!renderImmediately || responsive) {
+       // Set up observer for initial sizing or continuous monitoring
+       var observer = new ResizeObserver(function(entries) {
+           for (let entry of entries) {
+               if (entry.contentBoxSize && 
+                   entry.contentBoxSize[0].inlineSize > 0) {
+                   if (!responsive && observer) {
+                       observer.disconnect();
+                       observer = null;
+                   }
+                   renderPlot();
+                   if (!responsive) {
+                       break;
+                   }
+               }
+           }
+       });
+       
+       observer.observe(containerDiv);
+   }
+   
+   // ----------
+   })();
+   
+   </script>
+</div>
+</div>
+<div style="background:#F5F3FF;border-left:5px solid #7C3AED;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#5B21B6;font-weight:bold"><i class="bi bi-lightbulb-fill"></i> Pro Tip: <code>layer_tooltips()</code> puts you in charge of hover content</span><br><br> <code>layer_tooltips().line(‘<span class="citation" data-cites="col">@col</span>’)</code> renders each <code>.line()</code> entry as one row in the hover tooltip. <code><span class="citation" data-cites="col">@col</span></code> substitutes the column value at that data point. Omit <code>layer_tooltips()</code> entirely to keep the default (all mapped columns shown).</p>
+</div>
+<p><code>geom_density()</code> is the smooth-curve equivalent of a histogram, useful when comparing several distributions that would otherwise overlap into an unreadable stack of bars:</p>
+<div id="38" class="cell" data-execution_count="13">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> lets_plot <span class="im">import</span> geom_density</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>ggplot(results, aes(x<span class="op">=</span><span class="st">"exam_score"</span>, fill<span class="op">=</span><span class="st">"course"</span>)) <span class="op">+</span> geom_density(alpha<span class="op">=</span><span class="fl">0.4</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="13">
+   <div id="fvO6Tl"></div>
+   <script type="text/javascript" data-lets-plot-script="plot">
+   
+   (function() {
+   // ----------
+   
+   const forceImmediateRender = false;
+   const responsive = false;
+   
+   let sizing = {
+       width_mode: "MIN",
+       height_mode: "SCALED",
+       width: null, 
+       height: null 
+   };
+   
+   const preferredWidth = document.body.dataset.letsPlotPreferredWidth;
+   if (preferredWidth !== undefined) {
+       sizing = {
+           width_mode: 'FIXED',
+           height_mode: 'SCALED',
+           width: parseFloat(preferredWidth)
+       };
+   }
+   
+   const containerDiv = document.getElementById("fvO6Tl");
    let fig = null;
    
    function renderPlot() {
@@ -1579,7 +1995,7 @@ geom_smooth(method='lm', se=True)</pre>
 }
 }],
 "metainfo_list":[],
-"spec_id":"7"
+"spec_id":"9"
 };
            window.letsPlotCall(function() { fig = LetsPlot.buildPlotFromProcessedSpecs(plotSpec, containerDiv, sizing); });
        } else {
@@ -1625,12 +2041,12 @@ geom_smooth(method='lm', se=True)</pre>
 </div>
 </div>
 <p><code>geom_boxplot()</code> summarises a distribution as median, quartiles, and outliers per group, the declarative equivalent of Part 5’s <code>sns.boxplot()</code>. Because it is just another <code>geom_*()</code>, it composes with <code>aes()</code> and faceting exactly like any other layer:</p>
-<div id="29" class="cell" data-execution_count="11">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> lets_plot <span class="im">import</span> geom_boxplot</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>ggplot(results, aes(x<span class="op">=</span><span class="st">"course"</span>, y<span class="op">=</span><span class="st">"exam_score"</span>, fill<span class="op">=</span><span class="st">"course"</span>)) <span class="op">+</span> geom_boxplot(alpha<span class="op">=</span><span class="fl">0.7</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="11">
-   <div id="OerqBJ"></div>
+<div id="40" class="cell" data-execution_count="14">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> lets_plot <span class="im">import</span> geom_boxplot</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>ggplot(results, aes(x<span class="op">=</span><span class="st">"course"</span>, y<span class="op">=</span><span class="st">"exam_score"</span>, fill<span class="op">=</span><span class="st">"course"</span>)) <span class="op">+</span> geom_boxplot(alpha<span class="op">=</span><span class="fl">0.7</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="14">
+   <div id="lYzNr1"></div>
    <script type="text/javascript" data-lets-plot-script="plot">
    
    (function() {
@@ -1655,7 +2071,7 @@ geom_smooth(method='lm', se=True)</pre>
        };
    }
    
-   const containerDiv = document.getElementById("OerqBJ");
+   const containerDiv = document.getElementById("lYzNr1");
    let fig = null;
    
    function renderPlot() {
@@ -1719,7 +2135,7 @@ geom_smooth(method='lm', se=True)</pre>
 }
 }],
 "metainfo_list":[],
-"spec_id":"8"
+"spec_id":"10"
 };
            window.letsPlotCall(function() { fig = LetsPlot.buildPlotFromProcessedSpecs(plotSpec, containerDiv, sizing); });
        } else {
@@ -1767,8 +2183,8 @@ geom_smooth(method='lm', se=True)</pre>
 <div style="background:#F5F3FF;border-left:5px solid #7C3AED;padding:14px 18px;border-radius:6px;margin:16px 0">
 <p><span style="color:#5B21B6;font-weight:bold"><i class="bi bi-lightbulb-fill"></i> Pro Tip: Swap <code>geom_boxplot()</code> for <code>geom_violin()</code> when shape matters</span><br><br> A boxplot gives you five numbers: minimum, first quartile, median, third quartile, and maximum. A violin gives you the full density shape on both sides of the axis, which reveals skew or multiple peaks that the box hides. The <code>aes()</code> mapping stays identical: just change the <code>geom_*()</code>.</p>
 </div>
-<div style="background:#F5F3FF;border-left:5px solid #7C3AED;padding:14px 18px;border-radius:6px;margin:16px 0">
-<p><span style="color:#5B21B6;font-weight:bold"><i class="bi bi-lightbulb-fill"></i> Pro Tip: Layers compose in the order you add them</span><br><br> <code>geom_point() + geom_smooth()</code> draws points first, then the trend line on top. Reversing the order draws the line first and the points on top of it. This matters most when a layer has a solid fill that would otherwise hide whatever was drawn before it.</p>
+<div style="background:#EAF3FA;border-left:5px solid #0369A1;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-info-circle-fill"></i> Key Concept: Layers compose in the order you add them</span><br><br> <code>geom_point() + geom_smooth()</code> draws points first, then the trend line on top. Reversing the order draws the line first and the points on top of it. This matters most when a layer has a solid fill that would otherwise hide whatever was drawn before it.</p>
 </div>
 <div style="background:#F5F3FF;border-left:5px solid #7C3AED;padding:14px 18px;border-radius:6px;margin:16px 0">
 <p><span style="color:#5B21B6;font-weight:bold"><i class="bi bi-lightbulb-fill"></i> Pro Tip: Add marginal distribution plots with <code>ggmarginal()</code></span><br><br> Lets-Plot’s <code>ggmarginal()</code> wraps any scatter plot with histograms or density curves along the x and y margins, letting you see both the bivariate relationship and the individual distributions without a separate figure:</p>
@@ -1782,21 +2198,24 @@ p = (
 ggmarginal(p, type="density")</pre>
 <p><code>type</code> accepts <code>“density”</code> (KDE curves), <code>“histogram”</code>, or <code>“boxplot”</code>. The marginals automatically inherit the <code>color</code> mapping so each course gets its own density curve.</p>
 </div>
+<div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 5 - Layer a Raw Scatter with a Density Contour</span><br><br> <b>Goal:</b> Stack two geoms to show individual points and their density together.<br><br>1. Start with <code>ggplot(results, aes(x=‘study_hours’, y=‘exam_score’))</code>.<br>2. Add <code>+ geom_point(alpha=0.3, size=2)</code>.<br>3. Add <code>+ geom_density2d(color=‘#DC2626’)</code> as a second layer.<br>4. Add a trend line: <code>+ geom_smooth(se=True, color=‘#0369A1’)</code>.<br>5. Add tooltips: <code>+ geom_point(tooltips=layer_tooltips().line(‘score: <span class="citation" data-cites="exam_score">@exam_score</span>’))</code>.<br><br><b>Expected:</b> three layers compose – points, contour lines, and trend band.</p>
+</div>
 </section>
 <section id="faceting-one-plot-many-panels" class="level2">
 <h2 class="anchored" data-anchor-id="faceting-one-plot-many-panels">5. Faceting: One Plot, Many Panels</h2>
 <p>Part 5’s three-panel histogram needed a manual loop over <code>axes.flat</code>, plus <code>sharey=True</code> to keep the comparison fair. <code>facet_wrap()</code> does both in one line, and <strong>shares scales across panels by default</strong>, the opposite of matplotlib’s default and exactly what you want for a fair comparison:</p>
-<div id="34" class="cell" data-execution_count="12">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> lets_plot <span class="im">import</span> facet_wrap, geom_histogram, ggsize</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>(</span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    ggplot(results, aes(x<span class="op">=</span><span class="st">"exam_score"</span>))</span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> geom_histogram(bins<span class="op">=</span><span class="dv">15</span>, fill<span class="op">=</span><span class="st">"#4477AA"</span>)</span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> facet_wrap(facets<span class="op">=</span><span class="st">"course"</span>)</span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> ggsize(<span class="dv">700</span>, <span class="dv">250</span>)</span>
-<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="12">
-   <div id="mJaSI0"></div>
+<div id="46" class="cell" data-execution_count="15">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> lets_plot <span class="im">import</span> facet_wrap, geom_histogram, ggsize</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>(</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    ggplot(results, aes(x<span class="op">=</span><span class="st">"exam_score"</span>))</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> geom_histogram(bins<span class="op">=</span><span class="dv">15</span>, fill<span class="op">=</span><span class="st">"#4477AA"</span>)</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> facet_wrap(facets<span class="op">=</span><span class="st">"course"</span>)</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> ggsize(<span class="dv">700</span>, <span class="dv">250</span>)</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="15">
+   <div id="Vt6BvT"></div>
    <script type="text/javascript" data-lets-plot-script="plot">
    
    (function() {
@@ -1821,7 +2240,7 @@ ggmarginal(p, type="density")</pre>
        };
    }
    
-   const containerDiv = document.getElementById("mJaSI0");
+   const containerDiv = document.getElementById("Vt6BvT");
    let fig = null;
    
    function renderPlot() {
@@ -1875,7 +2294,7 @@ ggmarginal(p, type="density")</pre>
 }
 }],
 "metainfo_list":[],
-"spec_id":"9"
+"spec_id":"11"
 };
            window.letsPlotCall(function() { fig = LetsPlot.buildPlotFromProcessedSpecs(plotSpec, containerDiv, sizing); });
        } else {
@@ -1924,17 +2343,17 @@ ggmarginal(p, type="density")</pre>
 <p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-info-circle-fill"></i> Key Concept: Faceting replaces a loop with a declaration</span><br><br> <code>facet_wrap(facets=“course”)</code> splits the data by the <code>course</code> column and draws one panel per group, using the exact same <code>aes()</code> and <code>geom_*()</code> for every panel. There is no loop to write and no risk of accidentally giving one panel a different scale than the others, the bug from Part 5’s Common Mistake callout. Add a second facet variable with <code>facet_grid()</code> for a full grid of panels.</p>
 </div>
 <p>When you have two grouping variables, <code>facet_grid()</code> builds a full grid of panels: one row per level of one variable and one column per level of the other. For this dataset, rows are semesters and columns are courses:</p>
-<div id="37" class="cell" data-execution_count="13">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> lets_plot <span class="im">import</span> facet_grid</span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>(</span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    ggplot(results, aes(x<span class="op">=</span><span class="st">"exam_score"</span>))</span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> geom_histogram(bins<span class="op">=</span><span class="dv">12</span>, fill<span class="op">=</span><span class="st">"#4477AA"</span>)</span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> facet_grid(y<span class="op">=</span><span class="st">"semester"</span>, x<span class="op">=</span><span class="st">"course"</span>)</span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> ggsize(<span class="dv">850</span>, <span class="dv">450</span>)</span>
-<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="13">
-   <div id="YBx1yh"></div>
+<div id="49" class="cell" data-execution_count="16">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> lets_plot <span class="im">import</span> facet_grid</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>(</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>    ggplot(results, aes(x<span class="op">=</span><span class="st">"exam_score"</span>))</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> geom_histogram(bins<span class="op">=</span><span class="dv">12</span>, fill<span class="op">=</span><span class="st">"#4477AA"</span>)</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> facet_grid(y<span class="op">=</span><span class="st">"semester"</span>, x<span class="op">=</span><span class="st">"course"</span>)</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> ggsize(<span class="dv">850</span>, <span class="dv">450</span>)</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="16">
+   <div id="VdMK2U"></div>
    <script type="text/javascript" data-lets-plot-script="plot">
    
    (function() {
@@ -1959,7 +2378,7 @@ ggmarginal(p, type="density")</pre>
        };
    }
    
-   const containerDiv = document.getElementById("YBx1yh");
+   const containerDiv = document.getElementById("VdMK2U");
    let fig = null;
    
    function renderPlot() {
@@ -2015,7 +2434,7 @@ ggmarginal(p, type="density")</pre>
 }
 }],
 "metainfo_list":[],
-"spec_id":"10"
+"spec_id":"12"
 };
            window.letsPlotCall(function() { fig = LetsPlot.buildPlotFromProcessedSpecs(plotSpec, containerDiv, sizing); });
        } else {
@@ -2061,40 +2480,40 @@ ggmarginal(p, type="density")</pre>
 </div>
 </div>
 <div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
-<p><span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 2 - Facet by Semester</span><br><br></p>
+<p><span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 6 - Facet by Semester</span><br><br></p>
 <b>Goal:</b> Build a scatter plot of <code>study_hours</code> vs.&nbsp;<code>exam_score</code>, coloured by <code>course</code>, faceted into one panel per <code>semester</code>.
 <pre style="background:#FFF8E1;padding:10px;border-radius:4px;font-size:0.9em">ggplot(results, aes(x="study_hours", y="exam_score", color="course")) \
     + geom_point(alpha=0.5) \
     + facet_wrap(facets="semester")</pre>
 </div>
-<div id="39" class="cell" data-execution_count="14">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: scatter plot, coloured by course, faceted by semester</span></span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="51" class="cell" data-execution_count="17">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: scatter plot, coloured by course, faceted by semester</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="titles-labels-and-scales" class="level2">
 <h2 class="anchored" data-anchor-id="titles-labels-and-scales">6. Titles, Labels, and Scales</h2>
 <p>Every chart so far has used whatever axis labels and legend titles lets-plot generates by default: column names from the DataFrame, which are fine for exploration but not for sharing. <code>labs()</code> replaces all of them in one layer. <code>scale_color_manual()</code> and <code>scale_fill_manual()</code> give you exact control over which colour maps to which group. Passing <code>pro_colors</code> from <code>ark.plot.theme</code> uses the project’s brand palette, the same one <code>modern_theme()</code> applies globally in Part 7:</p>
-<div id="41" class="cell" data-execution_count="15">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> lets_plot <span class="im">import</span> labs, scale_color_manual</span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> ark.plot.theme <span class="im">import</span> pro_colors</span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>(</span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>    ggplot(results, aes(x<span class="op">=</span><span class="st">"study_hours"</span>, y<span class="op">=</span><span class="st">"exam_score"</span>, color<span class="op">=</span><span class="st">"course"</span>))</span>
-<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> geom_point(alpha<span class="op">=</span><span class="fl">0.5</span>)</span>
-<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> geom_smooth(se<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> labs(</span>
-<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>        title<span class="op">=</span><span class="st">"Study hours versus exam score"</span>,</span>
-<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>        subtitle<span class="op">=</span><span class="st">"Each point is one student; lines show the per-course trend"</span>,</span>
-<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>        x<span class="op">=</span><span class="st">"Weekly study hours"</span>,</span>
-<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>        y<span class="op">=</span><span class="st">"Exam score (0-100)"</span>,</span>
-<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>        color<span class="op">=</span><span class="st">"Course"</span>,</span>
-<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> scale_color_manual(values<span class="op">=</span>pro_colors)</span>
-<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="15">
-   <div id="KkMja0"></div>
+<div id="53" class="cell" data-execution_count="18">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> lets_plot <span class="im">import</span> labs, scale_color_manual</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> ark.plot.theme <span class="im">import</span> pro_colors</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>(</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>    ggplot(results, aes(x<span class="op">=</span><span class="st">"study_hours"</span>, y<span class="op">=</span><span class="st">"exam_score"</span>, color<span class="op">=</span><span class="st">"course"</span>))</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> geom_point(alpha<span class="op">=</span><span class="fl">0.5</span>)</span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> geom_smooth(se<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> labs(</span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>        title<span class="op">=</span><span class="st">"Study hours versus exam score"</span>,</span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>        subtitle<span class="op">=</span><span class="st">"Each point is one student; lines show the per-course trend"</span>,</span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>        x<span class="op">=</span><span class="st">"Weekly study hours"</span>,</span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>        y<span class="op">=</span><span class="st">"Exam score (0-100)"</span>,</span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a>        color<span class="op">=</span><span class="st">"Course"</span>,</span>
+<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> scale_color_manual(values<span class="op">=</span>pro_colors)</span>
+<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="18">
+   <div id="hscQgb"></div>
    <script type="text/javascript" data-lets-plot-script="plot">
    
    (function() {
@@ -2119,7 +2538,7 @@ ggmarginal(p, type="density")</pre>
        };
    }
    
-   const containerDiv = document.getElementById("KkMja0");
+   const containerDiv = document.getElementById("hscQgb");
    let fig = null;
    
    function renderPlot() {
@@ -2193,7 +2612,7 @@ ggmarginal(p, type="density")</pre>
 }
 }],
 "metainfo_list":[],
-"spec_id":"11"
+"spec_id":"13"
 };
            window.letsPlotCall(function() { fig = LetsPlot.buildPlotFromProcessedSpecs(plotSpec, containerDiv, sizing); });
        } else {
@@ -2242,14 +2661,14 @@ ggmarginal(p, type="density")</pre>
 <p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-info-circle-fill"></i> Key Concept: <code>labs()</code> renames anything auto-generated from a column name</span><br><br> <code>labs(title=…, x=…, y=…, color=…)</code> is one more <code>+</code> layer. The named argument matches the aesthetic: use <code>color=</code> when you have <code>aes(color=“course”)</code> and <code>fill=</code> when you have <code>aes(fill=“course”)</code>. <code>pro_colors</code> from <code>ark.plot.theme</code> is the project’s brand palette; passing it to <code>scale_color_manual()</code> connects this chart to the same colour system that <code>modern_theme()</code> applies globally in Part 7.</p>
 </div>
 <div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
-<p><span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 3 - Label the Density Chart</span><br><br></p>
+<p><span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 7 - Label the Density Chart</span><br><br></p>
 <b>Goal:</b> Take the <code>geom_density()</code> chart from Section 4 and add a proper title, axis labels, and legend title with <code>labs()</code>.
 <pre style="background:#FFF8E1;padding:10px;border-radius:4px;font-size:0.9em">ggplot(results, aes(x="exam_score", fill="course")) + geom_density(alpha=0.4) \
     + labs(title=..., x=..., y=..., fill=...)</pre>
 </div>
-<div id="44" class="cell" data-execution_count="16">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: add labs() to the density chart from Section 4</span></span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="56" class="cell" data-execution_count="19">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: add labs() to the density chart from Section 4</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="capstone-the-three-panel-report-declaratively" class="level2">
@@ -2267,14 +2686,14 @@ ggplot(results, aes(x="exam_score")) \
     + ggsize(700, 250)</pre>
 <p><b>Hint:</b> <code>geom_vline()</code> takes a fixed <code>xintercept</code>, a setting, not a mapping, so it goes outside <code>aes()</code> just like the fixed colours in Sec. 3.</p>
 </div>
-<div id="47" class="cell" data-execution_count="17">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> lets_plot <span class="im">import</span> geom_vline</span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>overall_mean <span class="op">=</span> results[<span class="st">"exam_score"</span>].mean()</span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: faceted histogram with a reference line at overall_mean</span></span>
-<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="17">
+<div id="59" class="cell" data-execution_count="20">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> lets_plot <span class="im">import</span> geom_vline</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>overall_mean <span class="op">=</span> results[<span class="st">"exam_score"</span>].mean()</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: faceted histogram with a reference line at overall_mean</span></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="20">
 <pre><code>Ellipsis</code></pre>
 </div>
 </div>
@@ -2303,7 +2722,7 @@ ggplot(results, aes(x="exam_score")) \
 </tr>
 <tr class="even">
 <td><a href="https://ggplot2-book.org">ggplot2 book</a> (Wickham, 2016)</td>
-<td>Free online — Lets-Plot’s API maps closely to ggplot2, so this book is directly useful</td>
+<td>Free online: Lets-Plot’s API maps closely to ggplot2, so this book is directly useful</td>
 </tr>
 </tbody>
 </table>

@@ -108,9 +108,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   }
 }</script>
 <style>html{ scroll-behavior: smooth; }</style>
-<script src="../../site_libs/quarto-diagram/mermaid.min.js"></script>
-<script src="../../site_libs/quarto-diagram/mermaid-init.js"></script>
-<link href="../../site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.min.js" integrity="sha384-c9c+LnTbwQ3aujuU7ULEPVvgLs+Fn6fJUvIGTsuu1ZcCf11fiEubah0ttpca4ntM sha384-6V1/AdqZRWk1KAlWbKBlGhN7VG4iE/yAZcO6NZPMF8od0vukrvr0tg4qY6NSrItx" crossorigin="anonymous"></script>
 
 <script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
@@ -210,12 +207,22 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../tutorials/01-python-basics/03-python-patterns.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 3: Patterns for Data Science &amp; ML</span></a>
+  <a href="../../tutorials/01-python-basics/03a-python-patterns.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 3a: Python Patterns – Functions and Code Reuse</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../tutorials/01-python-basics/04-numpy.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 4: NumPy for Data &amp; ML</span></a>
+  <a href="../../tutorials/01-python-basics/03b-python-patterns.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 3b: Python Patterns – Classes, Exceptions, and Defensive Code</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/04a-numpy.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 4a: NumPy Fundamentals</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/04b-numpy.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 4b: NumPy Advanced Operations</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -363,12 +370,22 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../tutorials/04-ml-intro/04-sklearn-core.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 25: Scikit-learn Core API</span></a>
+  <a href="../../tutorials/04-ml-intro/04a-sklearn-core.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 25a: Scikit-learn Core – Foundations</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../tutorials/04-ml-intro/05-sklearn-pipeline.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 26: Sklearn Pipeline and Hyperparameter Search</span></a>
+  <a href="../../tutorials/04-ml-intro/04b-sklearn-core.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 25b: Scikit-learn Core – Validation and Modern Features</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/04-ml-intro/05a-sklearn-pipeline.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 26a: sklearn Pipeline – Foundations</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/04-ml-intro/05b-sklearn-pipeline.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 26b: sklearn Pipeline – Hyperparameter Search and Evaluation</span></a>
   </div>
 </li>
       </ul>
@@ -407,8 +424,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">In this chapter</h2>
    
   <ul>
-  <li><a href="#before-you-begin" id="toc-before-you-begin" class="nav-link active" data-scroll-target="#before-you-begin">Before you begin</a></li>
-  <li><a href="#the-tool-that-thinks-in-tables" id="toc-the-tool-that-thinks-in-tables" class="nav-link" data-scroll-target="#the-tool-that-thinks-in-tables">0. The Tool That Thinks in Tables</a>
+  <li><a href="#the-tool-that-thinks-in-tables" id="toc-the-tool-that-thinks-in-tables" class="nav-link active" data-scroll-target="#the-tool-that-thinks-in-tables">The Tool That Thinks in Tables</a>
   <ul class="collapse">
   <li><a href="#how-it-compares-to-alternatives" id="toc-how-it-compares-to-alternatives" class="nav-link" data-scroll-target="#how-it-compares-to-alternatives">How it compares to alternatives</a></li>
   <li><a href="#already-in-your-environment" id="toc-already-in-your-environment" class="nav-link" data-scroll-target="#already-in-your-environment">Already in your environment</a></li>
@@ -452,67 +468,78 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p><a href="https://colab.research.google.com/github/sambaiga/ds-mlops-path/blob/main/tutorials/01-python-basics/08-pandas-core.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open In Colab"></a> <a href="https://raw.githubusercontent.com/sambaiga/ds-mlops-path/main/tutorials/01-python-basics/08-pandas-core.ipynb"><img src="https://img.shields.io/badge/Download-Notebook-blue.svg?logo=jupyter&amp;logoColor=white" class="img-fluid" alt="Download Notebook"></a></p>
 <p><strong>DS-MLOps Data Analysis</strong></p>
 <p><strong>Python 3.12+ | Author: Anthony Faustine</strong></p>
-<section id="before-you-begin" class="level2">
-<h2 class="anchored" data-anchor-id="before-you-begin">Before you begin</h2>
-<p>This notebook assumes you have completed Parts 1-7 (the Python Basics section), especially the NumPy notebook (Part 4): pandas builds directly on NumPy arrays, and a lot of what looks new here is really a NumPy idea wearing a label.</p>
-<p>Every example in this part uses a real dataset: exam results for 2,400 students across several schools, with columns covering marks, teacher counts, school size, and whether each student continued or dropped out. Real data means real messiness, missing values included, which is exactly what makes it worth learning on.</p>
-<p>Part 9 (<code>09-pandas-operations.ipynb</code>) continues with row-wise transformations, string methods, and descriptive statistics on this same dataset.</p>
+<p>You have a CSV. It has 2,400 rows, 10 columns, and three questions from your manager: which schools have the highest pass rate? Is there a relationship between teacher count and average score? How did results change between semesters?</p>
+<p>NumPy can store the numbers. A plain Python dict can hold the column names. But neither of them knows what a labelled row is. pandas gives every row an index, every column a name, and your 2,400-row question becomes three lines of code.</p>
+<p>Part 7 taught you how to visualise data once it is clean and shaped. This notebook covers the shaping: loading a file, inspecting it, selecting rows and columns, filtering, and fixing missing values. Part 9 (<code>09-pandas-operations.ipynb</code>) builds on this foundation with groupby, merge, and apply – the operations you reach for in every real analysis.</p>
+<blockquote class="blockquote">
+<p>Callout markers: <a href="../../index.html#callout-guide">book cover page</a>.</p>
+</blockquote>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Topics covered
+<span class="screen-reader-only">Note</span>Before You Begin
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
 <div id="callout-1" class="callout-1-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
+<p>This notebook follows Parts 1-7, especially Part 4 (NumPy): pandas is NumPy with labels. Install pandas with <code>pip install pandas</code>.</p>
+</div>
+</div>
+</div>
+<section id="the-tool-that-thinks-in-tables" class="level2">
+<h2 class="anchored" data-anchor-id="the-tool-that-thinks-in-tables">The Tool That Thinks in Tables</h2>
+<p>You have a CSV. It has 2,400 rows, 10 columns, and three questions from your manager: which schools have the highest pass rate? Is there a relationship between teacher count and average score? How did results change between semesters?</p>
+<p>NumPy can store the numbers. A plain Python dict can hold the column names. But neither of them has a concept of a <em>labelled row</em>, a <em>named column</em>, or a <em>group-by operation</em>. You would spend more time writing plumbing than answering the questions.</p>
+<p><strong>pandas</strong> (<a href="https://pandas.pydata.org">pandas.pydata.org</a>) was created at AQR Capital in 2008 by Wes McKinney to bring the R data frame into Python. The idea was to give Python scientists a two-dimensional, labelled data structure with built-in operations for filtering, grouping, joining, and reshaping: the things you actually do with tabular data, every day. It became the de-facto standard for data analysis in Python and the input format expected by every ML library in the ecosystem.</p>
+<section id="how-it-compares-to-alternatives" class="level3">
+<h3 class="anchored" data-anchor-id="how-it-compares-to-alternatives">How it compares to alternatives</h3>
 <table class="caption-top table">
-<colgroup>
-<col style="width: 50%">
-<col style="width: 50%">
-</colgroup>
 <thead>
 <tr class="header">
-<th>Topic</th>
-<th>Why it matters</th>
+<th>Library</th>
+<th>Strengths</th>
+<th>When to reach for it instead</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td><strong>Series and DataFrame</strong></td>
-<td>The two objects every pandas operation works on</td>
+<td><strong>pandas</strong> (<a href="https://pandas.pydata.org">pandas.pydata.org</a>)</td>
+<td>Mature, enormous ecosystem, readable API</td>
+<td>Your default for anything up to a few million rows</td>
 </tr>
 <tr class="even">
-<td><strong>Reading data</strong></td>
-<td><code>pd.read_csv</code> and the first checks every dataset deserves</td>
+<td><strong>Polars</strong> (<a href="https://pola.rs">pola.rs</a>)</td>
+<td>Rust core, multi-threaded, lazy evaluation</td>
+<td>Datasets too large for pandas to fit comfortably in RAM; see Part 11</td>
 </tr>
 <tr class="odd">
-<td><strong>Selecting rows and columns</strong></td>
-<td><code>loc</code> vs <code>iloc</code>, and why mixing them up is the most common pandas bug</td>
+<td><strong>Dask</strong> (<a href="https://dask.org">dask.org</a>)</td>
+<td>Distributed pandas on a cluster</td>
+<td>Multi-machine computation, out-of-core data</td>
 </tr>
 <tr class="even">
-<td><strong>Boolean filtering</strong></td>
-<td>The same masking idea from NumPy, applied to a labelled table</td>
+<td><strong>Modin</strong> (<a href="https://modin.readthedocs.io">modin.readthedocs.io</a>)</td>
+<td>pandas API, parallel execution</td>
+<td>Parallelism without changing your pandas code</td>
 </tr>
 <tr class="odd">
-<td><strong>Missing data</strong></td>
-<td>Real datasets have gaps; pandas gives you tools to see and handle them, not ignore them</td>
-</tr>
-<tr class="even">
-<td><strong>Memory and categorical dtype</strong></td>
-<td>Profile what a DataFrame costs in RAM; reduce it for columns with few distinct values</td>
+<td><strong>cuDF</strong> (<a href="https://docs.rapids.ai/api/cudf/stable">docs.rapids.ai</a>)</td>
+<td>GPU-accelerated pandas</td>
+<td>Large datasets on NVIDIA GPUs</td>
 </tr>
 </tbody>
 </table>
-</div>
-</div>
-</div>
-<blockquote class="blockquote">
-<p>Callout markers used throughout this notebook are explained on the <a href="../../index.html#callout-guide">book cover page</a>.</p>
-</blockquote>
+<p>For most data science and ML work pandas is the right starting point. You will meet Polars in Part 11, when the scenario specifically calls for speed at scale.</p>
+</section>
+<section id="already-in-your-environment" class="level3">
+<h3 class="anchored" data-anchor-id="already-in-your-environment">Already in your environment</h3>
+<p>pandas is in <code>pyproject.toml</code>. For a standalone project:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> add pandas          <span class="co"># or: pip install pandas</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Official docs: <a href="https://pandas.pydata.org/docs/">pandas.pydata.org/docs</a></p>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
@@ -586,57 +613,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </section>
-<section id="the-tool-that-thinks-in-tables" class="level2">
-<h2 class="anchored" data-anchor-id="the-tool-that-thinks-in-tables">0. The Tool That Thinks in Tables</h2>
-<p>You have a CSV. It has 2,400 rows, 10 columns, and three questions from your manager: which schools have the highest pass rate? Is there a relationship between teacher count and average score? How did results change between semesters?</p>
-<p>NumPy can store the numbers. A plain Python dict can hold the column names. But neither of them has a concept of a <em>labelled row</em>, a <em>named column</em>, or a <em>group-by operation</em>. You would spend more time writing plumbing than answering the questions.</p>
-<p><strong>pandas</strong> (<a href="https://pandas.pydata.org">pandas.pydata.org</a>) was created at AQR Capital in 2008 by Wes McKinney to bring the R data frame into Python. The idea was to give Python scientists a two-dimensional, labelled data structure with built-in operations for filtering, grouping, joining, and reshaping — the things you actually do with tabular data, every day. It became the de-facto standard for data analysis in Python and the input format expected by every ML library in the ecosystem.</p>
-<section id="how-it-compares-to-alternatives" class="level3">
-<h3 class="anchored" data-anchor-id="how-it-compares-to-alternatives">How it compares to alternatives</h3>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th>Library</th>
-<th>Strengths</th>
-<th>When to reach for it instead</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><strong>pandas</strong> (<a href="https://pandas.pydata.org">pandas.pydata.org</a>)</td>
-<td>Mature, enormous ecosystem, readable API</td>
-<td>Your default for anything up to a few million rows</td>
-</tr>
-<tr class="even">
-<td><strong>Polars</strong> (<a href="https://pola.rs">pola.rs</a>)</td>
-<td>Rust core, multi-threaded, lazy evaluation</td>
-<td>Datasets too large for pandas to fit comfortably in RAM; see Part 11</td>
-</tr>
-<tr class="odd">
-<td><strong>Dask</strong> (<a href="https://dask.org">dask.org</a>)</td>
-<td>Distributed pandas on a cluster</td>
-<td>Multi-machine computation, out-of-core data</td>
-</tr>
-<tr class="even">
-<td><strong>Modin</strong> (<a href="https://modin.readthedocs.io">modin.readthedocs.io</a>)</td>
-<td>pandas API, parallel execution</td>
-<td>Parallelism without changing your pandas code</td>
-</tr>
-<tr class="odd">
-<td><strong>cuDF</strong> (<a href="https://docs.rapids.ai/api/cudf/stable">docs.rapids.ai</a>)</td>
-<td>GPU-accelerated pandas</td>
-<td>Large datasets on NVIDIA GPUs</td>
-</tr>
-</tbody>
-</table>
-<p>For most data science and ML work pandas is the right starting point. You will meet Polars in Part 11, when the scenario specifically calls for speed at scale.</p>
-</section>
-<section id="already-in-your-environment" class="level3">
-<h3 class="anchored" data-anchor-id="already-in-your-environment">Already in your environment</h3>
-<p>pandas is in <code>pyproject.toml</code>. For a standalone project:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> add pandas          <span class="co"># or: pip install pandas</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Official docs: <a href="https://pandas.pydata.org/docs/">pandas.pydata.org/docs</a></p>
-</section>
 </section>
 <section id="series-and-dataframe" class="level2">
 <h2 class="anchored" data-anchor-id="series-and-dataframe">1. Series and DataFrame</h2>
@@ -657,51 +633,106 @@ dtype: int64
 underlying NumPy array: [62 78 91]</code></pre>
 </div>
 </div>
-<blockquote class="blockquote">
-<p><strong>Relationship: Series are columns, DataFrame shares one Index</strong></p>
-</blockquote>
-<div class="cell" data-layout-align="default">
-<div class="cell-output-display">
+<div id="7" class="cell" data-execution_count="2">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.patches <span class="im">as</span> mpatches</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> matplotlib.patches <span class="im">import</span> FancyBboxPatch</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>BG <span class="op">=</span> <span class="st">"#F8FAFC"</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>BLUE <span class="op">=</span> <span class="st">"#0369A1"</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>GREEN <span class="op">=</span> <span class="st">"#059669"</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>GRAY <span class="op">=</span> <span class="st">"#64748B"</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>LBLUE <span class="op">=</span> <span class="st">"#EFF6FF"</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>LGRN <span class="op">=</span> <span class="st">"#ECFDF5"</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>fig, axes <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">2</span>, figsize<span class="op">=</span>(<span class="dv">9</span>, <span class="dv">4</span>))</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>fig.patch.set_facecolor(BG)</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="co"># ── LEFT: Series ───────────────────────────────────────────────────────</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> axes[<span class="dv">0</span>]</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>ax.set_facecolor(BG)</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>ax.set_xlim(<span class="dv">0</span>, <span class="dv">4</span>)</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>ax.set_ylim(<span class="dv">0</span>, <span class="dv">5</span>)</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>ax.axis(<span class="st">"off"</span>)</span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">"Series (1-D)"</span>, fontsize<span class="op">=</span><span class="dv">11</span>, fontweight<span class="op">=</span><span class="st">"bold"</span>, color<span class="op">=</span>GREEN, pad<span class="op">=</span><span class="dv">8</span>)</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a><span class="co"># name label at top</span></span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>ax.add_patch(FancyBboxPatch((<span class="fl">0.3</span>, <span class="fl">4.1</span>), <span class="fl">3.4</span>, <span class="fl">0.6</span>, boxstyle<span class="op">=</span><span class="st">"round,pad=0.05"</span>, facecolor<span class="op">=</span>LGRN, edgecolor<span class="op">=</span>GREEN, lw<span class="op">=</span><span class="fl">1.5</span>))</span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>ax.text(<span class="fl">2.0</span>, <span class="fl">4.4</span>, <span class="st">"name: midterm_score"</span>, ha<span class="op">=</span><span class="st">"center"</span>, va<span class="op">=</span><span class="st">"center"</span>, fontsize<span class="op">=</span><span class="dv">9</span>, color<span class="op">=</span>GREEN, fontweight<span class="op">=</span><span class="st">"bold"</span>)</span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a><span class="co"># header row</span></span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> x, label <span class="kw">in</span> [(<span class="fl">0.7</span>, <span class="st">"Index"</span>), (<span class="fl">2.5</span>, <span class="st">"Values"</span>)]:</span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>    ax.add_patch(</span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>        FancyBboxPatch((x <span class="op">-</span> <span class="fl">0.35</span>, <span class="fl">3.3</span>), <span class="fl">1.3</span>, <span class="fl">0.5</span>, boxstyle<span class="op">=</span><span class="st">"square,pad=0"</span>, facecolor<span class="op">=</span>LBLUE, edgecolor<span class="op">=</span>BLUE, lw<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>    ax.text(x <span class="op">+</span> <span class="fl">0.3</span>, <span class="fl">3.55</span>, label, ha<span class="op">=</span><span class="st">"center"</span>, va<span class="op">=</span><span class="st">"center"</span>, fontsize<span class="op">=</span><span class="dv">9</span>, color<span class="op">=</span>BLUE, fontweight<span class="op">=</span><span class="st">"bold"</span>)</span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a><span class="co"># data rows</span></span>
+<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> row_i, (idx, val) <span class="kw">in</span> <span class="bu">enumerate</span>([(<span class="dv">0</span>, <span class="fl">85.0</span>), (<span class="dv">1</span>, <span class="fl">72.0</span>), (<span class="dv">2</span>, <span class="fl">91.0</span>)]):</span>
+<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a>    y <span class="op">=</span> <span class="fl">2.6</span> <span class="op">-</span> row_i <span class="op">*</span> <span class="fl">0.6</span></span>
+<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a>    ax.add_patch(FancyBboxPatch((<span class="fl">0.3</span>, y), <span class="fl">0.8</span>, <span class="fl">0.5</span>, boxstyle<span class="op">=</span><span class="st">"square,pad=0"</span>, facecolor<span class="op">=</span><span class="st">"white"</span>, edgecolor<span class="op">=</span>GRAY, lw<span class="op">=</span><span class="fl">0.8</span>))</span>
+<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a>    ax.text(<span class="fl">0.7</span>, y <span class="op">+</span> <span class="fl">0.25</span>, <span class="bu">str</span>(idx), ha<span class="op">=</span><span class="st">"center"</span>, va<span class="op">=</span><span class="st">"center"</span>, fontsize<span class="op">=</span><span class="dv">9</span>)</span>
+<span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a>    ax.add_patch(FancyBboxPatch((<span class="fl">1.5</span>, y), <span class="fl">1.8</span>, <span class="fl">0.5</span>, boxstyle<span class="op">=</span><span class="st">"square,pad=0"</span>, facecolor<span class="op">=</span><span class="st">"white"</span>, edgecolor<span class="op">=</span>GRAY, lw<span class="op">=</span><span class="fl">0.8</span>))</span>
+<span id="cb4-40"><a href="#cb4-40" aria-hidden="true" tabindex="-1"></a>    ax.text(<span class="fl">2.5</span>, y <span class="op">+</span> <span class="fl">0.25</span>, <span class="bu">str</span>(val), ha<span class="op">=</span><span class="st">"center"</span>, va<span class="op">=</span><span class="st">"center"</span>, fontsize<span class="op">=</span><span class="dv">9</span>)</span>
+<span id="cb4-41"><a href="#cb4-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-42"><a href="#cb4-42" aria-hidden="true" tabindex="-1"></a><span class="co"># ── RIGHT: DataFrame ──────────────────────────────────────────────────</span></span>
+<span id="cb4-43"><a href="#cb4-43" aria-hidden="true" tabindex="-1"></a>ax2 <span class="op">=</span> axes[<span class="dv">1</span>]</span>
+<span id="cb4-44"><a href="#cb4-44" aria-hidden="true" tabindex="-1"></a>ax2.set_facecolor(BG)</span>
+<span id="cb4-45"><a href="#cb4-45" aria-hidden="true" tabindex="-1"></a>ax2.set_xlim(<span class="dv">0</span>, <span class="dv">6</span>)</span>
+<span id="cb4-46"><a href="#cb4-46" aria-hidden="true" tabindex="-1"></a>ax2.set_ylim(<span class="dv">0</span>, <span class="dv">5</span>)</span>
+<span id="cb4-47"><a href="#cb4-47" aria-hidden="true" tabindex="-1"></a>ax2.axis(<span class="st">"off"</span>)</span>
+<span id="cb4-48"><a href="#cb4-48" aria-hidden="true" tabindex="-1"></a>ax2.set_title(<span class="st">"DataFrame (2-D) = Series side by side"</span>, fontsize<span class="op">=</span><span class="dv">11</span>, fontweight<span class="op">=</span><span class="st">"bold"</span>, color<span class="op">=</span>BLUE, pad<span class="op">=</span><span class="dv">8</span>)</span>
+<span id="cb4-49"><a href="#cb4-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-50"><a href="#cb4-50" aria-hidden="true" tabindex="-1"></a>cols <span class="op">=</span> [<span class="st">"student_id"</span>, <span class="st">"midterm"</span>, <span class="st">"final"</span>, <span class="st">"program"</span>]</span>
+<span id="cb4-51"><a href="#cb4-51" aria-hidden="true" tabindex="-1"></a>vals <span class="op">=</span> [(<span class="st">"s001"</span>, <span class="st">"s002"</span>, <span class="st">"s003"</span>), (<span class="dv">85</span>, <span class="dv">72</span>, <span class="dv">91</span>), (<span class="dv">78</span>, <span class="dv">88</span>, <span class="dv">65</span>), (<span class="st">"CS"</span>, <span class="st">"Maths"</span>, <span class="st">"CS"</span>)]</span>
+<span id="cb4-52"><a href="#cb4-52" aria-hidden="true" tabindex="-1"></a>col_w <span class="op">=</span> <span class="fl">1.3</span></span>
+<span id="cb4-53"><a href="#cb4-53" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> ci, (col_name, col_vals) <span class="kw">in</span> <span class="bu">enumerate</span>(<span class="bu">zip</span>(cols, vals, strict<span class="op">=</span><span class="va">False</span>)):</span>
+<span id="cb4-54"><a href="#cb4-54" aria-hidden="true" tabindex="-1"></a>    x0 <span class="op">=</span> <span class="fl">0.2</span> <span class="op">+</span> ci <span class="op">*</span> col_w</span>
+<span id="cb4-55"><a href="#cb4-55" aria-hidden="true" tabindex="-1"></a>    ax2.add_patch(</span>
+<span id="cb4-56"><a href="#cb4-56" aria-hidden="true" tabindex="-1"></a>        FancyBboxPatch((x0, <span class="fl">3.3</span>), col_w <span class="op">-</span> <span class="fl">0.05</span>, <span class="fl">0.5</span>, boxstyle<span class="op">=</span><span class="st">"square,pad=0"</span>, facecolor<span class="op">=</span>LBLUE, edgecolor<span class="op">=</span>BLUE, lw<span class="op">=</span><span class="fl">1.2</span>)</span>
+<span id="cb4-57"><a href="#cb4-57" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb4-58"><a href="#cb4-58" aria-hidden="true" tabindex="-1"></a>    ax2.text(x0 <span class="op">+</span> <span class="fl">0.6</span>, <span class="fl">3.55</span>, col_name, ha<span class="op">=</span><span class="st">"center"</span>, va<span class="op">=</span><span class="st">"center"</span>, fontsize<span class="op">=</span><span class="fl">7.5</span>, color<span class="op">=</span>BLUE, fontweight<span class="op">=</span><span class="st">"bold"</span>)</span>
+<span id="cb4-59"><a href="#cb4-59" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> ri, v <span class="kw">in</span> <span class="bu">enumerate</span>(col_vals):</span>
+<span id="cb4-60"><a href="#cb4-60" aria-hidden="true" tabindex="-1"></a>        y <span class="op">=</span> <span class="fl">2.6</span> <span class="op">-</span> ri <span class="op">*</span> <span class="fl">0.6</span></span>
+<span id="cb4-61"><a href="#cb4-61" aria-hidden="true" tabindex="-1"></a>        ax2.add_patch(</span>
+<span id="cb4-62"><a href="#cb4-62" aria-hidden="true" tabindex="-1"></a>            FancyBboxPatch(</span>
+<span id="cb4-63"><a href="#cb4-63" aria-hidden="true" tabindex="-1"></a>                (x0, y), col_w <span class="op">-</span> <span class="fl">0.05</span>, <span class="fl">0.5</span>, boxstyle<span class="op">=</span><span class="st">"square,pad=0"</span>, facecolor<span class="op">=</span><span class="st">"white"</span>, edgecolor<span class="op">=</span>GRAY, lw<span class="op">=</span><span class="fl">0.7</span></span>
+<span id="cb4-64"><a href="#cb4-64" aria-hidden="true" tabindex="-1"></a>            )</span>
+<span id="cb4-65"><a href="#cb4-65" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb4-66"><a href="#cb4-66" aria-hidden="true" tabindex="-1"></a>        ax2.text(x0 <span class="op">+</span> <span class="fl">0.6</span>, y <span class="op">+</span> <span class="fl">0.25</span>, <span class="bu">str</span>(v), ha<span class="op">=</span><span class="st">"center"</span>, va<span class="op">=</span><span class="st">"center"</span>, fontsize<span class="op">=</span><span class="dv">8</span>)</span>
+<span id="cb4-67"><a href="#cb4-67" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-68"><a href="#cb4-68" aria-hidden="true" tabindex="-1"></a><span class="co"># shared index label</span></span>
+<span id="cb4-69"><a href="#cb4-69" aria-hidden="true" tabindex="-1"></a>ax2.text(</span>
+<span id="cb4-70"><a href="#cb4-70" aria-hidden="true" tabindex="-1"></a>    <span class="fl">3.0</span>, <span class="fl">0.35</span>, <span class="st">"shared Index: 0, 1, 2  (one row per student)"</span>, ha<span class="op">=</span><span class="st">"center"</span>, fontsize<span class="op">=</span><span class="fl">8.5</span>, color<span class="op">=</span>GRAY, style<span class="op">=</span><span class="st">"italic"</span></span>
+<span id="cb4-71"><a href="#cb4-71" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-72"><a href="#cb4-72" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-73"><a href="#cb4-73" aria-hidden="true" tabindex="-1"></a>fig.suptitle(</span>
+<span id="cb4-74"><a href="#cb4-74" aria-hidden="true" tabindex="-1"></a>    <span class="st">"A Series is one labelled column; a DataFrame is multiple Series sharing the same Index"</span>,</span>
+<span id="cb4-75"><a href="#cb4-75" aria-hidden="true" tabindex="-1"></a>    fontsize<span class="op">=</span><span class="dv">10</span>,</span>
+<span id="cb4-76"><a href="#cb4-76" aria-hidden="true" tabindex="-1"></a>    color<span class="op">=</span><span class="st">"#0F172A"</span>,</span>
+<span id="cb4-77"><a href="#cb4-77" aria-hidden="true" tabindex="-1"></a>    y<span class="op">=</span><span class="fl">1.02</span>,</span>
+<span id="cb4-78"><a href="#cb4-78" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-79"><a href="#cb4-79" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb4-80"><a href="#cb4-80" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
 <div>
-<p></p><figure class="figure"><p></p>
-<div>
-<pre class="mermaid mermaid-js">flowchart TB
-    subgraph S ["Series (1-D)"]
-        I1["Index: 0
-1
-2"] --- V1["Values: 85.0
-72.0
-91.0"]
-        LB["name: midterm_score"]
-    end
-    subgraph DF ["DataFrame (2-D)"]
-        direction LR
-        COL1["Series: midterm_score"]
-        COL2["Series: final_score"]
-        COL3["Series: program"]
-        IDX["shared Index: S0001, S0002, S0003"]
-    end
-    S --&gt;|"pd.DataFrame({'mid': s1, 'fin': s2})"| DF
-
-    style DF fill:#EAF3FA,stroke:#0369A1
-    style S fill:#EBF5F0,stroke:#059669
-</pre>
-</div>
-<p></p></figure><p></p>
+<figure class="figure">
+<p><img src="08-pandas-core_files/figure-html/cell-3-output-1.png" width="854" height="396" class="figure-img"></p>
+</figure>
 </div>
 </div>
 </div>
 <p>A DataFrame is what you get when several Series that share an index sit next to each other as columns. Building one from a dict of equal-length arrays, the same pattern used to build the feature matrices in the NumPy notebook, makes this explicit:</p>
-<div id="9" class="cell" data-execution_count="2">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> pd.DataFrame(</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    {</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>        <span class="st">"student_id"</span>: [<span class="st">"s001"</span>, <span class="st">"s002"</span>, <span class="st">"s003"</span>],</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>        <span class="st">"midterm_score"</span>: [<span class="dv">62</span>, <span class="dv">78</span>, <span class="dv">91</span>],</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>        <span class="st">"gender"</span>: [<span class="st">"F"</span>, <span class="st">"M"</span>, <span class="st">"F"</span>],</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>data</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="2">
+<div id="9" class="cell" data-execution_count="3">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> pd.DataFrame(</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    {</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>        <span class="st">"student_id"</span>: [<span class="st">"s001"</span>, <span class="st">"s002"</span>, <span class="st">"s003"</span>],</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>        <span class="st">"midterm_score"</span>: [<span class="dv">62</span>, <span class="dv">78</span>, <span class="dv">91</span>],</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>        <span class="st">"gender"</span>: [<span class="st">"F"</span>, <span class="st">"M"</span>, <span class="st">"F"</span>],</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>data</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="3">
 <div>
 
 
@@ -742,18 +773,21 @@ underlying NumPy array: [62 78 91]</code></pre>
 <div style="background:#EAF3FA;border-left:5px solid #0369A1;padding:14px 18px;border-radius:6px;margin:16px 0">
 <p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-info-circle-fill"></i> Key Concept: A DataFrame is a dict of same-length Series</span><br><br> Every column of a DataFrame is a <code>Series</code> sharing the DataFrame’s index. <code>data[“midterm_score”]</code> returns that column as a standalone <code>Series</code>, with the same index, the same values, and every NumPy method still available on it through <code>.to_numpy()</code>. This is why the array skills from the NumPy notebook keep paying off here: a pandas column is a NumPy array with row labels attached, not a different kind of thing.</p>
 </div>
+<div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 1 - Build a DataFrame from Two Series</span><br><br> <b>Goal:</b> Go from individual Series to a joined DataFrame.<br><br>1. Create a Series for three students’ midterm scores with student ID labels:<br><code>mid = pd.Series([85, 72, 91], index=[‘s001’,‘s002’,‘s003’], name=‘midterm’)</code><br>2. Create a matching Series for final scores:<br><code>fin = pd.Series([78, 88, 65], index=[‘s001’,‘s002’,‘s003’], name=‘final’)</code><br>3. Combine into a DataFrame: <code>df_two = pd.DataFrame({‘midterm’: mid, ‘final’: fin})</code><br>4. Check that both series share the same index: <code>df_two.index</code><br>5. Add a third column inline: <code>df_two[‘average’] = (df_two[‘midterm’] + df_two[‘final’]) / 2</code><br><br><b>Expected:</b> a 3x3 DataFrame with matching index labels.</p>
+</div>
 </section>
 <section id="reading-and-inspecting-data" class="level2">
 <h2 class="anchored" data-anchor-id="reading-and-inspecting-data">2. Reading and Inspecting Data</h2>
 <p><code>pd.read_csv</code> is almost always the first line of a real analysis. The first thing to do with whatever it returns is never to start analysing it: it is to check what you actually got.</p>
-<div id="12" class="cell" data-execution_count="3">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.read_csv(<span class="st">"data/university_analytics.csv"</span>)</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"shape   : </span><span class="sc">{</span>df<span class="sc">.</span>shape<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>df.head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="13" class="cell" data-execution_count="4">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.read_csv(<span class="st">"data/university_analytics.csv"</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"shape   : </span><span class="sc">{</span>df<span class="sc">.</span>shape<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>df.head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>shape   : (2400, 18)</code></pre>
 </div>
-<div class="cell-output cell-output-display" data-execution_count="3">
+<div class="cell-output cell-output-display" data-execution_count="4">
 <div>
 
 
@@ -893,10 +927,43 @@ underlying NumPy array: [62 78 91]</code></pre>
 </div>
 </div>
 </div>
+<p>By default <code>pd.read_csv()</code> infers types using NumPy dtypes. Passing <code>dtype_backend='pyarrow'</code> uses Apache Arrow memory instead: string columns stay as <code>ArrowDtype(pa.large_string())</code> rather than <code>object</code>, nullable integers avoid the forced float conversion, and memory use drops for large CSVs.</p>
+<div id="15" class="cell" data-execution_count="5">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>df_arrow <span class="op">=</span> pd.read_csv(<span class="st">"data/university_analytics.csv"</span>, dtype_backend<span class="op">=</span><span class="st">"pyarrow"</span>)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df_arrow.dtypes)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>arrow_kb <span class="op">=</span> df_arrow.memory_usage(deep<span class="op">=</span><span class="va">True</span>).<span class="bu">sum</span>() <span class="op">/</span> <span class="dv">1024</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>default_kb <span class="op">=</span> df.memory_usage(deep<span class="op">=</span><span class="va">True</span>).<span class="bu">sum</span>() <span class="op">/</span> <span class="dv">1024</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Memory: </span><span class="sc">{</span>arrow_kb<span class="sc">:.1f}</span><span class="ss"> KB (arrow)  vs  </span><span class="sc">{</span>default_kb<span class="sc">:.1f}</span><span class="ss"> KB (default)"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>student_id         string[pyarrow]
+cohort              int64[pyarrow]
+program            string[pyarrow]
+gender             string[pyarrow]
+region             string[pyarrow]
+guardian           string[pyarrow]
+has_internet         bool[pyarrow]
+course_id          string[pyarrow]
+course             string[pyarrow]
+semester           string[pyarrow]
+enrollment_date    string[pyarrow]
+study_hours        double[pyarrow]
+attendance_pct     double[pyarrow]
+midterm_score      double[pyarrow]
+final_score        double[pyarrow]
+project_score      double[pyarrow]
+final_grade        string[pyarrow]
+passed               bool[pyarrow]
+dtype: object
+Memory: 372.0 KB (arrow)  vs  469.2 KB (default)</code></pre>
+</div>
+</div>
+<div style="background:#EAF3FA;border-left:5px solid #0369A1;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-info-circle-fill"></i> Key Concept: <code>dtype_backend=‘pyarrow’</code> changes representation, not the API</span><br><br> <code>dtype_backend=‘pyarrow’</code> changes the in-memory representation but not the API: every <code>df</code> method still works. The benefit shows at scale: string columns move from Python-object overhead to Arrow’s zero-copy buffers. Use it for any CSV with many text columns or when you will later pass the DataFrame to Polars.</p>
+</div>
 <p><code>.dtypes</code> shows what type pandas inferred for every column, <code>.info()</code> adds memory usage and non-null counts in one call, and <code>.describe()</code> summarises every numeric column at once:</p>
-<div id="14" class="cell" data-execution_count="4">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>df.dtypes</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="4">
+<div id="18" class="cell" data-execution_count="6">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>df.dtypes</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="6">
 <pre><code>student_id             str
 cohort               int64
 program                str
@@ -918,8 +985,8 @@ passed                bool
 dtype: object</code></pre>
 </div>
 </div>
-<div id="15" class="cell" data-execution_count="5">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>df.info()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="19" class="cell" data-execution_count="7">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>df.info()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>&lt;class 'pandas.DataFrame'&gt;
 RangeIndex: 2400 entries, 0 to 2399
@@ -948,9 +1015,9 @@ dtypes: bool(2), float64(5), int64(1), str(10)
 memory usage: 469.2 KB</code></pre>
 </div>
 </div>
-<div id="16" class="cell" data-execution_count="6">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>df.describe().T</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="6">
+<div id="20" class="cell" data-execution_count="8">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>df.describe().T</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="8">
 <div>
 
 
@@ -1045,43 +1112,46 @@ memory usage: 469.2 KB</code></pre>
 <p><span style="color:#5B21B6;font-weight:bold"><i class="bi bi-lightbulb-fill"></i> Pro Tip: Run these three checks on every new dataset, before anything else</span><br><br> <code>.shape</code>, <code>.dtypes</code>, and <code>.describe()</code> take seconds and catch most of the embarrassing mistakes early: a column pandas read as text when it should be numeric, a date stored as a string, a column that is almost entirely one value. Cheaper to catch here than three analysis steps later.</p>
 </div>
 <div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
-<p><span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 1 - First Look</span><br><br></p>
+<p><span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 2 - First Look</span><br><br></p>
 <b>Goal:</b> Print the column names with <code>df.columns</code>, then print how many unique values the <code>caste</code> column has using <code>.nunique()</code>.
 <pre style="background:#FFF8E1;padding:10px;border-radius:4px;font-size:0.9em">df.columns
 df["program"].nunique()
 # -&gt; 4</pre>
 </div>
-<div id="19" class="cell" data-execution_count="7">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: print df.columns, then the number of unique values in "program"</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="23" class="cell" data-execution_count="9">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: print df.columns, then the number of unique values in "program"</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="selecting-rows-and-columns" class="level2">
 <h2 class="anchored" data-anchor-id="selecting-rows-and-columns">3. Selecting Rows and Columns</h2>
 <p><code>df["col"]</code> selects one column as a Series; <code>df[["col1", "col2"]]</code> selects several columns as a DataFrame, note the double brackets. Selecting rows by label or by position needs <code>.loc</code> or <code>.iloc</code>, and the two are not interchangeable.</p>
-<div id="21" class="cell" data-execution_count="8">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>one_column <span class="op">=</span> df[<span class="st">"midterm_score"</span>]</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>several_columns <span class="op">=</span> df[[<span class="st">"student_id"</span>, <span class="st">"midterm_score"</span>, <span class="st">"final_score"</span>]]</span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="bu">type</span>(one_column), <span class="bu">type</span>(several_columns))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div style="background:#EFF6FF;border-left:5px solid #0369A1;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-key-fill"></i> Key Concept: loc selects by label; iloc selects by integer position</span><br><br> <code>df.loc[0, ‘midterm_score’]</code> uses the index label <code>0</code> and the column name. <code>df.iloc[0, 2]</code> uses integer positions regardless of labels. Never chain them: <code>df[‘col’][row]</code> may silently create a copy and your assignment will not modify the original DataFrame. Use <code>df.loc[row, ‘col’] = value</code> instead.</p>
+</div>
+<div id="26" class="cell" data-execution_count="10">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>one_column <span class="op">=</span> df[<span class="st">"midterm_score"</span>]</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>several_columns <span class="op">=</span> df[[<span class="st">"student_id"</span>, <span class="st">"midterm_score"</span>, <span class="st">"final_score"</span>]]</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="bu">type</span>(one_column), <span class="bu">type</span>(several_columns))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>&lt;class 'pandas.Series'&gt; &lt;class 'pandas.DataFrame'&gt;</code></pre>
 </div>
 </div>
 <p><code>.loc</code> selects by <strong>label</strong>: the value in the index, or a column name. <code>.iloc</code> selects by <strong>integer position</strong>, exactly like a NumPy array, regardless of what the labels actually are:</p>
-<div id="23" class="cell" data-execution_count="9">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># .loc: by label. Row label 0, column label "midterm_score".</span></span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df.loc[<span class="dv">0</span>, <span class="st">"midterm_score"</span>])</span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="co"># .iloc: by position. First row, second column, whatever they are labelled.</span></span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df.iloc[<span class="dv">0</span>, <span class="dv">1</span>])</span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="co"># A label-based row slice with .loc is inclusive of both ends.</span></span>
-<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>df.loc[<span class="dv">0</span>:<span class="dv">2</span>, [<span class="st">"student_id"</span>, <span class="st">"midterm_score"</span>]]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="28" class="cell" data-execution_count="11">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># .loc: by label. Row label 0, column label "midterm_score".</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df.loc[<span class="dv">0</span>, <span class="st">"midterm_score"</span>])</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="co"># .iloc: by position. First row, second column, whatever they are labelled.</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df.iloc[<span class="dv">0</span>, <span class="dv">1</span>])</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a><span class="co"># A label-based row slice with .loc is inclusive of both ends.</span></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>df.loc[<span class="dv">0</span>:<span class="dv">2</span>, [<span class="st">"student_id"</span>, <span class="st">"midterm_score"</span>]]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>46.1
 2023</code></pre>
 </div>
-<div class="cell-output cell-output-display" data-execution_count="9">
+<div class="cell-output cell-output-display" data-execution_count="11">
 <div>
 
 
@@ -1119,28 +1189,31 @@ df["program"].nunique()
 <p><span style="color:#991B1B;font-weight:bold"><i class="bi bi-bug-fill"></i> Common Mistake: Treating <code>.loc</code> and <code>.iloc</code> as interchangeable</span><br><br> <code>df.loc[0:2]</code> and <code>df.iloc[0:2]</code> can return a different number of rows. <code>.iloc</code> slicing behaves exactly like a Python list: the end is excluded. <code>.loc</code> slicing is inclusive of the end label, because that label might not even be an integer; it could be a date or a name. The two only happen to look similar when the index is the default <code>0, 1, 2, …</code> range, which is exactly when this mistake hides best.</p>
 </div>
 <div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
-<p><span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 2 - Select a Slice</span><br><br></p>
+<p><span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 3 - Select a Slice</span><br><br></p>
 <b>Goal:</b> Using <code>.iloc</code>, select rows 10 through 14 (5 rows) and only the <code>student_id</code> and <code>project_score</code> columns.
 <pre style="background:#FFF8E1;padding:10px;border-radius:4px;font-size:0.9em">df.iloc[10:15, [?, ?]]
 # Hint: find the integer position of each column with df.columns.get_loc(...)</pre>
 </div>
-<div id="26" class="cell" data-execution_count="10">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: select rows 10-14 and the student_id/project_score columns using .iloc</span></span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="31" class="cell" data-execution_count="12">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: select rows 10-14 and the student_id/project_score columns using .iloc</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="boolean-filtering" class="level2">
 <h2 class="anchored" data-anchor-id="boolean-filtering">4. Boolean Filtering</h2>
 <p>This is the same trick from the NumPy notebook’s boolean masking section, applied to a DataFrame instead of an array: a comparison produces a Series of <code>True</code>/<code>False</code>, and indexing with that Series keeps only the <code>True</code> rows.</p>
-<div id="28" class="cell" data-execution_count="11">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>high_scorers <span class="op">=</span> df[<span class="st">"midterm_score"</span>] <span class="op">&gt;</span> <span class="dv">90</span></span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"high scorers: </span><span class="sc">{</span>high_scorers<span class="sc">.</span><span class="bu">sum</span>()<span class="sc">}</span><span class="ss"> of </span><span class="sc">{</span><span class="bu">len</span>(df)<span class="sc">}</span><span class="ss"> students"</span>)</span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>df[high_scorers].head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div style="background:#EFF6FF;border-left:5px solid #0369A1;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-key-fill"></i> Key Concept: A boolean mask is just a Series of True/False – combine with &amp; and |</span><br><br> <code>df[‘score’] &gt; 80</code> returns a Series of <code>True</code>/<code>False</code> with the same index as the DataFrame. <code>df[mask]</code> keeps only the rows where the mask is <code>True</code>. Combine two masks with <code>&amp;</code> (and) or <code>|</code> (or), always wrapped in parentheses: <code>(df[‘score’] &gt; 80) &amp; (df[‘program’] == ‘CS’)</code>. Never use Python’s <code>and</code>/<code>or</code> on a Series – they raise a ValueError.</p>
+</div>
+<div id="34" class="cell" data-execution_count="13">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>high_scorers <span class="op">=</span> df[<span class="st">"midterm_score"</span>] <span class="op">&gt;</span> <span class="dv">90</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"high scorers: </span><span class="sc">{</span>high_scorers<span class="sc">.</span><span class="bu">sum</span>()<span class="sc">}</span><span class="ss"> of </span><span class="sc">{</span><span class="bu">len</span>(df)<span class="sc">}</span><span class="ss"> students"</span>)</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>df[high_scorers].head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>high scorers: 31 of 2400 students</code></pre>
 </div>
-<div class="cell-output cell-output-display" data-execution_count="11">
+<div class="cell-output cell-output-display" data-execution_count="13">
 <div>
 
 
@@ -1281,15 +1354,15 @@ df["program"].nunique()
 </div>
 </div>
 <p>Combine conditions with <code>&amp;</code> and <code>|</code>, the same operators and the same parentheses requirement as NumPy, not Python’s <code>and</code>/<code>or</code>:</p>
-<div id="30" class="cell" data-execution_count="12">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>struggling_without_internet <span class="op">=</span> (df[<span class="st">"final_grade"</span>] <span class="op">==</span> <span class="st">"F"</span>) <span class="op">&amp;</span> (<span class="op">~</span>df[<span class="st">"has_internet"</span>])</span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"failed students without internet: </span><span class="sc">{</span>struggling_without_internet<span class="sc">.</span><span class="bu">sum</span>()<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>df.loc[struggling_without_internet, [<span class="st">"student_id"</span>, <span class="st">"final_grade"</span>, <span class="st">"has_internet"</span>]].head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="36" class="cell" data-execution_count="14">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>struggling_without_internet <span class="op">=</span> (df[<span class="st">"final_grade"</span>] <span class="op">==</span> <span class="st">"F"</span>) <span class="op">&amp;</span> (<span class="op">~</span>df[<span class="st">"has_internet"</span>])</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"failed students without internet: </span><span class="sc">{</span>struggling_without_internet<span class="sc">.</span><span class="bu">sum</span>()<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>df.loc[struggling_without_internet, [<span class="st">"student_id"</span>, <span class="st">"final_grade"</span>, <span class="st">"has_internet"</span>]].head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>failed students without internet: 60</code></pre>
 </div>
-<div class="cell-output cell-output-display" data-execution_count="12">
+<div class="cell-output cell-output-display" data-execution_count="14">
 <div>
 
 
@@ -1340,23 +1413,23 @@ df["program"].nunique()
 </div>
 </div>
 <div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
-<p><span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 3 - Female High Scorers</span><br><br></p>
+<p><span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 4 - Female High Scorers</span><br><br></p>
 <b>Goal:</b> Count how many female students (<code>gender == “F”</code>) scored above 80 in <code>final_score</code>.
 <pre style="background:#FFF8E1;padding:10px;border-radius:4px;font-size:0.9em">condition = (df["gender"] == "F") &amp; (df["final_score"] &gt; 80)
 condition.sum()</pre>
 </div>
-<div id="32" class="cell" data-execution_count="13">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: count female students with final_score &gt; 80</span></span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="38" class="cell" data-execution_count="15">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: count female students with final_score &gt; 80</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="adding-modifying-and-dropping-columns" class="level2">
 <h2 class="anchored" data-anchor-id="adding-modifying-and-dropping-columns">5. Adding, Modifying, and Dropping Columns</h2>
 <p>Assigning to a new column name creates it; assigning to an existing one overwrites it. Both work the same way and both operate on the whole column at once, no loop required:</p>
-<div id="34" class="cell" data-execution_count="14">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"average_marks"</span>] <span class="op">=</span> (df[<span class="st">"midterm_score"</span>] <span class="op">+</span> df[<span class="st">"final_score"</span>] <span class="op">+</span> df[<span class="st">"project_score"</span>]) <span class="op">/</span> <span class="dv">3</span></span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>df[[<span class="st">"student_id"</span>, <span class="st">"average_marks"</span>]].head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="14">
+<div id="40" class="cell" data-execution_count="16">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"average_marks"</span>] <span class="op">=</span> (df[<span class="st">"midterm_score"</span>] <span class="op">+</span> df[<span class="st">"final_score"</span>] <span class="op">+</span> df[<span class="st">"project_score"</span>]) <span class="op">/</span> <span class="dv">3</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>df[[<span class="st">"student_id"</span>, <span class="st">"average_marks"</span>]].head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="16">
 <div>
 
 
@@ -1401,12 +1474,12 @@ condition.sum()</pre>
 </div>
 </div>
 <p><code>.drop()</code> removes rows or columns. <code>axis=1</code> means columns, <code>axis=0</code> (the default) means rows, the same convention as NumPy’s <code>axis</code> parameter:</p>
-<div id="36" class="cell" data-execution_count="15">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># axis=1: drop a column. Returns a NEW DataFrame; df itself is unchanged</span></span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="co"># unless you reassign it.</span></span>
-<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>without_internet_col <span class="op">=</span> df.drop(<span class="st">"has_internet"</span>, axis<span class="op">=</span><span class="dv">1</span>)</span>
-<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"original columns : </span><span class="sc">{</span><span class="bu">len</span>(df.columns)<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"after drop        : </span><span class="sc">{</span><span class="bu">len</span>(without_internet_col.columns)<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="42" class="cell" data-execution_count="17">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># axis=1: drop a column. Returns a NEW DataFrame; df itself is unchanged</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="co"># unless you reassign it.</span></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>without_internet_col <span class="op">=</span> df.drop(<span class="st">"has_internet"</span>, axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"original columns : </span><span class="sc">{</span><span class="bu">len</span>(df.columns)<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"after drop        : </span><span class="sc">{</span><span class="bu">len</span>(without_internet_col.columns)<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>original columns : 19
 after drop        : 18</code></pre>
@@ -1425,26 +1498,29 @@ after drop        : 18</code></pre>
 <b>Chained assignment is silently dropped:</b> <code>df[df[“gender”] == “F”][“passed”] = True</code> looks like it updates <code>df</code>, but the inner <code>df[mask]</code> now returns a copy. The assignment goes to that temporary copy and is immediately lost. The fix is one step: <code>df.loc[df[“gender”] == “F”, “passed”] = True</code>.
 </li>
 </ol>
-<p>CoW is why <code>inplace=True</code> (above) is being phased out — explicit reassignment (<code>df = df.drop(…)</code>) is both clearer and CoW-compatible. Part 9 shows the same rule applied to <code>groupby</code> and <code>transform</code>.</p>
+<p>CoW is why <code>inplace=True</code> (above) is being phased out: explicit reassignment (<code>df = df.drop(…)</code>) is both clearer and CoW-compatible. Part 9 shows the same rule applied to <code>groupby</code> and <code>transform</code>.</p>
 </div>
 <div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
-<p><span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 4 - Add a Pass/Fail Column</span><br><br></p>
+<p><span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 5 - Add a Pass/Fail Column</span><br><br></p>
 <b>Goal:</b> Add a new column <code>passed</code> that is <code>True</code> when <code>average_marks</code> is at least 0.5, using <code>np.where</code> the same way it was used in the NumPy notebook.
 <pre style="background:#FFF8E1;padding:10px;border-radius:4px;font-size:0.9em">df["passed"] = np.where(df["average_marks"] &gt;= 0.5, True, False)
 df["passed"].value_counts()</pre>
 </div>
-<div id="40" class="cell" data-execution_count="16">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: add the "passed" column</span></span>
-<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="46" class="cell" data-execution_count="18">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: add the "passed" column</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="sorting" class="level2">
 <h2 class="anchored" data-anchor-id="sorting">6. Sorting</h2>
 <p><code>.sort_values()</code> sorts by one or more columns; <code>.sort_index()</code> sorts by the index instead. Neither changes <code>df</code> unless you reassign it, same rule as every method so far:</p>
-<div id="42" class="cell" data-execution_count="17">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>top_5 <span class="op">=</span> df.sort_values(<span class="st">"average_marks"</span>, ascending<span class="op">=</span><span class="va">False</span>).head(<span class="dv">5</span>)</span>
-<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>top_5[[<span class="st">"student_id"</span>, <span class="st">"average_marks"</span>]]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="17">
+<div style="background:#EFF6FF;border-left:5px solid #0369A1;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-key-fill"></i> Key Concept: sort_values returns a new DataFrame; display order means nothing about rank</span><br><br> <code>.sort_values()</code> returns a <b>new</b> DataFrame by default. The order rows appear in a DataFrame has no meaning until you sort – the top row is not the highest value unless you asked for it. Pass <code>ascending=False</code> for descending order; pass a list of column names to sort by multiple keys.</p>
+</div>
+<div id="49" class="cell" data-execution_count="19">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>top_5 <span class="op">=</span> df.sort_values(<span class="st">"average_marks"</span>, ascending<span class="op">=</span><span class="va">False</span>).head(<span class="dv">5</span>)</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>top_5[[<span class="st">"student_id"</span>, <span class="st">"average_marks"</span>]]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="19">
 <div>
 
 
@@ -1488,11 +1564,11 @@ df["passed"].value_counts()</pre>
 </div>
 </div>
 </div>
-<div id="43" class="cell" data-execution_count="18">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Sort by multiple columns: gender first, then average_marks descending within each</span></span>
-<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>by_gender_then_marks <span class="op">=</span> df.sort_values([<span class="st">"gender"</span>, <span class="st">"average_marks"</span>], ascending<span class="op">=</span>[<span class="va">True</span>, <span class="va">False</span>])</span>
-<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>by_gender_then_marks[[<span class="st">"student_id"</span>, <span class="st">"gender"</span>, <span class="st">"average_marks"</span>]].head(<span class="dv">6</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="18">
+<div id="50" class="cell" data-execution_count="20">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Sort by multiple columns: gender first, then average_marks descending within each</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>by_gender_then_marks <span class="op">=</span> df.sort_values([<span class="st">"gender"</span>, <span class="st">"average_marks"</span>], ascending<span class="op">=</span>[<span class="va">True</span>, <span class="va">False</span>])</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>by_gender_then_marks[[<span class="st">"student_id"</span>, <span class="st">"gender"</span>, <span class="st">"average_marks"</span>]].head(<span class="dv">6</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="20">
 <div>
 
 
@@ -1548,13 +1624,19 @@ df["passed"].value_counts()</pre>
 </div>
 </div>
 </div>
+<div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 6 - Multi-Column Sort</span><br><br> <b>Goal:</b> Sort by two columns and explain what changes.<br><br>1. Sort the DataFrame by <code>program</code> ascending, then <code>average_marks</code> descending within each program:<br><code>df.sort_values([‘program’, ‘average_marks’], ascending=[True, False]).head(10)</code><br>2. Print the original <code>df.head(10)</code> – compare the index values.<br>3. In a markdown cell, answer: did the index values change, or just the row order?<br>4. Now use <code>.reset_index(drop=True)</code> after sorting and explain what it does.<br><br><b>Expected:</b> rows reordered; original index labels stay attached to their rows until reset.</p>
+</div>
 </section>
 <section id="handling-missing-data" class="level2">
 <h2 class="anchored" data-anchor-id="handling-missing-data">7. Handling Missing Data</h2>
 <p><code>total_toilets</code> and <code>establishment_year</code> are missing for some schools in this dataset, encoded as <code>NaN</code>. <code>.isna()</code> finds them, <code>.dropna()</code> removes rows that have them, and <code>.fillna()</code> replaces them, three different decisions with three different consequences for an analysis.</p>
-<div id="45" class="cell" data-execution_count="19">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>missing_per_column <span class="op">=</span> df.isna().<span class="bu">sum</span>()</span>
-<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(missing_per_column[missing_per_column <span class="op">&gt;</span> <span class="dv">0</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div style="background:#EFF6FF;border-left:5px solid #0369A1;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-key-fill"></i> Key Concept: Missing values are np.nan – detect with isna(), not == None</span><br><br> <code>df.isna()</code> returns a boolean mask of missing positions. <code>df[‘col’].isna().sum()</code> counts how many are missing. <code>fillna(value)</code> replaces them; <code>dropna()</code> removes the rows. Never test <code>x == np.nan</code> – it always returns <code>False</code> because <code>NaN != NaN</code> by definition.</p>
+</div>
+<div id="54" class="cell" data-execution_count="21">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>missing_per_column <span class="op">=</span> df.isna().<span class="bu">sum</span>()</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(missing_per_column[missing_per_column <span class="op">&gt;</span> <span class="dv">0</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>attendance_pct    73
 midterm_score     70
@@ -1563,10 +1645,10 @@ dtype: int64</code></pre>
 </div>
 </div>
 <p>Dropping every row with any missing value is the simplest option and often the wrong one: it can throw away far more data than the missing values themselves justify:</p>
-<div id="47" class="cell" data-execution_count="20">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"rows before dropna : </span><span class="sc">{</span><span class="bu">len</span>(df)<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"rows after dropna  : </span><span class="sc">{</span><span class="bu">len</span>(df.dropna())<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"rows lost          : </span><span class="sc">{</span><span class="bu">len</span>(df) <span class="op">-</span> <span class="bu">len</span>(df.dropna())<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="56" class="cell" data-execution_count="22">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"rows before dropna : </span><span class="sc">{</span><span class="bu">len</span>(df)<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"rows after dropna  : </span><span class="sc">{</span><span class="bu">len</span>(df.dropna())<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"rows lost          : </span><span class="sc">{</span><span class="bu">len</span>(df) <span class="op">-</span> <span class="bu">len</span>(df.dropna())<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>rows before dropna : 2400
 rows after dropna  : 2258
@@ -1577,26 +1659,26 @@ rows lost          : 142</code></pre>
 <p><span style="color:#5B21B6;font-weight:bold"><i class="bi bi-lightbulb-fill"></i> Pro Tip: Decide what missing means before you decide how to handle it</span><br><br> A missing <code>total_toilets</code> value might mean the school never reported it, which is different from meaning zero. Filling with the column mean (<code>df[“total_toilets”].fillna(df[“total_toilets”].mean())</code>) assumes the missing schools look like the average school. Dropping those rows assumes they are not worth analysing at all. Both are real decisions with real consequences, not a technicality to get past quickly.</p>
 </div>
 <div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
-<p><span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 5 - Fill With the Median</span><br><br></p>
+<p><span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 7 - Fill With the Median</span><br><br></p>
 <b>Goal:</b> Fill the missing <code>total_toilets</code> values with the column’s median instead of dropping those rows, and confirm there are no missing values left in that column afterward.
 <pre style="background:#FFF8E1;padding:10px;border-radius:4px;font-size:0.9em">median_toilets = df["total_toilets"].median()
 df["total_toilets"] = df["total_toilets"].fillna(median_toilets)
 df["total_toilets"].isna().sum()  # -&gt; 0</pre>
 </div>
-<div id="50" class="cell" data-execution_count="21">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: fill missing total_toilets with the column median</span></span>
-<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="59" class="cell" data-execution_count="23">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: fill missing total_toilets with the column median</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="memory-usage-and-the-categorical-dtype" class="level2">
 <h2 class="anchored" data-anchor-id="memory-usage-and-the-categorical-dtype">8. Memory Usage and the Categorical Dtype</h2>
 <p>A 2,400-row dataset fits in memory with ease, but the patterns here scale to millions of rows where they matter. Understanding what pandas keeps in memory and how to reduce it is a practical skill, not an optimization curiosity.</p>
 <p><code>df.memory_usage(deep=True)</code> shows how many bytes each column occupies. <code>deep=True</code> is required for string columns: without it, pandas reports only the object pointer size, not the actual string bytes.</p>
-<div id="52" class="cell" data-execution_count="22">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>mem <span class="op">=</span> df.memory_usage(deep<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>mem_mb <span class="op">=</span> (mem <span class="op">/</span> <span class="dv">1024</span><span class="op">**</span><span class="dv">2</span>).<span class="bu">round</span>(<span class="dv">3</span>)</span>
-<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(mem_mb.sort_values(ascending<span class="op">=</span><span class="va">False</span>))</span>
-<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">Total: </span><span class="sc">{</span>mem_mb<span class="sc">.</span><span class="bu">sum</span>()<span class="sc">:.3f}</span><span class="ss"> MB"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="61" class="cell" data-execution_count="24">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>mem <span class="op">=</span> df.memory_usage(deep<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>mem_mb <span class="op">=</span> (mem <span class="op">/</span> <span class="dv">1024</span><span class="op">**</span><span class="dv">2</span>).<span class="bu">round</span>(<span class="dv">3</span>)</span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(mem_mb.sort_values(ascending<span class="op">=</span><span class="va">False</span>))</span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">Total: </span><span class="sc">{</span>mem_mb<span class="sc">.</span><span class="bu">sum</span>()<span class="sc">:.3f}</span><span class="ss"> MB"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>program            0.053
 course             0.050
@@ -1626,30 +1708,30 @@ Total: 0.474 MB</code></pre>
 <div style="background:#EAF3FA;border-left:5px solid #0369A1;padding:14px 18px;border-radius:6px;margin:16px 0">
 <p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-info-circle-fill"></i> Key Concept: String columns dominate memory in most DataFrames</span><br><br> An <code>object</code> or <code>str</code> column stores a Python string object per row: the string plus Python object overhead. A numeric column stores a flat NumPy array: 8 bytes per row for <code>float64</code>, 4 for <code>float32</code>. A column like <code>program</code> with only 4 distinct values across 2,400 rows wastes most of that memory repeating the same strings. The categorical dtype solves this by storing each unique string once and keeping only a compact integer code per row.</p>
 </div>
-<div id="54" class="cell" data-execution_count="23">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Compare memory: str dtype vs category dtype</span></span>
-<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>before <span class="op">=</span> df[<span class="st">"program"</span>].memory_usage(deep<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"program"</span>] <span class="op">=</span> df[<span class="st">"program"</span>].astype(<span class="st">"category"</span>)</span>
-<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>after <span class="op">=</span> df[<span class="st">"program"</span>].memory_usage(deep<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"str dtype    : </span><span class="sc">{</span>before<span class="sc">:,}</span><span class="ss"> bytes"</span>)</span>
-<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"category     : </span><span class="sc">{</span>after<span class="sc">:,}</span><span class="ss"> bytes"</span>)</span>
-<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"reduction    : </span><span class="sc">{</span>(<span class="dv">1</span> <span class="op">-</span> after <span class="op">/</span> before) <span class="op">*</span> <span class="dv">100</span><span class="sc">:.1f}</span><span class="ss">%"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="63" class="cell" data-execution_count="25">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Compare memory: str dtype vs category dtype</span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>before <span class="op">=</span> df[<span class="st">"program"</span>].memory_usage(deep<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"program"</span>] <span class="op">=</span> df[<span class="st">"program"</span>].astype(<span class="st">"category"</span>)</span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>after <span class="op">=</span> df[<span class="st">"program"</span>].memory_usage(deep<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"str dtype    : </span><span class="sc">{</span>before<span class="sc">:,}</span><span class="ss"> bytes"</span>)</span>
+<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"category     : </span><span class="sc">{</span>after<span class="sc">:,}</span><span class="ss"> bytes"</span>)</span>
+<span id="cb39-8"><a href="#cb39-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"reduction    : </span><span class="sc">{</span>(<span class="dv">1</span> <span class="op">-</span> after <span class="op">/</span> before) <span class="op">*</span> <span class="dv">100</span><span class="sc">:.1f}</span><span class="ss">%"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>str dtype    : 55,998 bytes
 category     : 2,626 bytes
 reduction    : 95.3%</code></pre>
 </div>
 </div>
-<div id="55" class="cell" data-execution_count="24">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Any low-cardinality string column is a candidate for category dtype</span></span>
-<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>low_cardinality <span class="op">=</span> [c <span class="cf">for</span> c <span class="kw">in</span> df.select_dtypes(<span class="st">"object"</span>).columns <span class="cf">if</span> df[c].nunique() <span class="op">&lt;</span> <span class="dv">50</span>]</span>
-<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Low-cardinality columns:"</span>, low_cardinality)</span>
-<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> col <span class="kw">in</span> low_cardinality:</span>
-<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>    df[col] <span class="op">=</span> df[col].astype(<span class="st">"category"</span>)</span>
-<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Memory after converting all: </span><span class="sc">{</span>df<span class="sc">.</span>memory_usage(deep<span class="op">=</span><span class="va">True</span>)<span class="sc">.</span><span class="bu">sum</span>() <span class="op">/</span> <span class="dv">1024</span><span class="op">**</span><span class="dv">2</span><span class="sc">:.3f}</span><span class="ss"> MB"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="64" class="cell" data-execution_count="26">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Any low-cardinality string column is a candidate for category dtype</span></span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>low_cardinality <span class="op">=</span> [c <span class="cf">for</span> c <span class="kw">in</span> df.select_dtypes(<span class="st">"object"</span>).columns <span class="cf">if</span> df[c].nunique() <span class="op">&lt;</span> <span class="dv">50</span>]</span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Low-cardinality columns:"</span>, low_cardinality)</span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> col <span class="kw">in</span> low_cardinality:</span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>    df[col] <span class="op">=</span> df[col].astype(<span class="st">"category"</span>)</span>
+<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Memory after converting all: </span><span class="sc">{</span>df<span class="sc">.</span>memory_usage(deep<span class="op">=</span><span class="va">True</span>)<span class="sc">.</span><span class="bu">sum</span>() <span class="op">/</span> <span class="dv">1024</span><span class="op">**</span><span class="dv">2</span><span class="sc">:.3f}</span><span class="ss"> MB"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Low-cardinality columns: ['gender', 'region', 'guardian', 'course_id', 'course', 'semester', 'enrollment_date', 'final_grade']
 Memory after converting all: 0.184 MB</code></pre>
@@ -1659,7 +1741,7 @@ Memory after converting all: 0.184 MB</code></pre>
 <p><span style="color:#5B21B6;font-weight:bold"><i class="bi bi-lightbulb-fill"></i> Pro Tip: Use category dtype early; undo it before one-hot encoding</span><br><br> Convert low-cardinality string columns to <code>category</code> dtype right after loading, before any analysis. It speeds up <code>groupby</code> and <code>value_counts</code> and reduces memory. The one time to undo it: <code>pd.get_dummies()</code> (Part 9) works on category columns but produces the same output, so it is not strictly required, just worth knowing the pattern.</p>
 </div>
 <div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
-<p><span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 6 - Measure and Reduce Memory</span><br><br></p>
+<p><span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 8 - Measure and Reduce Memory</span><br><br></p>
 <b>Goal:</b> Load the dataset fresh, print its total memory usage in MB with <code>memory_usage(deep=True).sum()</code>, convert the <code>gender</code> and <code>guardian</code> columns to <code>category</code> dtype, and print the new total. What percentage of memory did you save?
 <pre style="background:#FFF8E1;padding:10px;border-radius:4px;font-size:0.9em">df_fresh = pd.read_csv("data/university_analytics.csv")
 before_mb = df_fresh.memory_usage(deep=True).sum() / 1024**2
@@ -1669,9 +1751,9 @@ after_mb = df_fresh.memory_usage(deep=True).sum() / 1024**2
 print(f"Before: {before_mb:.3f} MB, After: {after_mb:.3f} MB")
 print(f"Saving: {(1 - after_mb/before_mb)*100:.1f}%")</pre>
 </div>
-<div id="58" class="cell" data-execution_count="25">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: measure and reduce memory as described above</span></span>
-<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="67" class="cell" data-execution_count="27">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: measure and reduce memory as described above</span></span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="capstone-top-schools-report" class="level2">
@@ -1698,9 +1780,9 @@ Sort the result descending and show the top 5 school IDs
 school_means = with_internet.groupby("school_id")["average_marks"].mean()
 school_means.sort_values(ascending=False).head(5)</pre>
 </div>
-<div id="61" class="cell" data-execution_count="26">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: build the top-5-schools report described above</span></span>
-<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="70" class="cell" data-execution_count="28">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb44"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: build the top-5-schools report described above</span></span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="further-reading" class="level2">
@@ -1715,7 +1797,7 @@ school_means.sort_values(ascending=False).head(5)</pre>
 <tbody>
 <tr class="odd">
 <td>McKinney, W. (2022). <em>Python for Data Analysis</em>, 3rd ed.&nbsp;O’Reilly.</td>
-<td>The book by pandas’ creator; free online at <a href="https://wesmckinney.com/book">wesmckinney.com/book</a> — Chapters 5 and 6 map directly to this notebook</td>
+<td>The book by pandas’ creator; free online at <a href="https://wesmckinney.com/book">wesmckinney.com/book</a>: Chapters 5 and 6 map directly to this notebook</td>
 </tr>
 <tr class="even">
 <td><a href="https://pandas.pydata.org/docs/user_guide/10min.html">10 minutes to pandas</a></td>
@@ -1723,7 +1805,7 @@ school_means.sort_values(ascending=False).head(5)</pre>
 </tr>
 <tr class="odd">
 <td><a href="https://pandas.pydata.org/docs/whatsnew/v3.0.0.html">pandas 3.0 migration guide</a></td>
-<td>Covers Copy-on-Write and the new <code>str</code> dtype — the two biggest breaking changes from pandas 2</td>
+<td>Covers Copy-on-Write and the new <code>str</code> dtype: the two biggest breaking changes from pandas 2</td>
 </tr>
 <tr class="even">
 <td>Harris, C.R. et al.&nbsp;(2020). <a href="https://doi.org/10.1038/s41586-020-2649-2">Array programming with NumPy</a>. <em>Nature</em> 585, 357–362.</td>

@@ -108,9 +108,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   }
 }</script>
 <style>html{ scroll-behavior: smooth; }</style>
-<script src="../../site_libs/quarto-diagram/mermaid.min.js"></script>
-<script src="../../site_libs/quarto-diagram/mermaid-init.js"></script>
-<link href="../../site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.min.js" integrity="sha384-c9c+LnTbwQ3aujuU7ULEPVvgLs+Fn6fJUvIGTsuu1ZcCf11fiEubah0ttpca4ntM sha384-6V1/AdqZRWk1KAlWbKBlGhN7VG4iE/yAZcO6NZPMF8od0vukrvr0tg4qY6NSrItx" crossorigin="anonymous"></script>
 
 <script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
@@ -210,12 +207,22 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../tutorials/01-python-basics/03-python-patterns.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 3: Patterns for Data Science &amp; ML</span></a>
+  <a href="../../tutorials/01-python-basics/03a-python-patterns.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 3a: Python Patterns – Functions and Code Reuse</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../tutorials/01-python-basics/04-numpy.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 4: NumPy for Data &amp; ML</span></a>
+  <a href="../../tutorials/01-python-basics/03b-python-patterns.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 3b: Python Patterns – Classes, Exceptions, and Defensive Code</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/04a-numpy.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 4a: NumPy Fundamentals</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/04b-numpy.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 4b: NumPy Advanced Operations</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -363,12 +370,22 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../tutorials/04-ml-intro/04-sklearn-core.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 25: Scikit-learn Core API</span></a>
+  <a href="../../tutorials/04-ml-intro/04a-sklearn-core.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 25a: Scikit-learn Core – Foundations</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../tutorials/04-ml-intro/05-sklearn-pipeline.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 26: Sklearn Pipeline and Hyperparameter Search</span></a>
+  <a href="../../tutorials/04-ml-intro/04b-sklearn-core.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 25b: Scikit-learn Core – Validation and Modern Features</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/04-ml-intro/05a-sklearn-pipeline.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 26a: sklearn Pipeline – Foundations</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/04-ml-intro/05b-sklearn-pipeline.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 26b: sklearn Pipeline – Hyperparameter Search and Evaluation</span></a>
   </div>
 </li>
       </ul>
@@ -407,8 +424,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">In this chapter</h2>
    
   <ul>
-  <li><a href="#before-you-begin" id="toc-before-you-begin" class="nav-link active" data-scroll-target="#before-you-begin">Before you begin</a></li>
-  <li><a href="#whats-new-in-pandas-3" id="toc-whats-new-in-pandas-3" class="nav-link" data-scroll-target="#whats-new-in-pandas-3">0. What’s New in Pandas 3</a></li>
+  <li><a href="#whats-new-in-pandas-3" id="toc-whats-new-in-pandas-3" class="nav-link active" data-scroll-target="#whats-new-in-pandas-3">What’s New in Pandas 3</a></li>
   <li><a href="#function-application-with-map-and-apply" id="toc-function-application-with-map-and-apply" class="nav-link" data-scroll-target="#function-application-with-map-and-apply">1. Function Application with <code>map</code> and <code>apply</code></a></li>
   <li><a href="#unique-values-value-counts-and-membership" id="toc-unique-values-value-counts-and-membership" class="nav-link" data-scroll-target="#unique-values-value-counts-and-membership">2. Unique Values, Value Counts, and Membership</a></li>
   <li><a href="#working-with-text-columns-the-.str-accessor" id="toc-working-with-text-columns-the-.str-accessor" class="nav-link" data-scroll-target="#working-with-text-columns-the-.str-accessor">3. Working with Text Columns: the <code>.str</code> Accessor</a></li>
@@ -449,139 +465,28 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p><a href="https://colab.research.google.com/github/sambaiga/ds-mlops-path/blob/main/tutorials/01-python-basics/09-pandas-operations.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open In Colab"></a> <a href="https://raw.githubusercontent.com/sambaiga/ds-mlops-path/main/tutorials/01-python-basics/09-pandas-operations.ipynb"><img src="https://img.shields.io/badge/Download-Notebook-blue.svg?logo=jupyter&amp;logoColor=white" class="img-fluid" alt="Download Notebook"></a></p>
 <p><strong>DS-MLOps Data Analysis</strong></p>
 <p><strong>Python 3.12+ | Author: Anthony Faustine</strong></p>
-<section id="before-you-begin" class="level2">
-<h2 class="anchored" data-anchor-id="before-you-begin">Before you begin</h2>
-<p>This notebook continues directly from Part 8 (<code>08-pandas-core.ipynb</code>). It assumes you can read a CSV, select rows and columns with <code>.loc</code>/<code>.iloc</code>, and filter with a boolean mask. We reload the same dataset from scratch below, so you can run this notebook on its own.</p>
-<p>Part 8 covered the dataset’s shape and structure. Part 9 covers the operations that turn raw columns into derived ones: applying your own functions row-by-row, counting and filtering categorical values, cleaning text columns, summarizing a dataset, and computing window statistics.</p>
-<p>Part 10 (<code>10-combining-reshaping.ipynb</code>) continues with combining datasets, <code>groupby</code>, pivoting, and time series.</p>
+<p>The CSV is loaded and clean. Now the questions get specific: which students went from failing to passing between semesters? Which course names have a trailing space or a typo? What is the 10-student rolling average for each program? None of these answers live in a raw column – you have to derive them.</p>
+<p>Part 8 covered loading, selecting, filtering, and fixing missing values: the shape and structure of a DataFrame. This notebook covers the operations that turn raw columns into derived ones: applying your own functions row-by-row, counting categorical values, cleaning text, summarizing, and computing window statistics. Part 10 (<code>10-combining-reshaping.ipynb</code>) builds on this with <code>groupby</code>, merge, pivot, and time-series reshaping.</p>
+<blockquote class="blockquote">
+<p>Callout markers: <a href="../../index.html#callout-guide">book cover page</a>.</p>
+</blockquote>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Topics covered
+<span class="screen-reader-only">Note</span>Before You Begin
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
 <div id="callout-1" class="callout-1-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<table class="caption-top table">
-<colgroup>
-<col style="width: 50%">
-<col style="width: 50%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Topic</th>
-<th>Why it matters</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><strong>Pandas 3: <code>str</code> dtype and Copy-on-Write</strong></td>
-<td>Two behaviour changes that affect every example in this notebook and the ones before it</td>
-</tr>
-<tr class="even">
-<td><strong><code>map</code> and <code>apply</code></strong></td>
-<td>Run your own function over a Series or DataFrame when there is no built-in vectorized operation</td>
-</tr>
-<tr class="odd">
-<td><strong>Value counts, membership, and encoding</strong></td>
-<td>Understand a categorical column, filter on a set of values, and prepare it for a model</td>
-</tr>
-<tr class="even">
-<td><strong>The <code>.str</code> accessor</strong></td>
-<td>String methods on a Series need <code>.str</code>; calling them directly is the most common error here</td>
-</tr>
-<tr class="odd">
-<td><strong>Descriptive statistics</strong></td>
-<td><code>.describe()</code> and <code>.agg()</code> summarize a dataset in one call instead of many</td>
-</tr>
-<tr class="even">
-<td><strong>Rolling and expanding windows</strong></td>
-<td>Compute moving averages and cumulative statistics; the foundation of time-series feature engineering</td>
-</tr>
-<tr class="odd">
-<td><strong><code>df.query()</code></strong></td>
-<td>Express multi-condition filters as a readable string; faster with numexpr on large DataFrames</td>
-</tr>
-</tbody>
-</table>
+<p>This notebook follows Part 8. It reloads the dataset from scratch, so you can run it independently. Install pandas 3 with <code>pip install 'pandas&gt;=3'</code>.</p>
 </div>
 </div>
 </div>
-<blockquote class="blockquote">
-<p>Callout markers used throughout this notebook are explained on the <a href="../../index.html#callout-guide">book cover page</a>.</p>
-</blockquote>
-<div class="callout callout-style-default callout-note no-icon callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Learning Objectives
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-2" class="callout-2-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<p>By the end of Part 9 you will be able to:</p>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 33%">
-<col style="width: 33%">
-<col style="width: 33%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>#</th>
-<th>Skill</th>
-<th>Covered in</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>1</td>
-<td>Recognise pandas 3’s <code>str</code> dtype and Copy-on-Write behaviour</td>
-<td>Sec. 0</td>
-</tr>
-<tr class="even">
-<td>2</td>
-<td>Apply your own function to a Series or DataFrame with <code>map</code> and <code>apply</code></td>
-<td>Sec. 1</td>
-</tr>
-<tr class="odd">
-<td>3</td>
-<td>Count, filter, and encode categorical columns</td>
-<td>Sec. 2</td>
-</tr>
-<tr class="even">
-<td>4</td>
-<td>Clean and query text columns with the <code>.str</code> accessor</td>
-<td>Sec. 3</td>
-</tr>
-<tr class="odd">
-<td>5</td>
-<td>Summarize a dataset with descriptive statistics in one call</td>
-<td>Sec. 4</td>
-</tr>
-<tr class="even">
-<td>6</td>
-<td>Compute rolling and expanding window statistics</td>
-<td>Sec. 5a</td>
-</tr>
-<tr class="odd">
-<td>7</td>
-<td>Write readable multi-condition filters with <code>df.query()</code></td>
-<td>Sec. 5b</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-</div>
-<div id="4" class="cell" data-execution_count="1">
+<div id="3" class="cell" data-execution_count="1">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -734,12 +639,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
-</section>
 <section id="whats-new-in-pandas-3" class="level2">
-<h2 class="anchored" data-anchor-id="whats-new-in-pandas-3">0. What’s New in Pandas 3</h2>
+<h2 class="anchored" data-anchor-id="whats-new-in-pandas-3">What’s New in Pandas 3</h2>
 <p>This series is written against pandas 3, released in 2025, and two of its changes are worth understanding before going further, because they change what you see in everyday output.</p>
 <p>Run <code>df.dtypes</code> and look at the text columns. In pandas 2 they showed up as <code>object</code>, the catch-all dtype for anything that is not a fixed-width number. Pandas 3 gives strings a dedicated <code>str</code> dtype instead, backed by PyArrow when it is installed:</p>
-<div id="7" class="cell" data-execution_count="2">
+<div id="6" class="cell" data-execution_count="2">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>df.dtypes</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="2">
 <pre><code>student_id             str
@@ -768,7 +672,7 @@ dtype: object</code></pre>
 <p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-info-circle-fill"></i> Key Concept: A dedicated <code>str</code> dtype, not <code>object</code></span><br><br> <code>object</code> dtype could hold strings, but it could just as easily hold a mix of strings, numbers, and Python objects, with no guarantee which. The new <code>str</code> dtype can only hold strings or missing values, so a column typed <code>str</code> is a stronger guarantee than <code>object</code> ever was, and the PyArrow backing makes string operations faster. This is the same dtype the <code>.str</code> accessor in Sec. 3 operates on.</p>
 </div>
 <p>The second change does not show up in any output, it changes how assignment behaves. Pandas 3 makes Copy-on-Write the only behaviour: selecting a subset of a DataFrame never lets you accidentally modify the original through it.</p>
-<div id="10" class="cell" data-execution_count="3">
+<div id="9" class="cell" data-execution_count="3">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>subset <span class="op">=</span> df[[<span class="st">"student_id"</span>, <span class="st">"average_marks"</span>]]</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>subset.loc[<span class="dv">0</span>, <span class="st">"average_marks"</span>] <span class="op">=</span> <span class="fl">0.0</span></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"original unaffected: </span><span class="sc">{</span>df<span class="sc">.</span>loc[<span class="dv">0</span>, <span class="st">'average_marks'</span>]<span class="sc">}</span><span class="ss">"</span>)</span>
@@ -783,6 +687,73 @@ subset changed     : 0.0</code></pre>
 </div>
 <div style="background:#F5F3FF;border-left:5px solid #7C3AED;padding:14px 18px;border-radius:6px;margin:16px 0">
 <p><span style="color:#5B21B6;font-weight:bold"><i class="bi bi-lightbulb-fill"></i> Pro Tip: <code>pd.col()</code> previews the expression style Polars uses</span><br><br> Pandas 3 adds <code>pd.col(“name”)</code> as an alternative to a <code>lambda</code> inside <code>.assign()</code>: <code>df.assign(c=pd.col(“a”) + pd.col(“b”))</code> instead of <code>df.assign(c=lambda d: d[“a”] + d[“b”])</code>. It reads closer to the column-expression style used throughout Polars, covered in Part 11 of this series, and is worth recognising even though this notebook keeps using <code>apply</code> and <code>lambda</code>, the more widely used style today.</p>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Learning Objectives
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>By the end of Part 9 you will be able to:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>#</th>
+<th>Skill</th>
+<th>Covered in</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td>Recognise pandas 3’s <code>str</code> dtype and Copy-on-Write behaviour</td>
+<td>Sec. 0</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td>Apply your own function to a Series or DataFrame with <code>map</code> and <code>apply</code></td>
+<td>Sec. 1</td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td>Count, filter, and encode categorical columns</td>
+<td>Sec. 2</td>
+</tr>
+<tr class="even">
+<td>4</td>
+<td>Clean and query text columns with the <code>.str</code> accessor</td>
+<td>Sec. 3</td>
+</tr>
+<tr class="odd">
+<td>5</td>
+<td>Summarize a dataset with descriptive statistics in one call</td>
+<td>Sec. 4</td>
+</tr>
+<tr class="even">
+<td>6</td>
+<td>Compute rolling and expanding window statistics</td>
+<td>Sec. 5a</td>
+</tr>
+<tr class="odd">
+<td>7</td>
+<td>Write readable multi-condition filters with <code>df.query()</code></td>
+<td>Sec. 5b</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 </section>
 <section id="function-application-with-map-and-apply" class="level2">
@@ -827,25 +798,88 @@ subset changed     : 0.0</code></pre>
 </div>
 </div>
 </div>
+<p><code>Series.map()</code> transforms one column. For element-wise operations across ALL columns simultaneously, pandas 3.0 introduced <code>DataFrame.map()</code>: the replacement for the deprecated <code>applymap()</code>. Same signature, same semantics, new name.</p>
+<div id="17" class="cell" data-execution_count="5">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Round every numeric cell to 1 decimal place</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>numeric_cols <span class="op">=</span> df.select_dtypes(<span class="st">"number"</span>).columns.tolist()</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>rounded <span class="op">=</span> df[numeric_cols].<span class="bu">map</span>(<span class="kw">lambda</span> x: <span class="bu">round</span>(x, <span class="dv">1</span>) <span class="cf">if</span> pd.notna(x) <span class="cf">else</span> x)</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>rounded.head(<span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="5">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">cohort</th>
+<th data-quarto-table-cell-role="th">study_hours</th>
+<th data-quarto-table-cell-role="th">attendance_pct</th>
+<th data-quarto-table-cell-role="th">midterm_score</th>
+<th data-quarto-table-cell-role="th">final_score</th>
+<th data-quarto-table-cell-role="th">project_score</th>
+<th data-quarto-table-cell-role="th">average_marks</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>2023</td>
+<td>10.8</td>
+<td>88.6</td>
+<td>46.1</td>
+<td>54.4</td>
+<td>57.8</td>
+<td>52.8</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1</th>
+<td>2023</td>
+<td>16.1</td>
+<td>71.5</td>
+<td>49.9</td>
+<td>64.9</td>
+<td>67.0</td>
+<td>60.6</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2</th>
+<td>2023</td>
+<td>23.6</td>
+<td>71.5</td>
+<td>57.3</td>
+<td>64.1</td>
+<td>83.0</td>
+<td>68.1</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<div style="background:#FEF2F2;border-left:5px solid #DC2626;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#991B1B;font-weight:bold"><i class="bi bi-bug-fill"></i> Common Mistake: Using <code>applymap()</code> from an older tutorial</span><br><br> <code>df.applymap()</code> was removed in pandas 3.0. Any code or tutorial older than 2024 that uses <code>applymap</code> will raise <code>AttributeError</code>. The fix is a one-word rename: <code>df.applymap(fn)</code> becomes <code>df.map(fn)</code>.</p>
+</div>
 <div style="background:#EAF3FA;border-left:5px solid #0369A1;padding:14px 18px;border-radius:6px;margin:16px 0">
 <p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-info-circle-fill"></i> Key Concept: <code>map</code> is for substitution, <code>apply</code> is for logic</span><br><br> <code>map</code> expects a dict or a simple function and only ever looks at one value at a time. <code>apply</code> accepts any function, including one with branching logic, and can run over a Series (one value at a time) or a DataFrame (one row or one column at a time, depending on <code>axis</code>). Reach for <code>map</code> first; reach for <code>apply</code> when the rule does not fit in a lookup table.</p>
 </div>
 <p>Converting a normalized mark (0 to 1) into a letter grade needs a multi-branch rule, a job for <code>apply</code> with a plain Python function:</p>
-<div id="18" class="cell" data-execution_count="5">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> letter_grade(mark: <span class="bu">float</span>) <span class="op">-&gt;</span> <span class="bu">str</span>:</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> mark <span class="op">&gt;=</span> <span class="dv">80</span>:</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="st">"A"</span></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">elif</span> mark <span class="op">&gt;=</span> <span class="dv">60</span>:</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="st">"B"</span></span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">elif</span> mark <span class="op">&gt;=</span> <span class="dv">40</span>:</span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="st">"C"</span></span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="st">"D"</span></span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"grade"</span>] <span class="op">=</span> df[<span class="st">"average_marks"</span>].<span class="bu">apply</span>(letter_grade)</span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>df[[<span class="st">"student_id"</span>, <span class="st">"average_marks"</span>, <span class="st">"grade"</span>]].head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="5">
+<div id="21" class="cell" data-execution_count="6">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> letter_grade(mark: <span class="bu">float</span>) <span class="op">-&gt;</span> <span class="bu">str</span>:</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> mark <span class="op">&gt;=</span> <span class="dv">80</span>:</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="st">"A"</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">elif</span> mark <span class="op">&gt;=</span> <span class="dv">60</span>:</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="st">"B"</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">elif</span> mark <span class="op">&gt;=</span> <span class="dv">40</span>:</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="st">"C"</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="st">"D"</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"grade"</span>] <span class="op">=</span> df[<span class="st">"average_marks"</span>].<span class="bu">apply</span>(letter_grade)</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>df[[<span class="st">"student_id"</span>, <span class="st">"average_marks"</span>, <span class="st">"grade"</span>]].head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="6">
 <div>
 
 
@@ -895,15 +929,88 @@ subset changed     : 0.0</code></pre>
 </div>
 </div>
 </div>
+<p><code>np.where</code> handles one condition. For multiple ordered conditions with different outcomes, <code>Series.case_when()</code> (pandas 2.2+) reads like a SQL CASE statement: check cases top-to-bottom, return the value for the first match, and fall back to a default.</p>
+<div id="23" class="cell" data-execution_count="7">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"performance"</span>] <span class="op">=</span> df[<span class="st">"midterm_score"</span>].case_when(</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    caselist<span class="op">=</span>[</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>        (df[<span class="st">"midterm_score"</span>] <span class="op">&gt;=</span> <span class="dv">85</span>, <span class="st">"High"</span>),</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>        (df[<span class="st">"midterm_score"</span>] <span class="op">&gt;=</span> <span class="dv">70</span>, <span class="st">"Medium"</span>),</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>        (df[<span class="st">"midterm_score"</span>] <span class="op">&gt;=</span> <span class="dv">55</span>, <span class="st">"Low"</span>),</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>        (df[<span class="st">"midterm_score"</span>] <span class="op">&gt;=</span> <span class="dv">0</span>, <span class="st">"At Risk"</span>),  <span class="co"># catch-all default</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    ],</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>df[[<span class="st">"midterm_score"</span>, <span class="st">"performance"</span>]].head(<span class="dv">8</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="7">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">midterm_score</th>
+<th data-quarto-table-cell-role="th">performance</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>46.1</td>
+<td>At Risk</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1</th>
+<td>49.9</td>
+<td>At Risk</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2</th>
+<td>57.3</td>
+<td>Low</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">3</th>
+<td>75.6</td>
+<td>Medium</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">4</th>
+<td>53.6</td>
+<td>At Risk</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">5</th>
+<td>65.2</td>
+<td>Low</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">6</th>
+<td>87.8</td>
+<td>High</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">7</th>
+<td>62.3</td>
+<td>Low</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<div style="background:#F5F3FF;border-left:5px solid #7C3AED;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#5B21B6;font-weight:bold"><i class="bi bi-lightbulb-fill"></i> Pro Tip: <code>case_when()</code> for three or more branches instead of chained <code>np.where()</code></span><br><br> <code>case_when()</code> evaluates conditions in order and stops at the first match, like <code>if/elif/else</code>. The <code>default</code> argument fills any row where no condition matched. Use it instead of chained <code>np.where()</code> calls whenever you have three or more branches.</p>
+</div>
 <p><code>DataFrame.apply(..., axis=1)</code> runs a function once per row, with the whole row available as a Series. Use it when the rule needs more than one column at a time, for example flagging students who are both low-scoring and without internet access:</p>
-<div id="20" class="cell" data-execution_count="6">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> at_risk(row: pd.Series) <span class="op">-&gt;</span> <span class="bu">bool</span>:</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> row[<span class="st">"average_marks"</span>] <span class="op">&lt;</span> <span class="dv">40</span> <span class="kw">and</span> <span class="kw">not</span> row[<span class="st">"has_internet"</span>]</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"at_risk"</span>] <span class="op">=</span> df.<span class="bu">apply</span>(at_risk, axis<span class="op">=</span><span class="dv">1</span>)</span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"at_risk"</span>].<span class="bu">sum</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="6">
+<div id="26" class="cell" data-execution_count="8">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> at_risk(row: pd.Series) <span class="op">-&gt;</span> <span class="bu">bool</span>:</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> row[<span class="st">"average_marks"</span>] <span class="op">&lt;</span> <span class="dv">40</span> <span class="kw">and</span> <span class="kw">not</span> row[<span class="st">"has_internet"</span>]</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"at_risk"</span>] <span class="op">=</span> df.<span class="bu">apply</span>(at_risk, axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"at_risk"</span>].<span class="bu">sum</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="8">
 <pre><code>np.int64(12)</code></pre>
 </div>
 </div>
@@ -921,17 +1028,17 @@ df["passed"] = df["average_marks"].apply(passed_threshold)
 df["passed"].sum()
 # -&gt; 6011</pre>
 </div>
-<div id="23" class="cell" data-execution_count="7">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: write passed_threshold, apply it, and print the count of students who passed</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="29" class="cell" data-execution_count="9">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: write passed_threshold, apply it, and print the count of students who passed</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="unique-values-value-counts-and-membership" class="level2">
 <h2 class="anchored" data-anchor-id="unique-values-value-counts-and-membership">2. Unique Values, Value Counts, and Membership</h2>
 <p><code>.unique()</code>, <code>.value_counts()</code>, and <code>.isin()</code> are usually the first three calls worth making on any categorical column, before any filtering or grouping.</p>
-<div id="25" class="cell" data-execution_count="8">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"program"</span>].unique()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="8">
+<div id="31" class="cell" data-execution_count="10">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"program"</span>].unique()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="10">
 <pre><code>&lt;ArrowStringArray&gt;
 ['Information Technology', 'Data Science', 'Engineering', 'Computer Science']
 Length: 4, dtype: str</code></pre>
@@ -941,9 +1048,9 @@ Length: 4, dtype: str</code></pre>
 <div style="background:#EAF7F0;border-left:5px solid #059669;padding:14px 18px;border-radius:6px;margin:16px 0">
 <p><span style="color:#059669;font-weight:bold"><i class="bi bi-journal-code"></i> Example: Pass rate from <code>value_counts</code></span><br><br> <code>df[“passed”].value_counts(normalize=True)</code> answers the pass-rate question in a single line, no manual division required.</p>
 </div>
-<div id="28" class="cell" data-execution_count="9">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"passed"</span>].value_counts(normalize<span class="op">=</span><span class="va">True</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="9">
+<div id="34" class="cell" data-execution_count="11">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"passed"</span>].value_counts(normalize<span class="op">=</span><span class="va">True</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="11">
 <pre><code>passed
 True     0.961667
 False    0.038333
@@ -951,11 +1058,11 @@ Name: proportion, dtype: float64</code></pre>
 </div>
 </div>
 <p><code>.isin()</code> filters rows whose value is in a given list, the categorical equivalent of a boolean comparison. Filtering to the two largest programs combines <code>.value_counts()</code> and <code>.isin()</code> directly:</p>
-<div id="30" class="cell" data-execution_count="10">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>top_programs <span class="op">=</span> df[<span class="st">"program"</span>].value_counts().head(<span class="dv">2</span>).index</span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>df_top_programs <span class="op">=</span> df[df[<span class="st">"program"</span>].isin(top_programs)]</span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>df_top_programs[<span class="st">"program"</span>].value_counts()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="10">
+<div id="36" class="cell" data-execution_count="12">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>top_programs <span class="op">=</span> df[<span class="st">"program"</span>].value_counts().head(<span class="dv">2</span>).index</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>df_top_programs <span class="op">=</span> df[df[<span class="st">"program"</span>].isin(top_programs)]</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>df_top_programs[<span class="st">"program"</span>].value_counts()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="12">
 <pre><code>program
 Data Science        828
 Computer Science    726
@@ -966,20 +1073,20 @@ Name: count, dtype: int64</code></pre>
 <p><span style="color:#5B21B6;font-weight:bold"><i class="bi bi-lightbulb-fill"></i> Pro Tip: <code>.nunique()</code> before <code>.unique()</code> on a column you have not seen yet</span><br><br> <code>.nunique()</code> returns just the count of distinct values. Running it before <code>.unique()</code> tells you whether printing every unique value is even a reasonable idea, useful for a column that turns out to have 4 categories versus one that turns out to have 4,000.</p>
 </div>
 <p>A column with a small, fixed set of values is a candidate for the <code>category</code> dtype: pandas stores each value once and keeps a compact integer code per row instead of repeating the full string, which is most of <code>gender</code>, <code>program</code>, and <code>guardian</code> here:</p>
-<div id="33" class="cell" data-execution_count="11">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"program"</span>] <span class="op">=</span> df[<span class="st">"program"</span>].astype(<span class="st">"category"</span>)</span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"program"</span>].dtype</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="11">
+<div id="39" class="cell" data-execution_count="13">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"program"</span>] <span class="op">=</span> df[<span class="st">"program"</span>].astype(<span class="st">"category"</span>)</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"program"</span>].dtype</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="13">
 <pre><code>CategoricalDtype(categories=['Computer Science', 'Data Science', 'Engineering',
                   'Information Technology'],
 , ordered=False, categories_dtype=str)</code></pre>
 </div>
 </div>
 <p>Most ML models need numbers, not category labels. <code>pd.get_dummies()</code> one-hot encodes a categorical column into one binary column per category, the standard first step before fitting a model on top of this data:</p>
-<div id="35" class="cell" data-execution_count="12">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>program_dummies <span class="op">=</span> pd.get_dummies(df[<span class="st">"program"</span>], prefix<span class="op">=</span><span class="st">"program"</span>)</span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>program_dummies.head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="12">
+<div id="41" class="cell" data-execution_count="14">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>program_dummies <span class="op">=</span> pd.get_dummies(df[<span class="st">"program"</span>], prefix<span class="op">=</span><span class="st">"program"</span>)</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>program_dummies.head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="14">
 <div>
 
 
@@ -1046,20 +1153,23 @@ Name: count, dtype: int64</code></pre>
 parents = df[df["guardian"].isin(["mother", "father"])]
 len(parents)</pre>
 </div>
-<div id="38" class="cell" data-execution_count="13">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: print value counts for guardian, then filter to mother/father and print row count</span></span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="44" class="cell" data-execution_count="15">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: print value counts for guardian, then filter to mother/father and print row count</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="working-with-text-columns-the-.str-accessor" class="level2">
 <h2 class="anchored" data-anchor-id="working-with-text-columns-the-.str-accessor">3. Working with Text Columns: the <code>.str</code> Accessor</h2>
 <p><code>student_id</code> is a string column, and pandas keeps every string method behind a <code>.str</code> accessor rather than directly on the Series. The accessor exists because a Series can hold any dtype, <code>.str</code> is what tells pandas you specifically want the string-handling behaviour.</p>
+<div style="background:#EFF6FF;border-left:5px solid #0369A1;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-key-fill"></i> Key Concept: .str is a namespace – call string methods on the whole column at once</span><br><br> <code>df[‘col’].str.upper()</code> applies <code>upper()</code> to every element without a Python loop. The <code>.str</code> prefix is required – <code>df[‘col’].upper()</code> raises an <code>AttributeError</code> because <code>upper</code> is not a Series method. Common methods: <code>.str.strip()</code> for whitespace, <code>.str.contains(pattern)</code> for search, <code>.str.extract(r’(pattern)’)</code> for regex capture groups.</p>
+</div>
 <div style="background:#FEF2F2;border-left:5px solid #DC2626;padding:14px 18px;border-radius:6px;margin:16px 0">
 <p><span style="color:#991B1B;font-weight:bold"><i class="bi bi-bug-fill"></i> Common Mistake: Calling a string method directly on a Series</span><br><br> <code>df[“student_id”].upper()</code> raises an <code>AttributeError</code>: <code>Series</code> has no <code>upper</code> method. The string methods live on <code>df[“student_id”].str</code>, not on the Series itself, because the Series itself is a general-purpose container that happens to hold strings here.</p>
 </div>
-<div id="41" class="cell" data-execution_count="14">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"student_id"</span>].<span class="bu">str</span>.upper().head(<span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="14">
+<div id="48" class="cell" data-execution_count="16">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"student_id"</span>].<span class="bu">str</span>.upper().head(<span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="16">
 <pre><code>0    S0001
 1    S0001
 2    S0001
@@ -1067,27 +1177,27 @@ Name: student_id, dtype: str</code></pre>
 </div>
 </div>
 <p><code>.str.len()</code> gives the length of every string at once, useful for spotting malformed values before they cause problems downstream:</p>
-<div id="43" class="cell" data-execution_count="15">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>id_lengths <span class="op">=</span> df[<span class="st">"student_id"</span>].<span class="bu">str</span>.<span class="bu">len</span>()</span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>id_lengths.value_counts()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="15">
+<div id="50" class="cell" data-execution_count="17">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>id_lengths <span class="op">=</span> df[<span class="st">"student_id"</span>].<span class="bu">str</span>.<span class="bu">len</span>()</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>id_lengths.value_counts()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="17">
 <pre><code>student_id
 5    2400
 Name: count, dtype: int64</code></pre>
 </div>
 </div>
 <p><code>.str.extract()</code> pulls a regex capture group out of every value, the cleanest way to turn a structured string column into a usable numeric one. Every <code>student_id</code> here is the letter <code>S</code> followed by four digits (<code>S0001</code>–<code>S0400</code>), so extracting just the digits gives a numeric ID:</p>
-<div id="45" class="cell" data-execution_count="16">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"student_id"</span>].<span class="bu">str</span>.match(<span class="vs">r"</span><span class="dv">^</span><span class="vs">S</span><span class="dv">\d</span><span class="op">{4}</span><span class="dv">$</span><span class="vs">"</span>).<span class="bu">all</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="16">
+<div id="52" class="cell" data-execution_count="18">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"student_id"</span>].<span class="bu">str</span>.match(<span class="vs">r"</span><span class="dv">^</span><span class="vs">S</span><span class="dv">\d</span><span class="op">{4}</span><span class="dv">$</span><span class="vs">"</span>).<span class="bu">all</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="18">
 <pre><code>np.True_</code></pre>
 </div>
 </div>
-<div id="46" class="cell" data-execution_count="17">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>numeric_id <span class="op">=</span> df[<span class="st">"student_id"</span>].<span class="bu">str</span>.extract(<span class="vs">r"S</span><span class="kw">(</span><span class="dv">\d</span><span class="op">+</span><span class="kw">)</span><span class="vs">"</span>)[<span class="dv">0</span>].astype(<span class="st">"Int64"</span>)</span>
-<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"numeric_id"</span>] <span class="op">=</span> numeric_id</span>
-<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>df[[<span class="st">"student_id"</span>, <span class="st">"numeric_id"</span>]].head(<span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="17">
+<div id="53" class="cell" data-execution_count="19">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>numeric_id <span class="op">=</span> df[<span class="st">"student_id"</span>].<span class="bu">str</span>.extract(<span class="vs">r"S</span><span class="kw">(</span><span class="dv">\d</span><span class="op">+</span><span class="kw">)</span><span class="vs">"</span>)[<span class="dv">0</span>].astype(<span class="st">"Int64"</span>)</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"numeric_id"</span>] <span class="op">=</span> numeric_id</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>df[[<span class="st">"student_id"</span>, <span class="st">"numeric_id"</span>]].head(<span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="19">
 <div>
 
 
@@ -1127,17 +1237,20 @@ Name: count, dtype: int64</code></pre>
 <pre style="background:#FFF8E1;padding:10px;border-radius:4px;font-size:0.9em">df["student_id"].str.startswith("S").all()
 df["student_id"].str.contains("0").sum()</pre>
 </div>
-<div id="48" class="cell" data-execution_count="18">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: confirm every student_id starts with "s", then count IDs containing "0"</span></span>
-<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="55" class="cell" data-execution_count="20">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: confirm every student_id starts with "s", then count IDs containing "0"</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="descriptive-statistics-and-summarization" class="level2">
 <h2 class="anchored" data-anchor-id="descriptive-statistics-and-summarization">4. Descriptive Statistics and Summarization</h2>
 <p><code>.describe()</code> from Part 1 summarizes every numeric column with one call. <code>.agg()</code> goes a step further: it computes a chosen list of statistics for a chosen set of columns, in whatever combination you ask for.</p>
-<div id="50" class="cell" data-execution_count="19">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>df[[<span class="st">"midterm_score"</span>, <span class="st">"final_score"</span>, <span class="st">"project_score"</span>]].describe()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="19">
+<div style="background:#EFF6FF;border-left:5px solid #0369A1;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-key-fill"></i> Key Concept: .describe() is a first look, not a conclusion</span><br><br> <code>.describe()</code> shows count, mean, std, min, 25th/50th/75th percentile, and max. It skips non-numeric columns by default. <code>.agg([‘mean’,‘std’,‘min’,‘max’])</code> gives you the same numbers for only the columns and statistics you care about, in a table you can compare at a glance. <code>.corr()</code> is Pearson correlation by default – it measures linear relationship, not causation.</p>
+</div>
+<div id="58" class="cell" data-execution_count="21">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>df[[<span class="st">"midterm_score"</span>, <span class="st">"final_score"</span>, <span class="st">"project_score"</span>]].describe()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="21">
 <div>
 
 
@@ -1206,9 +1319,9 @@ df["student_id"].str.contains("0").sum()</pre>
 </div>
 </div>
 <p><code>.agg()</code> accepts a list of function names and applies every one of them to every selected column, returning a single small table instead of one Series per statistic:</p>
-<div id="52" class="cell" data-execution_count="20">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>df[[<span class="st">"midterm_score"</span>, <span class="st">"final_score"</span>, <span class="st">"project_score"</span>]].agg([<span class="st">"mean"</span>, <span class="st">"std"</span>, <span class="st">"min"</span>, <span class="st">"max"</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="20">
+<div id="60" class="cell" data-execution_count="22">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>df[[<span class="st">"midterm_score"</span>, <span class="st">"final_score"</span>, <span class="st">"project_score"</span>]].agg([<span class="st">"mean"</span>, <span class="st">"std"</span>, <span class="st">"min"</span>, <span class="st">"max"</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="22">
 <div>
 
 
@@ -1253,9 +1366,9 @@ df["student_id"].str.contains("0").sum()</pre>
 </div>
 </div>
 <p><code>.corr()</code> computes the pairwise correlation between numeric columns, a quick way to see whether strong performance in one subject tends to come with strong performance in another:</p>
-<div id="54" class="cell" data-execution_count="21">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>df[[<span class="st">"midterm_score"</span>, <span class="st">"final_score"</span>, <span class="st">"project_score"</span>]].corr()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="21">
+<div id="62" class="cell" data-execution_count="23">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>df[[<span class="st">"midterm_score"</span>, <span class="st">"final_score"</span>, <span class="st">"project_score"</span>]].corr()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="23">
 <div>
 
 
@@ -1293,9 +1406,7 @@ df["student_id"].str.contains("0").sum()</pre>
 </div>
 </div>
 </div>
-<div style="background:#F5F3FF;border-left:5px solid #7C3AED;padding:14px 18px;border-radius:6px;margin:16px 0">
-<p><span style="color:#5B21B6;font-weight:bold"><i class="bi bi-lightbulb-fill"></i> Pro Tip: <code>.agg()</code> over chaining several single-statistic calls</span><br><br> Five separate lines like <code>df[“midterm_score”].mean()</code>, <code>.std()</code>, <code>.min()</code> read fine in isolation but scatter related numbers across separate outputs. One <code>.agg([…])</code> call keeps them in a single table that is easier to read and to compare across columns.</p>
-</div>
+<p>Prefer one <code>.agg([...])</code> call over five separate <code>.mean()</code>, <code>.std()</code>, <code>.min()</code> calls. The aggregation table is easier to scan and keeps related numbers in one output.</p>
 <div style="background:#F5F3FF;border-left:5px solid #7C3AED;padding:14px 18px;border-radius:6px;margin:16px 0">
 <p><span style="color:#5B21B6;font-weight:bold"><i class="bi bi-lightbulb-fill"></i> Pro Tip: Use <code>groupby().transform()</code> to add a group statistic back to the original rows</span><br><br> <code>groupby().agg()</code> reduces a DataFrame to one row per group. <code>groupby().transform()</code> does the opposite: it computes the same group statistic but returns a Series the exact same length as the original DataFrame, aligned to the original index, so you can assign it as a new column without a merge:</p>
 <pre style="background:#F4F5F6;padding:10px;border-radius:4px;font-size:0.9em"># agg → one row per program
@@ -1312,9 +1423,9 @@ df["caste_mean_marks"] = df.groupby("program")["average_marks"].transform("mean"
 <pre style="background:#FFF8E1;padding:10px;border-radius:4px;font-size:0.9em">with_internet = df[df["has_internet"]]
 with_internet[["midterm_score", "final_score", "project_score"]].agg(["mean", "std"])</pre>
 </div>
-<div id="58" class="cell" data-execution_count="22">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: agg mean and std for the three mark columns, restricted to internet == 1</span></span>
-<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="66" class="cell" data-execution_count="24">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: agg mean and std for the three mark columns, restricted to internet == 1</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="window-operations-and-expressive-queries" class="level2">
@@ -1324,49 +1435,112 @@ with_internet[["midterm_score", "final_score", "project_score"]].agg(["mean", "s
 <h3 class="anchored" data-anchor-id="a.-rolling-and-expanding-windows">5a. Rolling and Expanding Windows</h3>
 <p><code>rolling(n)</code> groups each row with the <code>n-1</code> rows before it and applies an aggregation. It is the standard tool for smoothing noisy signals, computing moving averages, or creating features that capture recent trend for a time-ordered dataset.</p>
 <p><code>expanding()</code> is the cumulative version: each row aggregates everything from the start of the series up to that point. The first row is its own mean; the second is the mean of rows 1-2; and so on.</p>
-<blockquote class="blockquote">
-<p><strong>Rolling window (size=3): slides one step at a time</strong></p>
-</blockquote>
-<div class="cell" data-layout-align="default">
-<div class="cell-output-display">
+<div id="69" class="cell" data-execution_count="25">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.patches <span class="im">as</span> mpatches</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> matplotlib.patches <span class="im">import</span> FancyBboxPatch</span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>BG <span class="op">=</span> <span class="st">"#F8FAFC"</span></span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>GREEN <span class="op">=</span> <span class="st">"#059669"</span></span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>BLUE <span class="op">=</span> <span class="st">"#0369A1"</span></span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>PURPLE <span class="op">=</span> <span class="st">"#7C3AED"</span></span>
+<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a>LGRN <span class="op">=</span> <span class="st">"#ECFDF5"</span></span>
+<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a>LBLUE <span class="op">=</span> <span class="st">"#EFF6FF"</span></span>
+<span id="cb35-11"><a href="#cb35-11" aria-hidden="true" tabindex="-1"></a>LPURP <span class="op">=</span> <span class="st">"#F5F3FF"</span></span>
+<span id="cb35-12"><a href="#cb35-12" aria-hidden="true" tabindex="-1"></a>GRAY <span class="op">=</span> <span class="st">"#64748B"</span></span>
+<span id="cb35-13"><a href="#cb35-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-14"><a href="#cb35-14" aria-hidden="true" tabindex="-1"></a>scores <span class="op">=</span> [<span class="dv">70</span>, <span class="dv">80</span>, <span class="dv">90</span>, <span class="dv">60</span>, <span class="dv">75</span>]</span>
+<span id="cb35-15"><a href="#cb35-15" aria-hidden="true" tabindex="-1"></a>days <span class="op">=</span> [<span class="st">"day 1"</span>, <span class="st">"day 2"</span>, <span class="st">"day 3"</span>, <span class="st">"day 4"</span>, <span class="st">"day 5"</span>]</span>
+<span id="cb35-16"><a href="#cb35-16" aria-hidden="true" tabindex="-1"></a>window_colors <span class="op">=</span> [(GREEN, LGRN), (BLUE, LBLUE), (PURPLE, LPURP)]</span>
+<span id="cb35-17"><a href="#cb35-17" aria-hidden="true" tabindex="-1"></a>window_means <span class="op">=</span> [<span class="fl">80.0</span>, <span class="fl">76.7</span>, <span class="fl">75.0</span>]</span>
+<span id="cb35-18"><a href="#cb35-18" aria-hidden="true" tabindex="-1"></a>result_labels <span class="op">=</span> [<span class="st">"result[2]"</span>, <span class="st">"result[3]"</span>, <span class="st">"result[4]"</span>]</span>
+<span id="cb35-19"><a href="#cb35-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-20"><a href="#cb35-20" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">9</span>, <span class="dv">4</span>))</span>
+<span id="cb35-21"><a href="#cb35-21" aria-hidden="true" tabindex="-1"></a>fig.patch.set_facecolor(BG)</span>
+<span id="cb35-22"><a href="#cb35-22" aria-hidden="true" tabindex="-1"></a>ax.set_facecolor(BG)</span>
+<span id="cb35-23"><a href="#cb35-23" aria-hidden="true" tabindex="-1"></a>ax.set_xlim(<span class="op">-</span><span class="fl">0.5</span>, <span class="fl">6.5</span>)</span>
+<span id="cb35-24"><a href="#cb35-24" aria-hidden="true" tabindex="-1"></a>ax.set_ylim(<span class="op">-</span><span class="fl">0.3</span>, <span class="fl">4.2</span>)</span>
+<span id="cb35-25"><a href="#cb35-25" aria-hidden="true" tabindex="-1"></a>ax.axis(<span class="st">"off"</span>)</span>
+<span id="cb35-26"><a href="#cb35-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-27"><a href="#cb35-27" aria-hidden="true" tabindex="-1"></a><span class="co"># Draw score tiles (top row)</span></span>
+<span id="cb35-28"><a href="#cb35-28" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> xi, (day, score) <span class="kw">in</span> <span class="bu">enumerate</span>(<span class="bu">zip</span>(days, scores, strict<span class="op">=</span><span class="va">False</span>)):</span>
+<span id="cb35-29"><a href="#cb35-29" aria-hidden="true" tabindex="-1"></a>    ax.add_patch(</span>
+<span id="cb35-30"><a href="#cb35-30" aria-hidden="true" tabindex="-1"></a>        FancyBboxPatch((xi <span class="op">+</span> <span class="fl">0.05</span>, <span class="fl">3.1</span>), <span class="fl">0.9</span>, <span class="fl">0.7</span>, boxstyle<span class="op">=</span><span class="st">"round,pad=0.04"</span>, facecolor<span class="op">=</span><span class="st">"white"</span>, edgecolor<span class="op">=</span>GRAY, lw<span class="op">=</span><span class="fl">1.2</span>)</span>
+<span id="cb35-31"><a href="#cb35-31" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb35-32"><a href="#cb35-32" aria-hidden="true" tabindex="-1"></a>    ax.text(xi <span class="op">+</span> <span class="fl">0.5</span>, <span class="fl">3.6</span>, <span class="bu">str</span>(score), ha<span class="op">=</span><span class="st">"center"</span>, va<span class="op">=</span><span class="st">"center"</span>, fontsize<span class="op">=</span><span class="dv">11</span>, fontweight<span class="op">=</span><span class="st">"bold"</span>, color<span class="op">=</span><span class="st">"#0F172A"</span>)</span>
+<span id="cb35-33"><a href="#cb35-33" aria-hidden="true" tabindex="-1"></a>    ax.text(xi <span class="op">+</span> <span class="fl">0.5</span>, <span class="fl">3.2</span>, day, ha<span class="op">=</span><span class="st">"center"</span>, va<span class="op">=</span><span class="st">"center"</span>, fontsize<span class="op">=</span><span class="fl">7.5</span>, color<span class="op">=</span>GRAY)</span>
+<span id="cb35-34"><a href="#cb35-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-35"><a href="#cb35-35" aria-hidden="true" tabindex="-1"></a>ax.text(<span class="op">-</span><span class="fl">0.3</span>, <span class="fl">3.45</span>, <span class="st">"scores:"</span>, ha<span class="op">=</span><span class="st">"right"</span>, va<span class="op">=</span><span class="st">"center"</span>, fontsize<span class="op">=</span><span class="dv">9</span>, color<span class="op">=</span>GRAY)</span>
+<span id="cb35-36"><a href="#cb35-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-37"><a href="#cb35-37" aria-hidden="true" tabindex="-1"></a><span class="co"># Draw each window as a colored bracket under the relevant tiles</span></span>
+<span id="cb35-38"><a href="#cb35-38" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> wi, (start, (edge_c, fill_c), mean, lbl) <span class="kw">in</span> <span class="bu">enumerate</span>(</span>
+<span id="cb35-39"><a href="#cb35-39" aria-hidden="true" tabindex="-1"></a>    <span class="bu">zip</span>([<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">2</span>], window_colors, window_means, result_labels, strict<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb35-40"><a href="#cb35-40" aria-hidden="true" tabindex="-1"></a>):</span>
+<span id="cb35-41"><a href="#cb35-41" aria-hidden="true" tabindex="-1"></a>    y <span class="op">=</span> <span class="fl">2.4</span> <span class="op">-</span> wi <span class="op">*</span> <span class="fl">0.75</span></span>
+<span id="cb35-42"><a href="#cb35-42" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Highlight bracket</span></span>
+<span id="cb35-43"><a href="#cb35-43" aria-hidden="true" tabindex="-1"></a>    ax.add_patch(</span>
+<span id="cb35-44"><a href="#cb35-44" aria-hidden="true" tabindex="-1"></a>        FancyBboxPatch(</span>
+<span id="cb35-45"><a href="#cb35-45" aria-hidden="true" tabindex="-1"></a>            (start <span class="op">+</span> <span class="fl">0.02</span>, y <span class="op">-</span> <span class="fl">0.12</span>),</span>
+<span id="cb35-46"><a href="#cb35-46" aria-hidden="true" tabindex="-1"></a>            <span class="fl">3.0</span> <span class="op">-</span> <span class="fl">0.04</span>,</span>
+<span id="cb35-47"><a href="#cb35-47" aria-hidden="true" tabindex="-1"></a>            <span class="fl">0.45</span>,</span>
+<span id="cb35-48"><a href="#cb35-48" aria-hidden="true" tabindex="-1"></a>            boxstyle<span class="op">=</span><span class="st">"round,pad=0.04"</span>,</span>
+<span id="cb35-49"><a href="#cb35-49" aria-hidden="true" tabindex="-1"></a>            facecolor<span class="op">=</span>fill_c,</span>
+<span id="cb35-50"><a href="#cb35-50" aria-hidden="true" tabindex="-1"></a>            edgecolor<span class="op">=</span>edge_c,</span>
+<span id="cb35-51"><a href="#cb35-51" aria-hidden="true" tabindex="-1"></a>            lw<span class="op">=</span><span class="fl">1.8</span>,</span>
+<span id="cb35-52"><a href="#cb35-52" aria-hidden="true" tabindex="-1"></a>            alpha<span class="op">=</span><span class="fl">0.9</span>,</span>
+<span id="cb35-53"><a href="#cb35-53" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb35-54"><a href="#cb35-54" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb35-55"><a href="#cb35-55" aria-hidden="true" tabindex="-1"></a>    ax.text(</span>
+<span id="cb35-56"><a href="#cb35-56" aria-hidden="true" tabindex="-1"></a>        start <span class="op">+</span> <span class="fl">1.5</span>,</span>
+<span id="cb35-57"><a href="#cb35-57" aria-hidden="true" tabindex="-1"></a>        y <span class="op">+</span> <span class="fl">0.1</span>,</span>
+<span id="cb35-58"><a href="#cb35-58" aria-hidden="true" tabindex="-1"></a>        <span class="ss">f"window </span><span class="sc">{</span>wi <span class="op">+</span> <span class="dv">1</span><span class="sc">}</span><span class="ss">  (days </span><span class="sc">{</span>start <span class="op">+</span> <span class="dv">1</span><span class="sc">}</span><span class="ss">-</span><span class="sc">{</span>start <span class="op">+</span> <span class="dv">3</span><span class="sc">}</span><span class="ss">)"</span>,</span>
+<span id="cb35-59"><a href="#cb35-59" aria-hidden="true" tabindex="-1"></a>        ha<span class="op">=</span><span class="st">"center"</span>,</span>
+<span id="cb35-60"><a href="#cb35-60" aria-hidden="true" tabindex="-1"></a>        va<span class="op">=</span><span class="st">"center"</span>,</span>
+<span id="cb35-61"><a href="#cb35-61" aria-hidden="true" tabindex="-1"></a>        fontsize<span class="op">=</span><span class="dv">9</span>,</span>
+<span id="cb35-62"><a href="#cb35-62" aria-hidden="true" tabindex="-1"></a>        color<span class="op">=</span>edge_c,</span>
+<span id="cb35-63"><a href="#cb35-63" aria-hidden="true" tabindex="-1"></a>        fontweight<span class="op">=</span><span class="st">"bold"</span>,</span>
+<span id="cb35-64"><a href="#cb35-64" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb35-65"><a href="#cb35-65" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Arrow + result</span></span>
+<span id="cb35-66"><a href="#cb35-66" aria-hidden="true" tabindex="-1"></a>    ax.annotate(</span>
+<span id="cb35-67"><a href="#cb35-67" aria-hidden="true" tabindex="-1"></a>        <span class="st">""</span>,</span>
+<span id="cb35-68"><a href="#cb35-68" aria-hidden="true" tabindex="-1"></a>        xy<span class="op">=</span>(<span class="fl">5.5</span>, y <span class="op">+</span> <span class="fl">0.1</span>),</span>
+<span id="cb35-69"><a href="#cb35-69" aria-hidden="true" tabindex="-1"></a>        xytext<span class="op">=</span>(start <span class="op">+</span> <span class="fl">3.05</span>, y <span class="op">+</span> <span class="fl">0.1</span>),</span>
+<span id="cb35-70"><a href="#cb35-70" aria-hidden="true" tabindex="-1"></a>        arrowprops<span class="op">=</span>{<span class="st">"arrowstyle"</span>: <span class="st">"-&gt;"</span>, <span class="st">"color"</span>: edge_c, <span class="st">"lw"</span>: <span class="fl">1.5</span>},</span>
+<span id="cb35-71"><a href="#cb35-71" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb35-72"><a href="#cb35-72" aria-hidden="true" tabindex="-1"></a>    ax.text(<span class="fl">5.6</span>, y <span class="op">+</span> <span class="fl">0.1</span>, <span class="ss">f"mean = </span><span class="sc">{</span>mean<span class="sc">:.1f}</span><span class="ss">  (</span><span class="sc">{</span>lbl<span class="sc">}</span><span class="ss">)"</span>, va<span class="op">=</span><span class="st">"center"</span>, fontsize<span class="op">=</span><span class="dv">9</span>, color<span class="op">=</span>edge_c)</span>
+<span id="cb35-73"><a href="#cb35-73" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-74"><a href="#cb35-74" aria-hidden="true" tabindex="-1"></a>ax.text(</span>
+<span id="cb35-75"><a href="#cb35-75" aria-hidden="true" tabindex="-1"></a>    <span class="fl">0.5</span>,</span>
+<span id="cb35-76"><a href="#cb35-76" aria-hidden="true" tabindex="-1"></a>    <span class="fl">0.05</span>,</span>
+<span id="cb35-77"><a href="#cb35-77" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Rolling(3): the first two results are NaN (not enough prior rows to fill the window)."</span>,</span>
+<span id="cb35-78"><a href="#cb35-78" aria-hidden="true" tabindex="-1"></a>    fontsize<span class="op">=</span><span class="fl">8.5</span>,</span>
+<span id="cb35-79"><a href="#cb35-79" aria-hidden="true" tabindex="-1"></a>    color<span class="op">=</span>GRAY,</span>
+<span id="cb35-80"><a href="#cb35-80" aria-hidden="true" tabindex="-1"></a>    style<span class="op">=</span><span class="st">"italic"</span>,</span>
+<span id="cb35-81"><a href="#cb35-81" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb35-82"><a href="#cb35-82" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-83"><a href="#cb35-83" aria-hidden="true" tabindex="-1"></a>fig.suptitle(<span class="st">"rolling(n=3).mean()  --  window slides one row at a time"</span>, fontsize<span class="op">=</span><span class="dv">11</span>, color<span class="op">=</span><span class="st">"#0F172A"</span>, y<span class="op">=</span><span class="fl">1.0</span>)</span>
+<span id="cb35-84"><a href="#cb35-84" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb35-85"><a href="#cb35-85" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
 <div>
-<p></p><figure class="figure"><p></p>
-<div>
-<pre class="mermaid mermaid-js">flowchart LR
-    subgraph W1 ["window 1 (size=3)"]
-        A1["day 1: 70"] --&gt; A2["day 2: 80"] --&gt; A3["day 3: 90"]
-    end
-    subgraph W2 ["window 2 (size=3)"]
-        B1["day 2: 80"] --&gt; B2["day 3: 90"] --&gt; B3["day 4: 60"]
-    end
-    subgraph W3 ["window 3 (size=3)"]
-        C1["day 3: 90"] --&gt; C2["day 4: 60"] --&gt; C3["day 5: 75"]
-    end
-    W1 --&gt;|mean = 80.0| R1["result[2]"]
-    W2 --&gt;|mean = 76.7| R2["result[3]"]
-    W3 --&gt;|mean = 75.0| R3["result[4]"]
-
-    style R1 fill:#EBF5F0,stroke:#059669,color:#065F46
-    style R2 fill:#EAF3FA,stroke:#0369A1,color:#0C4A6E
-    style R3 fill:#F5F3FF,stroke:#7C3AED,color:#3B0764
-</pre>
-</div>
-<p></p></figure><p></p>
+<figure class="figure">
+<p><img src="09-pandas-operations_files/figure-html/cell-26-output-1.png" width="841" height="389" class="figure-img"></p>
+</figure>
 </div>
 </div>
 </div>
-<div id="62" class="cell" data-execution_count="23">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Sort by average_marks to give the rolling window a meaningful order here</span></span>
-<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>df_sorted <span class="op">=</span> df.sort_values(<span class="st">"average_marks"</span>).reset_index(drop<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 5-row rolling mean: smooth out noise</span></span>
-<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>df_sorted[<span class="st">"marks_rolling5"</span>] <span class="op">=</span> df_sorted[<span class="st">"average_marks"</span>].rolling(window<span class="op">=</span><span class="dv">5</span>).mean()</span>
-<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a><span class="co"># expanding mean: cumulative average as we move through sorted students</span></span>
-<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a>df_sorted[<span class="st">"marks_cumulative"</span>] <span class="op">=</span> df_sorted[<span class="st">"average_marks"</span>].expanding().mean()</span>
-<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a>df_sorted[[<span class="st">"student_id"</span>, <span class="st">"average_marks"</span>, <span class="st">"marks_rolling5"</span>, <span class="st">"marks_cumulative"</span>]].head(<span class="dv">8</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="23">
+<div id="70" class="cell" data-execution_count="26">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Sort by average_marks to give the rolling window a meaningful order here</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>df_sorted <span class="op">=</span> df.sort_values(<span class="st">"average_marks"</span>).reset_index(drop<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 5-row rolling mean: smooth out noise</span></span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>df_sorted[<span class="st">"marks_rolling5"</span>] <span class="op">=</span> df_sorted[<span class="st">"average_marks"</span>].rolling(window<span class="op">=</span><span class="dv">5</span>).mean()</span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a><span class="co"># expanding mean: cumulative average as we move through sorted students</span></span>
+<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a>df_sorted[<span class="st">"marks_cumulative"</span>] <span class="op">=</span> df_sorted[<span class="st">"average_marks"</span>].expanding().mean()</span>
+<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a>df_sorted[[<span class="st">"student_id"</span>, <span class="st">"average_marks"</span>, <span class="st">"marks_rolling5"</span>, <span class="st">"marks_cumulative"</span>]].head(<span class="dv">8</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="26">
 <div>
 
 
@@ -1447,16 +1621,16 @@ with_internet[["midterm_score", "final_score", "project_score"]].agg(["mean", "s
 <p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-info-circle-fill"></i> Key Concept: Rolling windows require ordered data to be meaningful</span><br><br> <code>rolling(5)</code> looks at the 5 rows immediately before each row in whatever order they sit in the DataFrame. On unsorted data the window picks up random rows and produces meaningless averages. Always sort by the relevant axis (time, score, sequence number) before calling <code>rolling()</code>. The NaN values in the first <code>n-1</code> rows are correct: there is not enough history to fill those windows yet.</p>
 </div>
 <p>In time-series work, the pattern is almost always: sort by date, group by entity, then compute a rolling stat per group. The <code>groupby().transform()</code> tip from Section 4 applies here too:</p>
-<div id="65" class="cell" data-execution_count="24">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Per-program 10-student rolling mean of average_marks</span></span>
-<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a><span class="co"># transform keeps the result aligned to the original index</span></span>
-<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"marks_prog_rolling10"</span>] <span class="op">=</span> (</span>
-<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>    df.sort_values(<span class="st">"average_marks"</span>)</span>
-<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>    .groupby(<span class="st">"program"</span>)[<span class="st">"average_marks"</span>]</span>
-<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>    .transform(<span class="kw">lambda</span> s: s.rolling(<span class="dv">10</span>, min_periods<span class="op">=</span><span class="dv">3</span>).mean())</span>
-<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>df[[<span class="st">"program"</span>, <span class="st">"average_marks"</span>, <span class="st">"marks_prog_rolling10"</span>]].dropna().head(<span class="dv">6</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="24">
+<div id="73" class="cell" data-execution_count="27">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Per-program 10-student rolling mean of average_marks</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a><span class="co"># transform keeps the result aligned to the original index</span></span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"marks_prog_rolling10"</span>] <span class="op">=</span> (</span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>    df.sort_values(<span class="st">"average_marks"</span>)</span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>    .groupby(<span class="st">"program"</span>)[<span class="st">"average_marks"</span>]</span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>    .transform(<span class="kw">lambda</span> s: s.rolling(<span class="dv">10</span>, min_periods<span class="op">=</span><span class="dv">3</span>).mean())</span>
+<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a>df[[<span class="st">"program"</span>, <span class="st">"average_marks"</span>, <span class="st">"marks_prog_rolling10"</span>]].dropna().head(<span class="dv">6</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="27">
 <div>
 
 
@@ -1517,15 +1691,15 @@ with_internet[["midterm_score", "final_score", "project_score"]].agg(["mean", "s
 <h3 class="anchored" data-anchor-id="b.-expressive-filtering-with-df.query">5b. Expressive Filtering with <code>df.query()</code></h3>
 <p>Boolean masks work well for one or two conditions. For complex multi-condition filters, <code>df.query()</code> expresses the same logic as a readable string, closer to how you would say it out loud.</p>
 <p>Reference an external variable inside a query string with the <code>@</code> prefix:</p>
-<div id="67" class="cell" data-execution_count="25">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Boolean mask version -- correct but harder to read</span></span>
-<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>mask <span class="op">=</span> (df[<span class="st">"midterm_score"</span>] <span class="op">&gt;</span> <span class="dv">70</span>) <span class="op">&amp;</span> (df[<span class="st">"final_score"</span>] <span class="op">&gt;</span> <span class="dv">70</span>) <span class="op">&amp;</span> (df[<span class="st">"program"</span>].isin([<span class="st">"Engineering"</span>, <span class="st">"Sciences"</span>]))</span>
-<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"mask result  : </span><span class="sc">{</span>mask<span class="sc">.</span><span class="bu">sum</span>()<span class="sc">}</span><span class="ss"> rows"</span>)</span>
-<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Same filter as a query string -- reads like a sentence</span></span>
-<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>threshold <span class="op">=</span> <span class="dv">70</span></span>
-<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>result <span class="op">=</span> df.query(<span class="st">"midterm_score &gt; @threshold and final_score &gt; @threshold and program in ['Engineering', 'Sciences']"</span>)</span>
-<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"query result : </span><span class="sc">{</span><span class="bu">len</span>(result)<span class="sc">}</span><span class="ss"> rows"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="75" class="cell" data-execution_count="28">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Boolean mask version -- correct but harder to read</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>mask <span class="op">=</span> (df[<span class="st">"midterm_score"</span>] <span class="op">&gt;</span> <span class="dv">70</span>) <span class="op">&amp;</span> (df[<span class="st">"final_score"</span>] <span class="op">&gt;</span> <span class="dv">70</span>) <span class="op">&amp;</span> (df[<span class="st">"program"</span>].isin([<span class="st">"Engineering"</span>, <span class="st">"Sciences"</span>]))</span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"mask result  : </span><span class="sc">{</span>mask<span class="sc">.</span><span class="bu">sum</span>()<span class="sc">}</span><span class="ss"> rows"</span>)</span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Same filter as a query string -- reads like a sentence</span></span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>threshold <span class="op">=</span> <span class="dv">70</span></span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>result <span class="op">=</span> df.query(<span class="st">"midterm_score &gt; @threshold and final_score &gt; @threshold and program in ['Engineering', 'Sciences']"</span>)</span>
+<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"query result : </span><span class="sc">{</span><span class="bu">len</span>(result)<span class="sc">}</span><span class="ss"> rows"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>mask result  : 14 rows
 query result : 14 rows</code></pre>
@@ -1542,9 +1716,9 @@ df_q["rolling_mean"] = df_q["average_marks"].rolling(20).mean()
 result = df_q.query("rolling_mean &gt; 75 and program == 'Sciences'")
 print(len(result))</pre>
 </div>
-<div id="70" class="cell" data-execution_count="26">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: rolling mean, then query-filter to Sciences students above rolling threshold</span></span>
-<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="78" class="cell" data-execution_count="29">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: rolling mean, then query-filter to Sciences students above rolling threshold</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 </section>
@@ -1572,9 +1746,9 @@ grade_distribution = df["final_grade"].value_counts(normalize=True)
 passing = df[df["passed"] == True]["average_marks"].agg(["mean"])  # noqa: E712
 failing = df[df["passed"] == False]["average_marks"].agg(["mean"])  # noqa: E712</pre>
 </div>
-<div id="73" class="cell" data-execution_count="27">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: build the risk and performance report described above</span></span>
-<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="81" class="cell" data-execution_count="30">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: build the risk and performance report described above</span></span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="further-reading" class="level2">
@@ -1592,11 +1766,11 @@ failing = df[df["passed"] == False]["average_marks"].agg(["mean"])  # noqa: E712
 <td>Chapter 7 (data cleaning) and Chapter 10 (aggregation) are the canonical references for the operations in this notebook</td>
 </tr>
 <tr class="even">
-<td><a href="https://pandas.pydata.org/docs/user_guide/indexing.html">pandas documentation — Indexing and selecting data</a></td>
+<td><a href="https://pandas.pydata.org/docs/user_guide/indexing.html">pandas documentation: Indexing and selecting data</a></td>
 <td>Covers <code>.loc</code>, <code>.iloc</code>, boolean indexing, and <code>MultiIndex</code> in exhaustive detail</td>
 </tr>
 <tr class="odd">
-<td><a href="https://pandas.pydata.org/docs/user_guide/groupby.html">pandas documentation — Group by: split-apply-combine</a></td>
+<td><a href="https://pandas.pydata.org/docs/user_guide/groupby.html">pandas documentation: Group by: split-apply-combine</a></td>
 <td>Official guide to <code>groupby</code>, <code>transform</code>, and <code>apply</code>; the examples use the same column types as this notebook</td>
 </tr>
 <tr class="even">

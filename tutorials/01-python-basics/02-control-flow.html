@@ -68,7 +68,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../../">
-<link href="../../tutorials/01-python-basics/03-python-patterns.html" rel="next">
+<link href="../../tutorials/01-python-basics/03a-python-patterns.html" rel="next">
 <link href="../../tutorials/01-python-basics/01-python-core.html" rel="prev">
 <script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
@@ -207,12 +207,22 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../tutorials/01-python-basics/03-python-patterns.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 3: Patterns for Data Science &amp; ML</span></a>
+  <a href="../../tutorials/01-python-basics/03a-python-patterns.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 3a: Python Patterns – Functions and Code Reuse</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../tutorials/01-python-basics/04-numpy.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 4: NumPy for Data &amp; ML</span></a>
+  <a href="../../tutorials/01-python-basics/03b-python-patterns.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 3b: Python Patterns – Classes, Exceptions, and Defensive Code</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/04a-numpy.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 4a: NumPy Fundamentals</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/04b-numpy.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 4b: NumPy Advanced Operations</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -360,12 +370,22 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../tutorials/04-ml-intro/04-sklearn-core.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 25: Scikit-learn Core API</span></a>
+  <a href="../../tutorials/04-ml-intro/04a-sklearn-core.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 25a: Scikit-learn Core – Foundations</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../tutorials/04-ml-intro/05-sklearn-pipeline.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 26: Sklearn Pipeline and Hyperparameter Search</span></a>
+  <a href="../../tutorials/04-ml-intro/04b-sklearn-core.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 25b: Scikit-learn Core – Validation and Modern Features</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/04-ml-intro/05a-sklearn-pipeline.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 26a: sklearn Pipeline – Foundations</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/04-ml-intro/05b-sklearn-pipeline.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 26b: sklearn Pipeline – Hyperparameter Search and Evaluation</span></a>
   </div>
 </li>
       </ul>
@@ -404,10 +424,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">In this chapter</h2>
    
   <ul>
-  <li><a href="#before-you-begin" id="toc-before-you-begin" class="nav-link active" data-scroll-target="#before-you-begin">Before you begin</a></li>
-  <li><a href="#control-flow-if-elif-else-match-case" id="toc-control-flow-if-elif-else-match-case" class="nav-link" data-scroll-target="#control-flow-if-elif-else-match-case">1. Control Flow: if / elif / else &amp; match / case</a>
+  <li><a href="#control-flow-if-elif-else-match-case" id="toc-control-flow-if-elif-else-match-case" class="nav-link active" data-scroll-target="#control-flow-if-elif-else-match-case">1. Control Flow: if / elif / else &amp; match / case</a>
   <ul class="collapse">
   <li><a href="#match-case-structural-pattern-matching-python-3.10" id="toc-match-case-structural-pattern-matching-python-3.10" class="nav-link" data-scroll-target="#match-case-structural-pattern-matching-python-3.10">match / case: Structural Pattern Matching (Python 3.10+)</a></li>
+  <li><a href="#sequence-patterns-in-match-case" id="toc-sequence-patterns-in-match-case" class="nav-link" data-scroll-target="#sequence-patterns-in-match-case">Sequence Patterns in match / case</a></li>
   </ul></li>
   <li><a href="#control-flow-for-loops" id="toc-control-flow-for-loops" class="nav-link" data-scroll-target="#control-flow-for-loops">2. Control Flow: for Loops</a>
   <ul class="collapse">
@@ -455,9 +475,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p><a href="https://colab.research.google.com/github/sambaiga/ds-mlops-path/blob/main/tutorials/01-python-basics/02-control-flow.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open In Colab"></a> <a href="https://raw.githubusercontent.com/sambaiga/ds-mlops-path/main/tutorials/01-python-basics/02-control-flow.ipynb"><img src="https://img.shields.io/badge/Download-Notebook-blue.svg?logo=jupyter&amp;logoColor=white" class="img-fluid" alt="Download Notebook"></a></p>
 <p><strong>DS-MLOps Python Foundations</strong></p>
 <p><strong>Python 3.12+ | Author: Anthony Faustine</strong></p>
-<section id="before-you-begin" class="level2">
-<h2 class="anchored" data-anchor-id="before-you-begin">Before you begin</h2>
-<p>This notebook assumes you have completed Part 1 (<code>01-python-core.ipynb</code>). If you have not, start there. Part 2 picks up immediately where Part 1 left off, using the same <strong>university analytics platform</strong> scenario, and covers everything that decides <em>what runs and how many times</em>: conditionals, pattern matching, loops, and comprehensions.</p>
+<p>Your training loop runs 50 epochs. Epoch 47 fails because a score came in as <code>None</code>. The loop should have skipped it. It didn’t – because no one told it what to do when the check fails. Control flow is how you teach code to make decisions.</p>
+<p>This notebook covers four constructs: <code>if</code> for decisions, <code>for</code> for known collections, <code>while</code> for indefinite repetition, and comprehensions for one-line transformations. Same scenario as Part 1: student scores, course enrollments, and experiment logs.</p>
 <blockquote class="blockquote">
 <p>Callout markers used throughout this notebook are explained on the <a href="../../index.html#callout-guide">book cover page</a>.</p>
 </blockquote>
@@ -467,11 +486,27 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Learning Objectives
+<span class="screen-reader-only">Note</span>Before You Begin
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
 <div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>This notebook assumes you have completed Part 1 (<code>01-python-core.ipynb</code>). Later cells use variables and concepts from there. If something looks unfamiliar, open Part 1 and run the relevant section first.</p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Learning Objectives
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>By the end of Part 2 you will be able to:</p>
 <table class="caption-top table">
@@ -513,37 +548,103 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
-</section>
+<p>Before diving into each construct, here is the map. Python gives you four tools for controlling execution – each answers a different question about what runs and when.</p>
+<div id="5" class="cell" data-execution_count="1">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.patches <span class="im">as</span> mpatches</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> matplotlib.patches <span class="im">import</span> FancyBboxPatch</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>BG <span class="op">=</span> <span class="st">"#F8FAFC"</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>BLUE <span class="op">=</span> <span class="st">"#0369A1"</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>GREEN <span class="op">=</span> <span class="st">"#059669"</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>PURPLE <span class="op">=</span> <span class="st">"#7C3AED"</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>AMBER <span class="op">=</span> <span class="st">"#B45309"</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>configs <span class="op">=</span> [</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    (<span class="dv">0</span>, <span class="st">"if / elif / else"</span>, <span class="st">"Choose one branch</span><span class="ch">\n</span><span class="st">based on a condition"</span>, <span class="st">"#DBEAFE"</span>, BLUE),</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    (<span class="dv">1</span>, <span class="st">"for loop"</span>, <span class="st">"Repeat once per item</span><span class="ch">\n</span><span class="st">in a known collection"</span>, <span class="st">"#D1FAE5"</span>, GREEN),</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    (<span class="dv">2</span>, <span class="st">"while loop"</span>, <span class="st">"Repeat until a condition</span><span class="ch">\n</span><span class="st">becomes False"</span>, <span class="st">"#EDE9FE"</span>, PURPLE),</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    (<span class="dv">3</span>, <span class="st">"comprehension"</span>, <span class="st">"Transform a collection</span><span class="ch">\n</span><span class="st">in one expression"</span>, <span class="st">"#FEF3C7"</span>, AMBER),</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>]</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">9</span>, <span class="fl">2.4</span>))</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>fig.patch.set_facecolor(BG)</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>ax.set_facecolor(BG)</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>ax.set_xlim(<span class="op">-</span><span class="fl">0.1</span>, <span class="fl">4.1</span>)</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>ax.set_ylim(<span class="op">-</span><span class="fl">0.05</span>, <span class="fl">1.05</span>)</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>ax.axis(<span class="st">"off"</span>)</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> col, name, desc, bg, border <span class="kw">in</span> configs:</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>    x <span class="op">=</span> col <span class="op">+</span> <span class="fl">0.5</span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>    ax.add_patch(</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>        FancyBboxPatch(</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>            (col <span class="op">+</span> <span class="fl">0.06</span>, <span class="fl">0.08</span>),</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>            <span class="fl">0.88</span>,</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>            <span class="fl">0.84</span>,</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>            boxstyle<span class="op">=</span><span class="st">"round,pad=0.03"</span>,</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>            facecolor<span class="op">=</span>bg,</span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>            edgecolor<span class="op">=</span>border,</span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>            linewidth<span class="op">=</span><span class="dv">2</span>,</span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>            zorder<span class="op">=</span><span class="dv">2</span>,</span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>    ax.text(</span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>        x,</span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>        <span class="fl">0.72</span>,</span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>        name,</span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>        ha<span class="op">=</span><span class="st">"center"</span>,</span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>        va<span class="op">=</span><span class="st">"center"</span>,</span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>        fontsize<span class="op">=</span><span class="dv">12</span>,</span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>        fontweight<span class="op">=</span><span class="st">"bold"</span>,</span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>        color<span class="op">=</span>border,</span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>        fontfamily<span class="op">=</span><span class="st">"monospace"</span>,</span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a>        zorder<span class="op">=</span><span class="dv">3</span>,</span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a>    ax.text(x, <span class="fl">0.38</span>, desc, ha<span class="op">=</span><span class="st">"center"</span>, va<span class="op">=</span><span class="st">"center"</span>, fontsize<span class="op">=</span><span class="dv">9</span>, color<span class="op">=</span><span class="st">"#374151"</span>, linespacing<span class="op">=</span><span class="fl">1.5</span>, zorder<span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a>ax.set_title(</span>
+<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Python Control Flow: Four Constructs at a Glance"</span>, fontsize<span class="op">=</span><span class="dv">12</span>, fontweight<span class="op">=</span><span class="st">"bold"</span>, color<span class="op">=</span><span class="st">"#0F172A"</span>, pad<span class="op">=</span><span class="dv">10</span></span>
+<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="02-control-flow_files/figure-html/cell-2-output-1.png" width="854" height="221" class="figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
 <section id="control-flow-if-elif-else-match-case" class="level2">
 <h2 class="anchored" data-anchor-id="control-flow-if-elif-else-match-case">1. Control Flow: if / elif / else &amp; match / case</h2>
 <p>So far every cell runs its lines from top to bottom, once, in order. <strong>Control flow</strong> lets you change that: - <code>if / elif / else</code>: run one branch based on a condition - <code>match / case</code>: route structured data to different handlers (Python 3.10+)</p>
 <div style="background:#EAF3FA;border-left:5px solid #0369A1;padding:14px 18px;border-radius:6px;margin:16px 0">
 <p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-info-circle-fill"></i> Key Concept: match / case (Python 3.10+)</span><br><br> Structural pattern matching goes beyond simple equality checks. It can match on the <b>shape of data</b>, destructuring dicts, lists, and class instances in the same step. Use it when branching on the shape or value of structured data, not just numeric thresholds.</p>
 </div>
-<div id="5" class="cell" data-execution_count="1">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> classify_grade(score: <span class="bu">float</span>) <span class="op">-&gt;</span> <span class="bu">str</span>:</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Return letter grade for a numeric score."""</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> score <span class="op">&gt;=</span> <span class="dv">90</span>:</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="st">"A: Excellent"</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">elif</span> score <span class="op">&gt;=</span> <span class="dv">80</span>:</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="st">"B: Good"</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">elif</span> score <span class="op">&gt;=</span> <span class="dv">70</span>:</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="st">"C: Satisfactory"</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">elif</span> score <span class="op">&gt;=</span> <span class="dv">60</span>:</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="st">"D: Needs improvement"</span></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="st">"F: See instructor"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="7" class="cell" data-execution_count="2">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> classify_grade(score: <span class="bu">float</span>) <span class="op">-&gt;</span> <span class="bu">str</span>:</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Return letter grade for a numeric score."""</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> score <span class="op">&gt;=</span> <span class="dv">90</span>:</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="st">"A: Excellent"</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">elif</span> score <span class="op">&gt;=</span> <span class="dv">80</span>:</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="st">"B: Good"</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">elif</span> score <span class="op">&gt;=</span> <span class="dv">70</span>:</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="st">"C: Satisfactory"</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">elif</span> score <span class="op">&gt;=</span> <span class="dv">60</span>:</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="st">"D: Needs improvement"</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="st">"F: See instructor"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Test the function across the full grade range:</p>
-<div id="7" class="cell" data-execution_count="2">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> s <span class="kw">in</span> [<span class="fl">95.0</span>, <span class="fl">83.5</span>, <span class="fl">71.0</span>, <span class="fl">62.0</span>, <span class="fl">45.0</span>]:</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"  </span><span class="sc">{</span>s<span class="sc">:5.1f}</span><span class="ss"> -&gt; </span><span class="sc">{</span>classify_grade(s)<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Ternary expression: one-liner for simple binary choices</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>score <span class="op">=</span> <span class="fl">87.0</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>status <span class="op">=</span> <span class="st">"pass"</span> <span class="cf">if</span> score <span class="op">&gt;=</span> <span class="dv">70</span> <span class="cf">else</span> <span class="st">"fail"</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>band <span class="op">=</span> <span class="st">"high"</span> <span class="cf">if</span> score <span class="op">&gt;=</span> <span class="dv">90</span> <span class="cf">else</span> (<span class="st">"mid"</span> <span class="cf">if</span> score <span class="op">&gt;=</span> <span class="dv">70</span> <span class="cf">else</span> <span class="st">"low"</span>)</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="sc">{</span>score<span class="sc">}</span><span class="ss"> -&gt; </span><span class="sc">{</span>status<span class="sc">}</span><span class="ss">, </span><span class="sc">{</span>band<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="9" class="cell" data-execution_count="3">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> s <span class="kw">in</span> [<span class="fl">95.0</span>, <span class="fl">83.5</span>, <span class="fl">71.0</span>, <span class="fl">62.0</span>, <span class="fl">45.0</span>]:</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"  </span><span class="sc">{</span>s<span class="sc">:5.1f}</span><span class="ss"> -&gt; </span><span class="sc">{</span>classify_grade(s)<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Ternary expression: one-liner for simple binary choices</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>score <span class="op">=</span> <span class="fl">87.0</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>status <span class="op">=</span> <span class="st">"pass"</span> <span class="cf">if</span> score <span class="op">&gt;=</span> <span class="dv">70</span> <span class="cf">else</span> <span class="st">"fail"</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>band <span class="op">=</span> <span class="st">"high"</span> <span class="cf">if</span> score <span class="op">&gt;=</span> <span class="dv">90</span> <span class="cf">else</span> (<span class="st">"mid"</span> <span class="cf">if</span> score <span class="op">&gt;=</span> <span class="dv">70</span> <span class="cf">else</span> <span class="st">"low"</span>)</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="sc">{</span>score<span class="sc">}</span><span class="ss"> -&gt; </span><span class="sc">{</span>status<span class="sc">}</span><span class="ss">, </span><span class="sc">{</span>band<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   95.0 -&gt; A: Excellent
    83.5 -&gt; B: Good
@@ -584,34 +685,34 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="match-case-structural-pattern-matching-python-3.10" class="level3">
 <h3 class="anchored" data-anchor-id="match-case-structural-pattern-matching-python-3.10">match / case: Structural Pattern Matching (Python 3.10+)</h3>
 <p><code>match</code> goes beyond simple equality checks. It can destructure <strong>the shape of data</strong>, extracting values from dicts and lists in one step. Define the routing function first:</p>
-<div id="10" class="cell" data-execution_count="3">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># match / case: structural pattern matching (Python 3.10+)</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> process_event(event: <span class="bu">dict</span>[<span class="bu">str</span>, <span class="bu">object</span>]) <span class="op">-&gt;</span> <span class="bu">str</span>:</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Route a training event to the right handler."""</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">match</span> event:</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>        case {<span class="st">"type"</span>: <span class="st">"epoch"</span>, <span class="st">"epoch"</span>: e, <span class="st">"loss"</span>: l} <span class="cf">if</span> <span class="bu">float</span>(<span class="bu">str</span>(l)) <span class="op">&lt;</span> <span class="fl">0.05</span>:</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="ss">f"Epoch </span><span class="sc">{</span>e<span class="sc">}</span><span class="ss">: converged (loss=</span><span class="sc">{</span>l<span class="sc">:.3f}</span><span class="ss">)"</span></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>        <span class="cf">case</span> {<span class="st">"type"</span>: <span class="st">"epoch"</span>, <span class="st">"epoch"</span>: e, <span class="st">"loss"</span>: l}:</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="ss">f"Epoch </span><span class="sc">{</span>e<span class="sc">}</span><span class="ss">: loss=</span><span class="sc">{</span>l<span class="sc">:.3f}</span><span class="ss">"</span></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>        <span class="cf">case</span> {<span class="st">"type"</span>: <span class="st">"error"</span>, <span class="st">"message"</span>: msg}:</span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="ss">f"ERROR: </span><span class="sc">{</span>msg<span class="sc">}</span><span class="ss">"</span></span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>        <span class="cf">case</span> {<span class="st">"type"</span>: t}:</span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="ss">f"Unhandled event type: </span><span class="sc">{</span>t<span class="sc">!r}</span><span class="ss">"</span></span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>        <span class="cf">case</span> _:</span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="st">"Malformed event"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="12" class="cell" data-execution_count="4">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># match / case: structural pattern matching (Python 3.10+)</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> process_event(event: <span class="bu">dict</span>[<span class="bu">str</span>, <span class="bu">object</span>]) <span class="op">-&gt;</span> <span class="bu">str</span>:</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Route a training event to the right handler."""</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">match</span> event:</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>        case {<span class="st">"type"</span>: <span class="st">"epoch"</span>, <span class="st">"epoch"</span>: e, <span class="st">"loss"</span>: l} <span class="cf">if</span> <span class="bu">float</span>(<span class="bu">str</span>(l)) <span class="op">&lt;</span> <span class="fl">0.05</span>:</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="ss">f"Epoch </span><span class="sc">{</span>e<span class="sc">}</span><span class="ss">: converged (loss=</span><span class="sc">{</span>l<span class="sc">:.3f}</span><span class="ss">)"</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>        <span class="cf">case</span> {<span class="st">"type"</span>: <span class="st">"epoch"</span>, <span class="st">"epoch"</span>: e, <span class="st">"loss"</span>: l}:</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="ss">f"Epoch </span><span class="sc">{</span>e<span class="sc">}</span><span class="ss">: loss=</span><span class="sc">{</span>l<span class="sc">:.3f}</span><span class="ss">"</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>        <span class="cf">case</span> {<span class="st">"type"</span>: <span class="st">"error"</span>, <span class="st">"message"</span>: msg}:</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="ss">f"ERROR: </span><span class="sc">{</span>msg<span class="sc">}</span><span class="ss">"</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>        <span class="cf">case</span> {<span class="st">"type"</span>: t}:</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="ss">f"Unhandled event type: </span><span class="sc">{</span>t<span class="sc">!r}</span><span class="ss">"</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>        <span class="cf">case</span> _:</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="st">"Malformed event"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Run a variety of event shapes through the dispatcher to see each <code>case</code> arm triggered. The <code>case _:</code> arm is a catch-all that always matches:</p>
-<div id="12" class="cell" data-execution_count="4">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>events: <span class="bu">list</span>[<span class="bu">dict</span>[<span class="bu">str</span>, <span class="bu">object</span>]] <span class="op">=</span> [</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"type"</span>: <span class="st">"epoch"</span>, <span class="st">"epoch"</span>: <span class="dv">1</span>, <span class="st">"loss"</span>: <span class="fl">0.823</span>},</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"type"</span>: <span class="st">"epoch"</span>, <span class="st">"epoch"</span>: <span class="dv">20</span>, <span class="st">"loss"</span>: <span class="fl">0.041</span>},</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"type"</span>: <span class="st">"error"</span>, <span class="st">"message"</span>: <span class="st">"OOM on GPU 0"</span>},</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"type"</span>: <span class="st">"checkpoint"</span>},</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"status"</span>: <span class="st">"idle"</span>},</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>]</span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> ev <span class="kw">in</span> events:</span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(process_event(ev))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="14" class="cell" data-execution_count="5">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>events: <span class="bu">list</span>[<span class="bu">dict</span>[<span class="bu">str</span>, <span class="bu">object</span>]] <span class="op">=</span> [</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"type"</span>: <span class="st">"epoch"</span>, <span class="st">"epoch"</span>: <span class="dv">1</span>, <span class="st">"loss"</span>: <span class="fl">0.823</span>},</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"type"</span>: <span class="st">"epoch"</span>, <span class="st">"epoch"</span>: <span class="dv">20</span>, <span class="st">"loss"</span>: <span class="fl">0.041</span>},</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"type"</span>: <span class="st">"error"</span>, <span class="st">"message"</span>: <span class="st">"OOM on GPU 0"</span>},</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"type"</span>: <span class="st">"checkpoint"</span>},</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"status"</span>: <span class="st">"idle"</span>},</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>]</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> ev <span class="kw">in</span> events:</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(process_event(ev))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Epoch 1: loss=0.823
 Epoch 20: converged (loss=0.041)
@@ -620,8 +721,37 @@ Unhandled event type: 'checkpoint'
 Malformed event</code></pre>
 </div>
 </div>
+</section>
+<section id="sequence-patterns-in-match-case" class="level3">
+<h3 class="anchored" data-anchor-id="sequence-patterns-in-match-case">Sequence Patterns in match / case</h3>
+<p>Sequence patterns match lists and tuples by position. <code>case [first, *rest]:</code> binds the first element to <code>first</code> and the remainder to <code>rest</code>. This is particularly useful in data pipelines where you process variable-length records.</p>
+<div id="16" class="cell" data-execution_count="6">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> describe_scores(record: <span class="bu">list</span>) <span class="op">-&gt;</span> <span class="bu">str</span>:</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">match</span> record:</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>        case []:</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="st">"no scores"</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>        case [only]:</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="ss">f"single score: </span><span class="sc">{</span>only<span class="sc">}</span><span class="ss">"</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>        case [first, second]:</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="ss">f"two scores: </span><span class="sc">{</span>first<span class="sc">}</span><span class="ss"> and </span><span class="sc">{</span>second<span class="sc">}</span><span class="ss">"</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>        case [first, <span class="op">*</span>rest] <span class="cf">if</span> first <span class="op">&gt;=</span> <span class="dv">90</span>:</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="ss">f"high-starter (</span><span class="sc">{</span>first<span class="sc">}</span><span class="ss">) with </span><span class="sc">{</span><span class="bu">len</span>(rest)<span class="sc">}</span><span class="ss"> more scores"</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>        case [first, <span class="op">*</span>rest]:</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="ss">f"started at </span><span class="sc">{</span>first<span class="sc">}</span><span class="ss">, </span><span class="sc">{</span><span class="bu">len</span>(rest)<span class="sc">}</span><span class="ss"> more scores"</span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> r <span class="kw">in</span> [[], [<span class="dv">85</span>], [<span class="dv">72</span>, <span class="dv">88</span>], [<span class="dv">95</span>, <span class="dv">80</span>, <span class="dv">77</span>], [<span class="dv">60</span>, <span class="dv">70</span>, <span class="dv">75</span>, <span class="dv">80</span>]]:</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span>r<span class="sc">!r:30s}</span><span class="ss"> -&gt; </span><span class="sc">{</span>describe_scores(r)<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[]                             -&gt; no scores
+[85]                           -&gt; single score: 85
+[72, 88]                       -&gt; two scores: 72 and 88
+[95, 80, 77]                   -&gt; high-starter (95) with 2 more scores
+[60, 70, 75, 80]               -&gt; started at 60, 3 more scores</code></pre>
+</div>
+</div>
 <div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
-<span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 6 - Match on HTTP-style Status Codes</span><br><br> <b>Goal:</b> Write a <code>describe_status(code)</code> function using <code>match/case</code> that returns a short description.
+<span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 1 - Match on HTTP-style Status Codes</span><br><br> <b>Goal:</b> Write a <code>describe_status(code)</code> function using <code>match/case</code> that returns a short description.
 <pre style="background:#FCE8DA;padding:10px;border-radius:4px;font-size:0.9em">describe_status(200)  -&gt; '200 OK'
 describe_status(404)  -&gt; '404 Not Found'
 describe_status(500)  -&gt; '500 Server Error'
@@ -629,16 +759,16 @@ describe_status(301)  -&gt; '3xx Redirect'
 describe_status(999)  -&gt; 'Unknown code'</pre>
 <p><b>Hint:</b> Use <code>case 2xx</code> patterns are not valid. Use guard conditions instead: <code>case c if 200 &lt;= c &lt; 300</code>.</p>
 </div>
-<div id="14" class="cell" data-execution_count="5">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> describe_status(code: <span class="bu">int</span>) <span class="op">-&gt;</span> <span class="bu">str</span>:</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Return a short description for an HTTP-style status code."""</span></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">match</span> code:</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>        <span class="cf">case</span> _:</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="st">"unknown"</span>  <span class="co"># </span><span class="al">TODO</span><span class="co">: replace with specific case patterns</span></span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> c <span class="kw">in</span> [<span class="dv">200</span>, <span class="dv">404</span>, <span class="dv">500</span>, <span class="dv">301</span>, <span class="dv">999</span>]:</span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(describe_status(c))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="18" class="cell" data-execution_count="7">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> describe_status(code: <span class="bu">int</span>) <span class="op">-&gt;</span> <span class="bu">str</span>:</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Return a short description for an HTTP-style status code."""</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">match</span> code:</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>        <span class="cf">case</span> _:</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="st">"unknown"</span>  <span class="co"># </span><span class="al">TODO</span><span class="co">: replace with specific case patterns</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> c <span class="kw">in</span> [<span class="dv">200</span>, <span class="dv">404</span>, <span class="dv">500</span>, <span class="dv">301</span>, <span class="dv">999</span>]:</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(describe_status(c))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>unknown
 unknown
@@ -652,18 +782,21 @@ unknown</code></pre>
 <section id="control-flow-for-loops" class="level2">
 <h2 class="anchored" data-anchor-id="control-flow-for-loops">2. Control Flow: for Loops</h2>
 <p>A <strong><code>for</code> loop</strong> repeats a block of code once for each item in a collection. It is the primary tool for processing datasets, running training epochs, and iterating over files.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> score <span class="kw">in</span> [<span class="dv">78</span>, <span class="dv">85</span>, <span class="dv">92</span>]:   <span class="co"># repeat once per score</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(score)              <span class="co"># output: 78, then 85, then 92</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> score <span class="kw">in</span> [<span class="dv">78</span>, <span class="dv">85</span>, <span class="dv">92</span>]:   <span class="co"># repeat once per score</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(score)              <span class="co"># output: 78, then 85, then 92</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>The indented block (4 spaces) is the <strong>loop body</strong>: it runs once per item.</p>
 <p>Python <code>for</code> loops iterate over any <strong>iterable</strong>. The built-ins <code>range()</code>, <code>enumerate()</code>, and <code>zip()</code> cover the most common patterns in data work.</p>
-<div id="16" class="cell" data-execution_count="6">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># range(start, stop, step): generates integers lazily (no list in memory)</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>MAX_EPOCHS: <span class="bu">int</span> <span class="op">=</span> <span class="dv">5</span></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>loss: <span class="bu">float</span> <span class="op">=</span> <span class="fl">1.0</span></span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> epoch <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1</span>, MAX_EPOCHS <span class="op">+</span> <span class="dv">1</span>):</span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    loss <span class="op">*=</span> <span class="fl">0.75</span></span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"  Epoch </span><span class="sc">{</span>epoch<span class="sc">}</span><span class="ss">/</span><span class="sc">{</span>MAX_EPOCHS<span class="sc">}</span><span class="ss">  loss=</span><span class="sc">{</span>loss<span class="sc">:.4f}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div style="background:#EFF6FF;border-left:5px solid #0369A1;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-key-fill"></i> Key Concept: enumerate and zip over manual indexing</span><br><br> <code>for i in range(len(items))</code> is a red flag. Use <code>enumerate(items)</code> when you need both the index and the value, and <code>zip(a, b)</code> when you need to step two collections in lockstep. Both are lazy: they generate pairs on demand without building a temporary list.</p>
+</div>
+<div id="21" class="cell" data-execution_count="8">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># range(start, stop, step): generates integers lazily (no list in memory)</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>MAX_EPOCHS: <span class="bu">int</span> <span class="op">=</span> <span class="dv">5</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>loss: <span class="bu">float</span> <span class="op">=</span> <span class="fl">1.0</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> epoch <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1</span>, MAX_EPOCHS <span class="op">+</span> <span class="dv">1</span>):</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>    loss <span class="op">*=</span> <span class="fl">0.75</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"  Epoch </span><span class="sc">{</span>epoch<span class="sc">}</span><span class="ss">/</span><span class="sc">{</span>MAX_EPOCHS<span class="sc">}</span><span class="ss">  loss=</span><span class="sc">{</span>loss<span class="sc">:.4f}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>  Epoch 1/5  loss=0.7500
   Epoch 2/5  loss=0.5625
@@ -673,13 +806,13 @@ unknown</code></pre>
 </div>
 </div>
 <p><code>enumerate()</code> pairs each element with its index, counting from <code>start=1</code> by default (or any integer you choose), eliminating the need for manual <code>i += 1</code> counters:</p>
-<div id="18" class="cell" data-execution_count="7">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># enumerate(): loop with automatic index; avoids manual counter variables</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>students: <span class="bu">list</span>[<span class="bu">str</span>] <span class="op">=</span> [<span class="st">"Alice"</span>, <span class="st">"Carol"</span>, <span class="st">"Dan"</span>, <span class="st">"Bob"</span>]</span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Leaderboard:"</span>)</span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> rank, name <span class="kw">in</span> <span class="bu">enumerate</span>(students, start<span class="op">=</span><span class="dv">1</span>):</span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"  #</span><span class="sc">{</span>rank<span class="sc">}</span><span class="ss">  </span><span class="sc">{</span>name<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="23" class="cell" data-execution_count="9">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># enumerate(): loop with automatic index; avoids manual counter variables</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>students: <span class="bu">list</span>[<span class="bu">str</span>] <span class="op">=</span> [<span class="st">"Alice"</span>, <span class="st">"Carol"</span>, <span class="st">"Dan"</span>, <span class="st">"Bob"</span>]</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Leaderboard:"</span>)</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> rank, name <span class="kw">in</span> <span class="bu">enumerate</span>(students, start<span class="op">=</span><span class="dv">1</span>):</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"  #</span><span class="sc">{</span>rank<span class="sc">}</span><span class="ss">  </span><span class="sc">{</span>name<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Leaderboard:
   #1  Alice
@@ -689,23 +822,23 @@ unknown</code></pre>
 </div>
 </div>
 <p><code>zip()</code> stitches two or more iterables together element-by-element. Pairs stop when the <strong>shortest</strong> input is exhausted. Build a <code>dict</code> from two parallel lists using <code>dict(zip(keys, values))</code>:</p>
-<div id="20" class="cell" data-execution_count="8">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># zip(): iterate two or more iterables in lockstep</span></span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="co"># strict=True raises ValueError if the iterables have different lengths</span></span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>names: <span class="bu">list</span>[<span class="bu">str</span>] <span class="op">=</span> [<span class="st">"Alice"</span>, <span class="st">"Bob"</span>, <span class="st">"Carol"</span>]</span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>scores: <span class="bu">list</span>[<span class="bu">float</span>] <span class="op">=</span> [<span class="fl">92.0</span>, <span class="fl">74.5</span>, <span class="fl">88.0</span>]</span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Score sheet:"</span>)</span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> name, score <span class="kw">in</span> <span class="bu">zip</span>(names, scores, strict<span class="op">=</span><span class="va">True</span>):</span>
-<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>    grade <span class="op">=</span> <span class="st">"pass"</span> <span class="cf">if</span> score <span class="op">&gt;=</span> <span class="dv">70</span> <span class="cf">else</span> <span class="st">"fail"</span></span>
-<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"  </span><span class="sc">{</span>name<span class="sc">:&lt;8}</span><span class="ss"> </span><span class="sc">{</span>score<span class="sc">:5.1f}</span><span class="ss">  </span><span class="sc">{</span>grade<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Build a dict from two parallel lists</span></span>
-<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>metric_names: <span class="bu">list</span>[<span class="bu">str</span>] <span class="op">=</span> [<span class="st">"accuracy"</span>, <span class="st">"precision"</span>, <span class="st">"recall"</span>]</span>
-<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>metric_vals: <span class="bu">list</span>[<span class="bu">float</span>] <span class="op">=</span> [<span class="fl">0.923</span>, <span class="fl">0.911</span>, <span class="fl">0.934</span>]</span>
-<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>report: <span class="bu">dict</span>[<span class="bu">str</span>, <span class="bu">float</span>] <span class="op">=</span> <span class="bu">dict</span>(<span class="bu">zip</span>(metric_names, metric_vals, strict<span class="op">=</span><span class="va">True</span>))</span>
-<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>()</span>
-<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Report: </span><span class="sc">{</span>report<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="25" class="cell" data-execution_count="10">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># zip(): iterate two or more iterables in lockstep</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="co"># strict=True raises ValueError if the iterables have different lengths</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>names: <span class="bu">list</span>[<span class="bu">str</span>] <span class="op">=</span> [<span class="st">"Alice"</span>, <span class="st">"Bob"</span>, <span class="st">"Carol"</span>]</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>scores: <span class="bu">list</span>[<span class="bu">float</span>] <span class="op">=</span> [<span class="fl">92.0</span>, <span class="fl">74.5</span>, <span class="fl">88.0</span>]</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Score sheet:"</span>)</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> name, score <span class="kw">in</span> <span class="bu">zip</span>(names, scores, strict<span class="op">=</span><span class="va">True</span>):</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>    grade <span class="op">=</span> <span class="st">"pass"</span> <span class="cf">if</span> score <span class="op">&gt;=</span> <span class="dv">70</span> <span class="cf">else</span> <span class="st">"fail"</span></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"  </span><span class="sc">{</span>name<span class="sc">:&lt;8}</span><span class="ss"> </span><span class="sc">{</span>score<span class="sc">:5.1f}</span><span class="ss">  </span><span class="sc">{</span>grade<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Build a dict from two parallel lists</span></span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>metric_names: <span class="bu">list</span>[<span class="bu">str</span>] <span class="op">=</span> [<span class="st">"accuracy"</span>, <span class="st">"precision"</span>, <span class="st">"recall"</span>]</span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>metric_vals: <span class="bu">list</span>[<span class="bu">float</span>] <span class="op">=</span> [<span class="fl">0.923</span>, <span class="fl">0.911</span>, <span class="fl">0.934</span>]</span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>report: <span class="bu">dict</span>[<span class="bu">str</span>, <span class="bu">float</span>] <span class="op">=</span> <span class="bu">dict</span>(<span class="bu">zip</span>(metric_names, metric_vals, strict<span class="op">=</span><span class="va">True</span>))</span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>()</span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Report: </span><span class="sc">{</span>report<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Score sheet:
   Alice     92.0  pass
@@ -718,20 +851,20 @@ Report: {'accuracy': 0.923, 'precision': 0.911, 'recall': 0.934}</code></pre>
 <section id="tqdm-progress-bars-for-long-loops" class="level3">
 <h3 class="anchored" data-anchor-id="tqdm-progress-bars-for-long-loops">tqdm: Progress Bars for Long Loops</h3>
 <p>When a loop processes thousands of files or training examples, you need to know how long it will take. <code>tqdm</code> wraps any iterable and displays a live progress bar with elapsed time, rate, and ETA, with zero code changes to the loop body:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>pip install tqdm   <span class="co"># if not already installed</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div id="22" class="cell" data-execution_count="9">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> tqdm <span class="im">import</span> tqdm</span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Wrap any iterable with tqdm() - the loop body is unchanged</span></span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>scores: <span class="bu">list</span>[<span class="bu">float</span>] <span class="op">=</span> []</span>
-<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> tqdm(<span class="bu">range</span>(<span class="dv">1_000</span>), desc<span class="op">=</span><span class="st">"Simulating scores"</span>, unit<span class="op">=</span><span class="st">"rec"</span>):</span>
-<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>    scores.append(<span class="dv">50</span> <span class="op">+</span> (i <span class="op">%</span> <span class="dv">50</span>))  <span class="co"># dummy computation</span></span>
-<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Generated </span><span class="sc">{</span><span class="bu">len</span>(scores)<span class="sc">}</span><span class="ss"> scores, mean = </span><span class="sc">{</span><span class="bu">sum</span>(scores) <span class="op">/</span> <span class="bu">len</span>(scores)<span class="sc">:.1f}</span><span class="ss">"</span>)</span>
-<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a><span class="co"># tqdm also works with enumerate and zip</span></span>
-<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>labels: <span class="bu">list</span>[<span class="bu">str</span>] <span class="op">=</span> [<span class="st">"pass"</span> <span class="cf">if</span> s <span class="op">&gt;=</span> <span class="dv">70</span> <span class="cf">else</span> <span class="st">"fail"</span> <span class="cf">for</span> s <span class="kw">in</span> tqdm(scores, desc<span class="op">=</span><span class="st">"Labelling"</span>, leave<span class="op">=</span><span class="va">False</span>)]</span>
-<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"pass rate: </span><span class="sc">{</span>labels<span class="sc">.</span>count(<span class="st">'pass'</span>) <span class="op">/</span> <span class="bu">len</span>(labels)<span class="sc">:.1%}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>pip install tqdm   <span class="co"># if not already installed</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="27" class="cell" data-execution_count="11">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> tqdm <span class="im">import</span> tqdm</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Wrap any iterable with tqdm() - the loop body is unchanged</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>scores: <span class="bu">list</span>[<span class="bu">float</span>] <span class="op">=</span> []</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> tqdm(<span class="bu">range</span>(<span class="dv">1_000</span>), desc<span class="op">=</span><span class="st">"Simulating scores"</span>, unit<span class="op">=</span><span class="st">"rec"</span>):</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>    scores.append(<span class="dv">50</span> <span class="op">+</span> (i <span class="op">%</span> <span class="dv">50</span>))  <span class="co"># dummy computation</span></span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Generated </span><span class="sc">{</span><span class="bu">len</span>(scores)<span class="sc">}</span><span class="ss"> scores, mean = </span><span class="sc">{</span><span class="bu">sum</span>(scores) <span class="op">/</span> <span class="bu">len</span>(scores)<span class="sc">:.1f}</span><span class="ss">"</span>)</span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a><span class="co"># tqdm also works with enumerate and zip</span></span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>labels: <span class="bu">list</span>[<span class="bu">str</span>] <span class="op">=</span> [<span class="st">"pass"</span> <span class="cf">if</span> s <span class="op">&gt;=</span> <span class="dv">70</span> <span class="cf">else</span> <span class="st">"fail"</span> <span class="cf">for</span> s <span class="kw">in</span> tqdm(scores, desc<span class="op">=</span><span class="st">"Labelling"</span>, leave<span class="op">=</span><span class="va">False</span>)]</span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"pass rate: </span><span class="sc">{</span>labels<span class="sc">.</span>count(<span class="st">'pass'</span>) <span class="op">/</span> <span class="bu">len</span>(labels)<span class="sc">:.1%}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Generated 1000 scores, mean = 74.5</code></pre>
 </div>
@@ -739,33 +872,39 @@ Report: {'accuracy': 0.923, 'precision': 0.911, 'recall': 0.934}</code></pre>
 <pre><code>pass rate: 60.0%</code></pre>
 </div>
 </div>
+<div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 2 - Training Log with enumerate and zip</span><br><br> <b>Goal:</b> Print a formatted training summary using <code>enumerate</code> and <code>zip</code>.<br><br><b>Setup:</b><br><code>epochs = [1, 2, 3, 4, 5]</code><br><code>train_loss = [0.95, 0.72, 0.54, 0.41, 0.33]</code><br><code>val_loss = [0.98, 0.76, 0.58, 0.47, 0.39]</code><br><br><b>Steps:</b><br>1. Use <code>zip</code> to pair <code>train_loss</code> and <code>val_loss</code> and iterate them together.<br>2. Use <code>enumerate</code> (starting from 1) to add an epoch counter.<br>3. Print each row as: <code>Epoch 1/5 | train=0.950 val=0.980</code>.<br>4. After the loop, print the epoch where <code>val_loss</code> was lowest.<br><br><b>Expected output (last line):</b> <code>Best epoch: 5 (val_loss=0.390)</code></p>
+</div>
 </section>
 </section>
 <section id="control-flow-while-break-continue" class="level2">
 <h2 class="anchored" data-anchor-id="control-flow-while-break-continue">3. Control Flow: while, break, continue</h2>
 <p>A <strong><code>while</code> loop</strong> repeats a block as long as a condition is <code>True</code>. Unlike <code>for</code> (which iterates a fixed collection), <code>while</code> runs an <strong>indefinite</strong> number of times until either the condition becomes <code>False</code> or a <code>break</code> statement is hit.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>loss <span class="op">=</span> <span class="fl">1.0</span></span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="cf">while</span> loss <span class="op">&gt;</span> <span class="fl">0.05</span>:    <span class="co"># keep running until loss is small enough</span></span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>    loss <span class="op">*=</span> <span class="fl">0.7</span>       <span class="co"># shrink loss by 30% each iteration</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>loss <span class="op">=</span> <span class="fl">1.0</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="cf">while</span> loss <span class="op">&gt;</span> <span class="fl">0.05</span>:    <span class="co"># keep running until loss is small enough</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>    loss <span class="op">*=</span> <span class="fl">0.7</span>       <span class="co"># shrink loss by 30% each iteration</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Use <code>while</code> when you do not know in advance how many iterations are needed: waiting for convergence, retrying a failing operation, or consuming a data stream.</p>
 <ul>
 <li><code>break</code>: exit the loop immediately</li>
 <li><code>continue</code>: skip the rest of this iteration</li>
 <li><code>else</code> on a loop: runs <strong>only</strong> if no <code>break</code> was hit</li>
 </ul>
-<div id="24" class="cell" data-execution_count="10">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># while: train until convergence or budget exhausted</span></span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>loss: <span class="bu">float</span> <span class="op">=</span> <span class="fl">1.0</span></span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>epoch: <span class="bu">int</span> <span class="op">=</span> <span class="dv">0</span></span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>MAX_EPOCHS: <span class="bu">int</span> <span class="op">=</span> <span class="dv">30</span></span>
-<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>THRESHOLD: <span class="bu">float</span> <span class="op">=</span> <span class="fl">0.05</span></span>
-<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a><span class="cf">while</span> loss <span class="op">&gt;</span> THRESHOLD <span class="kw">and</span> epoch <span class="op">&lt;</span> MAX_EPOCHS:</span>
-<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>    loss <span class="op">*=</span> <span class="fl">0.7</span></span>
-<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>    epoch <span class="op">+=</span> <span class="dv">1</span></span>
-<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Stopped at epoch </span><span class="sc">{</span>epoch<span class="sc">}</span><span class="ss">: loss=</span><span class="sc">{</span>loss<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
-<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Converged: </span><span class="sc">{</span>loss <span class="op">&lt;=</span> THRESHOLD<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div style="background:#EFF6FF;border-left:5px solid #0369A1;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-key-fill"></i> Key Concept: while is for indefinite loops; for is for known collections</span><br><br> Use <code>for</code> when you know the collection to iterate. Use <code>while</code> when you don’t know how many iterations you need: training until convergence, reading until EOF, retrying until success. Every <code>while</code> loop needs either a condition that eventually becomes <code>False</code> or an explicit <code>break</code> – otherwise it runs forever.</p>
+</div>
+<div id="31" class="cell" data-execution_count="12">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># while: train until convergence or budget exhausted</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>loss: <span class="bu">float</span> <span class="op">=</span> <span class="fl">1.0</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>epoch: <span class="bu">int</span> <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>MAX_EPOCHS: <span class="bu">int</span> <span class="op">=</span> <span class="dv">30</span></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>THRESHOLD: <span class="bu">float</span> <span class="op">=</span> <span class="fl">0.05</span></span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a><span class="cf">while</span> loss <span class="op">&gt;</span> THRESHOLD <span class="kw">and</span> epoch <span class="op">&lt;</span> MAX_EPOCHS:</span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>    loss <span class="op">*=</span> <span class="fl">0.7</span></span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>    epoch <span class="op">+=</span> <span class="dv">1</span></span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Stopped at epoch </span><span class="sc">{</span>epoch<span class="sc">}</span><span class="ss">: loss=</span><span class="sc">{</span>loss<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
+<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Converged: </span><span class="sc">{</span>loss <span class="op">&lt;=</span> THRESHOLD<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Stopped at epoch 9: loss=0.0404
 Converged: True</code></pre>
@@ -774,63 +913,66 @@ Converged: True</code></pre>
 <section id="break-and-continue" class="level3">
 <h3 class="anchored" data-anchor-id="break-and-continue">break and continue</h3>
 <p><code>break</code> exits the innermost loop immediately. Use it when a sentinel value or error condition means further iteration is pointless:</p>
-<div id="26" class="cell" data-execution_count="11">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># break: exit the loop immediately when a sentinel is found</span></span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>readings: <span class="bu">list</span>[<span class="bu">float</span> <span class="op">|</span> <span class="va">None</span>] <span class="op">=</span> [<span class="fl">36.5</span>, <span class="fl">36.9</span>, <span class="fl">37.4</span>, <span class="va">None</span>, <span class="fl">38.1</span>, <span class="fl">37.8</span>]</span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>clean: <span class="bu">list</span>[<span class="bu">float</span>] <span class="op">=</span> []</span>
-<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> r <span class="kw">in</span> readings:</span>
-<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> r <span class="kw">is</span> <span class="va">None</span>:</span>
-<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="st">"Sensor error : stopping collection"</span>)</span>
-<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>        <span class="cf">break</span></span>
-<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>    clean.append(r)</span>
-<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Clean readings: </span><span class="sc">{</span>clean<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="33" class="cell" data-execution_count="13">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># break: exit the loop immediately when a sentinel is found</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>readings: <span class="bu">list</span>[<span class="bu">float</span> <span class="op">|</span> <span class="va">None</span>] <span class="op">=</span> [<span class="fl">36.5</span>, <span class="fl">36.9</span>, <span class="fl">37.4</span>, <span class="va">None</span>, <span class="fl">38.1</span>, <span class="fl">37.8</span>]</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>clean: <span class="bu">list</span>[<span class="bu">float</span>] <span class="op">=</span> []</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> r <span class="kw">in</span> readings:</span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> r <span class="kw">is</span> <span class="va">None</span>:</span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="st">"Sensor error : stopping collection"</span>)</span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>        <span class="cf">break</span></span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>    clean.append(r)</span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Clean readings: </span><span class="sc">{</span>clean<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Sensor error : stopping collection
 Clean readings: [36.5, 36.9, 37.4]</code></pre>
 </div>
 </div>
 <p><code>continue</code> skips the rest of the current iteration and jumps to the next one. Ideal for filtering bad data without a nested <code>if/else</code>. The <code>else</code> clause on a loop runs only if no <code>break</code> occurred:</p>
-<div id="28" class="cell" data-execution_count="12">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># continue: skip the rest of this iteration and move to the next</span></span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>raw: <span class="bu">list</span>[<span class="bu">object</span>] <span class="op">=</span> [<span class="fl">85.0</span>, <span class="st">"n/a"</span>, <span class="va">None</span>, <span class="fl">92.0</span>, <span class="st">""</span>, <span class="fl">78.5</span>, <span class="op">-</span><span class="fl">1.0</span>, <span class="fl">95.0</span>]</span>
-<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>valid: <span class="bu">list</span>[<span class="bu">float</span>] <span class="op">=</span> []</span>
-<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> item <span class="kw">in</span> raw:</span>
-<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="kw">not</span> <span class="bu">isinstance</span>(item, <span class="bu">int</span> <span class="op">|</span> <span class="bu">float</span>) <span class="kw">or</span> <span class="bu">float</span>(<span class="bu">str</span>(item)) <span class="op">&lt;</span> <span class="dv">0</span>:</span>
-<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>        <span class="cf">continue</span>  <span class="co"># skip bad items</span></span>
-<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>    valid.append(<span class="bu">float</span>(<span class="bu">str</span>(item)))</span>
-<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Valid scores: </span><span class="sc">{</span>valid<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a><span class="co"># loop else: runs only when the loop was NOT exited via break</span></span>
-<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a>required_fields: <span class="bu">list</span>[<span class="bu">str</span>] <span class="op">=</span> [<span class="st">"name"</span>, <span class="st">"gpa"</span>, <span class="st">"major"</span>]</span>
-<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a>record: <span class="bu">dict</span>[<span class="bu">str</span>, <span class="bu">str</span>] <span class="op">=</span> {<span class="st">"name"</span>: <span class="st">"Alice"</span>, <span class="st">"gpa"</span>: <span class="st">"3.95"</span>, <span class="st">"major"</span>: <span class="st">"CS"</span>}</span>
-<span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-16"><a href="#cb25-16" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> field <span class="kw">in</span> required_fields:</span>
-<span id="cb25-17"><a href="#cb25-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> field <span class="kw">not</span> <span class="kw">in</span> record:</span>
-<span id="cb25-18"><a href="#cb25-18" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f"Missing required field: </span><span class="sc">{</span>field<span class="sc">!r}</span><span class="ss">"</span>)</span>
-<span id="cb25-19"><a href="#cb25-19" aria-hidden="true" tabindex="-1"></a>        <span class="cf">break</span></span>
-<span id="cb25-20"><a href="#cb25-20" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span>:</span>
-<span id="cb25-21"><a href="#cb25-21" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"All required fields present"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="35" class="cell" data-execution_count="14">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># continue: skip the rest of this iteration and move to the next</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>raw: <span class="bu">list</span>[<span class="bu">object</span>] <span class="op">=</span> [<span class="fl">85.0</span>, <span class="st">"n/a"</span>, <span class="va">None</span>, <span class="fl">92.0</span>, <span class="st">""</span>, <span class="fl">78.5</span>, <span class="op">-</span><span class="fl">1.0</span>, <span class="fl">95.0</span>]</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>valid: <span class="bu">list</span>[<span class="bu">float</span>] <span class="op">=</span> []</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> item <span class="kw">in</span> raw:</span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="kw">not</span> <span class="bu">isinstance</span>(item, <span class="bu">int</span> <span class="op">|</span> <span class="bu">float</span>) <span class="kw">or</span> <span class="bu">float</span>(<span class="bu">str</span>(item)) <span class="op">&lt;</span> <span class="dv">0</span>:</span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>        <span class="cf">continue</span>  <span class="co"># skip bad items</span></span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>    valid.append(<span class="bu">float</span>(<span class="bu">str</span>(item)))</span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Valid scores: </span><span class="sc">{</span>valid<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a><span class="co"># loop else: runs only when the loop was NOT exited via break</span></span>
+<span id="cb28-13"><a href="#cb28-13" aria-hidden="true" tabindex="-1"></a>required_fields: <span class="bu">list</span>[<span class="bu">str</span>] <span class="op">=</span> [<span class="st">"name"</span>, <span class="st">"gpa"</span>, <span class="st">"major"</span>]</span>
+<span id="cb28-14"><a href="#cb28-14" aria-hidden="true" tabindex="-1"></a>record: <span class="bu">dict</span>[<span class="bu">str</span>, <span class="bu">str</span>] <span class="op">=</span> {<span class="st">"name"</span>: <span class="st">"Alice"</span>, <span class="st">"gpa"</span>: <span class="st">"3.95"</span>, <span class="st">"major"</span>: <span class="st">"CS"</span>}</span>
+<span id="cb28-15"><a href="#cb28-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-16"><a href="#cb28-16" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> field <span class="kw">in</span> required_fields:</span>
+<span id="cb28-17"><a href="#cb28-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> field <span class="kw">not</span> <span class="kw">in</span> record:</span>
+<span id="cb28-18"><a href="#cb28-18" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f"Missing required field: </span><span class="sc">{</span>field<span class="sc">!r}</span><span class="ss">"</span>)</span>
+<span id="cb28-19"><a href="#cb28-19" aria-hidden="true" tabindex="-1"></a>        <span class="cf">break</span></span>
+<span id="cb28-20"><a href="#cb28-20" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span>:</span>
+<span id="cb28-21"><a href="#cb28-21" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"All required fields present"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Valid scores: [85.0, 92.0, 78.5, 95.0]
 All required fields present</code></pre>
 </div>
+</div>
+<div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 3 - Early-Stopping Loop</span><br><br> <b>Goal:</b> Implement a training loop that stops when the validation loss stops improving.<br><br><b>Setup:</b><br><code>val_losses = [0.95, 0.80, 0.65, 0.61, 0.60, 0.61, 0.63, 0.65]</code><br><br><b>Steps:</b><br>1. Use a <code>while</code> loop to iterate through <code>val_losses</code>.<br>2. Track the best loss seen so far. When the current loss is greater than the best, increment a <code>patience</code> counter; when it improves, reset <code>patience</code> to 0.<br>3. <code>break</code> when <code>patience</code> reaches 2 (two epochs without improvement).<br>4. Print the epoch at which training stopped and the best val_loss achieved.<br><br><b>Expected output:</b> <code>Stopped at epoch 7 | best val_loss=0.600</code></p>
 </div>
 </section>
 </section>
 <section id="comprehensions" class="level2">
 <h2 class="anchored" data-anchor-id="comprehensions">4. Comprehensions</h2>
 <p>A <strong>comprehension</strong> builds a new collection by transforming or filtering an existing one, all in a single expression. It replaces the verbose <code>for</code> + <code>.append()</code> pattern:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Loop version (3 lines):</span></span>
-<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>squares <span class="op">=</span> []</span>
-<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> n <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">5</span>):</span>
-<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>    squares.append(n <span class="op">**</span> <span class="dv">2</span>)   <span class="co"># [0, 1, 4, 9, 16]</span></span>
-<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Comprehension (1 line, identical result):</span></span>
-<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>squares <span class="op">=</span> [n <span class="op">**</span> <span class="dv">2</span> <span class="cf">for</span> n <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">5</span>)]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Loop version (3 lines):</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>squares <span class="op">=</span> []</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> n <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">5</span>):</span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>    squares.append(n <span class="op">**</span> <span class="dv">2</span>)   <span class="co"># [0, 1, 4, 9, 16]</span></span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Comprehension (1 line, identical result):</span></span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>squares <span class="op">=</span> [n <span class="op">**</span> <span class="dv">2</span> <span class="cf">for</span> n <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">5</span>)]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Comprehensions are faster than equivalent loops and are considered idiomatic Python.</p>
 <div style="background:#EAF3FA;border-left:5px solid #0369A1;padding:14px 18px;border-radius:6px;margin:16px 0">
 <p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-info-circle-fill"></i> Key Concept: Concise, Readable Collection Construction</span><br><br> Comprehensions build new collections by <b>transforming or filtering</b> an iterable in a single expression. They are faster than equivalent <code>for</code> + <code>.append()</code> loops and are idiomatic Python.</p>
@@ -869,21 +1011,24 @@ generator (lazy, no list in memory)
 </tr>
 </tbody></table>
 </div>
-<div id="30" class="cell" data-execution_count="13">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>raw_scores: <span class="bu">list</span>[<span class="bu">float</span>] <span class="op">=</span> [<span class="fl">78.0</span>, <span class="fl">85.5</span>, <span class="fl">92.0</span>, <span class="fl">88.5</span>, <span class="fl">95.0</span>, <span class="fl">67.0</span>, <span class="fl">81.0</span>]</span>
-<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Transform: min-max normalise to [0, 1]</span></span>
-<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>lo, hi <span class="op">=</span> <span class="bu">min</span>(raw_scores), <span class="bu">max</span>(raw_scores)</span>
-<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>normed: <span class="bu">list</span>[<span class="bu">float</span>] <span class="op">=</span> [(s <span class="op">-</span> lo) <span class="op">/</span> (hi <span class="op">-</span> lo) <span class="cf">for</span> s <span class="kw">in</span> raw_scores]</span>
-<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Normalised: </span><span class="sc">{</span>[<span class="bu">round</span>(n, <span class="dv">2</span>) <span class="cf">for</span> n <span class="kw">in</span> normed]<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Filter: keep only passing scores</span></span>
-<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>passing: <span class="bu">list</span>[<span class="bu">float</span>] <span class="op">=</span> [s <span class="cf">for</span> s <span class="kw">in</span> raw_scores <span class="cf">if</span> s <span class="op">&gt;=</span> <span class="dv">70</span>]</span>
-<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Passing   : </span><span class="sc">{</span>passing<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Filter + transform: label each score</span></span>
-<span id="cb28-13"><a href="#cb28-13" aria-hidden="true" tabindex="-1"></a>labels: <span class="bu">list</span>[<span class="bu">str</span>] <span class="op">=</span> [<span class="ss">f"</span><span class="sc">{</span>s<span class="sc">:.0f}</span><span class="ss"> (pass)"</span> <span class="cf">if</span> s <span class="op">&gt;=</span> <span class="dv">70</span> <span class="cf">else</span> <span class="ss">f"</span><span class="sc">{</span>s<span class="sc">:.0f}</span><span class="ss"> (FAIL)"</span> <span class="cf">for</span> s <span class="kw">in</span> raw_scores]</span>
-<span id="cb28-14"><a href="#cb28-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Labelled  : </span><span class="sc">{</span>labels<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div style="background:#EFF6FF;border-left:5px solid #0369A1;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-key-fill"></i> Key Concept: Comprehensions are for simple transformations; loops are for complex logic</span><br><br> A list comprehension <code>[f(x) for x in items if cond(x)]</code> is readable when the filter and transform are each one expression. When you need multiple steps, early returns, or side effects, write a <code>for</code> loop. Nested comprehensions beyond two levels hurt readability – that’s the signal to refactor.</p>
+</div>
+<div id="39" class="cell" data-execution_count="15">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>raw_scores: <span class="bu">list</span>[<span class="bu">float</span>] <span class="op">=</span> [<span class="fl">78.0</span>, <span class="fl">85.5</span>, <span class="fl">92.0</span>, <span class="fl">88.5</span>, <span class="fl">95.0</span>, <span class="fl">67.0</span>, <span class="fl">81.0</span>]</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Transform: min-max normalise to [0, 1]</span></span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>lo, hi <span class="op">=</span> <span class="bu">min</span>(raw_scores), <span class="bu">max</span>(raw_scores)</span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>normed: <span class="bu">list</span>[<span class="bu">float</span>] <span class="op">=</span> [(s <span class="op">-</span> lo) <span class="op">/</span> (hi <span class="op">-</span> lo) <span class="cf">for</span> s <span class="kw">in</span> raw_scores]</span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Normalised: </span><span class="sc">{</span>[<span class="bu">round</span>(n, <span class="dv">2</span>) <span class="cf">for</span> n <span class="kw">in</span> normed]<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Filter: keep only passing scores</span></span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a>passing: <span class="bu">list</span>[<span class="bu">float</span>] <span class="op">=</span> [s <span class="cf">for</span> s <span class="kw">in</span> raw_scores <span class="cf">if</span> s <span class="op">&gt;=</span> <span class="dv">70</span>]</span>
+<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Passing   : </span><span class="sc">{</span>passing<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-12"><a href="#cb31-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Filter + transform: label each score</span></span>
+<span id="cb31-13"><a href="#cb31-13" aria-hidden="true" tabindex="-1"></a>labels: <span class="bu">list</span>[<span class="bu">str</span>] <span class="op">=</span> [<span class="ss">f"</span><span class="sc">{</span>s<span class="sc">:.0f}</span><span class="ss"> (pass)"</span> <span class="cf">if</span> s <span class="op">&gt;=</span> <span class="dv">70</span> <span class="cf">else</span> <span class="ss">f"</span><span class="sc">{</span>s<span class="sc">:.0f}</span><span class="ss"> (FAIL)"</span> <span class="cf">for</span> s <span class="kw">in</span> raw_scores]</span>
+<span id="cb31-14"><a href="#cb31-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Labelled  : </span><span class="sc">{</span>labels<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Normalised: [0.39, 0.66, 0.89, 0.77, 1.0, 0.0, 0.5]
 Passing   : [78.0, 85.5, 92.0, 88.5, 95.0, 81.0]
@@ -891,11 +1036,11 @@ Labelled  : ['78 (pass)', '86 (pass)', '92 (pass)', '88 (pass)', '95 (pass)', '6
 </div>
 </div>
 <p>A two-clause comprehension flattens a nested collection. Read <code>[s for batch in batches for s in batch]</code> left-to-right: “outer loop, inner loop, collect <code>s</code>”:</p>
-<div id="32" class="cell" data-execution_count="14">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Flatten a nested structure with a two-clause comprehension</span></span>
-<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>batches: <span class="bu">list</span>[<span class="bu">list</span>[<span class="bu">float</span>]] <span class="op">=</span> [[<span class="fl">85.0</span>, <span class="fl">91.0</span>], [<span class="fl">74.0</span>, <span class="fl">88.5</span>], [<span class="fl">95.0</span>, <span class="fl">79.0</span>]]</span>
-<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>flat: <span class="bu">list</span>[<span class="bu">float</span>] <span class="op">=</span> [s <span class="cf">for</span> batch <span class="kw">in</span> batches <span class="cf">for</span> s <span class="kw">in</span> batch]</span>
-<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Flattened : </span><span class="sc">{</span>flat<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="41" class="cell" data-execution_count="16">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Flatten a nested structure with a two-clause comprehension</span></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>batches: <span class="bu">list</span>[<span class="bu">list</span>[<span class="bu">float</span>]] <span class="op">=</span> [[<span class="fl">85.0</span>, <span class="fl">91.0</span>], [<span class="fl">74.0</span>, <span class="fl">88.5</span>], [<span class="fl">95.0</span>, <span class="fl">79.0</span>]]</span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>flat: <span class="bu">list</span>[<span class="bu">float</span>] <span class="op">=</span> [s <span class="cf">for</span> batch <span class="kw">in</span> batches <span class="cf">for</span> s <span class="kw">in</span> batch]</span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Flattened : </span><span class="sc">{</span>flat<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Flattened : [85.0, 91.0, 74.0, 88.5, 95.0, 79.0]</code></pre>
 </div>
@@ -903,47 +1048,47 @@ Labelled  : ['78 (pass)', '86 (pass)', '92 (pass)', '88 (pass)', '95 (pass)', '6
 <section id="dict-set-and-generator-comprehensions" class="level3">
 <h3 class="anchored" data-anchor-id="dict-set-and-generator-comprehensions">Dict, Set, and Generator Comprehensions</h3>
 <p>The <code>[...]</code> syntax extends to dicts (<code>{k: v for ...}</code>), sets (<code>{expr for ...}</code>), and lazy generators (<code>(expr for ...)</code>):</p>
-<div id="34" class="cell" data-execution_count="15">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>students: <span class="bu">list</span>[<span class="bu">dict</span>[<span class="bu">str</span>, <span class="bu">object</span>]] <span class="op">=</span> [</span>
-<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"name"</span>: <span class="st">"Alice"</span>, <span class="st">"score"</span>: <span class="fl">92.0</span>, <span class="st">"major"</span>: <span class="st">"CS"</span>},</span>
-<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"name"</span>: <span class="st">"Bob"</span>, <span class="st">"score"</span>: <span class="fl">74.5</span>, <span class="st">"major"</span>: <span class="st">"Math"</span>},</span>
-<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"name"</span>: <span class="st">"Carol"</span>, <span class="st">"score"</span>: <span class="fl">88.0</span>, <span class="st">"major"</span>: <span class="st">"CS"</span>},</span>
-<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"name"</span>: <span class="st">"Dan"</span>, <span class="st">"score"</span>: <span class="fl">61.0</span>, <span class="st">"major"</span>: <span class="st">"Physics"</span>},</span>
-<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>]</span>
-<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Dict comprehension: build a name -&gt; score lookup</span></span>
-<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a>score_lookup: <span class="bu">dict</span>[<span class="bu">str</span>, <span class="bu">float</span>] <span class="op">=</span> {<span class="bu">str</span>(s[<span class="st">"name"</span>]): <span class="bu">float</span>(<span class="bu">str</span>(s[<span class="st">"score"</span>])) <span class="cf">for</span> s <span class="kw">in</span> students}</span>
-<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Lookup : </span><span class="sc">{</span>score_lookup<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-12"><a href="#cb32-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Dict comprehension with filter: honours students only</span></span>
-<span id="cb32-13"><a href="#cb32-13" aria-hidden="true" tabindex="-1"></a>honours: <span class="bu">dict</span>[<span class="bu">str</span>, <span class="bu">float</span>] <span class="op">=</span> {<span class="bu">str</span>(s[<span class="st">"name"</span>]): <span class="bu">float</span>(<span class="bu">str</span>(s[<span class="st">"score"</span>])) <span class="cf">for</span> s <span class="kw">in</span> students <span class="cf">if</span> <span class="bu">float</span>(<span class="bu">str</span>(s[<span class="st">"score"</span>])) <span class="op">&gt;=</span> <span class="dv">80</span>}</span>
-<span id="cb32-14"><a href="#cb32-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Honours: </span><span class="sc">{</span>honours<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="43" class="cell" data-execution_count="17">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>students: <span class="bu">list</span>[<span class="bu">dict</span>[<span class="bu">str</span>, <span class="bu">object</span>]] <span class="op">=</span> [</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"name"</span>: <span class="st">"Alice"</span>, <span class="st">"score"</span>: <span class="fl">92.0</span>, <span class="st">"major"</span>: <span class="st">"CS"</span>},</span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"name"</span>: <span class="st">"Bob"</span>, <span class="st">"score"</span>: <span class="fl">74.5</span>, <span class="st">"major"</span>: <span class="st">"Math"</span>},</span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"name"</span>: <span class="st">"Carol"</span>, <span class="st">"score"</span>: <span class="fl">88.0</span>, <span class="st">"major"</span>: <span class="st">"CS"</span>},</span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"name"</span>: <span class="st">"Dan"</span>, <span class="st">"score"</span>: <span class="fl">61.0</span>, <span class="st">"major"</span>: <span class="st">"Physics"</span>},</span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>]</span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Dict comprehension: build a name -&gt; score lookup</span></span>
+<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a>score_lookup: <span class="bu">dict</span>[<span class="bu">str</span>, <span class="bu">float</span>] <span class="op">=</span> {<span class="bu">str</span>(s[<span class="st">"name"</span>]): <span class="bu">float</span>(<span class="bu">str</span>(s[<span class="st">"score"</span>])) <span class="cf">for</span> s <span class="kw">in</span> students}</span>
+<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Lookup : </span><span class="sc">{</span>score_lookup<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb35-11"><a href="#cb35-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-12"><a href="#cb35-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Dict comprehension with filter: honours students only</span></span>
+<span id="cb35-13"><a href="#cb35-13" aria-hidden="true" tabindex="-1"></a>honours: <span class="bu">dict</span>[<span class="bu">str</span>, <span class="bu">float</span>] <span class="op">=</span> {<span class="bu">str</span>(s[<span class="st">"name"</span>]): <span class="bu">float</span>(<span class="bu">str</span>(s[<span class="st">"score"</span>])) <span class="cf">for</span> s <span class="kw">in</span> students <span class="cf">if</span> <span class="bu">float</span>(<span class="bu">str</span>(s[<span class="st">"score"</span>])) <span class="op">&gt;=</span> <span class="dv">80</span>}</span>
+<span id="cb35-14"><a href="#cb35-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Honours: </span><span class="sc">{</span>honours<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Lookup : {'Alice': 92.0, 'Bob': 74.5, 'Carol': 88.0, 'Dan': 61.0}
 Honours: {'Alice': 92.0, 'Carol': 88.0}</code></pre>
 </div>
 </div>
 <p>Set comprehensions deduplicate automatically. Generator expressions compute values <strong>lazily</strong>: they use O(1) memory regardless of input size, making them ideal inside <code>sum()</code>, <code>any()</code>, and <code>all()</code>:</p>
-<div id="36" class="cell" data-execution_count="16">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>students: <span class="bu">list</span>[<span class="bu">dict</span>[<span class="bu">str</span>, <span class="bu">object</span>]] <span class="op">=</span> [</span>
-<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"name"</span>: <span class="st">"Alice"</span>, <span class="st">"score"</span>: <span class="fl">92.0</span>, <span class="st">"major"</span>: <span class="st">"CS"</span>},</span>
-<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"name"</span>: <span class="st">"Bob"</span>, <span class="st">"score"</span>: <span class="fl">74.5</span>, <span class="st">"major"</span>: <span class="st">"Math"</span>},</span>
-<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"name"</span>: <span class="st">"Carol"</span>, <span class="st">"score"</span>: <span class="fl">88.0</span>, <span class="st">"major"</span>: <span class="st">"CS"</span>},</span>
-<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"name"</span>: <span class="st">"Dan"</span>, <span class="st">"score"</span>: <span class="fl">61.0</span>, <span class="st">"major"</span>: <span class="st">"Physics"</span>},</span>
-<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>]</span>
-<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Set comprehension: unique majors</span></span>
-<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a>majors: <span class="bu">set</span>[<span class="bu">str</span>] <span class="op">=</span> {<span class="bu">str</span>(s[<span class="st">"major"</span>]) <span class="cf">for</span> s <span class="kw">in</span> students}</span>
-<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Majors : </span><span class="sc">{</span><span class="bu">sorted</span>(majors)<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb34-11"><a href="#cb34-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb34-12"><a href="#cb34-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Generator expression: lazy evaluation; ideal inside sum/any/all</span></span>
-<span id="cb34-13"><a href="#cb34-13" aria-hidden="true" tabindex="-1"></a>total: <span class="bu">float</span> <span class="op">=</span> <span class="bu">sum</span>(<span class="bu">float</span>(<span class="bu">str</span>(s[<span class="st">"score"</span>])) <span class="cf">for</span> s <span class="kw">in</span> students)</span>
-<span id="cb34-14"><a href="#cb34-14" aria-hidden="true" tabindex="-1"></a>any_fail: <span class="bu">bool</span> <span class="op">=</span> <span class="bu">any</span>(<span class="bu">float</span>(<span class="bu">str</span>(s[<span class="st">"score"</span>])) <span class="op">&lt;</span> <span class="dv">70</span> <span class="cf">for</span> s <span class="kw">in</span> students)</span>
-<span id="cb34-15"><a href="#cb34-15" aria-hidden="true" tabindex="-1"></a>all_pass: <span class="bu">bool</span> <span class="op">=</span> <span class="bu">all</span>(<span class="bu">float</span>(<span class="bu">str</span>(s[<span class="st">"score"</span>])) <span class="op">&gt;=</span> <span class="dv">60</span> <span class="cf">for</span> s <span class="kw">in</span> students)</span>
-<span id="cb34-16"><a href="#cb34-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb34-17"><a href="#cb34-17" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Mean          : </span><span class="sc">{</span>total <span class="op">/</span> <span class="bu">len</span>(students)<span class="sc">:.1f}</span><span class="ss">"</span>)</span>
-<span id="cb34-18"><a href="#cb34-18" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Any fail (&lt;70): </span><span class="sc">{</span>any_fail<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb34-19"><a href="#cb34-19" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"All pass (&gt;=60): </span><span class="sc">{</span>all_pass<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="45" class="cell" data-execution_count="18">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>students: <span class="bu">list</span>[<span class="bu">dict</span>[<span class="bu">str</span>, <span class="bu">object</span>]] <span class="op">=</span> [</span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"name"</span>: <span class="st">"Alice"</span>, <span class="st">"score"</span>: <span class="fl">92.0</span>, <span class="st">"major"</span>: <span class="st">"CS"</span>},</span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"name"</span>: <span class="st">"Bob"</span>, <span class="st">"score"</span>: <span class="fl">74.5</span>, <span class="st">"major"</span>: <span class="st">"Math"</span>},</span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"name"</span>: <span class="st">"Carol"</span>, <span class="st">"score"</span>: <span class="fl">88.0</span>, <span class="st">"major"</span>: <span class="st">"CS"</span>},</span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"name"</span>: <span class="st">"Dan"</span>, <span class="st">"score"</span>: <span class="fl">61.0</span>, <span class="st">"major"</span>: <span class="st">"Physics"</span>},</span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>]</span>
+<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Set comprehension: unique majors</span></span>
+<span id="cb37-9"><a href="#cb37-9" aria-hidden="true" tabindex="-1"></a>majors: <span class="bu">set</span>[<span class="bu">str</span>] <span class="op">=</span> {<span class="bu">str</span>(s[<span class="st">"major"</span>]) <span class="cf">for</span> s <span class="kw">in</span> students}</span>
+<span id="cb37-10"><a href="#cb37-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Majors : </span><span class="sc">{</span><span class="bu">sorted</span>(majors)<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb37-11"><a href="#cb37-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-12"><a href="#cb37-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Generator expression: lazy evaluation; ideal inside sum/any/all</span></span>
+<span id="cb37-13"><a href="#cb37-13" aria-hidden="true" tabindex="-1"></a>total: <span class="bu">float</span> <span class="op">=</span> <span class="bu">sum</span>(<span class="bu">float</span>(<span class="bu">str</span>(s[<span class="st">"score"</span>])) <span class="cf">for</span> s <span class="kw">in</span> students)</span>
+<span id="cb37-14"><a href="#cb37-14" aria-hidden="true" tabindex="-1"></a>any_fail: <span class="bu">bool</span> <span class="op">=</span> <span class="bu">any</span>(<span class="bu">float</span>(<span class="bu">str</span>(s[<span class="st">"score"</span>])) <span class="op">&lt;</span> <span class="dv">70</span> <span class="cf">for</span> s <span class="kw">in</span> students)</span>
+<span id="cb37-15"><a href="#cb37-15" aria-hidden="true" tabindex="-1"></a>all_pass: <span class="bu">bool</span> <span class="op">=</span> <span class="bu">all</span>(<span class="bu">float</span>(<span class="bu">str</span>(s[<span class="st">"score"</span>])) <span class="op">&gt;=</span> <span class="dv">60</span> <span class="cf">for</span> s <span class="kw">in</span> students)</span>
+<span id="cb37-16"><a href="#cb37-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-17"><a href="#cb37-17" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Mean          : </span><span class="sc">{</span>total <span class="op">/</span> <span class="bu">len</span>(students)<span class="sc">:.1f}</span><span class="ss">"</span>)</span>
+<span id="cb37-18"><a href="#cb37-18" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Any fail (&lt;70): </span><span class="sc">{</span>any_fail<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb37-19"><a href="#cb37-19" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"All pass (&gt;=60): </span><span class="sc">{</span>all_pass<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Majors : ['CS', 'Math', 'Physics']
 Mean          : 78.9
@@ -952,7 +1097,7 @@ All pass (&gt;=60): True</code></pre>
 </div>
 </div>
 <div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
-<span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 7 - Cohort Score Report</span><br><br> <b>Goal:</b> Using a single comprehension for each, produce the outputs below from <code>records</code>.
+<span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 4 - Cohort Score Report</span><br><br> <b>Goal:</b> Using a single comprehension for each, produce the outputs below from <code>records</code>.
 <pre style="background:#FCE8DA;padding:10px;border-radius:4px;font-size:0.9em">records = [
     {'name': 'Alice', 'scores': [88, 92, 85]},
     {'name': 'Bob',   'scores': [62, 70, 58]},
@@ -968,30 +1113,49 @@ avg_map = {'Alice': 88.33, 'Bob': 63.33, 'Carol': 91.67}
 # 3. Set of unique student names who scored &gt;= 80 average
 top = {'Alice', 'Carol'}</pre>
 </div>
-<div id="38" class="cell" data-execution_count="17">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>records: <span class="bu">list</span>[<span class="bu">dict</span>[<span class="bu">str</span>, <span class="bu">object</span>]] <span class="op">=</span> [</span>
-<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"name"</span>: <span class="st">"Alice"</span>, <span class="st">"scores"</span>: [<span class="dv">88</span>, <span class="dv">92</span>, <span class="dv">85</span>]},</span>
-<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"name"</span>: <span class="st">"Bob"</span>, <span class="st">"scores"</span>: [<span class="dv">62</span>, <span class="dv">70</span>, <span class="dv">58</span>]},</span>
-<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"name"</span>: <span class="st">"Carol"</span>, <span class="st">"scores"</span>: [<span class="dv">91</span>, <span class="dv">95</span>, <span class="dv">89</span>]},</span>
-<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>]</span>
-<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: 1. list of averages</span></span>
-<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a>averages: <span class="bu">list</span>[<span class="bu">float</span>] <span class="op">=</span> ...</span>
-<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: 2. name -&gt; average dict</span></span>
-<span id="cb36-11"><a href="#cb36-11" aria-hidden="true" tabindex="-1"></a>avg_map: <span class="bu">dict</span>[<span class="bu">str</span>, <span class="bu">float</span>] <span class="op">=</span> ...</span>
-<span id="cb36-12"><a href="#cb36-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-13"><a href="#cb36-13" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: 3. set of names with average &gt;= 80</span></span>
-<span id="cb36-14"><a href="#cb36-14" aria-hidden="true" tabindex="-1"></a>top: <span class="bu">set</span>[<span class="bu">str</span>] <span class="op">=</span> ...</span>
-<span id="cb36-15"><a href="#cb36-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-16"><a href="#cb36-16" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"averages: </span><span class="sc">{</span>averages<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb36-17"><a href="#cb36-17" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"avg_map : </span><span class="sc">{</span>avg_map<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb36-18"><a href="#cb36-18" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"top     : </span><span class="sc">{</span>top<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="47" class="cell" data-execution_count="19">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>records: <span class="bu">list</span>[<span class="bu">dict</span>[<span class="bu">str</span>, <span class="bu">object</span>]] <span class="op">=</span> [</span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"name"</span>: <span class="st">"Alice"</span>, <span class="st">"scores"</span>: [<span class="dv">88</span>, <span class="dv">92</span>, <span class="dv">85</span>]},</span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"name"</span>: <span class="st">"Bob"</span>, <span class="st">"scores"</span>: [<span class="dv">62</span>, <span class="dv">70</span>, <span class="dv">58</span>]},</span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"name"</span>: <span class="st">"Carol"</span>, <span class="st">"scores"</span>: [<span class="dv">91</span>, <span class="dv">95</span>, <span class="dv">89</span>]},</span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>]</span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: 1. list of averages</span></span>
+<span id="cb39-8"><a href="#cb39-8" aria-hidden="true" tabindex="-1"></a>averages: <span class="bu">list</span>[<span class="bu">float</span>] <span class="op">=</span> ...</span>
+<span id="cb39-9"><a href="#cb39-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-10"><a href="#cb39-10" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: 2. name -&gt; average dict</span></span>
+<span id="cb39-11"><a href="#cb39-11" aria-hidden="true" tabindex="-1"></a>avg_map: <span class="bu">dict</span>[<span class="bu">str</span>, <span class="bu">float</span>] <span class="op">=</span> ...</span>
+<span id="cb39-12"><a href="#cb39-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-13"><a href="#cb39-13" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: 3. set of names with average &gt;= 80</span></span>
+<span id="cb39-14"><a href="#cb39-14" aria-hidden="true" tabindex="-1"></a>top: <span class="bu">set</span>[<span class="bu">str</span>] <span class="op">=</span> ...</span>
+<span id="cb39-15"><a href="#cb39-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-16"><a href="#cb39-16" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"averages: </span><span class="sc">{</span>averages<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb39-17"><a href="#cb39-17" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"avg_map : </span><span class="sc">{</span>avg_map<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb39-18"><a href="#cb39-18" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"top     : </span><span class="sc">{</span>top<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>averages: Ellipsis
 avg_map : Ellipsis
 top     : Ellipsis</code></pre>
 </div>
+</div>
+<p><code>itertools.batched()</code> (Python 3.12) splits any iterable into fixed-size chunks without loading everything into memory. It replaces manual sliding-window loops in data pipelines.</p>
+<div id="49" class="cell" data-execution_count="20">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> itertools <span class="im">import</span> batched</span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>student_ids <span class="op">=</span> <span class="bu">list</span>(<span class="bu">range</span>(<span class="dv">1</span>, <span class="dv">22</span>))  <span class="co"># 21 students</span></span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> batch_num, batch <span class="kw">in</span> <span class="bu">enumerate</span>(batched(student_ids, <span class="dv">5</span>), start<span class="op">=</span><span class="dv">1</span>):</span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"Batch </span><span class="sc">{</span>batch_num<span class="sc">}</span><span class="ss">: </span><span class="sc">{</span><span class="bu">list</span>(batch)<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Batch 1: [1, 2, 3, 4, 5]
+Batch 2: [6, 7, 8, 9, 10]
+Batch 3: [11, 12, 13, 14, 15]
+Batch 4: [16, 17, 18, 19, 20]
+Batch 5: [21]</code></pre>
+</div>
+</div>
+<div style="background:#F5F3FF;border-left:5px solid #7C3AED;padding:14px 18px;border-radius:6px;margin:16px 0">
+<p><span style="color:#5B21B6;font-weight:bold"><i class="bi bi-lightbulb-fill"></i> Pro Tip: batched() for Chunked Processing</span><br><br> <code>batched(iterable, n)</code> yields tuples of at most <code>n</code> items. The last batch may be shorter. Use it for API rate-limiting, mini-batch gradient descent, or processing large CSV files in chunks: <code>for rows in batched(csv_reader, 1000): process(rows)</code>.</p>
 </div>
 </section>
 </section>
@@ -1012,33 +1176,33 @@ top     : Ellipsis</code></pre>
    π/4 ≈ hits/total</code></pre>
 <p>This is a real technique used in finance, physics, and ML for problems that are too complex to solve analytically.</p>
 <p><strong>Step 1:</strong> Write a helper that checks whether a point is inside the unit circle:</p>
-<div id="41" class="cell" data-execution_count="18">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> math</span>
-<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> in_unit_circle(x: <span class="bu">float</span>, y: <span class="bu">float</span>) <span class="op">-&gt;</span> <span class="bu">bool</span>:</span>
-<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Return True if (x, y) lies inside the unit circle (radius = 1)."""</span></span>
-<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> x<span class="op">**</span><span class="dv">2</span> <span class="op">+</span> y<span class="op">**</span><span class="dv">2</span> <span class="op">&lt;=</span> <span class="fl">1.0</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="53" class="cell" data-execution_count="21">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb44"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> math</span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> in_unit_circle(x: <span class="bu">float</span>, y: <span class="bu">float</span>) <span class="op">-&gt;</span> <span class="bu">bool</span>:</span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Return True if (x, y) lies inside the unit circle (radius = 1)."""</span></span>
+<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> x<span class="op">**</span><span class="dv">2</span> <span class="op">+</span> y<span class="op">**</span><span class="dv">2</span> <span class="op">&lt;=</span> <span class="fl">1.0</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p><strong>Step 2:</strong> Simulate random points and count how many land inside the circle. <code>random.seed()</code> makes results reproducible. Always set a seed before any simulation:</p>
-<div id="43" class="cell" data-execution_count="19">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> random</span>
-<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>random.seed(<span class="dv">42</span>)  <span class="co"># fix seed for reproducibility</span></span>
-<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>N_POINTS: <span class="bu">int</span> <span class="op">=</span> <span class="dv">1_000_000</span></span>
-<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a>inside: <span class="bu">int</span> <span class="op">=</span> <span class="bu">sum</span>(</span>
-<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a>    <span class="dv">1</span></span>
-<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(N_POINTS)</span>
-<span id="cb40-9"><a href="#cb40-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> in_unit_circle(random.uniform(<span class="op">-</span><span class="dv">1</span>, <span class="dv">1</span>), random.uniform(<span class="op">-</span><span class="dv">1</span>, <span class="dv">1</span>))  <span class="co"># noqa: S311</span></span>
-<span id="cb40-10"><a href="#cb40-10" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb40-11"><a href="#cb40-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb40-12"><a href="#cb40-12" aria-hidden="true" tabindex="-1"></a>pi_estimate: <span class="bu">float</span> <span class="op">=</span> <span class="dv">4</span> <span class="op">*</span> inside <span class="op">/</span> N_POINTS</span>
-<span id="cb40-13"><a href="#cb40-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Points       : </span><span class="sc">{</span>N_POINTS<span class="sc">:,}</span><span class="ss">"</span>)</span>
-<span id="cb40-14"><a href="#cb40-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Hits (inside): </span><span class="sc">{</span>inside<span class="sc">:,}</span><span class="ss">"</span>)</span>
-<span id="cb40-15"><a href="#cb40-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"pi estimate  : </span><span class="sc">{</span>pi_estimate<span class="sc">:.5f}</span><span class="ss">"</span>)</span>
-<span id="cb40-16"><a href="#cb40-16" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"math.pi      : </span><span class="sc">{</span>math<span class="sc">.</span>pi<span class="sc">:.5f}</span><span class="ss">"</span>)</span>
-<span id="cb40-17"><a href="#cb40-17" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Error        : </span><span class="sc">{</span><span class="bu">abs</span>(pi_estimate <span class="op">-</span> math.pi)<span class="sc">:.5f}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="55" class="cell" data-execution_count="22">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb45"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> random</span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>random.seed(<span class="dv">42</span>)  <span class="co"># fix seed for reproducibility</span></span>
+<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a>N_POINTS: <span class="bu">int</span> <span class="op">=</span> <span class="dv">1_000_000</span></span>
+<span id="cb45-6"><a href="#cb45-6" aria-hidden="true" tabindex="-1"></a>inside: <span class="bu">int</span> <span class="op">=</span> <span class="bu">sum</span>(</span>
+<span id="cb45-7"><a href="#cb45-7" aria-hidden="true" tabindex="-1"></a>    <span class="dv">1</span></span>
+<span id="cb45-8"><a href="#cb45-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(N_POINTS)</span>
+<span id="cb45-9"><a href="#cb45-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> in_unit_circle(random.uniform(<span class="op">-</span><span class="dv">1</span>, <span class="dv">1</span>), random.uniform(<span class="op">-</span><span class="dv">1</span>, <span class="dv">1</span>))  <span class="co"># noqa: S311</span></span>
+<span id="cb45-10"><a href="#cb45-10" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb45-11"><a href="#cb45-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-12"><a href="#cb45-12" aria-hidden="true" tabindex="-1"></a>pi_estimate: <span class="bu">float</span> <span class="op">=</span> <span class="dv">4</span> <span class="op">*</span> inside <span class="op">/</span> N_POINTS</span>
+<span id="cb45-13"><a href="#cb45-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Points       : </span><span class="sc">{</span>N_POINTS<span class="sc">:,}</span><span class="ss">"</span>)</span>
+<span id="cb45-14"><a href="#cb45-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Hits (inside): </span><span class="sc">{</span>inside<span class="sc">:,}</span><span class="ss">"</span>)</span>
+<span id="cb45-15"><a href="#cb45-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"pi estimate  : </span><span class="sc">{</span>pi_estimate<span class="sc">:.5f}</span><span class="ss">"</span>)</span>
+<span id="cb45-16"><a href="#cb45-16" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"math.pi      : </span><span class="sc">{</span>math<span class="sc">.</span>pi<span class="sc">:.5f}</span><span class="ss">"</span>)</span>
+<span id="cb45-17"><a href="#cb45-17" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Error        : </span><span class="sc">{</span><span class="bu">abs</span>(pi_estimate <span class="op">-</span> math.pi)<span class="sc">:.5f}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Points       : 1,000,000
 Hits (inside): 785,061
@@ -1048,21 +1212,21 @@ Error        : 0.00135</code></pre>
 </div>
 </div>
 <p><strong>Step 3:</strong> See how the estimate improves as <code>N</code> grows: the law of large numbers at work:</p>
-<div id="45" class="cell" data-execution_count="20">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb42"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> math</span>
-<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> random</span>
-<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>random.seed(<span class="dv">0</span>)</span>
-<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> n <span class="kw">in</span> [<span class="dv">100</span>, <span class="dv">1_000</span>, <span class="dv">10_000</span>, <span class="dv">100_000</span>, <span class="dv">1_000_000</span>]:</span>
-<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a>    hits <span class="op">=</span> <span class="bu">sum</span>(</span>
-<span id="cb42-8"><a href="#cb42-8" aria-hidden="true" tabindex="-1"></a>        <span class="dv">1</span></span>
-<span id="cb42-9"><a href="#cb42-9" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(n)</span>
-<span id="cb42-10"><a href="#cb42-10" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> in_unit_circle(random.uniform(<span class="op">-</span><span class="dv">1</span>, <span class="dv">1</span>), random.uniform(<span class="op">-</span><span class="dv">1</span>, <span class="dv">1</span>))  <span class="co"># noqa: S311</span></span>
-<span id="cb42-11"><a href="#cb42-11" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb42-12"><a href="#cb42-12" aria-hidden="true" tabindex="-1"></a>    est <span class="op">=</span> <span class="dv">4</span> <span class="op">*</span> hits <span class="op">/</span> n</span>
-<span id="cb42-13"><a href="#cb42-13" aria-hidden="true" tabindex="-1"></a>    error <span class="op">=</span> <span class="bu">abs</span>(est <span class="op">-</span> math.pi)</span>
-<span id="cb42-14"><a href="#cb42-14" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"  n=</span><span class="sc">{</span>n<span class="sc">:&gt;9,}</span><span class="ss">  pi=</span><span class="sc">{</span>est<span class="sc">:.5f}</span><span class="ss">  error=</span><span class="sc">{</span>error<span class="sc">:.5f}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="57" class="cell" data-execution_count="23">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb47"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> math</span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> random</span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a>random.seed(<span class="dv">0</span>)</span>
+<span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-6"><a href="#cb47-6" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> n <span class="kw">in</span> [<span class="dv">100</span>, <span class="dv">1_000</span>, <span class="dv">10_000</span>, <span class="dv">100_000</span>, <span class="dv">1_000_000</span>]:</span>
+<span id="cb47-7"><a href="#cb47-7" aria-hidden="true" tabindex="-1"></a>    hits <span class="op">=</span> <span class="bu">sum</span>(</span>
+<span id="cb47-8"><a href="#cb47-8" aria-hidden="true" tabindex="-1"></a>        <span class="dv">1</span></span>
+<span id="cb47-9"><a href="#cb47-9" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(n)</span>
+<span id="cb47-10"><a href="#cb47-10" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> in_unit_circle(random.uniform(<span class="op">-</span><span class="dv">1</span>, <span class="dv">1</span>), random.uniform(<span class="op">-</span><span class="dv">1</span>, <span class="dv">1</span>))  <span class="co"># noqa: S311</span></span>
+<span id="cb47-11"><a href="#cb47-11" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb47-12"><a href="#cb47-12" aria-hidden="true" tabindex="-1"></a>    est <span class="op">=</span> <span class="dv">4</span> <span class="op">*</span> hits <span class="op">/</span> n</span>
+<span id="cb47-13"><a href="#cb47-13" aria-hidden="true" tabindex="-1"></a>    error <span class="op">=</span> <span class="bu">abs</span>(est <span class="op">-</span> math.pi)</span>
+<span id="cb47-14"><a href="#cb47-14" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"  n=</span><span class="sc">{</span>n<span class="sc">:&gt;9,}</span><span class="ss">  pi=</span><span class="sc">{</span>est<span class="sc">:.5f}</span><span class="ss">  error=</span><span class="sc">{</span>error<span class="sc">:.5f}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>  n=      100  pi=3.28000  error=0.13841
   n=    1,000  pi=3.02000  error=0.12159
@@ -1108,7 +1272,7 @@ Error        : 0.00135</code></pre>
 </thead>
 <tbody>
 <tr class="odd">
-<td><a href="https://peps.python.org/pep-0636/">PEP 636 — Structural Pattern Matching</a></td>
+<td><a href="https://peps.python.org/pep-0636/">PEP 636: Structural Pattern Matching</a></td>
 <td>Official tutorial for <code>match</code>/<code>case</code>, with worked examples from the Python core team</td>
 </tr>
 <tr class="even">
@@ -1116,11 +1280,11 @@ Error        : 0.00135</code></pre>
 <td>Chapter 10 covers pattern matching in depth, including class patterns and guards</td>
 </tr>
 <tr class="odd">
-<td><a href="https://realpython.com/python-for-loop/">Real Python — Python <code>for</code> Loops</a></td>
+<td><a href="https://realpython.com/python-for-loop/">Real Python: Python <code>for</code> Loops</a></td>
 <td>Clear treatment of <code>enumerate</code>, <code>zip</code>, and the iterator protocol behind every loop</td>
 </tr>
 <tr class="even">
-<td><a href="https://realpython.com/list-comprehension-python/">Real Python — List Comprehensions</a></td>
+<td><a href="https://realpython.com/list-comprehension-python/">Real Python: List Comprehensions</a></td>
 <td>When to use comprehensions vs explicit loops, and how to avoid making them unreadable</td>
 </tr>
 </tbody>
@@ -1571,8 +1735,8 @@ Error        : 0.00135</code></pre>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../../tutorials/01-python-basics/03-python-patterns.html" class="pagination-link" aria-label="Part 3: Patterns for Data Science &amp; ML">
-        <span class="nav-page-text"><span class="chapter-title">Part 3: Patterns for Data Science &amp; ML</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="../../tutorials/01-python-basics/03a-python-patterns.html" class="pagination-link" aria-label="Part 3a: Python Patterns -- Functions and Code Reuse">
+        <span class="nav-page-text"><span class="chapter-title">Part 3a: Python Patterns – Functions and Code Reuse</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
