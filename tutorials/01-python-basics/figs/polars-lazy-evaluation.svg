@@ -1,0 +1,87 @@
+<svg width="800" height="240" viewBox="0 0 800 240" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Jost:wght@400;600;700&amp;display=swap');
+    </style>
+    <filter id="lazy-shadow" x="-4%" y="-3%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="rgba(30,41,59,0.09)"/>
+    </filter>
+    <marker id="arr" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#64748B"/>
+    </marker>
+    <marker id="arr-green" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#059669"/>
+    </marker>
+  </defs>
+
+  <!-- TITLE -->
+  <text x="400" y="24" text-anchor="middle"
+        font-family="'Jost','Segoe UI',system-ui,sans-serif"
+        font-size="14" font-weight="700" fill="#1E293B">Polars Lazy Evaluation: Plan First, Execute Once</text>
+  <text x="400" y="41" text-anchor="middle"
+        font-family="'Libre Franklin','Segoe UI',sans-serif"
+        font-size="10.5" fill="#64748B">scan_csv builds a query plan; .collect() triggers optimization and a single read</text>
+  <line x1="40" y1="48" x2="760" y2="48" stroke="#E2E8F0" stroke-width="1"/>
+
+  <!-- BOX 1: scan_csv -->
+  <rect x="16" y="72" width="116" height="72" rx="10" fill="#F5F3FF" stroke="#7C3AED" stroke-width="1.5" filter="url(#lazy-shadow)" stroke-dasharray="6,3"/>
+  <text x="74" y="93" text-anchor="middle" font-family="'Libre Franklin',sans-serif" font-size="9" fill="#7C3AED" font-weight="700">scan_csv(</text>
+  <text x="74" y="106" text-anchor="middle" font-family="'Libre Franklin',sans-serif" font-size="9" fill="#7C3AED">'data.csv')</text>
+  <text x="74" y="124" text-anchor="middle" font-family="'Libre Franklin',sans-serif" font-size="8" fill="#94A3B8">no data read yet</text>
+  <text x="74" y="137" text-anchor="middle" font-family="'Jost',sans-serif" font-size="7.5" font-weight="700" fill="#7C3AED">LazyFrame</text>
+
+  <!-- Arrow -->
+  <line x1="134" y1="108" x2="154" y2="108" stroke="#64748B" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <!-- BOX 2: filter -->
+  <rect x="156" y="72" width="116" height="72" rx="10" fill="#F5F3FF" stroke="#7C3AED" stroke-width="1.5" filter="url(#lazy-shadow)" stroke-dasharray="6,3"/>
+  <text x="214" y="93" text-anchor="middle" font-family="'Libre Franklin',sans-serif" font-size="9" fill="#7C3AED" font-weight="700">.filter(</text>
+  <text x="214" y="106" text-anchor="middle" font-family="'Libre Franklin',sans-serif" font-size="9" fill="#7C3AED">pl.col("score")</text>
+  <text x="214" y="118" text-anchor="middle" font-family="'Libre Franklin',sans-serif" font-size="9" fill="#7C3AED">&gt; 60)</text>
+  <text x="214" y="135" text-anchor="middle" font-family="'Libre Franklin',sans-serif" font-size="8" fill="#94A3B8">adds predicate</text>
+
+  <!-- Arrow -->
+  <line x1="274" y1="108" x2="294" y2="108" stroke="#64748B" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <!-- BOX 3: group_by -->
+  <rect x="296" y="72" width="116" height="72" rx="10" fill="#F5F3FF" stroke="#7C3AED" stroke-width="1.5" filter="url(#lazy-shadow)" stroke-dasharray="6,3"/>
+  <text x="354" y="93" text-anchor="middle" font-family="'Libre Franklin',sans-serif" font-size="9" fill="#7C3AED" font-weight="700">.group_by(</text>
+  <text x="354" y="106" text-anchor="middle" font-family="'Libre Franklin',sans-serif" font-size="9" fill="#7C3AED">"program")</text>
+  <text x="354" y="119" text-anchor="middle" font-family="'Libre Franklin',sans-serif" font-size="9" fill="#7C3AED">.agg(...)</text>
+  <text x="354" y="135" text-anchor="middle" font-family="'Libre Franklin',sans-serif" font-size="8" fill="#94A3B8">adds aggregation</text>
+
+  <!-- Arrow: collect -->
+  <line x1="414" y1="108" x2="460" y2="108" stroke="#059669" stroke-width="2" marker-end="url(#arr-green)"/>
+  <rect x="413" y="88" width="48" height="20" rx="6" fill="#059669"/>
+  <text x="437" y="103" text-anchor="middle" font-family="'Jost',sans-serif" font-size="9" font-weight="700" fill="#fff">.collect()</text>
+
+  <!-- BOX 4: optimizer -->
+  <rect x="462" y="60" width="162" height="96" rx="10" fill="#EAF3FA" stroke="#0369A1" stroke-width="1.5" filter="url(#lazy-shadow)"/>
+  <text x="543" y="81" text-anchor="middle" font-family="'Jost',sans-serif" font-size="9.5" font-weight="700" fill="#0369A1">Query Optimizer</text>
+  <line x1="472" y1="86" x2="614" y2="86" stroke="#BFDBFE" stroke-width="1"/>
+  <text x="543" y="101" text-anchor="middle" font-family="'Libre Franklin',sans-serif" font-size="8.5" fill="#1E3A5F">1. predicate pushdown</text>
+  <text x="543" y="115" text-anchor="middle" font-family="'Libre Franklin',sans-serif" font-size="8.5" fill="#1E3A5F">2. projection pruning</text>
+  <text x="543" y="129" text-anchor="middle" font-family="'Libre Franklin',sans-serif" font-size="8.5" fill="#1E3A5F">3. parallel execution</text>
+  <text x="543" y="147" text-anchor="middle" font-family="'Libre Franklin',sans-serif" font-size="8" fill="#64748B">reads file once</text>
+
+  <!-- Arrow to result -->
+  <line x1="626" y1="108" x2="654" y2="108" stroke="#059669" stroke-width="1.5" marker-end="url(#arr-green)"/>
+
+  <!-- BOX 5: result DataFrame -->
+  <rect x="656" y="72" width="126" height="72" rx="10" fill="#F0FDF4" stroke="#059669" stroke-width="1.5" filter="url(#lazy-shadow)"/>
+  <text x="719" y="93" text-anchor="middle" font-family="'Jost',sans-serif" font-size="9.5" font-weight="700" fill="#059669">DataFrame</text>
+  <text x="719" y="109" text-anchor="middle" font-family="'Libre Franklin',sans-serif" font-size="8.5" fill="#065F46">in memory now</text>
+  <text x="719" y="123" text-anchor="middle" font-family="'Libre Franklin',sans-serif" font-size="8.5" fill="#065F46">optimized result</text>
+  <text x="719" y="137" text-anchor="middle" font-family="'Jost',sans-serif" font-size="8" font-weight="600" fill="#059669">only here</text>
+
+  <!-- Bottom annotation -->
+  <rect x="16" y="162" width="380" height="48" rx="8" fill="#FFF7ED" stroke="#B45309" stroke-width="1.2"/>
+  <text x="206" y="182" text-anchor="middle" font-family="'Jost',sans-serif" font-size="10" font-weight="700" fill="#B45309">Why lazy evaluation matters</text>
+  <text x="206" y="198" text-anchor="middle" font-family="'Libre Franklin',sans-serif" font-size="9" fill="#92400E">Polars reads only the columns and rows the final result needs.</text>
+  <text x="206" y="212" text-anchor="middle" font-family="'Libre Franklin',sans-serif" font-size="9" fill="#92400E">A 10-column CSV filtered to 2 columns is 5x faster than reading all 10.</text>
+
+  <rect x="404" y="162" width="378" height="48" rx="8" fill="#F0FDF4" stroke="#059669" stroke-width="1.2"/>
+  <text x="593" y="182" text-anchor="middle" font-family="'Jost',sans-serif" font-size="10" font-weight="700" fill="#059669">eager vs lazy</text>
+  <text x="593" y="198" text-anchor="middle" font-family="'Libre Franklin',sans-serif" font-size="9" fill="#065F46">pl.read_csv() is eager: reads everything now.</text>
+  <text x="593" y="212" text-anchor="middle" font-family="'Libre Franklin',sans-serif" font-size="9" fill="#065F46">pl.scan_csv() is lazy: reads only on .collect().</text>
+</svg>
