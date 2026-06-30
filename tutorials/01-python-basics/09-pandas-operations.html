@@ -642,7 +642,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="whats-new-in-pandas-3" class="level2">
 <h2 class="anchored" data-anchor-id="whats-new-in-pandas-3">What’s New in Pandas 3</h2>
 <p>This series is written against pandas 3, released in 2025, and two of its changes are worth understanding before going further, because they change what you see in everyday output.</p>
-<p>Run <code>df.dtypes</code> and look at the text columns. In pandas 2 they showed up as <code>object</code>, the catch-all dtype for anything that is not a fixed-width number. Pandas 3 gives strings a dedicated <code>str</code> dtype instead, backed by PyArrow when it is installed:</p>
+<p>Run <code>df.dtypes</code> and look at the text columns. In pandas 2 they showed up as <code>object</code>, the catch-all dtype for anything that isn’t a fixed-width number. Pandas 3 gives strings a dedicated <code>str</code> dtype instead, backed by PyArrow when it’s installed:</p>
 <div id="6" class="cell" data-execution_count="2">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>df.dtypes</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="2">
@@ -671,7 +671,7 @@ dtype: object</code></pre>
 <div style="background:#EAF3FA;border-left:5px solid #0369A1;padding:14px 18px;border-radius:6px;margin:16px 0">
 <p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-info-circle-fill"></i> Key Concept: A dedicated <code>str</code> dtype, not <code>object</code></span><br><br> <code>object</code> dtype could hold strings, but it could just as easily hold a mix of strings, numbers, and Python objects, with no guarantee which. The new <code>str</code> dtype can only hold strings or missing values, so a column typed <code>str</code> is a stronger guarantee than <code>object</code> ever was, and the PyArrow backing makes string operations faster. This is the same dtype the <code>.str</code> accessor in Sec. 3 operates on.</p>
 </div>
-<p>The second change does not show up in any output, it changes how assignment behaves. Pandas 3 makes Copy-on-Write the only behaviour: selecting a subset of a DataFrame never lets you accidentally modify the original through it.</p>
+<p>The second change doesn’t show up in any output, it changes how assignment behaves. Pandas 3 makes Copy-on-Write the only behaviour: selecting a subset of a DataFrame never lets you accidentally modify the original through it.</p>
 <div id="9" class="cell" data-execution_count="3">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>subset <span class="op">=</span> df[[<span class="st">"student_id"</span>, <span class="st">"average_marks"</span>]]</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>subset.loc[<span class="dv">0</span>, <span class="st">"average_marks"</span>] <span class="op">=</span> <span class="fl">0.0</span></span>
@@ -862,7 +862,7 @@ subset changed     : 0.0</code></pre>
 <p><span style="color:#991B1B;font-weight:bold"><i class="bi bi-bug-fill"></i> Common Mistake: Using <code>applymap()</code> from an older tutorial</span><br><br> <code>df.applymap()</code> was removed in pandas 3.0. Any code or tutorial older than 2024 that uses <code>applymap</code> will raise <code>AttributeError</code>. The fix is a one-word rename: <code>df.applymap(fn)</code> becomes <code>df.map(fn)</code>.</p>
 </div>
 <div style="background:#EAF3FA;border-left:5px solid #0369A1;padding:14px 18px;border-radius:6px;margin:16px 0">
-<p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-info-circle-fill"></i> Key Concept: <code>map</code> is for substitution, <code>apply</code> is for logic</span><br><br> <code>map</code> expects a dict or a simple function and only ever looks at one value at a time. <code>apply</code> accepts any function, including one with branching logic, and can run over a Series (one value at a time) or a DataFrame (one row or one column at a time, depending on <code>axis</code>). Reach for <code>map</code> first; reach for <code>apply</code> when the rule does not fit in a lookup table.</p>
+<p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-info-circle-fill"></i> Key Concept: <code>map</code> is for substitution, <code>apply</code> is for logic</span><br><br> <code>map</code> expects a dict or a simple function and only ever looks at one value at a time. <code>apply</code> accepts any function, including one with branching logic, and can run over a Series (one value at a time) or a DataFrame (one row or one column at a time, depending on <code>axis</code>). Reach for <code>map</code> first; reach for <code>apply</code> when the rule doesn’t fit in a lookup table.</p>
 </div>
 <p>Converting a normalized mark (0 to 1) into a letter grade needs a multi-branch rule, a job for <code>apply</code> with a plain Python function:</p>
 <div id="21" class="cell" data-execution_count="6">
@@ -1015,7 +1015,7 @@ subset changed     : 0.0</code></pre>
 </div>
 </div>
 <div style="background:#FEF2F2;border-left:5px solid #DC2626;padding:14px 18px;border-radius:6px;margin:16px 0">
-<p><span style="color:#991B1B;font-weight:bold"><i class="bi bi-bug-fill"></i> Common Mistake: Reaching for <code>apply(axis=1)</code> when a vectorized operation already does the job</span><br><br> <code>df.apply(at_risk, axis=1)</code> calls a Python function once per row, 17,190 times here, which is far slower than an equivalent boolean mask: <code>(df[“average_marks”] &lt; 0.4) &amp; (df[“has_internet”] == 0)</code> computes the same result with NumPy operating on whole columns at once. Use <code>apply</code> when the rule cannot be written with column-wise operations and comparisons; reach for masking first.</p>
+<p><span style="color:#991B1B;font-weight:bold"><i class="bi bi-bug-fill"></i> Common Mistake: Reaching for <code>apply(axis=1)</code> when a vectorized operation already does the job</span><br><br> <code>df.apply(at_risk, axis=1)</code> calls a Python function once per row, 17,190 times here, which is far slower than an equivalent boolean mask: <code>(df[“average_marks”] &lt; 0.4) &amp; (df[“has_internet”] == 0)</code> computes the same result with NumPy operating on whole columns at once. Use <code>apply</code> when the rule can’t be written with column-wise operations and comparisons; reach for masking first.</p>
 </div>
 <div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
 <p><span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 1 - Grade Distribution</span><br><br></p>
@@ -1143,7 +1143,7 @@ Name: count, dtype: int64</code></pre>
 </div>
 </div>
 <div style="background:#EAF3FA;border-left:5px solid #0369A1;padding:14px 18px;border-radius:6px;margin:16px 0">
-<p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-info-circle-fill"></i> Key Concept: <code>category</code> dtype for memory, one-hot encoding for models</span><br><br> <code>.astype(“category”)</code> is about storage and speed: it does not change what a column means, only how compactly pandas stores it. <code>pd.get_dummies()</code> is about preparing data for a model that expects numeric input: it turns one categorical column into several binary columns. The two are often used together, category dtype while exploring, dummy columns right before training.</p>
+<p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-info-circle-fill"></i> Key Concept: <code>category</code> dtype for memory, one-hot encoding for models</span><br><br> <code>.astype(“category”)</code> is about storage and speed: it doesn’t change what a column means, only how compactly pandas stores it. <code>pd.get_dummies()</code> is about preparing data for a model that expects numeric input: it turns one categorical column into several binary columns. The two are often used together, category dtype while exploring, dummy columns right before training.</p>
 </div>
 <div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
 <p><span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 2 - Guardian Breakdown</span><br><br></p>
@@ -1162,7 +1162,7 @@ len(parents)</pre>
 <h2 class="anchored" data-anchor-id="working-with-text-columns-the-.str-accessor">3. Working with Text Columns: the <code>.str</code> Accessor</h2>
 <p><code>student_id</code> is a string column, and pandas keeps every string method behind a <code>.str</code> accessor rather than directly on the Series. The accessor exists because a Series can hold any dtype, <code>.str</code> is what tells pandas you specifically want the string-handling behaviour.</p>
 <div style="background:#EFF6FF;border-left:5px solid #0369A1;padding:14px 18px;border-radius:6px;margin:16px 0">
-<p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-key-fill"></i> Key Concept: .str is a namespace – call string methods on the whole column at once</span><br><br> <code>df[‘col’].str.upper()</code> applies <code>upper()</code> to every element without a Python loop. The <code>.str</code> prefix is required – <code>df[‘col’].upper()</code> raises an <code>AttributeError</code> because <code>upper</code> is not a Series method. Common methods: <code>.str.strip()</code> for whitespace, <code>.str.contains(pattern)</code> for search, <code>.str.extract(r’(pattern)’)</code> for regex capture groups.</p>
+<p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-key-fill"></i> Key Concept: .str is a namespace – call string methods on the whole column at once</span><br><br> <code>df[‘col’].str.upper()</code> applies <code>upper()</code> to every element without a Python loop. The <code>.str</code> prefix is required – <code>df[‘col’].upper()</code> raises an <code>AttributeError</code> because <code>upper</code> isn’t a Series method. Common methods: <code>.str.strip()</code> for whitespace, <code>.str.contains(pattern)</code> for search, <code>.str.extract(r’(pattern)’)</code> for regex capture groups.</p>
 </div>
 <div style="background:#FEF2F2;border-left:5px solid #DC2626;padding:14px 18px;border-radius:6px;margin:16px 0">
 <p><span style="color:#991B1B;font-weight:bold"><i class="bi bi-bug-fill"></i> Common Mistake: Calling a string method directly on a Series</span><br><br> <code>df[“student_id”].upper()</code> raises an <code>AttributeError</code>: <code>Series</code> has no <code>upper</code> method. The string methods live on <code>df[“student_id”].str</code>, not on the Series itself, because the Series itself is a general-purpose container that happens to hold strings here.</p>
@@ -1430,7 +1430,7 @@ with_internet[["midterm_score", "final_score", "project_score"]].agg(["mean", "s
 </section>
 <section id="window-operations-and-expressive-queries" class="level2">
 <h2 class="anchored" data-anchor-id="window-operations-and-expressive-queries">5. Window Operations and Expressive Queries</h2>
-<p>Two operations that come up constantly in DS pipelines but do not fit neatly under “string methods” or “statistics”: rolling windows for time-aware aggregation, and <code>df.query()</code> for readable multi-condition filters.</p>
+<p>Two operations that come up constantly in DS pipelines but don’t fit neatly under “string methods” or “statistics”: rolling windows for time-aware aggregation, and <code>df.query()</code> for readable multi-condition filters.</p>
 <section id="a.-rolling-and-expanding-windows" class="level3">
 <h3 class="anchored" data-anchor-id="a.-rolling-and-expanding-windows">5a. Rolling and Expanding Windows</h3>
 <p><code>rolling(n)</code> groups each row with the <code>n-1</code> rows before it and applies an aggregation. It is the standard tool for smoothing noisy signals, computing moving averages, or creating features that capture recent trend for a time-ordered dataset.</p>
@@ -1530,7 +1530,7 @@ with_internet[["midterm_score", "final_score", "project_score"]].agg(["mean", "s
 </div>
 </div>
 <div style="background:#EAF3FA;border-left:5px solid #0369A1;padding:14px 18px;border-radius:6px;margin:16px 0">
-<p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-info-circle-fill"></i> Key Concept: Rolling windows require ordered data to be meaningful</span><br><br> <code>rolling(5)</code> looks at the 5 rows immediately before each row in whatever order they sit in the DataFrame. On unsorted data the window picks up random rows and produces meaningless averages. Always sort by the relevant axis (time, score, sequence number) before calling <code>rolling()</code>. The NaN values in the first <code>n-1</code> rows are correct: there is not enough history to fill those windows yet.</p>
+<p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-info-circle-fill"></i> Key Concept: Rolling windows require ordered data to be meaningful</span><br><br> <code>rolling(5)</code> looks at the 5 rows immediately before each row in whatever order they sit in the DataFrame. On unsorted data the window picks up random rows and produces meaningless averages. Always sort by the relevant axis (time, score, sequence number) before calling <code>rolling()</code>. The NaN values in the first <code>n-1</code> rows are correct: there isn’t enough history to fill those windows yet.</p>
 </div>
 <p>In time-series work, the pattern is almost always: sort by date, group by entity, then compute a rolling stat per group. The <code>groupby().transform()</code> tip from Section 4 applies here too:</p>
 <div id="73" class="cell" data-execution_count="26">
@@ -1618,7 +1618,7 @@ query result : 14 rows</code></pre>
 </div>
 </div>
 <div style="background:#F5F3FF;border-left:5px solid #7C3AED;padding:14px 18px;border-radius:6px;margin:16px 0">
-<p><span style="color:#5B21B6;font-weight:bold"><i class="bi bi-lightbulb-fill"></i> Pro Tip: Use <code>query()</code> for readability, masks for dynamic conditions</span><br><br> <code>df.query()</code> is evaluated with <code>numexpr</code> when the library is installed, which makes it faster than the equivalent boolean mask on large DataFrames. The downside: the query string is harder to build programmatically. Use <code>query()</code> when you are writing a fixed filter that a reader should understand at a glance; use a mask when the conditions are assembled at runtime from user input or a config.</p>
+<p><span style="color:#5B21B6;font-weight:bold"><i class="bi bi-lightbulb-fill"></i> Pro Tip: Use <code>query()</code> for readability, masks for dynamic conditions</span><br><br> <code>df.query()</code> is evaluated with <code>numexpr</code> when the library is installed, which makes it faster than the equivalent boolean mask on large DataFrames. The downside: the query string is harder to build programmatically. Use <code>query()</code> when you’re writing a fixed filter that a reader should understand at a glance; use a mask when the conditions are assembled at runtime from user input or a config.</p>
 </div>
 <div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
 <p><span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 5 - Smoothed Grade Distribution</span><br><br></p>

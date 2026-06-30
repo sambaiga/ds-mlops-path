@@ -459,7 +459,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 <p><a href="https://colab.research.google.com/github/sambaiga/ds-mlops-path/blob/main/tutorials/01-python-basics/11-time-series.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open In Colab"></a> <a href="https://raw.githubusercontent.com/sambaiga/ds-mlops-path/main/tutorials/01-python-basics/11-time-series.ipynb"><img src="https://img.shields.io/badge/Download-Notebook-blue.svg?logo=jupyter&amp;logoColor=white" class="img-fluid" alt="Download Notebook"></a></p>
-<p>The attendance report says 87% for Monday. Is that better or worse than last month? You have the numbers but the date column is plain text – pandas cannot slice by month, compute week-over-week changes, or resample to monthly totals until the column is a proper datetime type with a DatetimeIndex. This notebook adds that infrastructure, using daily attendance records across five schools over a full term.</p>
+<p>The attendance report says 87% for Monday. Is that better or worse than last month? You have the numbers but the date column is plain text – pandas can’t slice by month, compute week-over-week changes, or resample to monthly totals until the column is a proper datetime type with a DatetimeIndex. This notebook adds that infrastructure, using daily attendance records across five schools over a full term.</p>
 <p>Part 10 (<code>10-combining-reshaping.ipynb</code>) introduced time series data and basic date parsing. This notebook goes deeper: DatetimeIndex slicing, <code>resample</code>, timezones, and lag features – the same building blocks used in Part 12 (<code>11-polars.ipynb</code>) and, later, in forecasting.</p>
 <blockquote class="blockquote">
 <p>Callout markers used throughout this notebook are explained on the <a href="../../index.html#callout-guide">book cover page</a>.</p>
@@ -796,7 +796,7 @@ Freq: ME, Name: attendance_rate, dtype: float64</code></pre>
 <p>The timestamps in this dataset are naive: they carry no timezone information. That is fine for a single-country attendance dataset. It is not fine for anything that crosses system boundaries: API responses, cloud server logs, or sensor readings from devices in different cities. Naive timestamps from different sources silently offset against each other when you join them, with no error to warn you.</p>
 <p>Two operations handle timezones in pandas:</p>
 <ul>
-<li><code>tz_localize(tz)</code>: stamps a naive series with a timezone. The values do not change, only their meaning.</li>
+<li><code>tz_localize(tz)</code>: stamps a naive series with a timezone. The values don’t change, only their meaning.</li>
 <li><code>tz_convert(tz)</code>: shifts a timezone-aware series to a different timezone. The values change to represent the same instant in the target zone.</li>
 </ul>
 <p>The standard practice for storage: localize to UTC, convert to local time only for display.</p>
@@ -822,7 +822,7 @@ UTC:             DatetimeIndex(['2025-01-05 21:00:00+00:00', '2025-01-06 21:00:0
 </figure>
 </div>
 <div style="background:#EAF3FA;border-left:5px solid #0369A1;padding:14px 18px;border-radius:6px;margin:16px 0">
-<p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-info-circle-fill"></i> Key Concept: Store in UTC, display in local time</span><br><br> UTC has no daylight saving transitions and no ambiguous hours, so it is the only safe format for storing timestamps that will be compared, sorted, or joined across sources. Localize to UTC at ingestion; convert to the user’s timezone only when formatting for display. Timestamps stored as naive local time break silently when DST shifts: two records that look 60 minutes apart may actually be 120 minutes apart, or the same instant twice.</p>
+<p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-info-circle-fill"></i> Key Concept: Store in UTC, display in local time</span><br><br> UTC has no daylight saving transitions and no ambiguous hours, so it’s the only safe format for storing timestamps that will be compared, sorted, or joined across sources. Localize to UTC at ingestion; convert to the user’s timezone only when formatting for display. Timestamps stored as naive local time break silently when DST shifts: two records that look 60 minutes apart may actually be 120 minutes apart, or the same instant twice.</p>
 </div>
 <p>Mixing naive and aware timestamps raises a <code>TypeError</code>, which is actually helpful: it prevents silent wrong answers.</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>school_300_utc.index[<span class="dv">0</span>] <span class="op">&gt;</span> school_300.index[<span class="dv">0</span>]</span>
@@ -954,7 +954,7 @@ print(s302_london.index[0])</pre>
 </div>
 </div>
 <div style="background:#EAF3FA;border-left:5px solid #0369A1;padding:14px 18px;border-radius:6px;margin:16px 0">
-<p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-info-circle-fill"></i> Key Concept: Lag features turn time series forecasting into supervised learning</span><br><br> A gradient boosting model does not know what “time” means. It knows column values. Giving it a <code>rate_lag1</code> column is how you communicate “yesterday’s value” in a language the model understands. A model trained on <code>[rate_lag1, rate_lag5, day_of_week]</code> predicting <code>attendance_rate</code> is a supervised regression problem built from a single time series. The NaN rows produced by <code>shift</code> must be dropped or filled before training.</p>
+<p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-info-circle-fill"></i> Key Concept: Lag features turn time series forecasting into supervised learning</span><br><br> A gradient boosting model doesn’t know what “time” means. It knows column values. Giving it a <code>rate_lag1</code> column is how you communicate “yesterday’s value” in a language the model understands. A model trained on <code>[rate_lag1, rate_lag5, day_of_week]</code> predicting <code>attendance_rate</code> is a supervised regression problem built from a single time series. The NaN rows produced by <code>shift</code> must be dropped or filled before training.</p>
 </div>
 <div id="46" class="cell" data-execution_count="18">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Rolling 5-day average: smooth out day-of-week noise</span></span>
@@ -1183,7 +1183,7 @@ drop_per_school.sort_values(ascending=False)</pre>
 </tr>
 <tr class="odd">
 <td><code>tz_localize(tz)</code></td>
-<td>Stamps a naive timestamp with a timezone; values do not shift</td>
+<td>Stamps a naive timestamp with a timezone; values don’t shift</td>
 </tr>
 <tr class="even">
 <td><code>tz_convert(tz)</code></td>

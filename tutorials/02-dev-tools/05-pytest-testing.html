@@ -108,9 +108,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   }
 }</script>
 <style>html{ scroll-behavior: smooth; }</style>
-<script src="../../site_libs/quarto-diagram/mermaid.min.js"></script>
-<script src="../../site_libs/quarto-diagram/mermaid-init.js"></script>
-<link href="../../site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
 
 
 </head>
@@ -468,6 +465,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <p><strong>DS-MLOps Dev Tools</strong></p>
 <p><strong>Python 3.12+ | Author: Anthony Faustine</strong></p>
+<p>Your function returns the right answer on the three examples you tested by hand. A colleague adds one line two months later and it silently returns the wrong answer for weeks. A test suite runs every time the code changes and reports the breakage in seconds – not after it reaches production.</p>
+<p>The <code>grade-predictor</code> project is now versioned. Here you’ll write tests for it using pytest. <a href="../../tutorials/02-dev-tools/06-pre-commit-automation.html">Part 18</a> automates those tests before every commit.</p>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
@@ -638,57 +637,31 @@ Note
 <section id="what-is-pytest-and-why-use-it" class="level2">
 <h2 class="anchored" data-anchor-id="what-is-pytest-and-why-use-it">0. What is pytest and Why Use It</h2>
 <p>Python ships with a built-in test runner called <code>unittest</code>. It works, but it forces you to subclass <code>TestCase</code>, call <code>self.assertEqual(...)</code> instead of <code>assert</code>, and write substantial boilerplate before a single assertion runs. pytest is the community standard for a reason: it discovers tests automatically, uses plain <code>assert</code> statements, and provides richer output with no extra effort.</p>
-<div class="cell" data-layout-align="default">
-<div class="cell-output-display">
-<div>
-<p></p><figure class="figure"><p></p>
-<div>
-<pre class="mermaid mermaid-js">flowchart LR
-    A["unittest"] --&gt;|"subclass TestCase\nself.assertEqual\nsetUp / tearDown"| B["works\nbut verbose"]
-    C["pytest"] --&gt;|"plain assert\nautodiscovery\nrich output"| D["same tests\nhalf the code"]
-
-    style B fill:#FEF2F2,stroke:#DC2626,color:#991B1B
-    style D fill:#EBF5F0,stroke:#059669,color:#065F46
-</pre>
+<p>That’s it. Less ceremony, same tests.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="figs/pytest-vs-unittest.svg" class="img-fluid figure-img" alt="Two panels. Left red panel: unittest with four bullet points of boilerplate. Right green panel: pytest with four bullet points of cleaner syntax. A center bridge arrow reads same tests."></p>
+<figcaption>pytest vs unittest: unittest requires subclassing TestCase, self.assertEqual, and setUp/tearDown. pytest uses plain assert statements, autodiscovery, and fixtures. Both run the same tests; pytest needs half the code.</figcaption>
+</figure>
 </div>
-<p></p></figure><p></p>
-</div>
-</div>
-</div>
-<p>Install pytest and the two plugins you will use throughout this chapter:</p>
+<p>Install pytest and the two plugins you’ll use throughout this chapter:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> add <span class="at">--dev</span> pytest pytest-cov pytest-mock</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><code>pytest-cov</code> measures which lines of code are exercised. <code>pytest-mock</code> wraps <code>unittest.mock.patch</code> as a fixture so mocking reads more cleanly.</p>
 <p>Verify the installation:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run pytest <span class="at">--version</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="ark-concept">
-<p><span class="ark-concept-title"><i class="bi bi-info-circle-fill"></i> Key Concept: pytest discovers tests by naming convention</span><br><br> pytest collects any file matching <code>test_<em>.py</em></code><em> or <code></code></em><code>_test.py</code>, and within those files any function starting with <code>test_</code>. No registration, no base class, no import of pytest is required in the test file itself. Name your files and functions correctly and pytest finds them automatically.</p>
+<p><span class="ark-concept-title"><i class="bi bi-info-circle-fill"></i> Key Concept: pytest discovers tests by naming convention</span><br><br> Name your files <code>test_<em>.py</em></code><em> or <code></code></em><code>_test.py</code>, and prefix your test functions with <code>test_</code>. No registration, no base class, no import of pytest in the test file. pytest finds them automatically.</p>
 </div>
 </section>
 <section id="why-ds-code-needs-tests" class="level2">
 <h2 class="anchored" data-anchor-id="why-ds-code-needs-tests">1. Why DS Code Needs Tests</h2>
-<p>A normalization function applied after the train/test split instead of before. A <code>fillna(0)</code> that should have been <code>fillna(df["score"].mean())</code>. A boolean column that silently became an integer. These bugs do not raise exceptions; they produce wrong outputs quietly.</p>
-<p>In DS, silent bugs are the hard ones. A test suite converts “I think this is right” into “this is verifiably correct, and stays correct when the code changes.”</p>
-<div class="cell" data-layout-align="default">
-<div class="cell-output-display">
-<div>
-<p></p><figure class="figure"><p></p>
-<div>
-<pre class="mermaid mermaid-js">flowchart LR
-    A["pytest discovers\ntest_*.py files"] --&gt; B["run @pytest.fixture\nsetup phase"]
-    B --&gt; C["execute test body\nassert statements"]
-    C --&gt; D{assert passes?}
-    D --&gt;|yes| E["PASSED"]
-    D --&gt;|no| F["FAILED\nfull traceback"]
-    E &amp; F --&gt; G["teardown\n(yield fixtures)"]
-    G --&gt; H["next test"]
-
-    style E fill:#EBF5F0,stroke:#059669,color:#065F46
-    style F fill:#FEF2F2,stroke:#DC2626,color:#991B1B
-</pre>
-</div>
-<p></p></figure><p></p>
-</div>
-</div>
+<p>A normalization function applied after the train/test split instead of before. A <code>fillna(0)</code> that should have been <code>fillna(df["score"].mean())</code>. A boolean column that silently became an integer. These bugs don’t raise exceptions; they produce wrong outputs quietly.</p>
+<p>Silent bugs are the hard ones. A test suite converts “I think this is right” into “this is verifiably correct, and stays correct when the code changes.”</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="figs/pytest-lifecycle.svg" class="img-fluid figure-img" alt="Linear flow with six stages. Discover (gray), fixture setup (blue), test body (blue), assert diamond (PASSED green / FAILED red), teardown (gray), next test (gray with loop arc)."></p>
+<figcaption>pytest test execution lifecycle: discover test files, run fixtures for setup, execute the test body, check whether the assert passes (PASSED in green, FAILED with traceback in red), run teardown, then move to the next test.</figcaption>
+</figure>
 </div>
 <p>Here is the simplest possible test for <code>compute_grade</code>:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># tests/test_core.py</span></span>
@@ -699,7 +672,7 @@ Note
 <span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">assert</span> <span class="bu">abs</span>(result <span class="op">-</span> <span class="fl">84.25</span>) <span class="op">&lt;</span> <span class="fl">0.01</span>   <span class="co"># 0.30*80 + 0.45*85 + 0.25*90</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Run it:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run pytest tests/ <span class="at">-v</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>The <code>-v</code> flag shows each test name and its pass/fail status. Without it, pytest shows only a dot per passing test. A handful of flags cover the vast majority of what you need day-to-day:</p>
+<p>The <code>-v</code> flag shows each test name and its pass/fail status. Without it, pytest shows only a dot per passing test. A handful of flags cover most of what you need day-to-day:</p>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 50%">
@@ -741,12 +714,12 @@ Note
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run pytest tests/ <span class="at">-x</span> <span class="at">--tb</span><span class="op">=</span>short   <span class="co"># stop on first failure with compact output</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run pytest tests/ <span class="at">-k</span> <span class="st">"parametrize"</span> <span class="co"># run tests matching a keyword</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="ark-concept">
-<p><span class="ark-concept-title"><i class="bi bi-info-circle-fill"></i> Key Concept: A test is an executable specification</span><br><br> <code>test_compute_grade_defaults</code> says: given these inputs, this function must return this value. If the function ever changes and breaks this, the test fails immediately. A failing test is not a problem; it is useful information. A passing test on wrong code is the actual problem.</p>
+<p><span class="ark-concept-title"><i class="bi bi-info-circle-fill"></i> Key Concept: A test is an executable specification</span><br><br> <code>test_compute_grade_defaults</code> says: given these inputs, this function must return this value. If the function ever changes and breaks this, the test fails immediately. A failing test isn’t a problem – it’s useful information. A passing test on wrong code is the actual problem.</p>
 </div>
 </section>
 <section id="parametrize-one-test-many-inputs" class="level2">
 <h2 class="anchored" data-anchor-id="parametrize-one-test-many-inputs">2. Parametrize: One Test, Many Inputs</h2>
-<p>Writing one test function per boundary case produces a lot of duplicated code. <code>@pytest.mark.parametrize</code> runs the same test body once per row in a table of inputs.</p>
+<p>Writing one test function per boundary case produces a lot of duplicated code. <code>@pytest.mark.parametrize</code> runs the same test body once per row in a table of inputs – adding a new edge case is one extra row, not a new function.</p>
 <p>Grade boundaries in <code>grade-predictor</code>:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pytest</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> grade_predictor.core <span class="im">import</span> grade_to_letter</span>
@@ -764,7 +737,7 @@ Note
 <pre class="text"><code>tests/test_core.py::test_grade_letter_boundaries[90.0-92.0-88.0-A] PASSED
 tests/test_core.py::test_grade_letter_boundaries[75.0-78.0-80.0-B] PASSED
 ...</code></pre>
-<p>Adding a new edge case is one extra row. Without parametrize, it is a new function. Parametrize also makes it easy to spot which case failed: the bracket notation shows the exact inputs that produced the failure.</p>
+<p>The bracket notation in the output shows the exact inputs that produced the failure, which makes diagnosis fast.</p>
 <div class="ark-activity">
 <span class="ark-activity-title"><i class="bi bi-puzzle-fill"></i> Activity 1 - Parametrize a Boundary Test</span><br><br> <b>Goal:</b> Write a <code>normalize_score(raw, min_val, max_val)</code> function in <code>core.py</code> that maps a raw score to the 0-100 range. Write a parametrized test covering: raw equals min_val returns 0, raw equals max_val returns 100, and one midpoint. Confirm all three cases pass.
 <pre>@pytest.mark.parametrize("raw,min_val,max_val,expected", [
@@ -777,7 +750,7 @@ def test_normalize_score(raw, min_val, max_val, expected): ...</pre>
 </section>
 <section id="fixtures-for-reusable-test-data" class="level2">
 <h2 class="anchored" data-anchor-id="fixtures-for-reusable-test-data">3. Fixtures for Reusable Test Data</h2>
-<p>A fixture is a function that provides a value to a test. Any test that declares the fixture’s name as a parameter receives it automatically. Fixtures live in <code>conftest.py</code> so they are shared across all test files.</p>
+<p>A fixture is a function that provides a value to a test. Any test that declares the fixture’s name as a parameter receives it automatically. Fixtures live in <code>conftest.py</code> so they’re shared across all test files.</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># tests/conftest.py</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pytest</span>
@@ -824,7 +797,7 @@ def test_normalize_score(raw, min_val, max_val, expected): ...</pre>
 </tr>
 </tbody>
 </table>
-<p>For a fixture that loads <code>university_analytics.csv</code>, use <code>session</code> scope. Reading 2,400 rows once per run is fast enough; reading it 40 times (once per test) adds up.</p>
+<p>For a fixture that loads <code>university_analytics.csv</code>, use <code>session</code> scope. Reading 2,400 rows once per run is fast enough; reading it 40 times (once per test) adds up quickly.</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="at">@pytest.fixture</span>(scope<span class="op">=</span><span class="st">"session"</span>)</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> university_df() <span class="op">-&gt;</span> pd.DataFrame:</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> pd.read_csv(<span class="st">"data/university_analytics.csv"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -850,7 +823,7 @@ def small_df():
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    result <span class="op">=</span> filter_passing(sample_df)</span>
 <span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    expected <span class="op">=</span> sample_df.iloc[[<span class="dv">0</span>, <span class="dv">1</span>]].reset_index(drop<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    pd.testing.assert_frame_equal(result, expected, check_like<span class="op">=</span><span class="va">True</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p><code>check_like=True</code> ignores column and row order. This is usually what you want when testing a filter: the data should match, but the order may vary.</p>
+<p><code>check_like=True</code> ignores column and row order. When testing a filter, that’s usually what you want: the data should match, but the order doesn’t have to.</p>
 <p><strong>Pattern 3: dtype and schema assertions</strong></p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> test_output_dtypes(sample_df):</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    <span class="im">from</span> grade_predictor.core <span class="im">import</span> add_average_marks</span>
@@ -867,9 +840,9 @@ def small_df():
 <span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>    result <span class="op">=</span> compute_grade(midterm<span class="op">=</span><span class="fl">80.0</span>, final<span class="op">=</span><span class="fl">85.0</span>, project<span class="op">=</span><span class="fl">90.0</span>)</span>
 <span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">assert</span> result <span class="op">==</span> pytest.approx(<span class="fl">84.25</span>, rel<span class="op">=</span><span class="fl">1e-4</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><code>pytest.approx</code> also works on lists and dicts of floats: <code>assert [0.1 + 0.2, 0.3] == pytest.approx([0.3, 0.3])</code>.</p>
-<p>These four patterns together test the shape, the values, the types, and numeric precision. A transform that passes all four is well-specified.</p>
+<p>Together these four patterns test the shape, the values, the types, and numeric precision. A transform that passes all four is well-specified.</p>
 <div class="ark-mistake">
-<p><span class="ark-mistake-title"><i class="bi bi-bug-fill"></i> Common Mistake: <code>assert df1.equals(df2)</code> for floats</span><br><br> <code>DataFrame.equals</code> uses exact equality. Floating-point arithmetic means <code>0.30 * 80 + 0.45 * 85 + 0.25 * 90</code> may not equal <code>84.25</code> to the last bit on all platforms. <code>pd.testing.assert_frame_equal</code> has <code>check_exact=False</code> and <code>rtol</code> and <code>atol</code> parameters for numeric tolerance. Use it for all DataFrame comparisons.</p>
+<p><span class="ark-mistake-title"><i class="bi bi-bug-fill"></i> Common Mistake: <code>assert df1.equals(df2)</code> for floats</span><br><br> <code>DataFrame.equals</code> uses exact equality, and floating-point arithmetic means <code>0.30 * 80 + 0.45 * 85 + 0.25 * 90</code> may not equal <code>84.25</code> to the last bit on all platforms. Your test passes on your machine and fails in CI. Use <code>pd.testing.assert_frame_equal</code> instead – it has <code>check_exact=False</code> and <code>rtol</code>/<code>atol</code> parameters for numeric tolerance.</p>
 </div>
 <div class="ark-activity">
 <span class="ark-activity-title"><i class="bi bi-puzzle-fill"></i> Activity 3 - Test a Transform</span><br><br> <b>Goal:</b> Write an <code>add_average_marks(df)</code> function in <code>core.py</code> that adds a column <code>average_marks = (midterm + final + project) / 3</code>. Write three tests: shape assertion, <code>assert_frame_equal</code> on a manually computed expected DataFrame, and a dtype check. All three should pass.
@@ -882,11 +855,11 @@ def test_add_average_marks_shape(sample_df):
 </section>
 <section id="testing-exception-handling" class="level2">
 <h2 class="anchored" data-anchor-id="testing-exception-handling">5. Testing Exception Handling</h2>
-<p>A function that raises a clear exception on bad input is better than one that silently returns a wrong answer. Test the exception with <code>pytest.raises</code>:</p>
+<p>A function that raises a clear exception on bad input is better than one that silently returns a wrong answer. Test the exception:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> test_invalid_weights_raises():</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> pytest.raises(<span class="pp">ValueError</span>, match<span class="op">=</span><span class="st">"weights must sum to 1"</span>):</span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>        compute_grade(<span class="fl">80.0</span>, <span class="fl">85.0</span>, <span class="fl">90.0</span>, weights<span class="op">=</span>(<span class="fl">0.5</span>, <span class="fl">0.5</span>, <span class="fl">0.5</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>The <code>match</code> argument checks that the error message contains the given string. Without <code>match</code>, the test passes for any <code>ValueError</code>, even one from an unrelated part of the code. With <code>match</code>, you confirm that the right error, from the right place, with the right message, was raised.</p>
+<p>The <code>match</code> argument checks that the error message contains the given string. Without it, the test passes for any <code>ValueError</code>, even one from an unrelated part of the code. With it, you’re confirming the right error from the right place with the right message.</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># tests/test_core.py</span></span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="at">@pytest.mark.parametrize</span>(<span class="st">"weights"</span>, [</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    (<span class="fl">0.5</span>, <span class="fl">0.5</span>, <span class="fl">0.5</span>),    <span class="co"># sums to 1.5</span></span>
@@ -902,43 +875,27 @@ def test_add_average_marks_shape(sample_df):
 </section>
 <section id="coverage" class="level2">
 <h2 class="anchored" data-anchor-id="coverage">6. Coverage</h2>
-<p>Coverage measures which lines of code are executed during the test suite. Lines that are never executed are either dead code or untested paths.</p>
+<p>Coverage measures which lines of code are executed during the test suite. Lines that are never executed are either dead code or untested paths – and you want to know which.</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run pytest tests/ <span class="at">--cov</span><span class="op">=</span>grade_predictor <span class="at">--cov-report</span><span class="op">=</span>term-missing</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>The <code>term-missing</code> report shows which specific lines are not covered. A line number in the “missing” column means no test exercises that path.</p>
+<p>The <code>term-missing</code> report shows which specific lines aren’t covered. A line number in the “missing” column means no test exercises that path.</p>
 <p>Enforce a minimum threshold in <code>pyproject.toml</code>:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode toml code-with-copy"><code class="sourceCode toml"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="kw">[tool.pytest.ini_options]</span></span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="dt">testpaths</span> <span class="op">=</span> <span class="op">[</span><span class="st">"tests"</span><span class="op">]</span></span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="dt">addopts</span> <span class="op">=</span> <span class="st">"--cov=grade_predictor --cov-report=term-missing --cov-fail-under=80"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>With <code>--cov-fail-under=80</code>, pytest exits with a non-zero code if coverage drops below 80%. CI catches this automatically.</p>
-<p>The right target for DS library code is 80% to 85%. 100% is often counterproductive: it forces testing trivial property accessors and error messages that add no value. What matters is covering every code path that can produce a wrong answer silently.</p>
+<p>The right target for DS library code is 80% to 85%. 100% is often counterproductive – it forces testing trivial property accessors and error messages that add no value. What matters is covering every code path that can produce a wrong answer silently.</p>
 <div class="ark-tip">
-<p><span class="ark-tip-title"><i class="bi bi-lightbulb-fill"></i> Pro Tip: Focus coverage on the paths that matter</span><br><br> A missing line on a trivial <code>return self._name</code> property is not worth a test. A missing line on the normalization branch of a preprocessing function is. Read the “missing” column as a checklist of untested logic paths, not a number to maximize for its own sake.</p>
+<p><span class="ark-tip-title"><i class="bi bi-lightbulb-fill"></i> Pro Tip: Focus coverage on the paths that matter</span><br><br> A missing line on a trivial <code>return self._name</code> property isn’t worth a test. A missing line on the normalization branch of a preprocessing function is. Read the “missing” column as a checklist of untested logic paths, not a number to maximize for its own sake.</p>
 </div>
 </section>
 <section id="organizing-a-ds-test-suite" class="level2">
 <h2 class="anchored" data-anchor-id="organizing-a-ds-test-suite">7. Organizing a DS Test Suite</h2>
-<p>The standard structure for a DS project follows the test pyramid: many fast unit tests at the base, fewer integration tests in the middle, and a small number of end-to-end tests at the top.</p>
-<div class="cell" data-layout-align="default">
-<div class="cell-output-display">
-<div>
-<p></p><figure class="figure"><p></p>
-<div>
-<pre class="mermaid mermaid-js">flowchart TD
-    E2E["End-to-End\nfull pipeline: CSV in, report out\nfew, slow, run in CI only"]
-    INT["Integration\nmodule boundaries: pipeline + io\nsome, seconds, run pre-push"]
-    UNIT["Unit\nsingle functions: compute_grade, flag_at_risk\nmany, milliseconds, run on every save"]
-
-    UNIT --&gt;|"build confidence"| INT
-    INT --&gt;|"build confidence"| E2E
-
-    style E2E fill:#FEF2F2,stroke:#DC2626,color:#991B1B
-    style INT fill:#EAF3FA,stroke:#0369A1,color:#0C4A6E
-    style UNIT fill:#EBF5F0,stroke:#059669,color:#065F46
-</pre>
-</div>
-<p></p></figure><p></p>
-</div>
-</div>
+<p>The standard structure for a DS project follows the test pyramid: many fast unit tests at the base, fewer integration tests in the middle, a small number of end-to-end tests at the top.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="figs/pytest-pyramid.svg" class="img-fluid figure-img" alt="Triangle divided into three horizontal layers. Base (green): Unit tests. Middle (blue): Integration tests. Top (red): End-to-End tests. Side labels: speed increases downward, confidence increases upward."></p>
+<figcaption>Test pyramid: unit tests at the base (many, milliseconds each, run on every save), integration tests in the middle (some, seconds each, run pre-push), end-to-end tests at the top (few, minutes each, run in CI only).</figcaption>
+</figure>
 </div>
 <pre class="text"><code>tests/
 ├── conftest.py            # shared fixtures: sample_df, university_df
@@ -947,14 +904,14 @@ def test_add_average_marks_shape(sample_df):
 │   └── test_config.py     # settings and environment variable loading
 └── integration/
     └── test_pipeline.py   # end-to-end: load CSV, transform, compute grades</code></pre>
-<p>Unit tests test one function in isolation with synthetic data. They run in milliseconds and should always run. Integration tests test the full pipeline with real data from disk. They run in seconds and should run in CI and before releases.</p>
+<p>Unit tests test one function in isolation with synthetic data. They run in milliseconds and should always run. Integration tests test the full pipeline with real data from disk – they run in seconds and belong in CI and pre-release checks.</p>
 <p>Run only unit tests locally during development, all tests in CI:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run pytest tests/unit/ <span class="at">-v</span>                    <span class="co"># fast, local</span></span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run pytest tests/ <span class="at">-v</span> <span class="at">--override-ini</span><span class="op">=</span>addopts=  <span class="co"># full suite, CI</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="mocking-external-dependencies" class="level2">
 <h2 class="anchored" data-anchor-id="mocking-external-dependencies">8. Mocking External Dependencies</h2>
-<p>Some code cannot be tested with real data: a function that calls an API, reads from a database, or writes to a file. Mocking replaces that dependency with a controlled substitute for the duration of the test.</p>
+<p>Some code can’t be tested with real data: a function that calls an API, reads from a database, or writes to a file. Mocking replaces that dependency with a controlled substitute for the duration of the test.</p>
 <p><code>unittest.mock.patch</code> is the standard tool. It temporarily replaces an object at a given import path with a <code>MagicMock</code> that you control:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># grade_predictor/io.py</span></span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> requests</span>
@@ -980,9 +937,9 @@ def test_add_average_marks_shape(sample_df):
 <span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a>    mock_get.assert_called_once_with(<span class="st">"https://api.example.com/courses"</span>)</span>
 <span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">assert</span> result <span class="op">==</span> [{<span class="st">"course_id"</span>: <span class="st">"C01"</span>, <span class="st">"name"</span>: <span class="st">"Stats"</span>}]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="ark-concept">
-<p><span class="ark-concept-title"><i class="bi bi-info-circle-fill"></i> Key Concept: Patch at the import location, not the definition location</span><br><br> <code>requests.get</code> is defined in the <code>requests</code> library, but <code>fetch_course_list</code> imports it into <code>grade_predictor.io</code>. Patching <code>requests.get</code> would not work because the function already has a reference to the original. Patch <code>“grade_predictor.io.requests.get”</code>: the name as it appears inside the module under test. This is the single most common mock mistake.</p>
+<p><span class="ark-concept-title"><i class="bi bi-info-circle-fill"></i> Key Concept: Patch at the import location, not the definition location</span><br><br> Patching <code>requests.get</code> won’t work because <code>fetch_course_list</code> already holds a reference to the original. You have to patch <code>“grade_predictor.io.requests.get”</code> – the name as it appears inside the module under test. This is the single most common mock mistake.</p>
 </div>
-<p>For pandas-based code, mock the file read so tests do not depend on a real CSV being present:</p>
+<p>For pandas-based code, mock the file read so tests don’t depend on a real CSV being present:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> unittest.mock <span class="im">import</span> patch</span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -998,7 +955,7 @@ def test_add_average_marks_shape(sample_df):
 <span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">assert</span> <span class="bu">len</span>(result) <span class="op">==</span> <span class="dv">2</span></span>
 <span id="cb23-15"><a href="#cb23-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">assert</span> <span class="st">"final_score"</span> <span class="kw">in</span> result.columns</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p><code>pytest-mock</code> is a thin wrapper that makes the same pattern slightly cleaner as a fixture:</p>
+<p><code>pytest-mock</code> wraps the same pattern slightly cleaner as a fixture:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb24"><pre class="sourceCode toml code-with-copy"><code class="sourceCode toml"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># pyproject.toml</span></span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="kw">[project.optional-dependencies]</span></span>
 <span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="dt">test</span> <span class="op">=</span> <span class="op">[</span><span class="st">"pytest"</span><span class="op">,</span> <span class="st">"pytest-cov"</span><span class="op">,</span> <span class="st">"pytest-mock"</span><span class="op">]</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -1011,7 +968,7 @@ def test_add_average_marks_shape(sample_df):
 <span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>    result <span class="op">=</span> fetch_course_list(<span class="st">"https://api.example.com/courses"</span>)</span>
 <span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">assert</span> result[<span class="dv">0</span>][<span class="st">"course_id"</span>] <span class="op">==</span> <span class="st">"C01"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="ark-mistake">
-<p><span class="ark-mistake-title"><i class="bi bi-bug-fill"></i> Common Mistake: Over-mocking</span><br><br> If a test mocks every function the code under test calls, it is no longer testing the code: it is testing the mock. A unit test should run the real logic and mock only the I/O boundary: network calls, file reads, database queries. A function that computes a grade from numbers does not need any mocking. A function that reads grades from an API does. Mock the API; run the computation logic for real.</p>
+<p><span class="ark-mistake-title"><i class="bi bi-bug-fill"></i> Common Mistake: Over-mocking</span><br><br> If a test mocks every function the code under test calls, it’s no longer testing the code – it’s testing the mock. A unit test should run the real logic and mock only the I/O boundary: network calls, file reads, database queries. A function that computes a grade from numbers doesn’t need any mocking. Mock the API; run the computation logic for real.</p>
 </div>
 <div class="ark-activity">
 <span class="ark-activity-title"><i class="bi bi-puzzle-fill"></i> Activity 5 - Mock a CSV Load</span><br><br> <b>Goal:</b> Write a <code>load_grades(path: str) -&gt; pd.DataFrame</code> function in <code>grade_predictor/io.py</code> that calls <code>pd.read_csv(path)</code>. Write a test that mocks <code>pd.read_csv</code> to return a two-row DataFrame, calls <code>load_grades(“any/path.csv”)</code>, and asserts the result has two rows without reading a real file.
@@ -1027,16 +984,16 @@ def test_load_grades_mocked():
 </section>
 <section id="modern-built-in-fixtures" class="level2">
 <h2 class="anchored" data-anchor-id="modern-built-in-fixtures">9. Modern Built-in Fixtures</h2>
-<p>pytest ships three fixtures that cover a large class of I/O and environment problems without any extra package. They require no import in your test file.</p>
+<p>pytest ships three fixtures that cover a large class of I/O and environment problems without any extra package – and they don’t need to be imported.</p>
 <p><strong><code>tmp_path</code>: isolated temporary directories</strong></p>
-<p>Any test that writes to disk should write to a temporary directory that disappears after the test. <code>tmp_path</code> provides a <code>pathlib.Path</code> object pointing to a unique directory created for each test:</p>
+<p>Any test that writes to disk should write to a directory that disappears after the test. <code>tmp_path</code> provides a <code>pathlib.Path</code> pointing to a unique directory created for each test:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> test_pipeline_writes_output(tmp_path):</span>
 <span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>    <span class="im">from</span> grade_predictor.pipeline <span class="im">import</span> run_pipeline</span>
 <span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>    output_file <span class="op">=</span> tmp_path <span class="op">/</span> <span class="st">"results.csv"</span></span>
 <span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>    run_pipeline(output_path<span class="op">=</span>output_file)</span>
 <span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">assert</span> output_file.exists()</span>
 <span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">assert</span> output_file.stat().st_size <span class="op">&gt;</span> <span class="dv">0</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>No cleanup needed: pytest removes the directory after the test completes.</p>
+<p>No cleanup needed – pytest removes the directory after the test completes.</p>
 <p><strong><code>monkeypatch</code>: patching environment variables and objects</strong></p>
 <p><code>monkeypatch</code> is pytest’s built-in alternative to <code>unittest.mock.patch</code> for patching attributes, environment variables, and dictionary entries. Changes are automatically undone after each test:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> test_pipeline_config_from_env(monkeypatch):</span>
@@ -1045,9 +1002,9 @@ def test_load_grades_mocked():
 <span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>    <span class="im">from</span> grade_predictor.config <span class="im">import</span> PipelineConfig</span>
 <span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>    cfg <span class="op">=</span> PipelineConfig()</span>
 <span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">assert</span> cfg.model_threshold <span class="op">==</span> <span class="fl">0.75</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Use <code>monkeypatch.setattr</code> to patch any object attribute: <code>monkeypatch.setattr(module, "function_name", mock_fn)</code>.</p>
+<p>Use <code>monkeypatch.setattr</code> to patch any object attribute – <code>monkeypatch.setattr(module, "function_name", mock_fn)</code> – and the original is restored when the test exits.</p>
 <p><strong><code>capfd</code>: capturing stdout and stderr</strong></p>
-<p><code>capfd</code> captures file-descriptor-level output, including output from C extensions and subprocesses:</p>
+<p><code>capfd</code> captures file-descriptor-level output, including output from C extensions and subprocesses – useful when the code you’re testing prints rather than returns:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> test_report_prints_summary(capfd):</span>
 <span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>    <span class="im">from</span> grade_predictor.report <span class="im">import</span> print_summary</span>
 <span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>    print_summary(pass_rate<span class="op">=</span><span class="fl">0.82</span>, total<span class="op">=</span><span class="dv">120</span>)</span>
@@ -1191,7 +1148,7 @@ Coverage configured in <code>pyproject.toml</code> with <code>–cov-fail-under=
 </div>
 </div>
 </div>
-<p><strong>Next:</strong> <a href="../../tutorials/02-dev-tools/06-pre-commit-automation.html">Part 18: Automation with pre-commit</a> automates every check from Parts 14-17 so they run without thinking.</p>
+<p><strong>Next:</strong> <a href="../../tutorials/02-dev-tools/06-pre-commit-automation.html">Part 18: Automation with pre-commit</a> – every check from Parts 14-17, running automatically without having to remember to.</p>
 
 
 </section>

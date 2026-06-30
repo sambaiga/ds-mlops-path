@@ -108,9 +108,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   }
 }</script>
 <style>html{ scroll-behavior: smooth; }</style>
-<script src="../../site_libs/quarto-diagram/mermaid.min.js"></script>
-<script src="../../site_libs/quarto-diagram/mermaid-init.js"></script>
-<link href="../../site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
 
 
 </head>
@@ -477,7 +474,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </figure>
 </div>
 <p><strong>DS-MLOps Dev Tools</strong></p>
-<p><strong>Python 3.12+ | Author: Anthony Faustine</strong></p>
+<p><strong>Python 3.12+ | Author: Anthony Faustine</strong> You can run Python in any text editor. But without type hints catching errors before you run, function signatures appearing inline, and a terminal that already knows your project interpreter, you’re developing blind.</p>
+<p>Setting up VS Code properly takes under 30 minutes. Part 14 (<code>01-uv-project-setup.qmd</code>) uses this editor to build and run a real project for the first time – so get this right first.</p>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
@@ -621,10 +619,10 @@ Note
 </div>
 </div>
 </div>
-<p>Every file in this book is written, run, and debugged in an editor. The configuration in this chapter – the right Python interpreter, format-on-save, and git integration – eliminates a class of friction that slows beginners down before they even start writing code. Set it up once here and it carries through every chapter that follows.</p>
+<p>Every file in this book is written, run, and debugged in an editor. The configuration here – the right Python interpreter, format-on-save, and git integration – eliminates the friction that slows people down before they’ve written a single line of real code. Set it up once and it carries through every chapter that follows.</p>
 <section id="installing-vs-code" class="level2">
 <h2 class="anchored" data-anchor-id="installing-vs-code">1. Installing VS Code</h2>
-<p>VS Code is a free, open-source editor published by Microsoft. It runs on macOS, Linux, and Windows and has the largest Python extension ecosystem of any editor.</p>
+<p>VS Code is a free, open-source editor from Microsoft. It runs on macOS, Linux, and Windows and has the largest Python extension ecosystem of any editor.</p>
 <p>Download the installer for your platform from the official site:</p>
 <blockquote class="blockquote">
 <p><strong><a href="https://code.visualstudio.com/download">code.visualstudio.com/download</a></strong></p>
@@ -698,42 +696,11 @@ Note
 <section id="essential-extensions" class="level2">
 <h2 class="anchored" data-anchor-id="essential-extensions">2. Essential Extensions</h2>
 <p>The nine extensions below cover every layer of a DS/MLOps project:</p>
-<div class="cell" data-layout-align="default">
-<div class="cell-output-display">
-<div>
-<p></p><figure class="figure"><p></p>
-<div>
-<pre class="mermaid mermaid-js">flowchart TB
-    VSCode["VS Code"]
-
-    subgraph Python["Python Layer"]
-        PY["Python\nms-python.python"]
-        PYL["Pylance\nms-python.vscode-pylance"]
-        RUFF["Ruff\ncharliermarsh.ruff"]
-    end
-
-    subgraph Jupyter["Notebook Layer"]
-        JUP["Jupyter\nms-toolsai.jupyter"]
-        JKEY["Jupyter Keymap\nms-toolsai.jupyter-keymap"]
-    end
-
-    subgraph Git["Git Layer"]
-        GL["GitLens\neamodio.gitlens"]
-        GH["GitHub Pull Requests\ngithub.vscode-pull-request-github"]
-    end
-
-    subgraph QoL["Quality of Life"]
-        IR["indent-rainbow"]
-        YAML["YAML (Red Hat)"]
-        TOML["Even Better TOML"]
-    end
-
-    VSCode --&gt; Python &amp; Jupyter &amp; Git &amp; QoL
-</pre>
-</div>
-<p></p></figure><p></p>
-</div>
-</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="figs/vscode-extensions.svg" class="img-fluid figure-img" alt="Hub-and-spoke diagram. Center: VS Code. Four surrounding panels: blue Python Layer, green Notebook Layer, purple Git Layer, amber Quality of Life. Each panel lists its extension names and IDs."></p>
+<figcaption>VS Code extension stack: Python layer (Python, Pylance, Ruff), Notebook layer (Jupyter, Jupyter Keymap), Git layer (GitLens, GitHub Pull Requests), and Quality of Life extensions (indent-rainbow, YAML, TOML), all connected to the VS Code hub.</figcaption>
+</figure>
 </div>
 <p>Open the Extensions panel (<code>Cmd/Ctrl+Shift+X</code>) and install each of these. The extension ID is in parentheses; paste it into the search box for an exact match.</p>
 <section id="core-python-and-linting" class="level3">
@@ -915,7 +882,7 @@ Note
 <li><code>editor.rulers: [100]</code>: vertical guide at column 100 (matches <code>line-length = 100</code> in <code>pyproject.toml</code>)</li>
 </ul>
 <div class="ark-concept">
-<p><span class="ark-concept-title"><i class="bi bi-info-circle-fill"></i> Key Concept: Workspace settings override user settings</span><br><br> A developer’s personal <code>settings.json</code> might use Black as the formatter. When they open your project, the workspace <code>.vscode/settings.json</code> overrides that for Python files only. Their other projects are untouched. This is how you enforce a consistent formatter across a team without overwriting anyone’s personal preferences.</p>
+<p><span class="ark-concept-title"><i class="bi bi-info-circle-fill"></i> Key Concept: Workspace settings override user settings</span><br><br> A teammate’s personal <code>settings.json</code> might use Black. They open your project, and the workspace <code>.vscode/settings.json</code> quietly overrides that for Python files only – their other projects aren’t touched. That’s how you enforce a consistent formatter across a team without overwriting anyone’s personal preferences.</p>
 </div>
 <div class="ark-activity">
 <p><span class="ark-activity-title"><i class="bi bi-puzzle-fill"></i> Activity 1 - Format on Save</span><br><br> <b>Goal:</b> Create <code>.vscode/settings.json</code> with the configuration above. Open <code>core.py</code>, add an intentionally badly-formatted function, and save the file. Confirm that ruff reformats it automatically on save. The status bar at the bottom should show no ruff errors.</p>
@@ -923,7 +890,7 @@ Note
 </section>
 <section id="pointing-vs-code-at-the-uv-.venv-interpreter" class="level2">
 <h2 class="anchored" data-anchor-id="pointing-vs-code-at-the-uv-.venv-interpreter">4. Pointing VS Code at the uv <code>.venv</code> Interpreter</h2>
-<p>After running <code>uv sync</code>, a <code>.venv/</code> directory exists in the project root. VS Code needs to know about it to provide autocomplete and run code correctly.</p>
+<p>After running <code>uv sync</code>, a <code>.venv/</code> directory exists in the project root. VS Code needs to know about it – without this, autocomplete is guessing and code won’t run correctly.</p>
 <p><strong>Option A: Auto-detect (VS Code usually picks this up automatically):</strong></p>
 <ol type="1">
 <li>Open the project folder (<code>code .</code> from the terminal)</li>
@@ -943,14 +910,14 @@ Note
 <blockquote class="blockquote">
 <p>Source: <a href="https://code.visualstudio.com/docs/python/environments">VS Code Python Environments</a></p>
 </blockquote>
-<p>Once the interpreter is set, the IntelliSense for all packages installed by <code>uv sync</code> becomes available. Hovering over a pandas function shows its signature; <code>Cmd+Click</code> jumps to the source.</p>
+<p>Once it’s set, IntelliSense for all packages installed by <code>uv sync</code> becomes available. Hover over a pandas function to see its signature; <code>Cmd+Click</code> jumps to the source.</p>
 <div class="ark-mistake">
-<p><span class="ark-mistake-title"><i class="bi bi-bug-fill"></i> Common Mistake: Using the system Python or a conda env instead of .venv</span><br><br> If the Status Bar shows <code>Python 3.x.x 64-bit</code> without a path, VS Code is using the system Python. Packages installed by <code>uv sync</code> will not be visible, autocomplete will be incomplete, and notebooks will fail to import project dependencies. Always confirm the interpreter path ends with <code>.venv/bin/python</code>.</p>
+<p><span class="ark-mistake-title"><i class="bi bi-bug-fill"></i> Common Mistake: Using the system Python or a conda env instead of .venv</span><br><br> If the Status Bar shows <code>Python 3.x.x 64-bit</code> without a path, you’re on the system Python. Packages installed by <code>uv sync</code> won’t be visible, autocomplete will be incomplete, and notebooks will fail to import project dependencies. Always confirm the interpreter path ends with <code>.venv/bin/python</code>.</p>
 </div>
 </section>
 <section id="jupyter-notebooks-in-vs-code" class="level2">
 <h2 class="anchored" data-anchor-id="jupyter-notebooks-in-vs-code">5. Jupyter Notebooks in VS Code</h2>
-<p>With the Jupyter and Python extensions installed, VS Code opens <code>.ipynb</code> files as interactive notebooks. The experience is close to JupyterLab with some advantages: IntelliSense works inside cells, you can set breakpoints, and the Variable Inspector shows live DataFrame previews.</p>
+<p>With the Jupyter and Python extensions installed, VS Code opens <code>.ipynb</code> files as interactive notebooks. The experience is close to JupyterLab with some advantages: IntelliSense works inside cells, you can set breakpoints in notebook code, and the Variable Inspector shows live DataFrame previews.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="https://code.visualstudio.com/assets/docs/datascience/jupyter/native-code-runs.png" class="img-fluid figure-img"></p>
@@ -995,14 +962,14 @@ Note
 </tr>
 </tbody>
 </table>
-<p><strong>Select the kernel:</strong> when you first open a notebook, VS Code asks which kernel to use. Choose the <code>.venv</code> Python interpreter. This ensures every <code>import</code> in the notebook finds the packages installed by <code>uv sync</code>.</p>
+<p><strong>Select the kernel:</strong> when you first open a notebook, VS Code asks which kernel to use. Choose the <code>.venv</code> Python interpreter – that’s what ensures every <code>import</code> in the notebook finds the packages installed by <code>uv sync</code>.</p>
 <div class="ark-activity">
 <p><span class="ark-activity-title"><i class="bi bi-puzzle-fill"></i> Activity 2 - Run a Notebook in VS Code</span><br><br> <b>Goal:</b> Open <code>tutorials/01-python-basics/08-pandas-core.ipynb</code> in VS Code. Select the <code>.venv</code> kernel. Run the first three cells with <code>Shift+Enter</code>. Open the Variable Inspector and confirm the DataFrame is visible. Change one cell to produce a different output and save.</p>
 </div>
 </section>
 <section id="git-and-gitlens-in-vs-code" class="level2">
 <h2 class="anchored" data-anchor-id="git-and-gitlens-in-vs-code">6. Git and GitLens in VS Code</h2>
-<p>VS Code has a built-in Source Control panel (<code>Cmd/Ctrl+Shift+G</code>). It shows every modified file as a coloured indicator in the Explorer and in the Source Control panel, where you can stage, commit, and push without touching the terminal.</p>
+<p>VS Code’s built-in Source Control panel (<code>Cmd/Ctrl+Shift+G</code>) shows every modified file as a coloured indicator in the Explorer. From there you can stage, commit, and push without ever touching the terminal.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="https://code.visualstudio.com/assets/docs/sourcecontrol/overview/overview.png" class="img-fluid figure-img"></p>
@@ -1014,8 +981,8 @@ Note
 </blockquote>
 <section id="gitlens-features" class="level3">
 <h3 class="anchored" data-anchor-id="gitlens-features">GitLens features</h3>
-<p>GitLens enhances the built-in git support. The three features used most in DS work:</p>
-<p><strong>Inline blame:</strong> hover over any line to see who wrote it and when. Useful when debugging a pipeline step someone else wrote.</p>
+<p>GitLens enhances the built-in git support. Three features you’ll reach for most in DS work:</p>
+<p><strong>Inline blame:</strong> hover over any line to see who wrote it and when – indispensable when you’re debugging a pipeline step someone else wrote.</p>
 <p><strong>File History:</strong> right-click a file → “Open File History” to see every commit that touched it as a timeline.</p>
 <p><strong>Branch comparison:</strong> in the GitLens sidebar, compare two branches to see exactly which files and lines differ, useful before opening a PR.</p>
 <div class="quarto-figure quarto-figure-center">
@@ -1038,18 +1005,18 @@ Note
 <li>Merge a PR without leaving VS Code</li>
 </ul>
 <div class="ark-tip">
-<p><span class="ark-tip-title"><i class="bi bi-lightbulb-fill"></i> Pro Tip: Use the editor’s diff view to review your changes before committing</span><br><br> Click any modified file in the Source Control panel to open a side-by-side diff. This is the best way to catch accidental changes (a stray debug print, a hardcoded path, a dropped import) before they enter git history.</p>
+<p><span class="ark-tip-title"><i class="bi bi-lightbulb-fill"></i> Pro Tip: Use the editor’s diff view to review your changes before committing</span><br><br> Click any modified file in the Source Control panel to open a side-by-side diff. It’s the fastest way to catch accidental changes – a stray debug print, a hardcoded path, a dropped import – before they’re in git history permanently.</p>
 </div>
 </section>
 </section>
 <section id="integrated-terminal" class="level2">
 <h2 class="anchored" data-anchor-id="integrated-terminal">7. Integrated Terminal</h2>
-<p>The integrated terminal (<code>Ctrl+`</code>) opens a shell inside VS Code with the current project directory already set. Split it into multiple panes with the split icon to run a test suite in one pane and a Quarto preview in another.</p>
+<p>The integrated terminal (<code>Ctrl+`</code>) opens a shell inside VS Code with the current project directory already set. Split it into multiple panes to run a test suite in one and a Quarto preview in another – no window switching needed.</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Run in the integrated terminal exactly as you would in a standalone shell</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run ruff check .</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run pytest tests/ <span class="at">-v</span></span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run quarto preview</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>VS Code activates the <code>.venv</code> environment automatically in the integrated terminal when it detects a workspace interpreter. You can confirm this by running:</p>
+<p>VS Code activates the <code>.venv</code> environment automatically in the integrated terminal when it detects a workspace interpreter. Confirm it’s working:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">which</span> python</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="co"># /path/to/grade-predictor/.venv/bin/python</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="ark-activity">
@@ -1194,7 +1161,7 @@ Make a small change, stage it in the Source Control panel, and commit with a con
 </div>
 </div>
 </div>
-<p><strong>Next:</strong> <a href="../../tutorials/02-dev-tools/01-uv-project-setup.html">Part 13: Project Setup with uv</a> builds the <code>grade-predictor</code> project that the rest of Part 3 operates on.</p>
+<p><strong>Next:</strong> <a href="../../tutorials/02-dev-tools/01-uv-project-setup.html">Part 13: Project Setup with uv</a> – where you’ll build the <code>grade-predictor</code> project that the rest of Part 3 operates on.</p>
 
 
 </section>

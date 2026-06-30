@@ -108,9 +108,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   }
 }</script>
 <style>html{ scroll-behavior: smooth; }</style>
-<script src="../../site_libs/quarto-diagram/mermaid.min.js"></script>
-<script src="../../site_libs/quarto-diagram/mermaid-init.js"></script>
-<link href="../../site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
 
 
 </head>
@@ -465,6 +462,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <p><strong>DS-MLOps Dev Tools</strong></p>
 <p><strong>Python 3.12+ | Author: Anthony Faustine</strong></p>
+<p>Your code works on your machine. A colleague checks it out and immediately hits an import error – your editor sorts imports one way, theirs another, and the difference breaks the pipeline. <code>ruff</code> enforces one standard automatically: consistent formatting with <code>ruff format</code> and 700+ correctness rules with <code>ruff check</code>, both running in milliseconds before any code ships.</p>
+<p>The <code>grade-predictor</code> project from <a href="../../tutorials/02-dev-tools/01-uv-project-setup.html">Part 13</a> is the codebase you’ll run ruff on here. Pre-commit in <a href="../../tutorials/02-dev-tools/06-pre-commit-automation.html">Part 18</a> will automate it on every commit.</p>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
@@ -610,35 +609,18 @@ Note
 </div>
 <section id="two-different-jobs" class="level2">
 <h2 class="anchored" data-anchor-id="two-different-jobs">1. Two Different Jobs</h2>
-<p>Ruff does two separate things, and it is worth being clear about which one you are running.</p>
-<p>A <strong>formatter</strong> rewrites the layout of your code: indentation, line length, quote style, trailing commas. It makes no judgements about correctness. It does not care whether a variable is used or a loop is redundant. It just makes the code look consistent.</p>
-<p>A <strong>linter</strong> reads the code and flags patterns that are wrong, suspicious, or likely to cause bugs. It cannot fix most of what it finds, because fixing requires understanding intent. It tells you “this import is never used” and lets you decide whether to remove it or rename it.</p>
-<p>Ruff handles both. They are separate commands with separate jobs: <code>ruff format</code> for layout, <code>ruff check</code> for correctness. Running format first is the usual order: get the code looking clean, then read what the linter flags.</p>
-<div class="cell" data-layout-align="default">
-<div class="cell-output-display">
-<div>
-<p></p><figure class="figure"><p></p>
-<div>
-<pre class="mermaid mermaid-js">flowchart LR
-    A[source code] --&gt; B["ruff format\nindentation, quotes,\nline length"]
-    B --&gt; C[formatted code]
-    C --&gt; D["ruff check\nAST rules: unused imports,\nmutable defaults, etc."]
-    D --&gt; E{findings?}
-    E --&gt;|"--fix: auto-fixable"| F["ruff applies fix\nre-stage the file"]
-    F --&gt; D
-    E --&gt;|"none"| G["ready to commit"]
-
-    style G fill:#EBF5F0,stroke:#059669,color:#065F46
-    style B fill:#F5F3FF,stroke:#7C3AED,color:#3B0764
-    style D fill:#EAF3FA,stroke:#0369A1,color:#0C4A6E
-</pre>
-</div>
-<p></p></figure><p></p>
-</div>
-</div>
+<p>Ruff does two separate things, and it’s worth being clear about which one you’re running.</p>
+<p>A <strong>formatter</strong> rewrites the layout of your code: indentation, line length, quote style, trailing commas. It makes no judgements about correctness. It doesn’t care whether a variable is used or a loop is redundant. It just makes the code look consistent.</p>
+<p>A <strong>linter</strong> reads the code and flags patterns that are wrong, suspicious, or likely to cause bugs. It can’t fix most of what it finds, because fixing requires understanding intent. It tells you “this import is never used” and lets you decide whether to remove it or rename it.</p>
+<p>Ruff handles both. They’re separate commands with separate jobs: <code>ruff format</code> for layout, <code>ruff check</code> for correctness. Running format first is the usual order: get the code looking clean, then read what the linter flags.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="figs/ruff-pipeline.svg" class="img-fluid figure-img" alt="Linear flow: source code (gray) to ruff format (purple) to formatted code to ruff check (blue) to a diamond decision. Yes path (amber): ruff applies fix and loops back. No path (green): ready to commit."></p>
+<figcaption>ruff pipeline: source code passes through ruff format for style, then ruff check for correctness. If findings exist, ruff applies auto-fixes and re-checks. When no findings remain, the code is ready to commit.</figcaption>
+</figure>
 </div>
 <div class="ark-concept">
-<p><span class="ark-concept-title"><i class="bi bi-info-circle-fill"></i> Key Concept: Formatting is about style. Linting is about correctness.</span><br><br> A formatter can never catch <code>df.drop(“column”)</code> without <code>inplace=True</code> silently doing nothing. A linter can. Use both: format automatically on every save, run the linter before every commit.</p>
+<p><span class="ark-concept-title"><i class="bi bi-info-circle-fill"></i> Key Concept: Formatting is about style. Linting is about correctness.</span><br><br> <code>df.drop(“column”)</code> without <code>inplace=True</code> silently does nothing. A formatter won’t catch that – a linter will. Use both: format automatically on every save, run the linter before every commit.</p>
 </div>
 </section>
 <section id="running-ruff-check" class="level2">
@@ -671,7 +653,7 @@ src/grade_predictor/core.py:8:5: F841 [*] Local variable `unused_var` is assigne
 src/grade_predictor/core.py:13:5: E722 Do not use bare `except`
 Found 6 errors.
 [*] 4 fixable with the `--fix` option.</code></pre>
-<p>Reading the output: each line is <code>file:line:col: CODE message</code>. The <code>[*]</code> marker means ruff can auto-fix this one. <code>F401</code> is the pyflakes family; <code>B006</code> is from bugbear; <code>E722</code> is from pycodestyle.</p>
+<p>Each line is <code>file:line:col: CODE message</code>. The <code>[*]</code> marker means ruff can auto-fix this one. <code>F401</code> is the pyflakes family; <code>B006</code> is from bugbear; <code>E722</code> is from pycodestyle.</p>
 <p>Auto-fix what can be fixed automatically, then inspect the rest:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run ruff check src/ <span class="at">--fix</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run ruff check src/</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -698,11 +680,11 @@ uv run ruff check src/</pre>
 </section>
 <section id="running-ruff-format" class="level2">
 <h2 class="anchored" data-anchor-id="running-ruff-format">3. Running <code>ruff format</code></h2>
-<p><code>ruff format</code> rewrites the layout of every Python file it touches. It is opinionated and non-configurable by design: line length is the only setting. The result is that two developers with different editor preferences produce identical diffs.</p>
+<p><code>ruff format</code> rewrites the layout of every Python file it touches. It’s opinionated and non-configurable by design: line length is the only setting. The result is that two developers with different editor preferences produce identical diffs.</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run ruff format src/              <span class="co"># format in place</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run ruff format src/ <span class="at">--check</span>      <span class="co"># exit 1 if anything would change (CI mode)</span></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run ruff format src/ <span class="at">--diff</span>       <span class="co"># show what would change without writing it</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>The <code>--check</code> flag is what CI uses. If any file needs reformatting, the check fails and the push is blocked. The developer runs <code>ruff format .</code> locally, stages the changes, and pushes again.</p>
+<p>The <code>--check</code> flag is what CI uses. If any file needs reformatting, the check fails and the push is blocked. Run <code>ruff format .</code> locally, stage the changes, and push again.</p>
 <p>Before format:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> compute_grade(midterm,final,project,weights<span class="op">=</span>(<span class="fl">0.30</span>,<span class="fl">0.45</span>,<span class="fl">0.25</span>)):</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> midterm<span class="op">*</span>weights[<span class="dv">0</span>]<span class="op">+</span>final<span class="op">*</span>weights[<span class="dv">1</span>]<span class="op">+</span>project<span class="op">*</span>weights[<span class="dv">2</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -720,7 +702,7 @@ uv run ruff check src/</pre>
 </section>
 <section id="configuring-ruff-in-pyproject.toml" class="level2">
 <h2 class="anchored" data-anchor-id="configuring-ruff-in-pyproject.toml">4. Configuring ruff in <code>pyproject.toml</code></h2>
-<p>Without configuration, ruff checks only the <code>E</code> and <code>F</code> rules (pycodestyle and pyflakes). For DS work, several more rule groups pay for themselves:</p>
+<p>Without configuration, ruff checks only the <code>E</code> and <code>F</code> rules (pycodestyle and pyflakes). For DS work, several more rule groups are worth adding:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode toml code-with-copy"><code class="sourceCode toml"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">[tool.ruff]</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="dt">target-version</span> <span class="op">=</span> <span class="st">"py312"</span></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="dt">line-length</span> <span class="op">=</span> <span class="dv">100</span></span>
@@ -742,7 +724,7 @@ uv run ruff check src/</pre>
 <span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a><span class="kw">[tool.ruff.lint.per-file-ignores]</span></span>
 <span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a><span class="dt">"tests/**"</span> <span class="op">=</span> <span class="op">[</span><span class="st">"S101"</span><span class="op">]</span>          <span class="co"># assert is expected in tests</span></span>
 <span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a><span class="dt">"**/*.ipynb"</span> <span class="op">=</span> <span class="op">[</span><span class="st">"E501"</span><span class="op">,</span> <span class="st">"F811"</span><span class="op">]</span> <span class="co"># notebooks: long lines and re-defined names are ok</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>The <code>per-file-ignores</code> section is where you handle legitimate exceptions. Notebooks need <code>E501</code> suppressed because output lines can be long. Tests need <code>S101</code> suppressed because <code>assert</code> is the whole point.</p>
+<p>The <code>per-file-ignores</code> section handles legitimate exceptions. Notebooks need <code>E501</code> suppressed because output lines can be long. Tests need <code>S101</code> suppressed because <code>assert</code> is the whole point.</p>
 <div class="ark-activity">
 <span class="ark-activity-title"><i class="bi bi-puzzle-fill"></i> Activity 2 - Configure and Run</span><br><br> <b>Goal:</b> Add the configuration above to your <code>grade-predictor/pyproject.toml</code>. Run <code>ruff check src/</code> and fix every finding without using <code># noqa</code>. Then run <code>ruff format src/</code> and commit the clean state.
 <pre>uv run ruff check src/ --fix
@@ -752,7 +734,7 @@ uv run ruff format src/</pre>
 </section>
 <section id="the-rules-that-catch-real-ds-bugs" class="level2">
 <h2 class="anchored" data-anchor-id="the-rules-that-catch-real-ds-bugs">5. The Rules That Catch Real DS Bugs</h2>
-<p>The <code>E</code> and <code>F</code> rules catch syntax and unused-import issues. The rules that catch silent data bugs in DS code come from bugbear (<code>B</code>) and simplify (<code>SIM</code>).</p>
+<p>The <code>E</code> and <code>F</code> rules catch syntax and unused-import issues. The rules that catch silent data bugs – the ones that don’t raise exceptions, they just return wrong answers – come from bugbear (<code>B</code>) and simplify (<code>SIM</code>).</p>
 <p><strong>B006: Mutable default argument</strong></p>
 <p>This is the most common silent bug in DS code:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Wrong: the same list is shared across every call</span></span>
@@ -762,7 +744,7 @@ uv run ruff format src/</pre>
 <span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Right: use a tuple (immutable) or None</span></span>
 <span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> aggregate(df, group_cols: <span class="bu">tuple</span>[<span class="bu">str</span>, ...] <span class="op">=</span> (<span class="st">"program"</span>, <span class="st">"semester"</span>)):</span>
 <span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> df.groupby(<span class="bu">list</span>(group_cols)).mean()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>The wrong version works fine until someone calls <code>aggregate(df)</code> and the default list gets mutated somewhere in the call chain. The bug is silent and the output is wrong.</p>
+<p>The wrong version works fine until someone calls <code>aggregate(df)</code> and the default list gets mutated somewhere in the call chain. The output is wrong and there’s no exception to tell you why.</p>
 <p><strong>B023: Function defined in a loop</strong></p>
 <p>A common pattern in ML training callbacks:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Wrong: all callbacks capture the same (final) value of threshold</span></span>
@@ -786,12 +768,12 @@ uv run ruff format src/</pre>
 <span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="co"># After (ruff --fix handles this automatically)</span></span>
 <span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>label <span class="op">=</span> <span class="st">"Pass"</span> <span class="cf">if</span> score <span class="op">&gt;=</span> <span class="dv">50</span> <span class="cf">else</span> <span class="st">"Fail"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="ark-mistake">
-<p><span class="ark-mistake-title"><i class="bi bi-bug-fill"></i> Common Mistake: Mutable default argument</span><br><br> <code>def split(df, cols=[])</code> shares the same list object across every call. The second call gets whatever the first call left in the list. This exact pattern appears in DS code regularly because it looks like a harmless convenience. Use an empty tuple <code>()</code> or <code>None</code> with a guard inside the function.</p>
+<p><span class="ark-mistake-title"><i class="bi bi-bug-fill"></i> Common Mistake: Mutable default argument</span><br><br> <code>def split(df, cols=[])</code> looks like a harmless convenience – and that’s exactly why it shows up in DS code so often. The list is shared across every call, so the second call gets whatever the first call left in it. Use an empty tuple <code>()</code> or <code>None</code> with a guard inside the function.</p>
 </div>
 </section>
 <section id="docstrings-style-content-and-enforcement" class="level2">
 <h2 class="anchored" data-anchor-id="docstrings-style-content-and-enforcement">6. Docstrings: Style, Content, and Enforcement</h2>
-<p>A docstring is the first string literal inside a function, class, or module. It is not a comment; it is data that Python exposes through <code>help()</code>, IDEs, and documentation generators. The rule for when to write one: if a function is called from outside the file it lives in, it needs a docstring.</p>
+<p>A docstring is the first string literal inside a function, class, or module. It’s not a comment – it’s data that Python exposes through <code>help()</code>, IDEs, and documentation generators. The rule for when to write one: if a function is called from outside the file it lives in, it needs a docstring.</p>
 <p><strong>The Google style</strong> is the de facto standard for DS projects:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> compute_grade(</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    midterm: <span class="bu">float</span>,</span>
@@ -820,9 +802,9 @@ uv run ruff format src/</pre>
 <span id="cb14-25"><a href="#cb14-25" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="bu">abs</span>(<span class="bu">sum</span>(weights) <span class="op">-</span> <span class="fl">1.0</span>) <span class="op">&gt;</span> <span class="fl">1e-6</span>:</span>
 <span id="cb14-26"><a href="#cb14-26" aria-hidden="true" tabindex="-1"></a>        <span class="cf">raise</span> <span class="pp">ValueError</span>(<span class="ss">f"Weights must sum to 1.0, got </span><span class="sc">{</span><span class="bu">sum</span>(weights)<span class="sc">}</span><span class="ss">"</span>)</span>
 <span id="cb14-27"><a href="#cb14-27" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> midterm <span class="op">*</span> weights[<span class="dv">0</span>] <span class="op">+</span> final <span class="op">*</span> weights[<span class="dv">1</span>] <span class="op">+</span> project <span class="op">*</span> weights[<span class="dv">2</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>The structure: one-line summary, blank line, then named sections. The sections you actually need depend on the function: <code>Args</code> and <code>Returns</code> for anything non-trivial, <code>Raises</code> when exceptions are part of the contract, <code>Example</code> for functions that need a concrete demo to be understood.</p>
+<p>The structure is one-line summary, blank line, then named sections. Which sections you need depends on the function: <code>Args</code> and <code>Returns</code> for anything non-trivial, <code>Raises</code> when exceptions are part of the contract, <code>Example</code> for functions that need a concrete demo to be understood.</p>
 <div class="ark-concept">
-<p><span class="ark-concept-title"><i class="bi bi-info-circle-fill"></i> Key Concept: Write for the caller, not the implementer</span><br><br> A docstring answers: “what does this function do from the outside?” It does not explain how it works internally. <code>“““Compute weighted average grade”““</code> is useful. <code>”““Multiply midterm by weights[0] and add to final times weights[1]”““</code> is not: it describes the implementation, which the caller can already read. Write what a caller needs to know to use the function correctly: inputs, outputs, edge cases.</p>
+<p><span class="ark-concept-title"><i class="bi bi-info-circle-fill"></i> Key Concept: Write for the caller, not the implementer</span><br><br> A docstring answers: “what does this function do from the outside?” <code>“““Multiply midterm by weights[0] and add to final times weights[1]”““</code> isn’t a docstring – it’s a description of the implementation, which the caller can already read. Write what a caller needs to know to use the function correctly: inputs, outputs, edge cases.</p>
 </div>
 <p><strong>What counts as a module-level docstring?</strong></p>
 <p>A module docstring sits at the very top of the file, before any imports:</p>
@@ -848,17 +830,17 @@ uv run ruff format src/</pre>
 <span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a><span class="dt">"**/*.ipynb"</span>  <span class="op">=</span> <span class="op">[</span><span class="st">"E501"</span><span class="op">,</span> <span class="st">"F811"</span><span class="op">,</span> <span class="st">"D"</span><span class="op">]</span> <span class="co"># notebooks: docstrings not required</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>The key rules: - <code>D100</code>: missing module docstring - <code>D101/D102/D103</code>: missing class/method/function docstring - <code>D205</code>: blank line required after first-line summary - <code>D417</code>: missing argument descriptions in the docstring</p>
 <div class="ark-tip">
-<p><span class="ark-tip-title"><i class="bi bi-lightbulb-fill"></i> Pro Tip: Enforce docstrings only on public functions</span><br><br> Functions prefixed with <code>_</code> are internal by convention. Ruff’s D rules skip them by default when <code>convention = “google”</code> is set. This means you only have to document the API surface: the functions a caller is expected to use. Internal helpers stay undocumented until they grow complex enough to warrant it.</p>
+<p><span class="ark-tip-title"><i class="bi bi-lightbulb-fill"></i> Pro Tip: Enforce docstrings only on public functions</span><br><br> Functions prefixed with <code>_</code> are internal by convention, and ruff’s D rules skip them by default when <code>convention = “google”</code> is set. You only have to document the API surface – the functions a caller is expected to use. Internal helpers stay undocumented until they grow complex enough to warrant it.</p>
 </div>
 <p><strong>Enforcing spell-checking with codespell</strong></p>
-<p>Docstrings and comments accumulate typos. <code>codespell</code> catches them before they reach the repository. Add it to <code>.pre-commit-config.yaml</code>:</p>
+<p>Docstrings and comments accumulate typos. <code>codespell</code> catches them before they reach the repository – add it to <code>.pre-commit-config.yaml</code>:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="kw">-</span><span class="at"> </span><span class="fu">repo</span><span class="kw">:</span><span class="at"> https://github.com/codespell-project/codespell</span></span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">rev</span><span class="kw">:</span><span class="at"> v2.3.0</span></span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">hooks</span><span class="kw">:</span></span>
 <span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> </span><span class="fu">id</span><span class="kw">:</span><span class="at"> codespell</span></span>
 <span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">args</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="at">--write-changes</span><span class="kw">]</span></span>
 <span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">additional_dependencies</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="at">tomli</span><span class="kw">]</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>With <code>--write-changes</code>, codespell fixes unambiguous typos automatically. Ambiguous corrections are left for you to resolve. For project-specific words that codespell does not recognise (library names, abbreviations), add them to <code>pyproject.toml</code>:</p>
+<p>With <code>--write-changes</code>, codespell fixes unambiguous typos automatically. Ambiguous corrections are left for you to resolve. For project-specific words codespell doesn’t recognise (library names, abbreviations), add them to <code>pyproject.toml</code>:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode toml code-with-copy"><code class="sourceCode toml"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="kw">[tool.codespell]</span></span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="dt">skip</span> <span class="op">=</span> <span class="st">"*.ipynb,uv.lock,_freeze"</span></span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="dt">ignore-words-list</span> <span class="op">=</span> <span class="st">"caste,midterms"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -871,7 +853,7 @@ uv run ruff check src/ --select D</pre>
 </section>
 <section id="noqa-and-when-to-use-it" class="level2">
 <h2 class="anchored" data-anchor-id="noqa-and-when-to-use-it">7. <code># noqa</code> and When to Use It</h2>
-<p><code># noqa: E501</code> suppresses one rule on one line. Use it when suppression is the right answer, not when you want to avoid fixing the real problem.</p>
+<p><code># noqa: E501</code> suppresses one rule on one line. Use it when suppression is genuinely the right answer – not when you just want to avoid fixing the real problem.</p>
 <p>Legitimate uses:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># A URL that cannot be shortened</span></span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="co"># See https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.merge.html  # noqa: E501</span></span>
@@ -884,7 +866,7 @@ uv run ruff check src/ --select D</pre>
 <p>Not legitimate:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>result <span class="op">=</span> df.groupby(<span class="st">"program"</span>).agg({<span class="st">"score"</span>: <span class="st">"mean"</span>, <span class="st">"grade"</span>: <span class="st">"first"</span>, <span class="st">"cohort"</span>: <span class="st">"nunique"</span>, <span class="st">"semester"</span>: <span class="st">"count"</span>, <span class="st">"attendance"</span>: <span class="st">"mean"</span>})  <span class="co"># noqa: E501</span></span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Fix: break the line instead of suppressing</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p><code>per-file-ignores</code> is better than per-line <code># noqa</code> for patterns that apply to all files of a type, such as <code>E501</code> in all notebooks.</p>
+<p><code>per-file-ignores</code> is better than per-line <code># noqa</code> for patterns that apply to all files of a type. <code>E501</code> in all notebooks is the clearest example – suppress it once in config, not on every long line.</p>
 <div class="ark-activity">
 <p><span class="ark-activity-title"><i class="bi bi-puzzle-fill"></i> Activity 3 - Legitimate Suppression</span><br><br> <b>Goal:</b> Find one place in your <code>core.py</code> where a <code># noqa</code> comment is the right choice (a long docstring URL, a regex, or a ruff false positive). Add the comment with the specific rule code. Then find one place where you were tempted to use <code># noqa</code> but fixed the code instead. Explain in a comment why you chose each path.</p>
 </div>
@@ -1025,7 +1007,7 @@ Commit the clean state: <code>git commit -m “style: apply ruff to grade-predic
 </div>
 </div>
 </div>
-<p><strong>Next:</strong> <a href="../../tutorials/02-dev-tools/03-type-annotations.html">Part 15: Type Annotations</a> adds static type checking on top of the clean codebase you have here.</p>
+<p><strong>Next:</strong> <a href="../../tutorials/02-dev-tools/03-type-annotations.html">Part 15: Type Annotations</a> – static type checking on top of the clean codebase you’ve built here.</p>
 
 
 </section>

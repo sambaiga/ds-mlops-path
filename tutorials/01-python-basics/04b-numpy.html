@@ -464,7 +464,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p><a href="https://colab.research.google.com/github/sambaiga/ds-mlops-path/blob/main/tutorials/01-python-basics/04b-numpy.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open In Colab"></a> <a href="https://raw.githubusercontent.com/sambaiga/ds-mlops-path/main/tutorials/01-python-basics/04b-numpy.ipynb"><img src="https://img.shields.io/badge/Download-Notebook-blue.svg?logo=jupyter&amp;logoColor=white" class="img-fluid" alt="Download Notebook"></a></p>
 <p><strong>DS-MLOps Python Foundations</strong></p>
 <p><strong>Python 3.12+ | Author: Anthony Faustine</strong></p>
-<p>Part 4a gave you the fundamentals: creating arrays, checking shapes, indexing, masking, and aggregating. That is enough to write correct NumPy code.</p>
+<p>Part 4a gave you the fundamentals: creating arrays, checking shapes, indexing, masking, and aggregating. That’s enough to write correct NumPy code.</p>
 <p>Broadcasting and vectorisation are what make NumPy fast. A subtraction like <code>X - mean_row</code> that looks like a shape mismatch is actually valid – NumPy stretches the smaller array to match. Understanding this rule is what separates code that works from code that works quickly.</p>
 <p>This notebook covers broadcasting, vectorisation, linear algebra, saving/loading, and gotchas. By the end you will have everything you need for Part 5: matplotlib visualisations of the arrays you have been building.</p>
 <blockquote class="blockquote">
@@ -659,7 +659,7 @@ X_scaled.max(axis=0)  # -&gt; array([1., 1., 1.])</pre>
 </section>
 <section id="vectorisation-vs.-python-loops" class="level2">
 <h2 class="anchored" data-anchor-id="vectorisation-vs.-python-loops">8. Vectorisation vs.&nbsp;Python Loops</h2>
-<p>Now that you can express normalisation as <code>(X - mean) / std</code> with no loop, it is worth seeing <em>why</em> that matters. Every NumPy operation you have used so far runs as a single compiled loop over contiguous memory; a Python <code>for</code> loop pays the cost of the interpreter on every single element.</p>
+<p>Now that you can express normalisation as <code>(X - mean) / std</code> with no loop, it’s worth seeing <em>why</em> that matters. Every NumPy operation you have used so far runs as a single compiled loop over contiguous memory; a Python <code>for</code> loop pays the cost of the interpreter on every single element.</p>
 <div style="background:#EFF6FF;border-left:5px solid #0369A1;padding:14px 18px;border-radius:6px;margin:16px 0">
 <p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-key-fill"></i> Key Concept: Replace loops with vectorised expressions: 10-100x faster</span><br><br> A Python loop over one million floats takes ~500ms. The same operation as <code>(arr - arr.mean()) / arr.std()</code> takes ~5ms. NumPy calls compiled C code – the Python interpreter never enters the inner loop. The speedup grows with array size.</p>
 </div>
@@ -688,13 +688,13 @@ X_scaled.max(axis=0)  # -&gt; array([1., 1., 1.])</pre>
 <span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Vectorised time  : </span><span class="sc">{</span>vector_time<span class="sc">:.4f}</span><span class="ss">s"</span>)</span>
 <span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Speedup          : </span><span class="sc">{</span>loop_time <span class="op">/</span> vector_time<span class="sc">:,.0f}</span><span class="ss">x"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Python loop time : 0.4305s
-Vectorised time  : 0.0150s
-Speedup          : 29x</code></pre>
+<pre><code>Python loop time : 0.4355s
+Vectorised time  : 0.0164s
+Speedup          : 27x</code></pre>
 </div>
 </div>
 <div style="background:#F5F3FF;border-left:5px solid #7C3AED;padding:14px 18px;border-radius:6px;margin:16px 0">
-<p><span style="color:#5B21B6;font-weight:bold"><i class="bi bi-lightbulb-fill"></i> Pro Tip: If you are writing a <code>for</code> loop over an array, stop and look for a vectorised way</span><br><br> Almost every elementwise transformation, filter, or aggregation you would write as a Python loop already has a NumPy equivalent: arithmetic operators, <code>np.where</code>, boolean masks, <code>axis</code> aggregations. Reach for those first: a hand-written loop over a large array is one of the most common DS/ML performance bugs, and it is usually a 10-100x slowdown for no benefit.</p>
+<p><span style="color:#5B21B6;font-weight:bold"><i class="bi bi-lightbulb-fill"></i> Pro Tip: If you’re writing a <code>for</code> loop over an array, stop and look for a vectorised way</span><br><br> Almost every elementwise transformation, filter, or aggregation you would write as a Python loop already has a NumPy equivalent: arithmetic operators, <code>np.where</code>, boolean masks, <code>axis</code> aggregations. Reach for those first: a hand-written loop over a large array is one of the most common DS/ML performance bugs, and it’s usually a 10-100x slowdown for no benefit.</p>
 </div>
 <div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
 <p><span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 2 - Benchmark: loop vs vectorised z-score</span><br><br> <b>Goal:</b> Measure the speedup of vectorisation.<br><br>1. Create <code>arr = np.random.default_rng(0).normal(size=100_000)</code>.<br>2. Implement a Python loop z-score (iterate element by element).<br>3. Implement the vectorised version: <code>(arr - arr.mean()) / arr.std()</code>.<br>4. Time both with <code>import time</code> and print the speedup ratio.<br><br><b>Expected:</b> vectorised is 50-200x faster.</p>

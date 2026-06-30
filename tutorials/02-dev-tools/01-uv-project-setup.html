@@ -108,9 +108,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   }
 }</script>
 <style>html{ scroll-behavior: smooth; }</style>
-<script src="../../site_libs/quarto-diagram/mermaid.min.js"></script>
-<script src="../../site_libs/quarto-diagram/mermaid-init.js"></script>
-<link href="../../site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
 
 
 </head>
@@ -470,6 +467,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <p><strong>DS-MLOps Dev Tools</strong></p>
 <p><strong>Python 3.12+ | Author: Anthony Faustine</strong></p>
+<p>You install <code>scikit-learn</code> for one project. Three weeks later a second project breaks because a shared dependency updated. You didn’t change anything. The fix is per-project isolation – and <code>uv</code> delivers it in one tool: project init, dependency tracking, reproducible lockfiles, and script running, all faster than <code>pip</code> alone.</p>
+<p>The project you build here carries through every remaining Dev Tools chapter – ruff will lint it, git will version it, and pytest will test it.</p>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
@@ -621,28 +620,13 @@ Note
 </div>
 <section id="what-is-uv-and-why-use-it" class="level2">
 <h2 class="anchored" data-anchor-id="what-is-uv-and-why-use-it">0. What is uv and Why Use It</h2>
-<p>Ask five Python developers how they manage dependencies and you will get five different answers. Some use pip and venv. Some use Poetry. Some use conda. None of them produce the same environment reliably on a colleague’s machine. uv is the answer to that fragmentation: one tool, one configuration file, one command prefix.</p>
+<p>Ask five Python developers how they manage dependencies and you’ll get five different answers. Some use pip and venv. Some use Poetry. Some use conda. None of them produce the same environment reliably on a colleague’s machine. uv is the answer to that fragmentation: one tool, one configuration file, one command prefix.</p>
 <p><code>uv</code> is a Python package and project manager written in Rust, built by <a href="https://astral.sh">Astral</a>, the same team behind <code>ruff</code>. It replaces a stack of tools that most Python developers use separately: <code>pip</code>, <code>venv</code>, <code>pip-tools</code>, and parts of <code>Poetry</code> or <code>conda</code>. One binary, one configuration file, one command prefix (<code>uv run</code>).</p>
-<div class="cell" data-layout-align="default">
-<div class="cell-output-display">
-<div>
-<p></p><figure class="figure"><p></p>
-<div>
-<pre class="mermaid mermaid-js">flowchart LR
-    A["uv init --package\nproject-name"] --&gt; B["pyproject.toml\n[project] metadata"]
-    B --&gt; C["uv add pandas\nuv add --optional dev ruff"]
-    C --&gt; D["uv.lock\nfull dependency tree\npinned &amp; reproducible"]
-    D --&gt; E["uv sync\n.venv created"]
-    E --&gt; F["uv run script.py\nno activation needed"]
-
-    style D fill:#EBF5F0,stroke:#059669,color:#065F46
-    style E fill:#EAF3FA,stroke:#0369A1,color:#0C4A6E
-    style F fill:#EAF3FA,stroke:#0369A1,color:#0C4A6E
-</pre>
-</div>
-<p></p></figure><p></p>
-</div>
-</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="figs/uv-workflow.svg" class="img-fluid figure-img" alt="Six boxes left to right: uv init (gray), pyproject.toml (amber), uv add (blue), uv.lock (green, emphasized), uv sync (blue), uv run (blue). Arrows connect each step."></p>
+<figcaption>uv project setup pipeline: uv init creates the project, pyproject.toml holds metadata, uv add installs dependencies, uv.lock pins the full tree reproducibly, uv sync creates the .venv, uv run executes scripts without manual activation.</figcaption>
+</figure>
 </div>
 <section id="how-uv-compares-to-the-alternatives" class="level3">
 <h3 class="anchored" data-anchor-id="how-uv-compares-to-the-alternatives">How uv compares to the alternatives</h3>
@@ -724,7 +708,7 @@ Note
 <span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Verify</span></span>
 <span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> <span class="at">--version</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>After installation, <code>uv</code> is available system-wide. You do not need to activate any environment to use it.</p>
+<p>After installation, <code>uv</code> is available system-wide. You don’t need to activate any environment to use it.</p>
 <div class="ark-tip">
 <p><span class="ark-tip-title"><i class="bi bi-lightbulb-fill"></i> Pro Tip: Keep uv up to date</span><br><br> uv releases frequently. Run <code>uv self update</code> to upgrade to the latest version. The resolver improves with every release.</p>
 </div>
@@ -732,11 +716,11 @@ Note
 </section>
 <section id="the-reproducibility-problem" class="level2">
 <h2 class="anchored" data-anchor-id="the-reproducibility-problem">1. The Reproducibility Problem</h2>
-<p>Two colleagues share the same script. One gets a clean result; the other gets a <code>FutureWarning</code> and a different output. The script has not changed. The problem is the environment: <code>pandas 1.5</code> and <code>pandas 2.0</code> handle missing values and certain default arguments differently. Without a record of exact package versions, “it works on my machine” is the only guarantee on offer.</p>
-<p>The standard Python answer has been to pair a virtual environment (an isolated Python interpreter with its own packages) with a <code>requirements.txt</code> file pinning direct dependencies. This solves part of the problem. It does not pin transitive dependencies: the packages that your packages depend on. A project frozen at <code>pandas==2.1.0</code> will still install whichever version of <code>pytz</code> pip resolves on the day of installation, and that version may differ between colleagues or CI runs.</p>
+<p>Two colleagues share the same script. One gets a clean result; the other gets a <code>FutureWarning</code> and a different output. The script hasn’t changed. The problem is the environment: <code>pandas 1.5</code> and <code>pandas 2.0</code> handle missing values and certain default arguments differently. Without a record of exact package versions, “it works on my machine” is the only guarantee on offer.</p>
+<p>The standard Python answer has been to pair a virtual environment with a <code>requirements.txt</code> file pinning direct dependencies. This solves part of the problem. It doesn’t pin transitive dependencies – the packages that your packages depend on. A project frozen at <code>pandas==2.1.0</code> will still install whichever version of <code>pytz</code> pip resolves on the day of installation, and that version may differ between colleagues or CI runs.</p>
 <p>A lockfile solves this. It records the exact version of every package in the dependency tree, direct and transitive, so that two different machines installing from the same lockfile get byte-for-byte identical environments. <code>uv</code> provides both the virtual environment and the lockfile in a single fast tool.</p>
 <div class="ark-concept">
-<p><span class="ark-concept-title"><i class="bi bi-info-circle-fill"></i> Key Concept: A lockfile is a snapshot of the environment that worked</span><br><br> <code>uv.lock</code> pins the exact version of every dependency, including transitive ones. Commit it alongside your code. Anyone who clones the repo and runs <code>uv sync</code> gets the identical environment, on any machine, at any time.</p>
+<p><span class="ark-concept-title"><i class="bi bi-info-circle-fill"></i> Key Concept: A lockfile is a snapshot of the environment that worked</span><br><br> Commit <code>uv.lock</code> alongside your code. Anyone who clones the repo and runs <code>uv sync</code> gets the identical environment – on any machine, at any time – because the lockfile pins the exact version of every dependency, transitive ones included.</p>
 </div>
 </section>
 <section id="initializing-a-project" class="level2">
@@ -752,17 +736,17 @@ Note
 ├── .python-version
 ├── pyproject.toml
 └── README.md</code></pre>
-<p>The <code>--package</code> flag matters. Without it, <code>uv init</code> creates a simple script project. With it, it creates a proper Python package with the <code>src/</code> layout. In the <code>src/</code> layout, the package lives inside <code>src/</code> rather than at the project root. This means you cannot accidentally import from the development copy of the code when running scripts from the project root: Python will only find the installed package, which is the version that tests and CI will see.</p>
+<p>The <code>--package</code> flag matters. Without it, <code>uv init</code> creates a simple script project. With it, you get a proper Python package with the <code>src/</code> layout: the package lives inside <code>src/</code> rather than at the project root. That means you can’t accidentally import from the development copy of the code when running scripts from the project root – Python will only find the installed package, which is the version tests and CI will see.</p>
 <p>Run <code>uv sync</code> to create the virtual environment and generate <code>uv.lock</code>:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> sync</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>The <code>.venv/</code> directory appears at the project root. You do not activate it manually. <code>uv run</code> handles activation automatically.</p>
+<p>The <code>.venv/</code> directory appears at the project root. You don’t activate it manually – <code>uv run</code> handles that automatically.</p>
 <div class="ark-activity">
 <p><span class="ark-activity-title"><i class="bi bi-puzzle-fill"></i> Activity 1 - Initialize and Inspect</span><br><br> <b>Goal:</b> Run <code>uv init grade-predictor –package</code> in a temporary directory, then open <code>pyproject.toml</code> and identify the <code>[project]</code> section. List the three files whose purpose you cannot immediately guess and look each one up.</p>
 </div>
 </section>
 <section id="pyproject.toml-anatomy" class="level2">
 <h2 class="anchored" data-anchor-id="pyproject.toml-anatomy">3. <code>pyproject.toml</code> Anatomy</h2>
-<p><code>pyproject.toml</code> is the single source of truth for a Python project. It replaces four files that older projects split across: <code>setup.py</code>, <code>setup.cfg</code>, <code>requirements.txt</code>, and <code>pytest.ini</code>. Every modern Python tool reads it.</p>
+<p><code>pyproject.toml</code> is the single source of truth for a Python project. It replaces four files that older projects spread across: <code>setup.py</code>, <code>setup.cfg</code>, <code>requirements.txt</code>, and <code>pytest.ini</code>. Every modern Python tool reads it.</p>
 <p>Here is a complete <code>pyproject.toml</code> for <code>grade-predictor</code> with annotations:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode toml code-with-copy"><code class="sourceCode toml"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">[project]</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="dt">name</span> <span class="op">=</span> <span class="st">"grade-predictor"</span></span>
@@ -805,7 +789,7 @@ Note
 <span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a><span class="dt">target-version</span> <span class="op">=</span> <span class="st">"py312"</span></span>
 <span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a><span class="dt">line-length</span> <span class="op">=</span> <span class="dv">100</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="ark-concept">
-<p><span class="ark-concept-title"><i class="bi bi-info-circle-fill"></i> Key Concept: <code>pyproject.toml</code> is the single source of truth</span><br><br> It replaces <code>setup.py</code>, <code>requirements.txt</code>, <code>setup.cfg</code>, and <code>pytest.ini</code>. Read it and you can understand any modern Python project in under five minutes: what it does, what it depends on, how to test it, and how to build it.</p>
+<p><span class="ark-concept-title"><i class="bi bi-info-circle-fill"></i> Key Concept: <code>pyproject.toml</code> is the single source of truth</span><br><br> Read it and you can understand any modern Python project in under five minutes: what it does, what it depends on, how to test it, and how to build it. It replaces <code>setup.py</code>, <code>requirements.txt</code>, <code>setup.cfg</code>, and <code>pytest.ini</code> – all of them.</p>
 </div>
 <div class="ark-activity">
 <p><span class="ark-activity-title"><i class="bi bi-puzzle-fill"></i> Activity 2 - Edit pyproject.toml</span><br><br> <b>Goal:</b> Open the <code>pyproject.toml</code> from Activity 1. Change <code>requires-python</code> to <code>&gt;=3.12</code>, add <code>polars&gt;=1.0</code> to <code>dependencies</code>, and add a <code>dev</code> optional group containing <code>jupyter&gt;=1.0</code>. Then run <code>uv sync</code> and confirm no errors.</p>
@@ -817,7 +801,7 @@ Note
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> add pandas numpy</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> add <span class="at">--optional</span> dev ruff pytest</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> sync</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Compare this to <code>pip install pandas</code>: pip installs the package into whatever environment is currently active but writes nothing permanent. Next week, on a different machine, there is no record of which version was installed.</p>
+<p>Compare this to <code>pip install pandas</code>: pip installs the package into whatever environment is currently active but writes nothing permanent. Next week, on a different machine, there’s no record of which version was installed.</p>
 <p>Useful commands:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> add <span class="op">&lt;</span>package<span class="op">&gt;</span>                      <span class="co"># add to core dependencies</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> add <span class="at">--optional</span> dev <span class="op">&lt;</span>package<span class="op">&gt;</span>       <span class="co"># add to the dev group</span></span>
@@ -837,7 +821,7 @@ Note
 </section>
 <section id="optional-dependency-groups-for-ml-projects" class="level2">
 <h2 class="anchored" data-anchor-id="optional-dependency-groups-for-ml-projects">5. Optional Dependency Groups for ML Projects</h2>
-<p>Heavy ML dependencies are the single biggest cause of slow CI pipelines. A cold install of PyTorch takes three to four minutes. A cold install of scikit-learn and pytest takes under 20 seconds. Separating them into optional groups makes CI run only what it needs.</p>
+<p>Heavy ML dependencies are the single biggest cause of slow CI pipelines. A cold install of PyTorch takes three to four minutes; scikit-learn and pytest take under 20 seconds. Separating them into optional groups means CI only installs what it actually needs.</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode toml code-with-copy"><code class="sourceCode toml"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">[project.optional-dependencies]</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="dt">modelling</span> <span class="op">=</span> <span class="op">[</span></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"scikit-learn&gt;=1.7"</span><span class="op">,</span></span>
@@ -895,7 +879,7 @@ Note
 </section>
 <section id="secret-management-with-.env" class="level2">
 <h2 class="anchored" data-anchor-id="secret-management-with-.env">6. Secret Management with <code>.env</code></h2>
-<p>A database password or API key committed to a public GitHub repository is searchable, permanent (even after deletion from history via <code>git rm</code>), and a real security incident. The correct pattern is to never put secrets in version-controlled files.</p>
+<p>A database password or API key committed to a public GitHub repository is searchable, permanent (even after <code>git rm</code>), and a real security incident. Don’t put secrets in version-controlled files.</p>
 <p>Create <code>.env</code> at the project root:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># .env  -- never commit this file</span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="va">DATABASE_URL</span><span class="op">=</span>postgresql://user:password@localhost/grades</span>
@@ -917,7 +901,7 @@ Note
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="va">OPENAI_API_KEY</span><span class="op">=</span>sk-your-key-here</span>
 <span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="va">REPORT_TITLE</span><span class="op">=</span>My <span class="ex">Report</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="ark-mistake">
-<p><span class="ark-mistake-title"><i class="bi bi-bug-fill"></i> Common Mistake: Defaults that are real values</span><br><br> Never put a real secret as a default value in code: <code>os.getenv(“API_KEY”, “sk-prod-abc123”)</code>. The moment that file is committed, the key is in git history permanently. A placeholder default like <code>“your-key-here”</code> is safe; a real credential is not. If a key is committed by accident, rotate it immediately.</p>
+<p><span class="ark-mistake-title"><i class="bi bi-bug-fill"></i> Common Mistake: Defaults that are real values</span><br><br> <code>os.getenv(“API_KEY”, “sk-prod-abc123”)</code> looks harmless until someone commits that file. The key is in git history permanently at that point – even if you delete the line later. A placeholder default like <code>“your-key-here”</code> is safe; a real credential isn’t. If a key is committed by accident, rotate it immediately.</p>
 </div>
 <div class="ark-activity">
 <p><span class="ark-activity-title"><i class="bi bi-puzzle-fill"></i> Activity 5 - Load a Secret from .env</span><br><br> <b>Goal:</b> Create <code>.env</code> with <code>REPORT_TITLE=“Grade Predictor”</code>. Add <code>python-dotenv</code> to the <code>dev</code> group. Write a script <code>scripts/report.py</code> that loads the title and prints it. Confirm <code>.env</code> is in <code>.gitignore</code> before running <code>git status</code>.</p>
@@ -931,15 +915,15 @@ Note
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run ruff check .                        <span class="co"># lint</span></span>
 <span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run jupyter lab                         <span class="co"># open Jupyter</span></span>
 <span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run <span class="at">--with</span> httpx python <span class="at">-c</span> <span class="st">"import httpx; print(httpx.__version__)"</span>  <span class="co"># one-off tool</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>The <code>--with</code> flag installs a package into the run environment for that command only, without adding it to <code>pyproject.toml</code>. This is the correct way to use tools you reach for occasionally (<code>nbmake</code>, <code>httpx</code>, a formatter you are evaluating) without polluting the project’s dependency list.</p>
-<p><code>uv run</code> always uses the project environment defined by <code>uv.lock</code>. Shell state (which <code>conda</code> environment is active, whether you ran <code>source .venv/bin/activate</code> in another terminal) never leaks in.</p>
+<p>The <code>--with</code> flag installs a package into the run environment for that command only, without adding it to <code>pyproject.toml</code>. It’s the right way to use tools you reach for occasionally (<code>nbmake</code>, <code>httpx</code>, a formatter you’re evaluating) without polluting the project’s dependency list.</p>
+<p><code>uv run</code> always uses the project environment defined by <code>uv.lock</code>. Shell state – which <code>conda</code> environment is active, whether you ran <code>source .venv/bin/activate</code> in another terminal – never leaks in.</p>
 <div class="ark-concept">
-<p><span class="ark-concept-title"><i class="bi bi-info-circle-fill"></i> Key Concept: <code>uv run</code> replaces manual venv activation</span><br><br> <code>source .venv/bin/activate</code> changes your shell state. Forget to run it and you install into the wrong Python. <code>uv run</code> needs no shell state: it always resolves the project environment from <code>uv.lock</code>. Use it for every command in a project, and activation errors disappear entirely.</p>
+<p><span class="ark-concept-title"><i class="bi bi-info-circle-fill"></i> Key Concept: <code>uv run</code> replaces manual venv activation</span><br><br> Forget to run <code>source .venv/bin/activate</code> and you install into the wrong Python. <code>uv run</code> doesn’t have that problem: it always resolves the project environment from <code>uv.lock</code>, regardless of shell state. Use it for every command in a project and activation errors disappear entirely.</p>
 </div>
 </section>
 <section id="capstone---build-grade-predictor-from-scratch" class="level2">
 <h2 class="anchored" data-anchor-id="capstone---build-grade-predictor-from-scratch">Capstone - Build <code>grade-predictor</code> from Scratch</h2>
-<p>Build the complete initial structure of the <code>grade-predictor</code> project. By the end of this exercise, you will have a runnable Python package with a proper environment.</p>
+<p>Build the complete initial structure of the <code>grade-predictor</code> project. By the end, you’ll have a runnable Python package with a proper environment.</p>
 <div class="ark-activity">
 <p><span class="ark-activity-title"><i class="bi bi-puzzle-fill"></i> Capstone: grade-predictor initial setup</span><br><br></p>
 <ol>
@@ -1064,7 +1048,7 @@ Create <code>.env</code> with <code>REPORT_TITLE=Grade Predictor</code> and add 
 </div>
 </div>
 </div>
-<p><strong>Next:</strong> <a href="../../tutorials/02-dev-tools/02-code-quality-ruff.html">Part 14: Code Quality with ruff</a> runs <code>ruff check</code> and <code>ruff format</code> on the <code>grade-predictor</code> codebase you just created.</p>
+<p><strong>Next:</strong> <a href="../../tutorials/02-dev-tools/02-code-quality-ruff.html">Part 14: Code Quality with ruff</a> – <code>ruff check</code> and <code>ruff format</code> on the codebase you just built.</p>
 
 
 </section>

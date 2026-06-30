@@ -646,8 +646,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <section id="when-pandas-is-not-enough" class="level2">
 <h2 class="anchored" data-anchor-id="when-pandas-is-not-enough">When pandas Is Not Enough</h2>
-<p>Your pandas pipeline works perfectly at 50,000 rows. The <code>groupby</code> runs in a second, the merge finishes before you blink, and everything fits in memory with room to spare. Then someone drops a 10-million-row export on your desk. The same pipeline now takes three minutes, swaps to disk halfway through, and your laptop fan starts spinning like it is trying to take off.</p>
-<p>This is not a pandas bug. It is a design trade-off. pandas processes one column at a time on a single CPU thread, using a Python object model that was designed for flexibility rather than throughput. For most interactive data science that trade-off is exactly right. But when data gets large enough to feel slow, you need a different tool.</p>
+<p>Your pandas pipeline works perfectly at 50,000 rows. The <code>groupby</code> runs in a second, the merge finishes before you blink, and everything fits in memory with room to spare. Then someone drops a 10-million-row export on your desk. The same pipeline now takes three minutes, swaps to disk halfway through, and your laptop fan starts spinning like it’s trying to take off.</p>
+<p>This isn’t a pandas bug. It is a design trade-off. pandas processes one column at a time on a single CPU thread, using a Python object model that was designed for flexibility rather than throughput. For most interactive data science that trade-off is exactly right. But when data gets large enough to feel slow, you need a different tool.</p>
 <p><strong>Polars</strong> (<a href="https://pola.rs">pola.rs</a>) was written from scratch in Rust by Ritchie Vink in 2020. It stores data in Apache Arrow format, executes operations across all CPU cores in parallel, and evaluates expressions <em>lazily</em>: building a query plan and optimising it before touching a single row. The same operations that take minutes in pandas can take seconds in Polars, without changing what the code looks like.</p>
 <section id="how-it-compares" class="level3">
 <h3 class="anchored" data-anchor-id="how-it-compares">How it compares</h3>
@@ -702,7 +702,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </tr>
 </tbody>
 </table>
-<p>You do not have to choose one forever. Many production pipelines read and clean with Polars for speed, then convert to pandas for the parts of the ML ecosystem that expect it.</p>
+<p>You don’t have to choose one forever. Many production pipelines read and clean with Polars for speed, then convert to pandas for the parts of the ML ecosystem that expect it.</p>
 </section>
 <section id="already-in-your-environment" class="level3">
 <h3 class="anchored" data-anchor-id="already-in-your-environment">Already in your environment</h3>
@@ -1113,7 +1113,7 @@ df.describe()</pre>
 </section>
 <section id="the-expression-api-select-filter-with_columns" class="level2">
 <h2 class="anchored" data-anchor-id="the-expression-api-select-filter-with_columns">2. The Expression API: <code>select</code>, <code>filter</code>, <code>with_columns</code></h2>
-<p>The biggest difference from pandas is that Polars does not use bracket indexing for column selection or boolean filtering. Instead, every operation goes through <code>pl.col()</code> expressions, which describe what to compute without computing it immediately.</p>
+<p>The biggest difference from pandas is that Polars doesn’t use bracket indexing for column selection or boolean filtering. Instead, every operation goes through <code>pl.col()</code> expressions, which describe what to compute without computing it immediately.</p>
 <div id="17" class="cell" data-execution_count="5">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Select specific columns -- equivalent to df[["col_a", "col_b"]] in pandas</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>df.select([<span class="st">"student_id"</span>, <span class="st">"midterm_score"</span>, <span class="st">"final_score"</span>]).head(<span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -1575,7 +1575,7 @@ df.select(cs.string())</pre>
 </div>
 </div>
 <div style="background:#F5F3FF;border-left:5px solid #7C3AED;padding:14px 18px;border-radius:6px;margin:16px 0">
-<p><span style="color:#5B21B6;font-weight:bold"><i class="bi bi-lightbulb-fill"></i> Pro Tip: Sort the result explicitly: <code>group_by</code> order is not guaranteed</span><br><br> Polars <code>group_by</code> does not preserve or sort the output by the grouping key. Always chain <code>.sort(“key_col”)</code> after <code>.agg()</code> if the output order matters. The pandas equivalent sorted by default in older versions but no longer guarantees it either.</p>
+<p><span style="color:#5B21B6;font-weight:bold"><i class="bi bi-lightbulb-fill"></i> Pro Tip: Sort the result explicitly: <code>group_by</code> order is not guaranteed</span><br><br> Polars <code>group_by</code> doesn’t preserve or sort the output by the grouping key. Always chain <code>.sort(“key_col”)</code> after <code>.agg()</code> if the output order matters. The pandas equivalent sorted by default in older versions but no longer guarantees it either.</p>
 </div>
 <div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
 <span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 3 - Pass Rate by Program</span><br><br> <b>Goal:</b> Group <code>df</code> by <code>program</code> and compute, for each group, the fraction of students whose <code>continue_drop</code> is <code>False</code>. In Polars, <code>(pl.col(“continue_drop”) == False).mean()</code> gives the fraction directly.
@@ -1587,7 +1587,7 @@ df.select(cs.string())</pre>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: group by program, compute pass fraction per program, sort by program</span></span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p>When a vectorised expression (<code>pl.col("x") * 2</code>) cannot express your logic, <code>map_elements()</code> applies a Python function element-wise. This is slower than expressions but necessary for custom string parsing, API calls, or complex conditionals that Polars cannot optimise.</p>
+<p>When a vectorised expression (<code>pl.col("x") * 2</code>) can’t express your logic, <code>map_elements()</code> applies a Python function element-wise. This is slower than expressions but necessary for custom string parsing, API calls, or complex conditionals that Polars can’t optimise.</p>
 <div id="39" class="cell" data-execution_count="13">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> grade_label(score: <span class="bu">float</span>) <span class="op">-&gt;</span> <span class="bu">str</span>:</span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> score <span class="op">&gt;=</span> <span class="dv">85</span>:</span>
@@ -1744,7 +1744,7 @@ df.select(cs.string())</pre>
 </div>
 </div>
 <div style="background:#EAF3FA;border-left:5px solid #0369A1;padding:14px 18px;border-radius:6px;margin:16px 0">
-<p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-info-circle-fill"></i> Key Concept: Lazy evaluation lets Polars optimize the query before running it</span><br><br> When you call <code>.collect()</code>, Polars analyses the whole query plan: it pushes filters as early as possible (predicate pushdown), drops columns that are not needed (projection pushdown), and parallelizes independent operations. The same query in eager mode runs each step sequentially with no cross-step optimization. For large datasets the difference is significant; for small ones it is negligible. The API is identical apart from the <code>.lazy()</code> / <code>.collect()</code> bookends.</p>
+<p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-info-circle-fill"></i> Key Concept: Lazy evaluation lets Polars optimize the query before running it</span><br><br> When you call <code>.collect()</code>, Polars analyses the whole query plan: it pushes filters as early as possible (predicate pushdown), drops columns that are not needed (projection pushdown), and parallelizes independent operations. The same query in eager mode runs each step sequentially with no cross-step optimization. For large datasets the difference is significant; for small ones it’s negligible. The API is identical apart from the <code>.lazy()</code> / <code>.collect()</code> bookends.</p>
 </div>
 <div style="background:#FEF2F2;border-left:5px solid #DC2626;padding:14px 18px;border-radius:6px;margin:16px 0">
 <p><span style="color:#991B1B;font-weight:bold"><i class="bi bi-bug-fill"></i> Common Mistake: Forgetting <code>.collect()</code> and treating a <code>LazyFrame</code> as a result</span><br><br> <code>df.lazy().filter(…).group_by(…).agg(…)</code> returns a <code>LazyFrame</code>, not a <code>DataFrame</code>. Printing it shows the query plan, not the data. Call <code>.collect()</code> to get a real <code>DataFrame</code>. If you need the shape, columns, or to iterate over rows, you must collect first.</p>
@@ -2119,7 +2119,7 @@ shape: (5, 2)
 </section>
 <section id="window-functions-with-over-and-streaming-large-files" class="level2">
 <h2 class="anchored" data-anchor-id="window-functions-with-over-and-streaming-large-files">7. Window Functions with <code>over()</code> and Streaming Large Files</h2>
-<p>Two Polars strengths that have no direct pandas equivalent: <code>over()</code> for grouped window calculations without reducing rows, and <code>scan_csv</code>/<code>scan_parquet</code> for processing files that do not fit in memory.</p>
+<p>Two Polars strengths that have no direct pandas equivalent: <code>over()</code> for grouped window calculations without reducing rows, and <code>scan_csv</code>/<code>scan_parquet</code> for processing files that don’t fit in memory.</p>
 <section id="a.-the-over-expression" class="level3">
 <h3 class="anchored" data-anchor-id="a.-the-over-expression">7a. The <code>over()</code> Expression</h3>
 <p>In pandas, adding a per-group statistic back to the original rows requires <code>groupby().transform()</code>. In Polars, <code>pl.col("x").mean().over("group")</code> does the same thing inside a single <code>with_columns()</code> call. It computes the aggregation per group and broadcasts the result back to every row, aligned to the original index automatically.</p>
@@ -2396,7 +2396,7 @@ df.write_parquet("data/university_analytics.parquet")
 pl.scan_parquet("data/university_analytics.parquet")   .select(["student_id", "final_score"])   .filter(pl.col("final_score") &gt; 80)   .collect(streaming=True)</pre>
 </div>
 <div style="background:#FEF2F2;border-left:5px solid #DC2626;padding:14px 18px;border-radius:6px;margin:16px 0">
-<p><span style="color:#991B1B;font-weight:bold"><i class="bi bi-bug-fill"></i> Common Mistake: Not sorting before a rolling window in Polars</span><br><br> <code>pl.col(“rate”).rolling_mean(5).over(“school_id”)</code> operates on whatever order the rows are in. Without <code>.sort([“school_id”, “date”])</code> first, the 5-row window picks up rows in an arbitrary order and produces meaningless values. Polars does not sort automatically; it raises an error only for <code>group_by_dynamic</code>. For <code>rolling_mean().over()</code>, the wrong-order mistake is silent.</p>
+<p><span style="color:#991B1B;font-weight:bold"><i class="bi bi-bug-fill"></i> Common Mistake: Not sorting before a rolling window in Polars</span><br><br> <code>pl.col(“rate”).rolling_mean(5).over(“school_id”)</code> operates on whatever order the rows are in. Without <code>.sort([“school_id”, “date”])</code> first, the 5-row window picks up rows in an arbitrary order and produces meaningless values. Polars doesn’t sort automatically; it raises an error only for <code>group_by_dynamic</code>. For <code>rolling_mean().over()</code>, the wrong-order mistake is silent.</p>
 </div>
 </section>
 </section>
@@ -2481,7 +2481,7 @@ regional_summary = merged.group_by("region").agg(
 </tr>
 <tr class="odd">
 <td>Ritchie Vink, creator of Polars, explains the design in the <a href="https://pola.rs/posts/">Polars blog</a></td>
-<td>The posts on the expression API and lazy evaluation explain why certain pandas patterns do not translate</td>
+<td>The posts on the expression API and lazy evaluation explain why certain pandas patterns don’t translate</td>
 </tr>
 </tbody>
 </table>

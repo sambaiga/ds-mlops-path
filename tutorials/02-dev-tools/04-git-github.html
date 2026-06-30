@@ -108,9 +108,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   }
 }</script>
 <style>html{ scroll-behavior: smooth; }</style>
-<script src="../../site_libs/quarto-diagram/mermaid.min.js"></script>
-<script src="../../site_libs/quarto-diagram/mermaid-init.js"></script>
-<link href="../../site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
 
 
 </head>
@@ -470,6 +467,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <p><strong>DS-MLOps Dev Tools</strong></p>
 <p><strong>Python 3.12+ | Author: Anthony Faustine</strong></p>
+<p>You rename a function and the rest of the pipeline breaks. You want to undo it – but you saved over the original. Git is your time machine: every commit is a checkpoint you can return to, and every branch is an isolated experiment that only merges when it succeeds. On a team, it’s also what keeps two people from overwriting each other’s work.</p>
+<p>The <code>grade-predictor</code> project is now typed and linted. This chapter puts it under version control and connects it to GitHub – after which <a href="../../tutorials/02-dev-tools/05-pytest-testing.html">Part 17</a> adds a test suite.</p>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
@@ -614,15 +613,15 @@ Note
 </div>
 </div>
 </div>
-<p>Every data science project eventually breaks in the same three ways: the code changed and nobody knows when, an experiment worked but cannot be reproduced, and two people edited the same file. Git is the tool that prevents all three. This chapter sets up the habits you will use from every chapter onward.</p>
+<p>Every data science project eventually breaks in the same three ways: the code changed and nobody knows when, an experiment worked but can’t be reproduced, and two people edited the same file. Git prevents all three. The habits you set up here carry forward through every chapter that follows.</p>
 <section id="installing-and-configuring-git" class="level2">
 <h2 class="anchored" data-anchor-id="installing-and-configuring-git">0. Installing and Configuring Git</h2>
 <section id="install-git" class="level3">
 <h3 class="anchored" data-anchor-id="install-git">Install git</h3>
-<p>Git does not ship with every operating system. Check if it is already present:</p>
+<p>Git doesn’t ship with every operating system. Check if it’s already present:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> <span class="at">--version</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co"># git version 2.49.0</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>If it is not installed:</p>
+<p>If it’s not installed:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># macOS: via Homebrew (recommended)</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="ex">brew</span> install git</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -638,7 +637,7 @@ Note
 </section>
 <section id="first-time-identity-configuration" class="level3">
 <h3 class="anchored" data-anchor-id="first-time-identity-configuration">First-time identity configuration</h3>
-<p>Every commit records the author’s name and email. Set them once, globally, before making any commit:</p>
+<p>Every commit records the author’s name and email. Set them once globally before making any commit:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> config <span class="at">--global</span> user.name <span class="st">"Your Name"</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> config <span class="at">--global</span> user.email <span class="st">"you@example.com"</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> config <span class="at">--global</span> core.editor <span class="st">"code --wait"</span>   <span class="co"># use VS Code as the commit editor</span></span>
@@ -646,7 +645,7 @@ Note
 <p>Verify the result:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> config <span class="at">--list</span> <span class="at">--global</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="ark-concept">
-<p><span class="ark-concept-title"><i class="bi bi-info-circle-fill"></i> Key Concept: Global vs local git config</span><br><br> <code>–global</code> writes to <code>~/.gitconfig</code> and applies to every repository on the machine. Omitting it writes to <code>.git/config</code> inside the current repository only. Use <code>–global</code> for your identity; use local config to override settings for a specific project (e.g., a work email for a client repo).</p>
+<p><span class="ark-concept-title"><i class="bi bi-info-circle-fill"></i> Key Concept: Global vs local git config</span><br><br> <code>–global</code> writes to <code>~/.gitconfig</code> and applies to every repository on the machine. Omit it and the setting goes to <code>.git/config</code> inside the current repo only. Use <code>–global</code> for your identity; use local config to override settings for a specific project – for example, a work email for a client repo.</p>
 </div>
 </section>
 <section id="connect-to-github-or-gitlab" class="level3">
@@ -729,7 +728,7 @@ ssh -T git@github.com</pre>
 </section>
 <section id="what-git-tracks-and-what-it-must-not" class="level2">
 <h2 class="anchored" data-anchor-id="what-git-tracks-and-what-it-must-not">1. What Git Tracks and What It Must Not</h2>
-<p>Git is a time machine for code. It is not a time machine for data, models, or secrets. The single most important setup decision for a DS project is getting <code>.gitignore</code> right before the first commit, because a file committed once is in git history permanently.</p>
+<p>Git is a time machine for code. It isn’t a time machine for data, models, or secrets. The single most important setup decision for a DS project is getting <code>.gitignore</code> right before the first commit, because a file committed once is in git history permanently.</p>
 <p>A DS <code>.gitignore</code> covers five categories:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Python runtime</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/</span></span>
@@ -767,42 +766,28 @@ ssh -T git@github.com</pre>
 <span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a><span class="ex">.vscode/settings.json</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Add this to <code>grade-predictor/.gitignore</code> before running <code>git init</code>.</p>
 <div class="ark-concept">
-<p><span class="ark-concept-title"><i class="bi bi-info-circle-fill"></i> Key Concept: Git tracks code. Data and secrets belong elsewhere.</span><br><br> A 2GB CSV committed by accident is hard to remove cleanly: it lives in history even after <code>git rm</code> and requires rewriting history to fully erase. Secrets committed to a public repo are searchable and must be rotated immediately. The safest habit is to set up <code>.gitignore</code> and run <code>git status</code> before every first commit in a new project.</p>
+<p><span class="ark-concept-title"><i class="bi bi-info-circle-fill"></i> Key Concept: Git tracks code. Data and secrets belong elsewhere.</span><br><br> A 2GB CSV committed by accident lives in history even after <code>git rm</code> – you have to rewrite history to fully erase it. Secrets committed to a public repo are searchable and must be rotated immediately. Set up <code>.gitignore</code> and run <code>git status</code> before every first commit in a new project. Every time.</p>
 </div>
 </section>
 <section id="the-three-state-model" class="level2">
 <h2 class="anchored" data-anchor-id="the-three-state-model">2. The Three-State Model</h2>
-<p>Every file in a git project lives in one of three states: the working tree (what is on disk right now), the staging area (what will go into the next commit), and the commit history (what is permanent). Understanding these three states is what separates confident git use from “type commands and hope”.</p>
+<p>Every file in a git project lives in one of three states: the working tree (what’s on disk right now), the staging area (what will go into the next commit), and the commit history (what’s permanent). Understanding these three states is what separates confident git use from “type commands and hope”.</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> init</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> status                                         <span class="co"># see all three states</span></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> add src/grade_predictor/core.py                <span class="co"># move specific file to staging</span></span>
 <span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> status                                         <span class="co"># confirm it moved</span></span>
 <span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> commit <span class="at">-m</span> <span class="st">"feat(core): add compute_grade function"</span></span>
 <span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> log <span class="at">--oneline</span>                                  <span class="co"># inspect history</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell" data-layout-align="default">
-<div class="cell-output-display">
-<div>
-<p></p><figure class="figure"><p></p>
-<div>
-<pre class="mermaid mermaid-js">flowchart LR
-    W["Working Tree\non disk"] --&gt;|"git add file"| S["Staging Area\n(index)"]
-    S --&gt;|"git commit -m '...'"| H["Commit History\n(permanent)"]
-    H --&gt;|"git restore file"| W
-    S --&gt;|"git restore --staged file"| W
-
-    style H fill:#EBF5F0,stroke:#059669,color:#065F46
-    style S fill:#EAF3FA,stroke:#0369A1,color:#0C4A6E
-    style W fill:#F5F3FF,stroke:#7C3AED,color:#3B0764
-</pre>
-</div>
-<p></p></figure><p></p>
-</div>
-</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="figs/git-areas.svg" class="img-fluid figure-img" alt="Three boxes: Working Tree (purple dashed), Staging Area (blue), Commit History (green). Forward arrows: git add, git commit. Reverse arrows: git restore --staged, git restore."></p>
+<figcaption>Git three-zone model: Working Tree (files on disk) connects to Staging Area via git add, Staging Area connects to Commit History via git commit. Reverse arrows show git restore for undoing staged or committed changes.</figcaption>
+</figure>
 </div>
 <p>The flow: make changes in the working tree, select which changes belong in this commit with <code>git add</code>, then seal them into history with <code>git commit</code>. Changes left unstaged are visible in the working tree but invisible to the next commit.</p>
-<p><code>git diff</code> shows what is in the working tree but not yet staged. <code>git diff --staged</code> shows what is staged but not yet committed. Running both before committing is a habit worth building.</p>
+<p><code>git diff</code> shows what’s in the working tree but not yet staged. <code>git diff --staged</code> shows what’s staged but not yet committed. Running both before committing is a habit worth building.</p>
 <div class="ark-mistake">
-<p><span class="ark-mistake-title"><i class="bi bi-bug-fill"></i> Common Mistake: <code>git add .</code> adds everything</span><br><br> <code>git add .</code> stages every changed file in the current directory, including <code>.env</code>, CSV files, and anything else that slipped past <code>.gitignore</code>. Always run <code>git status</code> before <code>git add</code>. Stage specific files by name: <code>git add src/grade_predictor/core.py</code>. Use <code>git add -p</code> to stage hunks interactively when a file has multiple independent changes.</p>
+<p><span class="ark-mistake-title"><i class="bi bi-bug-fill"></i> Common Mistake: <code>git add .</code> adds everything</span><br><br> Including <code>.env</code>, CSV files, and anything else that slipped past <code>.gitignore</code>. Always run <code>git status</code> before <code>git add</code>. Stage specific files by name: <code>git add src/grade_predictor/core.py</code>. Use <code>git add -p</code> to stage hunks interactively when a file has multiple independent changes.</p>
 </div>
 <div class="ark-activity">
 <span class="ark-activity-title"><i class="bi bi-puzzle-fill"></i> Activity 1 - First Commit</span><br><br> <b>Goal:</b> Initialize a git repo in <code>grade-predictor</code>. Add <code>.gitignore</code> first. Then run <code>git status</code> and confirm <code>.env</code> and <code>.venv/</code> do not appear in the untracked list. Stage and commit only the source files.
@@ -814,7 +799,7 @@ git commit -m "feat: initial grade-predictor project setup"</pre>
 </section>
 <section id="conventional-commits" class="level2">
 <h2 class="anchored" data-anchor-id="conventional-commits">3. Conventional Commits</h2>
-<p>A git log is only useful if the messages are readable. <code>git log --oneline</code> on a project with messages like “fix”, “update”, “wip”, and “changes” tells you nothing. Conventional commits solve this by imposing a consistent format: <code>type(scope): description</code>.</p>
+<p>A git log is only useful if the messages are readable. <code>git log --oneline</code> on a project where every message is “fix” or “update” or “changes” tells you nothing. Conventional commits solve this with a consistent format: <code>type(scope): description</code>.</p>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 50%">
@@ -865,7 +850,7 @@ refactor(core): extract grade_to_letter from compute_grade
 test(core): parametrize grade boundary tests for all five letter grades
 chore: bump scikit-learn to 1.7, update uv.lock</code></pre>
 <p>Each message answers: what changed and why does it matter? Two months from now, <code>git log --oneline</code> with messages like these tells the whole project story.</p>
-<p><code>commitizen</code> enforces this format automatically. See <a href="../../tutorials/02-dev-tools/06-pre-commit-automation.html">Part 18</a> for setup. For now, write the messages by hand.</p>
+<p><code>commitizen</code> enforces this format automatically – <a href="../../tutorials/02-dev-tools/06-pre-commit-automation.html">Part 18</a> covers setup. For now, write the messages by hand.</p>
 <div class="ark-tip">
 <p><span class="ark-tip-title"><i class="bi bi-lightbulb-fill"></i> Pro Tip: The scope is optional but valuable</span><br><br> <code>fix: normalize features</code> is fine. <code>fix(preprocessing): normalize features before split</code> is searchable. <code>git log –oneline –grep=“fix(preprocessing)”</code> finds every bug fix in the preprocessing layer in one command. This matters when a production issue arrives at 2am and you need to trace exactly when the normalization logic changed.</p>
 </div>
@@ -875,7 +860,7 @@ chore: bump scikit-learn to 1.7, update uv.lock</code></pre>
 </section>
 <section id="branches-for-experiments" class="level2">
 <h2 class="anchored" data-anchor-id="branches-for-experiments">4. Branches for Experiments</h2>
-<p>The main branch of a project should always be in a working state. New features, experiments, and bug fixes belong on separate branches. In DS work, this applies especially to model experiments: a branch per experiment means you can run them in parallel, compare results, and abandon a dead end without any cleanup.</p>
+<p>The main branch of a project should always be in a working state. New features, experiments, and bug fixes belong on separate branches. In DS work this applies especially to model experiments: a branch per experiment means you can run them in parallel, compare results, and abandon a dead end without any cleanup.</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> checkout <span class="at">-b</span> experiment/ridge-regression    <span class="co"># create and switch in one step</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="co"># ...make changes...</span></span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> add src/</span>
@@ -884,25 +869,11 @@ chore: bump scikit-learn to 1.7, update uv.lock</code></pre>
 <span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> checkout main</span>
 <span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> merge experiment/ridge-regression</span>
 <span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> branch <span class="at">-d</span> experiment/ridge-regression      <span class="co"># clean up after merging</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell" data-layout-align="default">
-<div class="cell-output-display">
-<div>
-<p></p><figure class="figure"><p></p>
-<div>
-<pre class="mermaid mermaid-js">gitGraph
-    commit id: "feat: initial setup"
-    branch experiment/ridge
-    checkout experiment/ridge
-    commit id: "feat: ridge baseline"
-    commit id: "test: parametrize"
-    checkout main
-    merge experiment/ridge id: "merge: ridge (RMSE=9.2)"
-    commit id: "chore: update deps"
-</pre>
-</div>
-<p></p></figure><p></p>
-</div>
-</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="figs/git-branches.svg" class="img-fluid figure-img" alt="Horizontal timeline. Main branch (blue circles): initial setup, merge ridge, update deps. Feature branch (purple circles) forks after initial setup: ridge baseline, parametrize. Merges back at the green merge commit."></p>
+<figcaption>Feature branch workflow: a feature branch forks from main, accumulates two commits, then merges back into main. The merge commit is green. The feature branch commits are purple. Main branch commits are blue.</figcaption>
+</figure>
 </div>
 <p>Naming conventions that work well for DS projects:</p>
 <table class="caption-top table">
@@ -949,7 +920,7 @@ git checkout main &amp;&amp; git merge experiment/weighted-average</pre>
 </section>
 <section id="pull-requests" class="level2">
 <h2 class="anchored" data-anchor-id="pull-requests">5. Pull Requests</h2>
-<p>A pull request is a request to merge a branch into main, plus a structured conversation about the change. On a solo project, it is still worth opening PRs: the PR description forces you to articulate what changed and why, and the CI check runs automatically.</p>
+<p>A pull request is a request to merge a branch into main, plus a structured conversation about the change. On a solo project it’s still worth opening PRs: the PR description forces you to articulate what changed and why, and CI runs automatically.</p>
 <p>For DS work, a useful PR description answers:</p>
 <ul>
 <li>What changed (one sentence summary)</li>
@@ -962,7 +933,7 @@ git checkout main &amp;&amp; git merge experiment/weighted-average</pre>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="ex">gh</span> pr create <span class="dt">\</span></span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">--title</span> <span class="st">"feat(model): ridge regression baseline"</span> <span class="dt">\</span></span>
 <span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">--body</span> <span class="st">"Adds ridge regression (alpha=1.0) as a second baseline. RMSE=9.2 vs linear=10.4 on held-out 20%. Tests added for predict() signature and output shape."</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>The <code>gh</code> CLI creates the PR without leaving the terminal. CI runs automatically on the push that opens the PR.</p>
+<p>The <code>gh</code> CLI creates the PR without leaving the terminal. CI starts automatically on the push that opens it.</p>
 </section>
 <section id="github-actions-for-automated-testing" class="level2">
 <h2 class="anchored" data-anchor-id="github-actions-for-automated-testing">6. GitHub Actions for Automated Testing</h2>
@@ -998,7 +969,7 @@ git checkout main &amp;&amp; git merge experiment/weighted-average</pre>
 <li><code>uv run pytest tests/</code>: runs tests inside the project environment</li>
 <li><code>--override-ini=addopts=</code>: strips local <code>addopts</code> from <code>pyproject.toml</code> that may reference local paths not present in CI</li>
 </ul>
-<p>When the job fails, GitHub shows the full log. Reading CI logs is a skill: look for the first <code>FAILED</code> or <code>Error</code> line, not the summary at the bottom.</p>
+<p>When the job fails, GitHub shows the full log. Reading CI logs is a skill – look for the first <code>FAILED</code> or <code>Error</code> line, not the summary at the bottom.</p>
 <div class="ark-example">
 <p><span class="ark-example-title"><i class="bi bi-journal-code"></i> Example: Reading a CI log</span><br><br> A failing test produces output like:<br> <code>FAILED tests/test_core.py::test_compute_grade_defaults - AssertionError: assert 83.5 == 84.25</code><br><br> The important parts: the test file (<code>tests/test_core.py</code>), the test name (<code>test_compute_grade_defaults</code>), and the assertion that failed (<code>83.5 != 84.25</code>). The number tells you which weights were used: 83.5 is the old weights, 84.25 is the expected value with the new ones. This is why the test exists.</p>
 </div>
@@ -1131,7 +1102,7 @@ Add the test workflow. Push and confirm CI runs green
 </div>
 </div>
 </div>
-<p><strong>Next:</strong> <a href="../../tutorials/02-dev-tools/05-pytest-testing.html">Part 17: Testing with pytest</a> writes tests for the code you have just versioned.</p>
+<p><strong>Next:</strong> <a href="../../tutorials/02-dev-tools/05-pytest-testing.html">Part 17: Testing with pytest</a> – tests for the code you’ve just versioned.</p>
 
 
 </section>

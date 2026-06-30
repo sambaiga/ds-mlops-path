@@ -498,10 +498,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <p><strong>Dataset:</strong> Hotel Booking Demand (117,429 reservations, 32 features)</p>
 <p><strong>Covers sections 1-6:</strong> sklearn API contract, data prep, feature scaling, baselines, and linear models.</p>
+<p>Part 24 gave you the workflow: problem framing, data splits, baselines, evaluation. Now you need the tool that actually implements it. This chapter maps the full workflow onto sklearn’s API – <code>fit</code>, <code>transform</code>, <code>predict</code> – so you can apply the same discipline to any algorithm in the library. Part 25b then adds the machinery for reliable estimates: cross-validation, learning curves, and model persistence.</p>
 <section id="setup" class="level2">
 <h2 class="anchored" data-anchor-id="setup">1. Setup</h2>
 <p>All imports at the top – PEP 8 import ordering enforced by <code>ruff --select I</code>. <code>from __future__ import annotations</code> enables the modern union syntax <code>X | Y</code> on Python 3.9.</p>
-<div id="2" class="cell" data-execution_count="1">
+<div id="3" class="cell" data-execution_count="1">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> __future__ <span class="im">import</span> annotations</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># stdlib</span></span>
@@ -571,7 +572,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-67"><a href="#cb1-67" aria-hidden="true" tabindex="-1"></a>LetsPlot.setup_html()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 
-            <div id="2LRcDh"></div>
+            <div id="lVMpQ3"></div>
             <script type="text/javascript" data-lets-plot-script="library">
                 if(!window.letsPlotCallQueue) {
                     window.letsPlotCallQueue = [];
@@ -595,9 +596,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
                         var div = document.createElement("div");
                         div.style.color = 'darkred';
                         div.textContent = 'Error loading Lets-Plot JS';
-                        document.getElementById("2LRcDh").appendChild(div);
+                        document.getElementById("lVMpQ3").appendChild(div);
                     };
-                    var e = document.getElementById("2LRcDh");
+                    var e = document.getElementById("lVMpQ3");
                     e.appendChild(script);
                 })()
             </script>
@@ -607,7 +608,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="project-constants" class="level3">
 <h3 class="anchored" data-anchor-id="project-constants">1.1 Project constants</h3>
 <p>Paths and URLs as SCREAMING_SNAKE_CASE module-level constants – easy to find and change without searching function bodies. Covered in Part 12 (Dev Tools: code style).</p>
-<div id="4" class="cell" data-execution_count="2">
+<div id="5" class="cell" data-execution_count="2">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>DATA_URL: <span class="bu">str</span> <span class="op">=</span> <span class="st">"https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-02-11/hotels.csv"</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>DATA_PATH: Path <span class="op">=</span> Path(<span class="st">"data/hotel_bookings.csv"</span>)</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>MODEL_DIR: Path <span class="op">=</span> Path(<span class="st">"models"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -616,7 +617,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="define-the-data-loading-function" class="level3">
 <h3 class="anchored" data-anchor-id="define-the-data-loading-function">1.2 Define the data loading function</h3>
 <p>A typed function wraps the download-and-cache logic. The function is idempotent: it downloads once; subsequent calls load from disk.</p>
-<div id="6" class="cell" data-execution_count="3">
+<div id="7" class="cell" data-execution_count="3">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> load_hotel_data(</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    path: Path <span class="op">=</span> DATA_PATH,</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    url: <span class="bu">str</span> <span class="op">=</span> DATA_URL,</span>
@@ -638,13 +639,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="load-the-data" class="level3">
 <h3 class="anchored" data-anchor-id="load-the-data">1.3 Load the data</h3>
 <p>Execute the loader. <code>df</code> now holds 117 k cleaned hotel booking records.</p>
-<div id="8" class="cell" data-execution_count="4">
+<div id="9" class="cell" data-execution_count="4">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>df: pd.DataFrame <span class="op">=</span> load_hotel_data()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="inspect-shape-and-class-balance" class="level3">
 <h3 class="anchored" data-anchor-id="inspect-shape-and-class-balance">1.4 Inspect shape and class balance</h3>
-<div id="10" class="cell" data-execution_count="5">
+<div id="11" class="cell" data-execution_count="5">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>logger.info(<span class="ss">f"Shape: </span><span class="sc">{</span>df<span class="sc">.</span>shape[<span class="dv">0</span>]<span class="sc">:,}</span><span class="ss"> rows x </span><span class="sc">{</span>df<span class="sc">.</span>shape[<span class="dv">1</span>]<span class="sc">}</span><span class="ss"> columns"</span>)</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>logger.info(<span class="ss">f"Hotels in dataset: </span><span class="sc">{</span>df[<span class="st">'hotel'</span>]<span class="sc">.</span>value_counts()<span class="sc">.</span>to_dict()<span class="sc">}</span><span class="ss">"</span>)</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>logger.info(<span class="ss">f"Overall cancellation rate: </span><span class="sc">{</span>df[<span class="st">'is_canceled'</span>]<span class="sc">.</span>mean()<span class="sc">:.1%}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -653,7 +654,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="summary-statistics" class="level3">
 <h3 class="anchored" data-anchor-id="summary-statistics">1.5 Summary statistics</h3>
 <p>A branded GT table gives a cleaner overview than <code>df.describe()</code>.</p>
-<div id="12" class="cell" data-execution_count="6">
+<div id="13" class="cell" data-execution_count="6">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>stats: pd.DataFrame <span class="op">=</span> df.describe().<span class="bu">round</span>(<span class="dv">2</span>).T.reset_index().rename(columns<span class="op">=</span>{<span class="st">"index"</span>: <span class="st">"feature"</span>})</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>(</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    themed_gt(GT(stats), n_rows<span class="op">=</span><span class="bu">len</span>(stats))</span>
@@ -664,55 +665,55 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    .tab_source_note(<span class="st">"Antonio et al., 2019 | Data in Brief"</span>)</span>
 <span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="6">
-<div id="swqcyshsko" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:100%;height:auto;">
+<div id="esnvuvowst" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:100%;height:auto;">
 <style>
-#swqcyshsko table {
+#esnvuvowst table {
           font-family: 'Libre Franklin', 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
           -webkit-font-smoothing: antialiased;
           -moz-osx-font-smoothing: grayscale;
         }
 
-#swqcyshsko thead, tbody, tfoot, tr, td, th { border-style: none; }
+#esnvuvowst thead, tbody, tfoot, tr, td, th { border-style: none; }
  tr { background-color: transparent; }
-#swqcyshsko p { margin: 0; padding: 0; }
- #swqcyshsko .gt_table { display: table; border-collapse: collapse; line-height: normal; margin-left: auto; margin-right: auto; color: #171717; font-size: 13px; font-weight: normal; font-style: normal; background-color: #FFFFFF; width: 100%; border-top-style: solid; border-top-width: 2px; border-top-color: #1E293B; border-right-style: none; border-right-width: 2px; border-right-color: #D3D3D3; border-bottom-style: solid; border-bottom-width: 1px; border-bottom-color: #1E293B; border-left-style: none; border-left-width: 2px; border-left-color: #D3D3D3; }
- #swqcyshsko .gt_caption { padding-top: 4px; padding-bottom: 4px; }
- #swqcyshsko .gt_title { color: #171717; font-size: 16px; font-weight: bold; padding-top: 10px; padding-bottom: 10px; padding-left: 5px; padding-right: 5px; border-bottom-color: #FFFFFF; border-bottom-width: 0; }
- #swqcyshsko .gt_subtitle { color: #171717; font-size: 13px; font-weight: initial; padding-top: 9px; padding-bottom: 11px; padding-left: 5px; padding-right: 5px; border-top-color: #FFFFFF; border-top-width: 0; }
- #swqcyshsko .gt_heading { background-color: #FFFFFF; text-align: center; border-bottom-color: #FFFFFF; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; }
- #swqcyshsko .gt_bottom_border { border-bottom-style: solid; border-bottom-width: 2px; border-bottom-color: #D3D3D3; }
- #swqcyshsko .gt_col_headings { border-top-style: solid; border-top-width: 2px; border-top-color: #D3D3D3; border-bottom-style: solid; border-bottom-width: 1px; border-bottom-color: #D3D3D3; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; }
- #swqcyshsko .gt_col_heading { color: #FFFFFF; background-color: #1E293B; font-size: 13px; font-weight: bold; text-transform: inherit; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; vertical-align: bottom; padding-top: 9px; padding-bottom: 11px; padding-left: 5px; padding-right: 5px; overflow-x: hidden; }
- #swqcyshsko .gt_column_spanner_outer { color: #FFFFFF; background-color: #1E293B; font-size: 13px; font-weight: bold; text-transform: inherit; padding-top: 0; padding-bottom: 0; padding-left: 4px; padding-right: 4px; }
- #swqcyshsko .gt_column_spanner_outer:first-child { padding-left: 0; }
- #swqcyshsko .gt_column_spanner_outer:last-child { padding-right: 0; }
- #swqcyshsko .gt_column_spanner { border-bottom-style: solid; border-bottom-width: 1px; border-bottom-color: #D3D3D3; vertical-align: bottom; padding-top: 9px; padding-bottom: 9px; overflow-x: hidden; display: inline-block; width: 100%; }
- #swqcyshsko .gt_spanner_row { border-bottom-style: hidden; }
- #swqcyshsko .gt_group_heading { padding-top: 8px; padding-bottom: 8px; padding-left: 5px; padding-right: 5px; color: #171717; background-color: #FFFFFF; font-size: 100%; font-weight: initial; text-transform: inherit; border-top-style: solid; border-top-width: 2px; border-top-color: #D3D3D3; border-bottom-style: solid; border-bottom-width: 2px; border-bottom-color: #D3D3D3; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; vertical-align: middle; text-align: left; }
- #swqcyshsko .gt_empty_group_heading { padding: 0.5px; color: #171717; background-color: #FFFFFF; font-size: 100%; font-weight: initial; border-top-style: solid; border-top-width: 2px; border-top-color: #D3D3D3; border-bottom-style: solid; border-bottom-width: 2px; border-bottom-color: #D3D3D3; vertical-align: middle; }
- #swqcyshsko .gt_from_md> :first-child { margin-top: 0; }
- #swqcyshsko .gt_from_md> :last-child { margin-bottom: 0; }
- #swqcyshsko .gt_row { padding-top: 7px; padding-bottom: 7px; padding-left: 5px; padding-right: 5px; margin: 10px; border-top-style: solid; border-top-width: 1px; border-top-color: #D3D3D3; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; vertical-align: middle; overflow-x: hidden; }
- #swqcyshsko .gt_stub { color: #171717; background-color: #FFFFFF; font-size: 100%; font-weight: initial; text-transform: inherit; border-right-style: solid; border-right-width: 2px; border-right-color: #D3D3D3; padding-left: 5px; padding-right: 5px; }
- #swqcyshsko .gt_stub_row_group { color: #171717; background-color: #FFFFFF; font-size: 100%; font-weight: initial; text-transform: inherit; border-right-style: solid; border-right-width: 2px; border-right-color: #D3D3D3; padding-left: 5px; padding-right: 5px; vertical-align: top; }
- #swqcyshsko .gt_row_group_first td { border-top-width: 2px; }
- #swqcyshsko .gt_row_group_first th { border-top-width: 2px; }
- #swqcyshsko .gt_striped { color: #171717; background-color: #F4F4F4; }
- #swqcyshsko .gt_table_body { border-top-style: solid; border-top-width: 2px; border-top-color: #D3D3D3; border-bottom-style: solid; border-bottom-width: 1px; border-bottom-color: #DEE2E6; }
- #swqcyshsko .gt_grand_summary_row { color: #171717; background-color: #FFFFFF; text-transform: inherit; padding-top: 8px; padding-bottom: 8px; padding-left: 5px; padding-right: 5px; }
- #swqcyshsko .gt_first_grand_summary_row_bottom { border-top-style: double; border-top-width: 6px; border-top-color: #D3D3D3; }
- #swqcyshsko .gt_last_grand_summary_row_top { border-bottom-style: double; border-bottom-width: 6px; border-bottom-color: #D3D3D3; }
- #swqcyshsko .gt_sourcenotes { color: #171717; background-color: #FFFFFF; border-bottom-style: none; border-bottom-width: 2px; border-bottom-color: #D3D3D3; border-left-style: none; border-left-width: 2px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 2px; border-right-color: #D3D3D3; }
- #swqcyshsko .gt_sourcenote { font-size: 11px; padding-top: 6px; padding-bottom: 6px; padding-left: 5px; padding-right: 5px; text-align: left; }
- #swqcyshsko .gt_left { text-align: left; }
- #swqcyshsko .gt_center { text-align: center; }
- #swqcyshsko .gt_right { text-align: right; font-variant-numeric: tabular-nums; }
- #swqcyshsko .gt_font_normal { font-weight: normal; }
- #swqcyshsko .gt_font_bold { font-weight: bold; }
- #swqcyshsko .gt_font_italic { font-style: italic; }
- #swqcyshsko .gt_super { font-size: 65%; }
- #swqcyshsko .gt_footnote_marks { font-size: 75%; vertical-align: 0.4em; position: initial; }
- #swqcyshsko .gt_asterisk { font-size: 100%; vertical-align: 0; }
+#esnvuvowst p { margin: 0; padding: 0; }
+ #esnvuvowst .gt_table { display: table; border-collapse: collapse; line-height: normal; margin-left: auto; margin-right: auto; color: #171717; font-size: 13px; font-weight: normal; font-style: normal; background-color: #FFFFFF; width: 100%; border-top-style: solid; border-top-width: 2px; border-top-color: #1E293B; border-right-style: none; border-right-width: 2px; border-right-color: #D3D3D3; border-bottom-style: solid; border-bottom-width: 1px; border-bottom-color: #1E293B; border-left-style: none; border-left-width: 2px; border-left-color: #D3D3D3; }
+ #esnvuvowst .gt_caption { padding-top: 4px; padding-bottom: 4px; }
+ #esnvuvowst .gt_title { color: #171717; font-size: 16px; font-weight: bold; padding-top: 10px; padding-bottom: 10px; padding-left: 5px; padding-right: 5px; border-bottom-color: #FFFFFF; border-bottom-width: 0; }
+ #esnvuvowst .gt_subtitle { color: #171717; font-size: 13px; font-weight: initial; padding-top: 9px; padding-bottom: 11px; padding-left: 5px; padding-right: 5px; border-top-color: #FFFFFF; border-top-width: 0; }
+ #esnvuvowst .gt_heading { background-color: #FFFFFF; text-align: center; border-bottom-color: #FFFFFF; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; }
+ #esnvuvowst .gt_bottom_border { border-bottom-style: solid; border-bottom-width: 2px; border-bottom-color: #D3D3D3; }
+ #esnvuvowst .gt_col_headings { border-top-style: solid; border-top-width: 2px; border-top-color: #D3D3D3; border-bottom-style: solid; border-bottom-width: 1px; border-bottom-color: #D3D3D3; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; }
+ #esnvuvowst .gt_col_heading { color: #FFFFFF; background-color: #1E293B; font-size: 13px; font-weight: bold; text-transform: inherit; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; vertical-align: bottom; padding-top: 9px; padding-bottom: 11px; padding-left: 5px; padding-right: 5px; overflow-x: hidden; }
+ #esnvuvowst .gt_column_spanner_outer { color: #FFFFFF; background-color: #1E293B; font-size: 13px; font-weight: bold; text-transform: inherit; padding-top: 0; padding-bottom: 0; padding-left: 4px; padding-right: 4px; }
+ #esnvuvowst .gt_column_spanner_outer:first-child { padding-left: 0; }
+ #esnvuvowst .gt_column_spanner_outer:last-child { padding-right: 0; }
+ #esnvuvowst .gt_column_spanner { border-bottom-style: solid; border-bottom-width: 1px; border-bottom-color: #D3D3D3; vertical-align: bottom; padding-top: 9px; padding-bottom: 9px; overflow-x: hidden; display: inline-block; width: 100%; }
+ #esnvuvowst .gt_spanner_row { border-bottom-style: hidden; }
+ #esnvuvowst .gt_group_heading { padding-top: 8px; padding-bottom: 8px; padding-left: 5px; padding-right: 5px; color: #171717; background-color: #FFFFFF; font-size: 100%; font-weight: initial; text-transform: inherit; border-top-style: solid; border-top-width: 2px; border-top-color: #D3D3D3; border-bottom-style: solid; border-bottom-width: 2px; border-bottom-color: #D3D3D3; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; vertical-align: middle; text-align: left; }
+ #esnvuvowst .gt_empty_group_heading { padding: 0.5px; color: #171717; background-color: #FFFFFF; font-size: 100%; font-weight: initial; border-top-style: solid; border-top-width: 2px; border-top-color: #D3D3D3; border-bottom-style: solid; border-bottom-width: 2px; border-bottom-color: #D3D3D3; vertical-align: middle; }
+ #esnvuvowst .gt_from_md> :first-child { margin-top: 0; }
+ #esnvuvowst .gt_from_md> :last-child { margin-bottom: 0; }
+ #esnvuvowst .gt_row { padding-top: 7px; padding-bottom: 7px; padding-left: 5px; padding-right: 5px; margin: 10px; border-top-style: solid; border-top-width: 1px; border-top-color: #D3D3D3; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; vertical-align: middle; overflow-x: hidden; }
+ #esnvuvowst .gt_stub { color: #171717; background-color: #FFFFFF; font-size: 100%; font-weight: initial; text-transform: inherit; border-right-style: solid; border-right-width: 2px; border-right-color: #D3D3D3; padding-left: 5px; padding-right: 5px; }
+ #esnvuvowst .gt_stub_row_group { color: #171717; background-color: #FFFFFF; font-size: 100%; font-weight: initial; text-transform: inherit; border-right-style: solid; border-right-width: 2px; border-right-color: #D3D3D3; padding-left: 5px; padding-right: 5px; vertical-align: top; }
+ #esnvuvowst .gt_row_group_first td { border-top-width: 2px; }
+ #esnvuvowst .gt_row_group_first th { border-top-width: 2px; }
+ #esnvuvowst .gt_striped { color: #171717; background-color: #F4F4F4; }
+ #esnvuvowst .gt_table_body { border-top-style: solid; border-top-width: 2px; border-top-color: #D3D3D3; border-bottom-style: solid; border-bottom-width: 1px; border-bottom-color: #DEE2E6; }
+ #esnvuvowst .gt_grand_summary_row { color: #171717; background-color: #FFFFFF; text-transform: inherit; padding-top: 8px; padding-bottom: 8px; padding-left: 5px; padding-right: 5px; }
+ #esnvuvowst .gt_first_grand_summary_row_bottom { border-top-style: double; border-top-width: 6px; border-top-color: #D3D3D3; }
+ #esnvuvowst .gt_last_grand_summary_row_top { border-bottom-style: double; border-bottom-width: 6px; border-bottom-color: #D3D3D3; }
+ #esnvuvowst .gt_sourcenotes { color: #171717; background-color: #FFFFFF; border-bottom-style: none; border-bottom-width: 2px; border-bottom-color: #D3D3D3; border-left-style: none; border-left-width: 2px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 2px; border-right-color: #D3D3D3; }
+ #esnvuvowst .gt_sourcenote { font-size: 11px; padding-top: 6px; padding-bottom: 6px; padding-left: 5px; padding-right: 5px; text-align: left; }
+ #esnvuvowst .gt_left { text-align: left; }
+ #esnvuvowst .gt_center { text-align: center; }
+ #esnvuvowst .gt_right { text-align: right; font-variant-numeric: tabular-nums; }
+ #esnvuvowst .gt_font_normal { font-weight: normal; }
+ #esnvuvowst .gt_font_bold { font-weight: bold; }
+ #esnvuvowst .gt_font_italic { font-style: italic; }
+ #esnvuvowst .gt_super { font-size: 65%; }
+ #esnvuvowst .gt_footnote_marks { font-size: 75%; vertical-align: 0.4em; position: initial; }
+ #esnvuvowst .gt_asterisk { font-size: 100%; vertical-align: 0; }
  
 </style>
 
@@ -981,7 +982,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="transformer-the-fit-step" class="level3">
 <h3 class="anchored" data-anchor-id="transformer-the-fit-step">2.1 Transformer – the fit step</h3>
 <p>We use a toy array to isolate the API from the hotel data.</p>
-<div id="15" class="cell" data-execution_count="7">
+<div id="16" class="cell" data-execution_count="7">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>demo_x: np.ndarray <span class="op">=</span> np.array([[<span class="fl">1.0</span>, <span class="fl">100.0</span>], [<span class="fl">2.0</span>, <span class="fl">200.0</span>], [<span class="fl">3.0</span>, <span class="fl">300.0</span>]])</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>demo_scaler: StandardScaler <span class="op">=</span> StandardScaler()</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>demo_scaler.fit(demo_x)</span>
@@ -992,7 +993,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="transformer-the-transform-step" class="level3">
 <h3 class="anchored" data-anchor-id="transformer-the-transform-step">2.2 Transformer – the transform step</h3>
 <p>Apply the learned parameters to a new point. The scaler uses the same mean and scale every time – only the input changes.</p>
-<div id="17" class="cell" data-execution_count="8">
+<div id="18" class="cell" data-execution_count="8">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>new_point: np.ndarray <span class="op">=</span> np.array([[<span class="fl">4.0</span>, <span class="fl">400.0</span>]])</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>scaled_point: np.ndarray <span class="op">=</span> demo_scaler.transform(new_point)</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>logger.info(<span class="ss">f"Raw input:  </span><span class="sc">{</span>new_point<span class="sc">}</span><span class="ss">"</span>)</span>
@@ -1002,7 +1003,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="predictor-fit-with-labels-then-predict" class="level3">
 <h3 class="anchored" data-anchor-id="predictor-fit-with-labels-then-predict">2.3 Predictor – fit with labels, then predict</h3>
 <p>A Predictor learns weights from labeled data <code>(X, y)</code> and maps new <code>X</code> values to predicted <code>y</code> values.</p>
-<div id="19" class="cell" data-execution_count="9">
+<div id="20" class="cell" data-execution_count="9">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>demo_y: np.ndarray <span class="op">=</span> np.array([<span class="fl">1.0</span>, <span class="fl">2.0</span>, <span class="fl">3.0</span>])</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>demo_lr: LinearRegression <span class="op">=</span> LinearRegression()</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>demo_lr.fit(demo_x, demo_y)</span>
@@ -1050,7 +1051,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </table>
 <section id="define-prediction-targets" class="level3">
 <h3 class="anchored" data-anchor-id="define-prediction-targets">3.1 Define prediction targets</h3>
-<div id="23" class="cell" data-execution_count="10">
+<div id="24" class="cell" data-execution_count="10">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>TARGET_REG: <span class="bu">str</span> <span class="op">=</span> <span class="st">"adr"</span>  <span class="co"># Average Daily Rate in euros (continuous)</span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>TARGET_CLF: <span class="bu">str</span> <span class="op">=</span> <span class="st">"is_canceled"</span>  <span class="co"># 0 = kept, 1 = cancelled (binary)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
@@ -1058,7 +1059,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="select-numerical-features" class="level3">
 <h3 class="anchored" data-anchor-id="select-numerical-features">3.2 Select numerical features</h3>
 <p>We start with six interpretable columns. Part 26 extends this to a full mixed feature set.</p>
-<div id="25" class="cell" data-execution_count="11">
+<div id="26" class="cell" data-execution_count="11">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>FEATURES: <span class="bu">list</span>[<span class="bu">str</span>] <span class="op">=</span> [</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"lead_time"</span>,  <span class="co"># days booked in advance</span></span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"stays_in_weekend_nights"</span>,  <span class="co"># weekend nights stayed</span></span>
@@ -1072,7 +1073,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="build-feature-matrix-x-and-target-vectors" class="level3">
 <h3 class="anchored" data-anchor-id="build-feature-matrix-x-and-target-vectors">3.3 Build feature matrix X and target vectors</h3>
 <p><code>to_numpy()</code> produces a plain NumPy array. We specify <code>dtype=float</code> to catch implicit integer promotion early.</p>
-<div id="27" class="cell" data-execution_count="12">
+<div id="28" class="cell" data-execution_count="12">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>X: np.ndarray <span class="op">=</span> df[FEATURES].to_numpy(dtype<span class="op">=</span><span class="bu">float</span>)</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>y_reg: np.ndarray <span class="op">=</span> df[TARGET_REG].to_numpy(dtype<span class="op">=</span><span class="bu">float</span>)</span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>y_clf: np.ndarray <span class="op">=</span> df[TARGET_CLF].to_numpy(dtype<span class="op">=</span><span class="bu">int</span>)</span>
@@ -1082,7 +1083,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="explore-the-regression-target-adr-distribution" class="level3">
 <h3 class="anchored" data-anchor-id="explore-the-regression-target-adr-distribution">3.4 Explore the regression target: ADR distribution</h3>
 <p><strong>From Part 23 (Section 3.1):</strong> check the distribution of the target before modelling. Skewed targets may benefit from a log transform.</p>
-<div id="29" class="cell" data-execution_count="13">
+<div id="30" class="cell" data-execution_count="13">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>adr_df: pd.DataFrame <span class="op">=</span> df[[<span class="st">"adr"</span>]].copy()</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>(</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    ggplot(adr_df, aes(x<span class="op">=</span><span class="st">"adr"</span>))</span>
@@ -1096,7 +1097,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> modern_theme(grid<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="13">
-   <div id="dyKXnW"></div>
+   <div id="ehFkZg"></div>
    <script type="text/javascript" data-lets-plot-script="plot">
    
    (function() {
@@ -1121,7 +1122,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
        };
    }
    
-   const containerDiv = document.getElementById("dyKXnW");
+   const containerDiv = document.getElementById("ehFkZg");
    let fig = null;
    
    function renderPlot() {
@@ -1330,7 +1331,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="explore-the-classification-target-cancellation-by-hotel-type" class="level3">
 <h3 class="anchored" data-anchor-id="explore-the-classification-target-cancellation-by-hotel-type">3.5 Explore the classification target: cancellation by hotel type</h3>
 <p><strong>From Part 23 (Section 4):</strong> class imbalance affects which metrics are meaningful. The chart reveals whether both hotels share the same base rate.</p>
-<div id="31" class="cell" data-execution_count="14">
+<div id="32" class="cell" data-execution_count="14">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>cancel_df: pd.DataFrame <span class="op">=</span> (</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    df.groupby(<span class="st">"hotel"</span>, as_index<span class="op">=</span><span class="va">False</span>)[<span class="st">"is_canceled"</span>]</span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    .agg(total<span class="op">=</span><span class="st">"count"</span>, canceled<span class="op">=</span><span class="st">"sum"</span>)</span>
@@ -1349,7 +1350,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> modern_theme(legend_pos<span class="op">=</span><span class="st">"none"</span>)</span>
 <span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="14">
-   <div id="l6GRKX"></div>
+   <div id="vYEtWr"></div>
    <script type="text/javascript" data-lets-plot-script="plot">
    
    (function() {
@@ -1374,7 +1375,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
        };
    }
    
-   const containerDiv = document.getElementById("l6GRKX");
+   const containerDiv = document.getElementById("vYEtWr");
    let fig = null;
    
    function renderPlot() {
@@ -1616,7 +1617,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="feature-ranges-before-scaling" class="level3">
 <h3 class="anchored" data-anchor-id="feature-ranges-before-scaling">4.1 Feature ranges before scaling</h3>
 <p>Look at the raw min/max for each feature to see the scale mismatch.</p>
-<div id="35" class="cell" data-execution_count="15">
+<div id="36" class="cell" data-execution_count="15">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i, feat <span class="kw">in</span> <span class="bu">enumerate</span>(FEATURES):</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>    logger.info(<span class="ss">f"  </span><span class="sc">{</span>feat<span class="sc">:&lt;30}</span><span class="ss"> min=</span><span class="sc">{</span>X[:, i]<span class="sc">.</span><span class="bu">min</span>()<span class="sc">:&gt;7.1f}</span><span class="ss">  max=</span><span class="sc">{</span>X[:, i]<span class="sc">.</span><span class="bu">max</span>()<span class="sc">:&gt;7.1f}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
@@ -1624,7 +1625,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="split-the-data-before-fitting-any-scaler" class="level3">
 <h3 class="anchored" data-anchor-id="split-the-data-before-fitting-any-scaler">4.2 Split the data before fitting any scaler</h3>
 <p><strong>Splitting before scaling</strong> is the most important ordering constraint in the workflow.</p>
-<div id="37" class="cell" data-execution_count="16">
+<div id="38" class="cell" data-execution_count="16">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>X_tr, X_te, y_tr, y_te <span class="op">=</span> train_test_split(X, y_reg, test_size<span class="op">=</span><span class="fl">0.2</span>, random_state<span class="op">=</span><span class="dv">42</span>)</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>logger.info(<span class="ss">f"Train: </span><span class="sc">{</span>X_tr<span class="sc">.</span>shape<span class="sc">}</span><span class="ss">  Test: </span><span class="sc">{</span>X_te<span class="sc">.</span>shape<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
@@ -1632,7 +1633,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="fit-standardscaler-on-training-data-only" class="level3">
 <h3 class="anchored" data-anchor-id="fit-standardscaler-on-training-data-only">4.3 Fit StandardScaler on training data only</h3>
 <p><code>fit</code> learns mean and std from <code>X_tr</code>. These values describe the training distribution – the test set should not influence them.</p>
-<div id="39" class="cell" data-execution_count="17">
+<div id="40" class="cell" data-execution_count="17">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>scaler: StandardScaler <span class="op">=</span> StandardScaler()</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>scaler.fit(X_tr)</span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>logger.info(<span class="ss">f"Learned means:  </span><span class="sc">{</span>scaler<span class="sc">.</span>mean_<span class="sc">.</span><span class="bu">round</span>(<span class="dv">2</span>)<span class="sc">}</span><span class="ss">"</span>)</span>
@@ -1642,7 +1643,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="apply-the-fitted-scaler-to-train-and-test" class="level3">
 <h3 class="anchored" data-anchor-id="apply-the-fitted-scaler-to-train-and-test">4.4 Apply the fitted scaler to train and test</h3>
 <p>Same scaler object, same parameters, different input arrays.</p>
-<div id="41" class="cell" data-execution_count="18">
+<div id="42" class="cell" data-execution_count="18">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>X_train_s: np.ndarray <span class="op">=</span> scaler.transform(X_tr)</span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>X_test_s: np.ndarray <span class="op">=</span> scaler.transform(X_te)</span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i, feat <span class="kw">in</span> <span class="bu">enumerate</span>(FEATURES):</span>
@@ -1652,7 +1653,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="alternative-minmaxscaler" class="level3">
 <h3 class="anchored" data-anchor-id="alternative-minmaxscaler">4.5 Alternative: MinMaxScaler</h3>
 <p>MinMaxScaler maps every feature to [0, 1]. Prefer it for algorithms that need bounded inputs (neural networks, some distance-based methods).</p>
-<div id="43" class="cell" data-execution_count="19">
+<div id="44" class="cell" data-execution_count="19">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>mms: MinMaxScaler <span class="op">=</span> MinMaxScaler()</span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>mms.fit(X_tr)</span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>X_mm: np.ndarray <span class="op">=</span> mms.transform(X_tr)</span>
@@ -1704,7 +1705,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>sklearn’s <code>DummyRegressor</code> and <code>DummyClassifier</code> implement the dumbest possible strategies.</p>
 <section id="regression-baseline-always-predict-the-training-mean" class="level3">
 <h3 class="anchored" data-anchor-id="regression-baseline-always-predict-the-training-mean">5.1 Regression baseline: always predict the training mean</h3>
-<div id="48" class="cell" data-execution_count="20">
+<div id="49" class="cell" data-execution_count="20">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>dummy_reg: DummyRegressor <span class="op">=</span> DummyRegressor(strategy<span class="op">=</span><span class="st">"mean"</span>)</span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>dummy_reg.fit(X_train_s, y_tr)</span>
 <span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>dummy_pred: np.ndarray <span class="op">=</span> dummy_reg.predict(X_test_s)</span>
@@ -1717,7 +1718,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="classification-split-and-baseline" class="level3">
 <h3 class="anchored" data-anchor-id="classification-split-and-baseline">5.2 Classification split and baseline</h3>
 <p>Stratify on the binary target to preserve the class ratio in both splits.</p>
-<div id="50" class="cell" data-execution_count="21">
+<div id="51" class="cell" data-execution_count="21">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>Xc_tr, Xc_te, yc_tr, yc_te <span class="op">=</span> train_test_split(X, y_clf, test_size<span class="op">=</span><span class="fl">0.2</span>, random_state<span class="op">=</span><span class="dv">42</span>, stratify<span class="op">=</span>y_clf)</span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>sc_clf: StandardScaler <span class="op">=</span> StandardScaler()</span>
 <span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>Xc_train_s: np.ndarray <span class="op">=</span> sc_clf.fit_transform(Xc_tr)</span>
@@ -1727,7 +1728,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="classification-baseline-always-predict-the-majority-class" class="level3">
 <h3 class="anchored" data-anchor-id="classification-baseline-always-predict-the-majority-class">5.3 Classification baseline: always predict the majority class</h3>
-<div id="52" class="cell" data-execution_count="22">
+<div id="53" class="cell" data-execution_count="22">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>dummy_clf: DummyClassifier <span class="op">=</span> DummyClassifier(strategy<span class="op">=</span><span class="st">"most_frequent"</span>)</span>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>dummy_clf.fit(Xc_train_s, yc_tr)</span>
 <span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>dummy_clf_pred: np.ndarray <span class="op">=</span> dummy_clf.predict(Xc_test_s)</span>
@@ -1758,7 +1759,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="define-a-typed-evaluation-helper" class="level3">
 <h3 class="anchored" data-anchor-id="define-a-typed-evaluation-helper">6.1 Define a typed evaluation helper</h3>
 <p>One function covers all regression comparisons throughout the notebook.</p>
-<div id="56" class="cell" data-execution_count="23">
+<div id="57" class="cell" data-execution_count="23">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> evaluate_regressor(</span>
 <span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>    model: Any,</span>
 <span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>    X_eval: np.ndarray,</span>
@@ -1777,7 +1778,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="fit-linearregression" class="level3">
 <h3 class="anchored" data-anchor-id="fit-linearregression">6.2 Fit LinearRegression</h3>
-<div id="58" class="cell" data-execution_count="24">
+<div id="59" class="cell" data-execution_count="24">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>lin_reg: LinearRegression <span class="op">=</span> LinearRegression()</span>
 <span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>lin_reg.fit(X_train_s, y_tr)</span>
 <span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>logger.success(<span class="st">"LinearRegression fitted"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -1785,7 +1786,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="compare-against-the-baseline" class="level3">
 <h3 class="anchored" data-anchor-id="compare-against-the-baseline">6.3 Compare against the baseline</h3>
-<div id="60" class="cell" data-execution_count="25">
+<div id="61" class="cell" data-execution_count="25">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>reg_results: pd.DataFrame <span class="op">=</span> pd.DataFrame(</span>
 <span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>    [</span>
 <span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>        evaluate_regressor(dummy_reg, X_test_s, y_te, <span class="st">"DummyRegressor (mean)"</span>),</span>
@@ -1801,55 +1802,55 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb28-13"><a href="#cb28-13" aria-hidden="true" tabindex="-1"></a>    subtitle<span class="op">=</span><span class="st">"Test set | Hotel Booking Demand dataset"</span>,</span>
 <span id="cb28-14"><a href="#cb28-14" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="25">
-<div id="yftbgqlano" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:100%;height:auto;">
+<div id="otlkxdmqdn" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:100%;height:auto;">
 <style>
-#yftbgqlano table {
+#otlkxdmqdn table {
           font-family: 'Libre Franklin', 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
           -webkit-font-smoothing: antialiased;
           -moz-osx-font-smoothing: grayscale;
         }
 
-#yftbgqlano thead, tbody, tfoot, tr, td, th { border-style: none; }
+#otlkxdmqdn thead, tbody, tfoot, tr, td, th { border-style: none; }
  tr { background-color: transparent; }
-#yftbgqlano p { margin: 0; padding: 0; }
- #yftbgqlano .gt_table { display: table; border-collapse: collapse; line-height: normal; margin-left: auto; margin-right: auto; color: #171717; font-size: 13px; font-weight: normal; font-style: normal; background-color: #FFFFFF; width: 100%; border-top-style: solid; border-top-width: 2px; border-top-color: #1E293B; border-right-style: none; border-right-width: 2px; border-right-color: #D3D3D3; border-bottom-style: solid; border-bottom-width: 1px; border-bottom-color: #1E293B; border-left-style: none; border-left-width: 2px; border-left-color: #D3D3D3; }
- #yftbgqlano .gt_caption { padding-top: 4px; padding-bottom: 4px; }
- #yftbgqlano .gt_title { color: #171717; font-size: 16px; font-weight: bold; padding-top: 10px; padding-bottom: 10px; padding-left: 5px; padding-right: 5px; border-bottom-color: #FFFFFF; border-bottom-width: 0; }
- #yftbgqlano .gt_subtitle { color: #171717; font-size: 13px; font-weight: initial; padding-top: 9px; padding-bottom: 11px; padding-left: 5px; padding-right: 5px; border-top-color: #FFFFFF; border-top-width: 0; }
- #yftbgqlano .gt_heading { background-color: #FFFFFF; text-align: center; border-bottom-color: #FFFFFF; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; }
- #yftbgqlano .gt_bottom_border { border-bottom-style: solid; border-bottom-width: 2px; border-bottom-color: #D3D3D3; }
- #yftbgqlano .gt_col_headings { border-top-style: solid; border-top-width: 2px; border-top-color: #D3D3D3; border-bottom-style: solid; border-bottom-width: 1px; border-bottom-color: #D3D3D3; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; }
- #yftbgqlano .gt_col_heading { color: #FFFFFF; background-color: #1E293B; font-size: 13px; font-weight: bold; text-transform: inherit; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; vertical-align: bottom; padding-top: 9px; padding-bottom: 11px; padding-left: 5px; padding-right: 5px; overflow-x: hidden; }
- #yftbgqlano .gt_column_spanner_outer { color: #FFFFFF; background-color: #1E293B; font-size: 13px; font-weight: bold; text-transform: inherit; padding-top: 0; padding-bottom: 0; padding-left: 4px; padding-right: 4px; }
- #yftbgqlano .gt_column_spanner_outer:first-child { padding-left: 0; }
- #yftbgqlano .gt_column_spanner_outer:last-child { padding-right: 0; }
- #yftbgqlano .gt_column_spanner { border-bottom-style: solid; border-bottom-width: 1px; border-bottom-color: #D3D3D3; vertical-align: bottom; padding-top: 9px; padding-bottom: 9px; overflow-x: hidden; display: inline-block; width: 100%; }
- #yftbgqlano .gt_spanner_row { border-bottom-style: hidden; }
- #yftbgqlano .gt_group_heading { padding-top: 8px; padding-bottom: 8px; padding-left: 5px; padding-right: 5px; color: #171717; background-color: #FFFFFF; font-size: 100%; font-weight: initial; text-transform: inherit; border-top-style: solid; border-top-width: 2px; border-top-color: #D3D3D3; border-bottom-style: solid; border-bottom-width: 2px; border-bottom-color: #D3D3D3; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; vertical-align: middle; text-align: left; }
- #yftbgqlano .gt_empty_group_heading { padding: 0.5px; color: #171717; background-color: #FFFFFF; font-size: 100%; font-weight: initial; border-top-style: solid; border-top-width: 2px; border-top-color: #D3D3D3; border-bottom-style: solid; border-bottom-width: 2px; border-bottom-color: #D3D3D3; vertical-align: middle; }
- #yftbgqlano .gt_from_md> :first-child { margin-top: 0; }
- #yftbgqlano .gt_from_md> :last-child { margin-bottom: 0; }
- #yftbgqlano .gt_row { padding-top: 7px; padding-bottom: 7px; padding-left: 5px; padding-right: 5px; margin: 10px; border-top-style: solid; border-top-width: 1px; border-top-color: #D3D3D3; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; vertical-align: middle; overflow-x: hidden; }
- #yftbgqlano .gt_stub { color: #171717; background-color: #FFFFFF; font-size: 100%; font-weight: initial; text-transform: inherit; border-right-style: solid; border-right-width: 2px; border-right-color: #D3D3D3; padding-left: 5px; padding-right: 5px; }
- #yftbgqlano .gt_stub_row_group { color: #171717; background-color: #FFFFFF; font-size: 100%; font-weight: initial; text-transform: inherit; border-right-style: solid; border-right-width: 2px; border-right-color: #D3D3D3; padding-left: 5px; padding-right: 5px; vertical-align: top; }
- #yftbgqlano .gt_row_group_first td { border-top-width: 2px; }
- #yftbgqlano .gt_row_group_first th { border-top-width: 2px; }
- #yftbgqlano .gt_striped { color: #171717; background-color: #F4F4F4; }
- #yftbgqlano .gt_table_body { border-top-style: solid; border-top-width: 2px; border-top-color: #D3D3D3; border-bottom-style: solid; border-bottom-width: 1px; border-bottom-color: #DEE2E6; }
- #yftbgqlano .gt_grand_summary_row { color: #171717; background-color: #FFFFFF; text-transform: inherit; padding-top: 8px; padding-bottom: 8px; padding-left: 5px; padding-right: 5px; }
- #yftbgqlano .gt_first_grand_summary_row_bottom { border-top-style: double; border-top-width: 6px; border-top-color: #D3D3D3; }
- #yftbgqlano .gt_last_grand_summary_row_top { border-bottom-style: double; border-bottom-width: 6px; border-bottom-color: #D3D3D3; }
- #yftbgqlano .gt_sourcenotes { color: #171717; background-color: #FFFFFF; border-bottom-style: none; border-bottom-width: 2px; border-bottom-color: #D3D3D3; border-left-style: none; border-left-width: 2px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 2px; border-right-color: #D3D3D3; }
- #yftbgqlano .gt_sourcenote { font-size: 11px; padding-top: 6px; padding-bottom: 6px; padding-left: 5px; padding-right: 5px; text-align: left; }
- #yftbgqlano .gt_left { text-align: left; }
- #yftbgqlano .gt_center { text-align: center; }
- #yftbgqlano .gt_right { text-align: right; font-variant-numeric: tabular-nums; }
- #yftbgqlano .gt_font_normal { font-weight: normal; }
- #yftbgqlano .gt_font_bold { font-weight: bold; }
- #yftbgqlano .gt_font_italic { font-style: italic; }
- #yftbgqlano .gt_super { font-size: 65%; }
- #yftbgqlano .gt_footnote_marks { font-size: 75%; vertical-align: 0.4em; position: initial; }
- #yftbgqlano .gt_asterisk { font-size: 100%; vertical-align: 0; }
+#otlkxdmqdn p { margin: 0; padding: 0; }
+ #otlkxdmqdn .gt_table { display: table; border-collapse: collapse; line-height: normal; margin-left: auto; margin-right: auto; color: #171717; font-size: 13px; font-weight: normal; font-style: normal; background-color: #FFFFFF; width: 100%; border-top-style: solid; border-top-width: 2px; border-top-color: #1E293B; border-right-style: none; border-right-width: 2px; border-right-color: #D3D3D3; border-bottom-style: solid; border-bottom-width: 1px; border-bottom-color: #1E293B; border-left-style: none; border-left-width: 2px; border-left-color: #D3D3D3; }
+ #otlkxdmqdn .gt_caption { padding-top: 4px; padding-bottom: 4px; }
+ #otlkxdmqdn .gt_title { color: #171717; font-size: 16px; font-weight: bold; padding-top: 10px; padding-bottom: 10px; padding-left: 5px; padding-right: 5px; border-bottom-color: #FFFFFF; border-bottom-width: 0; }
+ #otlkxdmqdn .gt_subtitle { color: #171717; font-size: 13px; font-weight: initial; padding-top: 9px; padding-bottom: 11px; padding-left: 5px; padding-right: 5px; border-top-color: #FFFFFF; border-top-width: 0; }
+ #otlkxdmqdn .gt_heading { background-color: #FFFFFF; text-align: center; border-bottom-color: #FFFFFF; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; }
+ #otlkxdmqdn .gt_bottom_border { border-bottom-style: solid; border-bottom-width: 2px; border-bottom-color: #D3D3D3; }
+ #otlkxdmqdn .gt_col_headings { border-top-style: solid; border-top-width: 2px; border-top-color: #D3D3D3; border-bottom-style: solid; border-bottom-width: 1px; border-bottom-color: #D3D3D3; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; }
+ #otlkxdmqdn .gt_col_heading { color: #FFFFFF; background-color: #1E293B; font-size: 13px; font-weight: bold; text-transform: inherit; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; vertical-align: bottom; padding-top: 9px; padding-bottom: 11px; padding-left: 5px; padding-right: 5px; overflow-x: hidden; }
+ #otlkxdmqdn .gt_column_spanner_outer { color: #FFFFFF; background-color: #1E293B; font-size: 13px; font-weight: bold; text-transform: inherit; padding-top: 0; padding-bottom: 0; padding-left: 4px; padding-right: 4px; }
+ #otlkxdmqdn .gt_column_spanner_outer:first-child { padding-left: 0; }
+ #otlkxdmqdn .gt_column_spanner_outer:last-child { padding-right: 0; }
+ #otlkxdmqdn .gt_column_spanner { border-bottom-style: solid; border-bottom-width: 1px; border-bottom-color: #D3D3D3; vertical-align: bottom; padding-top: 9px; padding-bottom: 9px; overflow-x: hidden; display: inline-block; width: 100%; }
+ #otlkxdmqdn .gt_spanner_row { border-bottom-style: hidden; }
+ #otlkxdmqdn .gt_group_heading { padding-top: 8px; padding-bottom: 8px; padding-left: 5px; padding-right: 5px; color: #171717; background-color: #FFFFFF; font-size: 100%; font-weight: initial; text-transform: inherit; border-top-style: solid; border-top-width: 2px; border-top-color: #D3D3D3; border-bottom-style: solid; border-bottom-width: 2px; border-bottom-color: #D3D3D3; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; vertical-align: middle; text-align: left; }
+ #otlkxdmqdn .gt_empty_group_heading { padding: 0.5px; color: #171717; background-color: #FFFFFF; font-size: 100%; font-weight: initial; border-top-style: solid; border-top-width: 2px; border-top-color: #D3D3D3; border-bottom-style: solid; border-bottom-width: 2px; border-bottom-color: #D3D3D3; vertical-align: middle; }
+ #otlkxdmqdn .gt_from_md> :first-child { margin-top: 0; }
+ #otlkxdmqdn .gt_from_md> :last-child { margin-bottom: 0; }
+ #otlkxdmqdn .gt_row { padding-top: 7px; padding-bottom: 7px; padding-left: 5px; padding-right: 5px; margin: 10px; border-top-style: solid; border-top-width: 1px; border-top-color: #D3D3D3; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; vertical-align: middle; overflow-x: hidden; }
+ #otlkxdmqdn .gt_stub { color: #171717; background-color: #FFFFFF; font-size: 100%; font-weight: initial; text-transform: inherit; border-right-style: solid; border-right-width: 2px; border-right-color: #D3D3D3; padding-left: 5px; padding-right: 5px; }
+ #otlkxdmqdn .gt_stub_row_group { color: #171717; background-color: #FFFFFF; font-size: 100%; font-weight: initial; text-transform: inherit; border-right-style: solid; border-right-width: 2px; border-right-color: #D3D3D3; padding-left: 5px; padding-right: 5px; vertical-align: top; }
+ #otlkxdmqdn .gt_row_group_first td { border-top-width: 2px; }
+ #otlkxdmqdn .gt_row_group_first th { border-top-width: 2px; }
+ #otlkxdmqdn .gt_striped { color: #171717; background-color: #F4F4F4; }
+ #otlkxdmqdn .gt_table_body { border-top-style: solid; border-top-width: 2px; border-top-color: #D3D3D3; border-bottom-style: solid; border-bottom-width: 1px; border-bottom-color: #DEE2E6; }
+ #otlkxdmqdn .gt_grand_summary_row { color: #171717; background-color: #FFFFFF; text-transform: inherit; padding-top: 8px; padding-bottom: 8px; padding-left: 5px; padding-right: 5px; }
+ #otlkxdmqdn .gt_first_grand_summary_row_bottom { border-top-style: double; border-top-width: 6px; border-top-color: #D3D3D3; }
+ #otlkxdmqdn .gt_last_grand_summary_row_top { border-bottom-style: double; border-bottom-width: 6px; border-bottom-color: #D3D3D3; }
+ #otlkxdmqdn .gt_sourcenotes { color: #171717; background-color: #FFFFFF; border-bottom-style: none; border-bottom-width: 2px; border-bottom-color: #D3D3D3; border-left-style: none; border-left-width: 2px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 2px; border-right-color: #D3D3D3; }
+ #otlkxdmqdn .gt_sourcenote { font-size: 11px; padding-top: 6px; padding-bottom: 6px; padding-left: 5px; padding-right: 5px; text-align: left; }
+ #otlkxdmqdn .gt_left { text-align: left; }
+ #otlkxdmqdn .gt_center { text-align: center; }
+ #otlkxdmqdn .gt_right { text-align: right; font-variant-numeric: tabular-nums; }
+ #otlkxdmqdn .gt_font_normal { font-weight: normal; }
+ #otlkxdmqdn .gt_font_bold { font-weight: bold; }
+ #otlkxdmqdn .gt_font_italic { font-style: italic; }
+ #otlkxdmqdn .gt_super { font-size: 65%; }
+ #otlkxdmqdn .gt_footnote_marks { font-size: 75%; vertical-align: 0.4em; position: initial; }
+ #otlkxdmqdn .gt_asterisk { font-size: 100%; vertical-align: 0; }
  
 </style>
 
@@ -1897,7 +1898,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="inspect-learned-coefficients" class="level3">
 <h3 class="anchored" data-anchor-id="inspect-learned-coefficients">6.4 Inspect learned coefficients</h3>
 <p>Each coefficient: “holding other features constant, how many euros does ADR change when this standardised feature increases by 1?”</p>
-<div id="62" class="cell" data-execution_count="26">
+<div id="63" class="cell" data-execution_count="26">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>coef_df: pd.DataFrame <span class="op">=</span> (</span>
 <span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>    pd.DataFrame({<span class="st">"feature"</span>: FEATURES, <span class="st">"coefficient"</span>: lin_reg.coef_})</span>
 <span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>    .sort_values(<span class="st">"coefficient"</span>, key<span class="op">=</span><span class="bu">abs</span>, ascending<span class="op">=</span><span class="va">False</span>)</span>
@@ -1910,55 +1911,55 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a>    )</span>
 <span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="26">
-<div id="wulyogqhlw" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:100%;height:auto;">
+<div id="sdmwnxkvrm" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:100%;height:auto;">
 <style>
-#wulyogqhlw table {
+#sdmwnxkvrm table {
           font-family: 'Libre Franklin', 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
           -webkit-font-smoothing: antialiased;
           -moz-osx-font-smoothing: grayscale;
         }
 
-#wulyogqhlw thead, tbody, tfoot, tr, td, th { border-style: none; }
+#sdmwnxkvrm thead, tbody, tfoot, tr, td, th { border-style: none; }
  tr { background-color: transparent; }
-#wulyogqhlw p { margin: 0; padding: 0; }
- #wulyogqhlw .gt_table { display: table; border-collapse: collapse; line-height: normal; margin-left: auto; margin-right: auto; color: #171717; font-size: 13px; font-weight: normal; font-style: normal; background-color: #FFFFFF; width: 100%; border-top-style: solid; border-top-width: 2px; border-top-color: #1E293B; border-right-style: none; border-right-width: 2px; border-right-color: #D3D3D3; border-bottom-style: solid; border-bottom-width: 1px; border-bottom-color: #1E293B; border-left-style: none; border-left-width: 2px; border-left-color: #D3D3D3; }
- #wulyogqhlw .gt_caption { padding-top: 4px; padding-bottom: 4px; }
- #wulyogqhlw .gt_title { color: #171717; font-size: 16px; font-weight: bold; padding-top: 10px; padding-bottom: 10px; padding-left: 5px; padding-right: 5px; border-bottom-color: #FFFFFF; border-bottom-width: 0; }
- #wulyogqhlw .gt_subtitle { color: #171717; font-size: 13px; font-weight: initial; padding-top: 9px; padding-bottom: 11px; padding-left: 5px; padding-right: 5px; border-top-color: #FFFFFF; border-top-width: 0; }
- #wulyogqhlw .gt_heading { background-color: #FFFFFF; text-align: center; border-bottom-color: #FFFFFF; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; }
- #wulyogqhlw .gt_bottom_border { border-bottom-style: solid; border-bottom-width: 2px; border-bottom-color: #D3D3D3; }
- #wulyogqhlw .gt_col_headings { border-top-style: solid; border-top-width: 2px; border-top-color: #D3D3D3; border-bottom-style: solid; border-bottom-width: 1px; border-bottom-color: #D3D3D3; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; }
- #wulyogqhlw .gt_col_heading { color: #FFFFFF; background-color: #1E293B; font-size: 13px; font-weight: bold; text-transform: inherit; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; vertical-align: bottom; padding-top: 9px; padding-bottom: 11px; padding-left: 5px; padding-right: 5px; overflow-x: hidden; }
- #wulyogqhlw .gt_column_spanner_outer { color: #FFFFFF; background-color: #1E293B; font-size: 13px; font-weight: bold; text-transform: inherit; padding-top: 0; padding-bottom: 0; padding-left: 4px; padding-right: 4px; }
- #wulyogqhlw .gt_column_spanner_outer:first-child { padding-left: 0; }
- #wulyogqhlw .gt_column_spanner_outer:last-child { padding-right: 0; }
- #wulyogqhlw .gt_column_spanner { border-bottom-style: solid; border-bottom-width: 1px; border-bottom-color: #D3D3D3; vertical-align: bottom; padding-top: 9px; padding-bottom: 9px; overflow-x: hidden; display: inline-block; width: 100%; }
- #wulyogqhlw .gt_spanner_row { border-bottom-style: hidden; }
- #wulyogqhlw .gt_group_heading { padding-top: 8px; padding-bottom: 8px; padding-left: 5px; padding-right: 5px; color: #171717; background-color: #FFFFFF; font-size: 100%; font-weight: initial; text-transform: inherit; border-top-style: solid; border-top-width: 2px; border-top-color: #D3D3D3; border-bottom-style: solid; border-bottom-width: 2px; border-bottom-color: #D3D3D3; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; vertical-align: middle; text-align: left; }
- #wulyogqhlw .gt_empty_group_heading { padding: 0.5px; color: #171717; background-color: #FFFFFF; font-size: 100%; font-weight: initial; border-top-style: solid; border-top-width: 2px; border-top-color: #D3D3D3; border-bottom-style: solid; border-bottom-width: 2px; border-bottom-color: #D3D3D3; vertical-align: middle; }
- #wulyogqhlw .gt_from_md> :first-child { margin-top: 0; }
- #wulyogqhlw .gt_from_md> :last-child { margin-bottom: 0; }
- #wulyogqhlw .gt_row { padding-top: 7px; padding-bottom: 7px; padding-left: 5px; padding-right: 5px; margin: 10px; border-top-style: solid; border-top-width: 1px; border-top-color: #D3D3D3; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; vertical-align: middle; overflow-x: hidden; }
- #wulyogqhlw .gt_stub { color: #171717; background-color: #FFFFFF; font-size: 100%; font-weight: initial; text-transform: inherit; border-right-style: solid; border-right-width: 2px; border-right-color: #D3D3D3; padding-left: 5px; padding-right: 5px; }
- #wulyogqhlw .gt_stub_row_group { color: #171717; background-color: #FFFFFF; font-size: 100%; font-weight: initial; text-transform: inherit; border-right-style: solid; border-right-width: 2px; border-right-color: #D3D3D3; padding-left: 5px; padding-right: 5px; vertical-align: top; }
- #wulyogqhlw .gt_row_group_first td { border-top-width: 2px; }
- #wulyogqhlw .gt_row_group_first th { border-top-width: 2px; }
- #wulyogqhlw .gt_striped { color: #171717; background-color: #F4F4F4; }
- #wulyogqhlw .gt_table_body { border-top-style: solid; border-top-width: 2px; border-top-color: #D3D3D3; border-bottom-style: solid; border-bottom-width: 1px; border-bottom-color: #DEE2E6; }
- #wulyogqhlw .gt_grand_summary_row { color: #171717; background-color: #FFFFFF; text-transform: inherit; padding-top: 8px; padding-bottom: 8px; padding-left: 5px; padding-right: 5px; }
- #wulyogqhlw .gt_first_grand_summary_row_bottom { border-top-style: double; border-top-width: 6px; border-top-color: #D3D3D3; }
- #wulyogqhlw .gt_last_grand_summary_row_top { border-bottom-style: double; border-bottom-width: 6px; border-bottom-color: #D3D3D3; }
- #wulyogqhlw .gt_sourcenotes { color: #171717; background-color: #FFFFFF; border-bottom-style: none; border-bottom-width: 2px; border-bottom-color: #D3D3D3; border-left-style: none; border-left-width: 2px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 2px; border-right-color: #D3D3D3; }
- #wulyogqhlw .gt_sourcenote { font-size: 11px; padding-top: 6px; padding-bottom: 6px; padding-left: 5px; padding-right: 5px; text-align: left; }
- #wulyogqhlw .gt_left { text-align: left; }
- #wulyogqhlw .gt_center { text-align: center; }
- #wulyogqhlw .gt_right { text-align: right; font-variant-numeric: tabular-nums; }
- #wulyogqhlw .gt_font_normal { font-weight: normal; }
- #wulyogqhlw .gt_font_bold { font-weight: bold; }
- #wulyogqhlw .gt_font_italic { font-style: italic; }
- #wulyogqhlw .gt_super { font-size: 65%; }
- #wulyogqhlw .gt_footnote_marks { font-size: 75%; vertical-align: 0.4em; position: initial; }
- #wulyogqhlw .gt_asterisk { font-size: 100%; vertical-align: 0; }
+#sdmwnxkvrm p { margin: 0; padding: 0; }
+ #sdmwnxkvrm .gt_table { display: table; border-collapse: collapse; line-height: normal; margin-left: auto; margin-right: auto; color: #171717; font-size: 13px; font-weight: normal; font-style: normal; background-color: #FFFFFF; width: 100%; border-top-style: solid; border-top-width: 2px; border-top-color: #1E293B; border-right-style: none; border-right-width: 2px; border-right-color: #D3D3D3; border-bottom-style: solid; border-bottom-width: 1px; border-bottom-color: #1E293B; border-left-style: none; border-left-width: 2px; border-left-color: #D3D3D3; }
+ #sdmwnxkvrm .gt_caption { padding-top: 4px; padding-bottom: 4px; }
+ #sdmwnxkvrm .gt_title { color: #171717; font-size: 16px; font-weight: bold; padding-top: 10px; padding-bottom: 10px; padding-left: 5px; padding-right: 5px; border-bottom-color: #FFFFFF; border-bottom-width: 0; }
+ #sdmwnxkvrm .gt_subtitle { color: #171717; font-size: 13px; font-weight: initial; padding-top: 9px; padding-bottom: 11px; padding-left: 5px; padding-right: 5px; border-top-color: #FFFFFF; border-top-width: 0; }
+ #sdmwnxkvrm .gt_heading { background-color: #FFFFFF; text-align: center; border-bottom-color: #FFFFFF; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; }
+ #sdmwnxkvrm .gt_bottom_border { border-bottom-style: solid; border-bottom-width: 2px; border-bottom-color: #D3D3D3; }
+ #sdmwnxkvrm .gt_col_headings { border-top-style: solid; border-top-width: 2px; border-top-color: #D3D3D3; border-bottom-style: solid; border-bottom-width: 1px; border-bottom-color: #D3D3D3; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; }
+ #sdmwnxkvrm .gt_col_heading { color: #FFFFFF; background-color: #1E293B; font-size: 13px; font-weight: bold; text-transform: inherit; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; vertical-align: bottom; padding-top: 9px; padding-bottom: 11px; padding-left: 5px; padding-right: 5px; overflow-x: hidden; }
+ #sdmwnxkvrm .gt_column_spanner_outer { color: #FFFFFF; background-color: #1E293B; font-size: 13px; font-weight: bold; text-transform: inherit; padding-top: 0; padding-bottom: 0; padding-left: 4px; padding-right: 4px; }
+ #sdmwnxkvrm .gt_column_spanner_outer:first-child { padding-left: 0; }
+ #sdmwnxkvrm .gt_column_spanner_outer:last-child { padding-right: 0; }
+ #sdmwnxkvrm .gt_column_spanner { border-bottom-style: solid; border-bottom-width: 1px; border-bottom-color: #D3D3D3; vertical-align: bottom; padding-top: 9px; padding-bottom: 9px; overflow-x: hidden; display: inline-block; width: 100%; }
+ #sdmwnxkvrm .gt_spanner_row { border-bottom-style: hidden; }
+ #sdmwnxkvrm .gt_group_heading { padding-top: 8px; padding-bottom: 8px; padding-left: 5px; padding-right: 5px; color: #171717; background-color: #FFFFFF; font-size: 100%; font-weight: initial; text-transform: inherit; border-top-style: solid; border-top-width: 2px; border-top-color: #D3D3D3; border-bottom-style: solid; border-bottom-width: 2px; border-bottom-color: #D3D3D3; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; vertical-align: middle; text-align: left; }
+ #sdmwnxkvrm .gt_empty_group_heading { padding: 0.5px; color: #171717; background-color: #FFFFFF; font-size: 100%; font-weight: initial; border-top-style: solid; border-top-width: 2px; border-top-color: #D3D3D3; border-bottom-style: solid; border-bottom-width: 2px; border-bottom-color: #D3D3D3; vertical-align: middle; }
+ #sdmwnxkvrm .gt_from_md> :first-child { margin-top: 0; }
+ #sdmwnxkvrm .gt_from_md> :last-child { margin-bottom: 0; }
+ #sdmwnxkvrm .gt_row { padding-top: 7px; padding-bottom: 7px; padding-left: 5px; padding-right: 5px; margin: 10px; border-top-style: solid; border-top-width: 1px; border-top-color: #D3D3D3; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; vertical-align: middle; overflow-x: hidden; }
+ #sdmwnxkvrm .gt_stub { color: #171717; background-color: #FFFFFF; font-size: 100%; font-weight: initial; text-transform: inherit; border-right-style: solid; border-right-width: 2px; border-right-color: #D3D3D3; padding-left: 5px; padding-right: 5px; }
+ #sdmwnxkvrm .gt_stub_row_group { color: #171717; background-color: #FFFFFF; font-size: 100%; font-weight: initial; text-transform: inherit; border-right-style: solid; border-right-width: 2px; border-right-color: #D3D3D3; padding-left: 5px; padding-right: 5px; vertical-align: top; }
+ #sdmwnxkvrm .gt_row_group_first td { border-top-width: 2px; }
+ #sdmwnxkvrm .gt_row_group_first th { border-top-width: 2px; }
+ #sdmwnxkvrm .gt_striped { color: #171717; background-color: #F4F4F4; }
+ #sdmwnxkvrm .gt_table_body { border-top-style: solid; border-top-width: 2px; border-top-color: #D3D3D3; border-bottom-style: solid; border-bottom-width: 1px; border-bottom-color: #DEE2E6; }
+ #sdmwnxkvrm .gt_grand_summary_row { color: #171717; background-color: #FFFFFF; text-transform: inherit; padding-top: 8px; padding-bottom: 8px; padding-left: 5px; padding-right: 5px; }
+ #sdmwnxkvrm .gt_first_grand_summary_row_bottom { border-top-style: double; border-top-width: 6px; border-top-color: #D3D3D3; }
+ #sdmwnxkvrm .gt_last_grand_summary_row_top { border-bottom-style: double; border-bottom-width: 6px; border-bottom-color: #D3D3D3; }
+ #sdmwnxkvrm .gt_sourcenotes { color: #171717; background-color: #FFFFFF; border-bottom-style: none; border-bottom-width: 2px; border-bottom-color: #D3D3D3; border-left-style: none; border-left-width: 2px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 2px; border-right-color: #D3D3D3; }
+ #sdmwnxkvrm .gt_sourcenote { font-size: 11px; padding-top: 6px; padding-bottom: 6px; padding-left: 5px; padding-right: 5px; text-align: left; }
+ #sdmwnxkvrm .gt_left { text-align: left; }
+ #sdmwnxkvrm .gt_center { text-align: center; }
+ #sdmwnxkvrm .gt_right { text-align: right; font-variant-numeric: tabular-nums; }
+ #sdmwnxkvrm .gt_font_normal { font-weight: normal; }
+ #sdmwnxkvrm .gt_font_bold { font-weight: bold; }
+ #sdmwnxkvrm .gt_font_italic { font-style: italic; }
+ #sdmwnxkvrm .gt_super { font-size: 65%; }
+ #sdmwnxkvrm .gt_footnote_marks { font-size: 75%; vertical-align: 0.4em; position: initial; }
+ #sdmwnxkvrm .gt_asterisk { font-size: 100%; vertical-align: 0; }
  
 </style>
 
@@ -2010,7 +2011,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="visualise-coefficients" class="level3">
 <h3 class="anchored" data-anchor-id="visualise-coefficients">6.5 Visualise coefficients</h3>
-<div id="64" class="cell" data-execution_count="27">
+<div id="65" class="cell" data-execution_count="27">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>coef_plot: pd.DataFrame <span class="op">=</span> coef_df.assign(</span>
 <span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>    color<span class="op">=</span><span class="kw">lambda</span> d: d[<span class="st">"coefficient"</span>].<span class="bu">apply</span>(<span class="kw">lambda</span> v: <span class="st">"positive"</span> <span class="cf">if</span> v <span class="op">&gt;=</span> <span class="dv">0</span> <span class="cf">else</span> <span class="st">"negative"</span>)</span>
 <span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>)</span>
@@ -2034,7 +2035,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb30-21"><a href="#cb30-21" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> modern_theme(x_axis_angle<span class="op">=</span><span class="dv">30</span>, legend_pos<span class="op">=</span><span class="st">"none"</span>)</span>
 <span id="cb30-22"><a href="#cb30-22" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="27">
-   <div id="5nfbmI"></div>
+   <div id="EBO7qE"></div>
    <script type="text/javascript" data-lets-plot-script="plot">
    
    (function() {
@@ -2059,7 +2060,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
        };
    }
    
-   const containerDiv = document.getElementById("5nfbmI");
+   const containerDiv = document.getElementById("EBO7qE");
    let fig = null;
    
    function renderPlot() {
@@ -2286,7 +2287,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="residual-plot" class="level3">
 <h3 class="anchored" data-anchor-id="residual-plot">6.6 Residual plot</h3>
 <p>Random scatter around zero means the model has no systematic bias. Patterns (curved shape, funnel) indicate the linear model is missing something.</p>
-<div id="66" class="cell" data-execution_count="28">
+<div id="67" class="cell" data-execution_count="28">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>y_pred_lin: np.ndarray <span class="op">=</span> lin_reg.predict(X_test_s)</span>
 <span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>resid_df: pd.DataFrame <span class="op">=</span> pd.DataFrame(</span>
 <span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>    {</span>
@@ -2307,7 +2308,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb31-18"><a href="#cb31-18" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> modern_theme(grid<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb31-19"><a href="#cb31-19" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="28">
-   <div id="8bC9tJ"></div>
+   <div id="ybjzPE"></div>
    <script type="text/javascript" data-lets-plot-script="plot">
    
    (function() {
@@ -2332,7 +2333,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
        };
    }
    
-   const containerDiv = document.getElementById("8bC9tJ");
+   const containerDiv = document.getElementById("ybjzPE");
    let fig = null;
    
    function renderPlot() {
@@ -2557,7 +2558,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h3 class="anchored" data-anchor-id="fit-logisticregression-for-cancellation">6.7 Fit LogisticRegression for cancellation</h3>
 <p><code>class_weight="balanced"</code> adjusts the loss inversely proportional to class frequencies. Without it, the model learns to predict “not cancelled” for almost everything because that minimises raw error on an imbalanced dataset.</p>
 <p><strong>From Part 23 (Section 4):</strong> class imbalance is one of the most common failure modes in binary classification.</p>
-<div id="68" class="cell" data-execution_count="29">
+<div id="69" class="cell" data-execution_count="29">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>log_reg: LogisticRegression <span class="op">=</span> LogisticRegression(</span>
 <span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>    class_weight<span class="op">=</span><span class="st">"balanced"</span>,</span>
 <span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>    max_iter<span class="op">=</span><span class="dv">1000</span>,</span>
@@ -2569,7 +2570,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="evaluate-the-classifier-with-classification_report" class="level3">
 <h3 class="anchored" data-anchor-id="evaluate-the-classifier-with-classification_report">6.8 Evaluate the classifier with classification_report</h3>
-<div id="70" class="cell" data-execution_count="30">
+<div id="71" class="cell" data-execution_count="30">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>yc_pred: np.ndarray <span class="op">=</span> log_reg.predict(Xc_test_s)</span>
 <span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>report: <span class="bu">str</span> <span class="op">=</span> classification_report(yc_te, yc_pred, target_names<span class="op">=</span>[<span class="st">"Kept"</span>, <span class="st">"Cancelled"</span>])</span>
 <span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>logger.info(<span class="st">"</span><span class="ch">\n</span><span class="st">"</span> <span class="op">+</span> report)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
