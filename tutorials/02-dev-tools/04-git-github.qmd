@@ -9,9 +9,9 @@ title: "Part 16: Git and GitHub for Data Science"
 
 **Python 3.12+ | Author: Anthony Faustine**
 
-You rename a function and the rest of the pipeline breaks. You want to undo it -- but you saved over the original. Git is your time machine: every commit is a checkpoint you can return to, and every branch is an isolated experiment that only merges when it succeeds. On a team, it is also what keeps two people from overwriting each other's work.
+You rename a function and the rest of the pipeline breaks. You want to undo it -- but you saved over the original. Git is your time machine: every commit is a checkpoint you can return to, and every branch is an isolated experiment that only merges when it succeeds. On a team, it's also what keeps two people from overwriting each other's work.
 
-Part 15 (`03-type-annotations.ipynb`) left the `grade-predictor` project typed and linted. This chapter puts it under version control and connects it to GitHub. Part 17 (`05-pytest-testing.qmd`) then adds a test suite to that versioned project.
+The `grade-predictor` project is now typed and linted. This chapter puts it under version control and connects it to GitHub -- after which [Part 17](05-pytest-testing.qmd) adds a test suite.
 
 ::: {.callout-note collapse="true" icon=false}
 ## Before you begin
@@ -53,20 +53,20 @@ By the end of Part 16 you will be able to:
 | 6 | Write a GitHub Actions workflow that runs tests on every push | Sec. 6 |
 :::
 
-Every data science project eventually breaks in the same three ways: the code changed and nobody knows when, an experiment worked but cannot be reproduced, and two people edited the same file. Git is the tool that prevents all three. This chapter sets up the habits you will use from every chapter onward.
+Every data science project eventually breaks in the same three ways: the code changed and nobody knows when, an experiment worked but can't be reproduced, and two people edited the same file. Git prevents all three. The habits you set up here carry forward through every chapter that follows.
 
 ## 0. Installing and Configuring Git
 
 ### Install git
 
-Git does not ship with every operating system. Check if it is already present:
+Git doesn't ship with every operating system. Check if it's already present:
 
 ```bash
 git --version
 # git version 2.49.0
 ```
 
-If it is not installed:
+If it's not installed:
 
 ```bash
 # macOS: via Homebrew (recommended)
@@ -85,7 +85,7 @@ sudo apt update && sudo apt install git
 
 ### First-time identity configuration
 
-Every commit records the author's name and email. Set them once, globally, before making any commit:
+Every commit records the author's name and email. Set them once globally before making any commit:
 
 ```bash
 git config --global user.name "Your Name"
@@ -102,7 +102,7 @@ git config --list --global
 
 <div class='ark-concept'>
 <span class='ark-concept-title'><i class="bi bi-info-circle-fill"></i> Key Concept: Global vs local git config</span><br><br>
-<code>--global</code> writes to <code>~/.gitconfig</code> and applies to every repository on the machine. Omitting it writes to <code>.git/config</code> inside the current repository only. Use <code>--global</code> for your identity; use local config to override settings for a specific project (e.g., a work email for a client repo).
+<code>--global</code> writes to <code>~/.gitconfig</code> and applies to every repository on the machine. Omit it and the setting goes to <code>.git/config</code> inside the current repo only. Use <code>--global</code> for your identity; use local config to override settings for a specific project -- for example, a work email for a client repo.
 </div>
 
 ### Connect to GitHub (or GitLab)
@@ -165,7 +165,7 @@ ssh -T git@github.com</pre>
 
 ## 1. What Git Tracks and What It Must Not
 
-Git is a time machine for code. It is not a time machine for data, models, or secrets. The single most important setup decision for a DS project is getting `.gitignore` right before the first commit, because a file committed once is in git history permanently.
+Git is a time machine for code. It isn't a time machine for data, models, or secrets. The single most important setup decision for a DS project is getting `.gitignore` right before the first commit, because a file committed once is in git history permanently.
 
 A DS `.gitignore` covers five categories:
 
@@ -210,12 +210,12 @@ Add this to `grade-predictor/.gitignore` before running `git init`.
 
 <div class='ark-concept'>
 <span class='ark-concept-title'><i class="bi bi-info-circle-fill"></i> Key Concept: Git tracks code. Data and secrets belong elsewhere.</span><br><br>
-A 2GB CSV committed by accident is hard to remove cleanly: it lives in history even after <code>git rm</code> and requires rewriting history to fully erase. Secrets committed to a public repo are searchable and must be rotated immediately. The safest habit is to set up <code>.gitignore</code> and run <code>git status</code> before every first commit in a new project.
+A 2GB CSV committed by accident lives in history even after <code>git rm</code> -- you have to rewrite history to fully erase it. Secrets committed to a public repo are searchable and must be rotated immediately. Set up <code>.gitignore</code> and run <code>git status</code> before every first commit in a new project. Every time.
 </div>
 
 ## 2. The Three-State Model
 
-Every file in a git project lives in one of three states: the working tree (what is on disk right now), the staging area (what will go into the next commit), and the commit history (what is permanent). Understanding these three states is what separates confident git use from "type commands and hope".
+Every file in a git project lives in one of three states: the working tree (what's on disk right now), the staging area (what will go into the next commit), and the commit history (what's permanent). Understanding these three states is what separates confident git use from "type commands and hope".
 
 ```bash
 git init
@@ -230,11 +230,11 @@ git log --oneline                                  # inspect history
 
 The flow: make changes in the working tree, select which changes belong in this commit with `git add`, then seal them into history with `git commit`. Changes left unstaged are visible in the working tree but invisible to the next commit.
 
-`git diff` shows what is in the working tree but not yet staged. `git diff --staged` shows what is staged but not yet committed. Running both before committing is a habit worth building.
+`git diff` shows what's in the working tree but not yet staged. `git diff --staged` shows what's staged but not yet committed. Running both before committing is a habit worth building.
 
 <div class='ark-mistake'>
 <span class='ark-mistake-title'><i class="bi bi-bug-fill"></i> Common Mistake: <code>git add .</code> adds everything</span><br><br>
-<code>git add .</code> stages every changed file in the current directory, including <code>.env</code>, CSV files, and anything else that slipped past <code>.gitignore</code>. Always run <code>git status</code> before <code>git add</code>. Stage specific files by name: <code>git add src/grade_predictor/core.py</code>. Use <code>git add -p</code> to stage hunks interactively when a file has multiple independent changes.
+Including <code>.env</code>, CSV files, and anything else that slipped past <code>.gitignore</code>. Always run <code>git status</code> before <code>git add</code>. Stage specific files by name: <code>git add src/grade_predictor/core.py</code>. Use <code>git add -p</code> to stage hunks interactively when a file has multiple independent changes.
 </div>
 
 <div class='ark-activity'>
@@ -248,7 +248,7 @@ git commit -m "feat: initial grade-predictor project setup"</pre>
 
 ## 3. Conventional Commits
 
-A git log is only useful if the messages are readable. `git log --oneline` on a project with messages like "fix", "update", "wip", and "changes" tells you nothing. Conventional commits solve this by imposing a consistent format: `type(scope): description`.
+A git log is only useful if the messages are readable. `git log --oneline` on a project where every message is "fix" or "update" or "changes" tells you nothing. Conventional commits solve this with a consistent format: `type(scope): description`.
 
 | Type | When to use |
 |---|---|
@@ -273,7 +273,7 @@ chore: bump scikit-learn to 1.7, update uv.lock
 
 Each message answers: what changed and why does it matter? Two months from now, `git log --oneline` with messages like these tells the whole project story.
 
-`commitizen` enforces this format automatically. See [Part 18](06-pre-commit-automation.qmd) for setup. For now, write the messages by hand.
+`commitizen` enforces this format automatically -- [Part 18](06-pre-commit-automation.qmd) covers setup. For now, write the messages by hand.
 
 <div class='ark-tip'>
 <span class='ark-tip-title'><i class="bi bi-lightbulb-fill"></i> Pro Tip: The scope is optional but valuable</span><br><br>
@@ -287,7 +287,7 @@ Each message answers: what changed and why does it matter? Two months from now, 
 
 ## 4. Branches for Experiments
 
-The main branch of a project should always be in a working state. New features, experiments, and bug fixes belong on separate branches. In DS work, this applies especially to model experiments: a branch per experiment means you can run them in parallel, compare results, and abandon a dead end without any cleanup.
+The main branch of a project should always be in a working state. New features, experiments, and bug fixes belong on separate branches. In DS work this applies especially to model experiments: a branch per experiment means you can run them in parallel, compare results, and abandon a dead end without any cleanup.
 
 ```bash
 git checkout -b experiment/ridge-regression    # create and switch in one step
@@ -328,7 +328,7 @@ git checkout main && git merge experiment/weighted-average</pre>
 
 ## 5. Pull Requests
 
-A pull request is a request to merge a branch into main, plus a structured conversation about the change. On a solo project, it is still worth opening PRs: the PR description forces you to articulate what changed and why, and the CI check runs automatically.
+A pull request is a request to merge a branch into main, plus a structured conversation about the change. On a solo project it's still worth opening PRs: the PR description forces you to articulate what changed and why, and CI runs automatically.
 
 For DS work, a useful PR description answers:
 
@@ -345,7 +345,7 @@ gh pr create \
   --body "Adds ridge regression (alpha=1.0) as a second baseline. RMSE=9.2 vs linear=10.4 on held-out 20%. Tests added for predict() signature and output shape."
 ```
 
-The `gh` CLI creates the PR without leaving the terminal. CI runs automatically on the push that opens the PR.
+The `gh` CLI creates the PR without leaving the terminal. CI starts automatically on the push that opens it.
 
 ## 6. GitHub Actions for Automated Testing
 
@@ -385,7 +385,7 @@ Step by step:
 - `uv run pytest tests/`: runs tests inside the project environment
 - `--override-ini=addopts=`: strips local `addopts` from `pyproject.toml` that may reference local paths not present in CI
 
-When the job fails, GitHub shows the full log. Reading CI logs is a skill: look for the first `FAILED` or `Error` line, not the summary at the bottom.
+When the job fails, GitHub shows the full log. Reading CI logs is a skill -- look for the first `FAILED` or `Error` line, not the summary at the bottom.
 
 <div class='ark-example'>
 <span class='ark-example-title'><i class="bi bi-journal-code"></i> Example: Reading a CI log</span><br><br>
@@ -444,4 +444,4 @@ Bring the full `grade-predictor` project under version control.
 | CI | Every push runs tests. A failing CI run is a blocker, not a suggestion. |
 :::
 
-**Next:** [Part 17: Testing with pytest](05-pytest-testing.qmd) writes tests for the code you have just versioned.
+**Next:** [Part 17: Testing with pytest](05-pytest-testing.qmd) -- tests for the code you've just versioned.

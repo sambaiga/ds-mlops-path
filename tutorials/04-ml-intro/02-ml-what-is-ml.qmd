@@ -8,7 +8,7 @@ title: "Part 23: What Is Machine Learning?"
 
 **Python 3.12+ | Author: Anthony Faustine**
 
-You have 50,000 emails and a single question: is this one spam? You could write a rule: if the subject contains 'FREE MONEY', block it. Spam writers learn the rule in a day. An ML model learns the pattern from the 50,000 examples and updates itself as the pattern shifts -- no rule rewriting required.
+You have 50,000 emails and a single question: is this one spam? You could write a rule: if the subject contains 'FREE MONEY', block it. Spam writers learn the rule in a day. An ML model learns the pattern from the 50,000 examples and keeps working as the pattern shifts -- you retrain it, not rewrite it.
 
 Part 22 (`01-ml-introduction.qmd`) placed ML in the broader AI landscape. This chapter defines exactly what machine learning is, maps the four learning paradigms and seven task types, and gives you the vocabulary to classify any new problem before writing a line of code. Part 24 (`03-ml-workflow.qmd`) then shows how to build a solution end to end.
 
@@ -34,9 +34,9 @@ This chapter is conceptual. There is no code to run. The goal is to move from th
 
 ## What Machine Learning Is
 
-Consider 50,000 emails, each labeled as spam or not spam. Show them to an ML algorithm and it adjusts its internal parameters until it can reliably separate the two. Show it a new email it has never seen and it returns a judgment. No one wrote a rule that says "emails containing the words 'free', 'winner', and 'click here' together are probably spam." The algorithm found that pattern on its own, from the examples.
+Consider 50,000 emails, each labeled as spam or not spam. Show them to an ML algorithm and it adjusts its internal parameters until it can reliably separate the two. Show it a new email it's never seen and it returns a judgment. No one wrote a rule that says "emails containing the words 'free', 'winner', and 'click here' together are probably spam." The algorithm found that pattern on its own, from the examples.
 
-Machine learning is a set of algorithms that automatically detect patterns in data and use those patterns to make predictions or inferences. It is a subfield of artificial intelligence that enables computers to improve their performance on a task through experience, without being explicitly programmed for every scenario.
+Machine learning is a set of algorithms that automatically detect patterns in data and use those patterns to make predictions or inferences. It's a subfield of artificial intelligence that enables computers to improve their performance on a task through experience, without being explicitly programmed for every scenario.
 
 Any machine learning algorithm involves three steps:
 
@@ -46,21 +46,21 @@ Any machine learning algorithm involves three steps:
 
 ![The three steps of machine learning. Steps 1 and 2 together form the training process: a learning process in which the model adjusts its parameters until its predictions match the known outputs. Step 3 applies the trained model to new data it was never shown during training.](figs/ml-three-steps.svg){fig-alt="Three cards labelled Identify a Pattern, Build a Model, and Use the Model, connected by arrows. A bracket under cards 1 and 2 reads Training equals a learning process. Card 3 is annotated generalisation: the goal."}
 
-Training a model is a learning process. The algorithm is exposed to historical examples, such as thousands of emails labeled as spam or not spam, and adjusts its internal parameters until its predictions match the expected outputs as closely as possible. Parameters are the numbers a model adjusts during training: in a linear regression, the coefficients on each input feature; in a neural network, the connection weights between millions of nodes. Before training they are initialised at random; after training, their values encode everything the model learned.
+Training a model is a learning process. The algorithm is exposed to historical examples, such as thousands of emails labeled as spam or not spam, and adjusts its internal parameters until its predictions match the expected outputs as closely as possible. Parameters are the numbers a model adjusts during training: in a linear regression, the coefficients on each input feature; in a neural network, the connection weights between millions of nodes. Before training they're initialised at random. After training, their values encode everything the model learned.
 
-A new email arrives. The model applies what it learned and returns a judgment. Critically, the model does not memorise the training examples. It extracts the underlying structure so that it can make useful predictions on data it has never seen before.
+A new email arrives. The model applies what it learned and returns a judgment. Critically, the model doesn't memorise the training examples. It extracts the underlying structure so it can make useful predictions on data it's never seen before.
 
-This is what distinguishes ML from a lookup table. A lookup table returns the correct answer for every case it has seen before. A trained model can answer questions about cases it has never encountered, because it learned the pattern behind the examples, not the examples themselves.
+This is what distinguishes ML from a lookup table. A lookup table returns the correct answer for every case it has seen before. A trained model can answer questions about cases it's never encountered, because it learned the pattern behind the examples, not the examples themselves.
 
 <div class='ark-concept'>
 <span class='ark-concept-title'><i class="bi bi-info-circle-fill"></i> Key Concept: Generalisation is the goal</span><br><br>
-A model that performs perfectly on training data but fails on new data is useless in practice. The goal of training is not to memorise examples but to generalise: to capture the underlying structure of the problem well enough to make accurate predictions on data the model was never shown. Every design decision in ML, from choosing a model family to setting regularisation, is ultimately about improving generalisation.
+A model that performs perfectly on training data but fails on new data is useless in practice. The goal of training isn't to memorise examples but to generalise: to capture the underlying structure of the problem well enough to make accurate predictions on data the model was never shown. Every design decision in ML, from choosing a model family to setting regularisation, is ultimately about improving generalisation.
 </div>
 
 <div class='ark-mistake'>
 <span class='ark-mistake-title'><i class="bi bi-bug-fill"></i> Common Mistake: Two confusions that follow ML beginners for years</span><br><br>
 <b>ML is not traditional programming.</b> A traditional program executes explicit instructions written by a human. A trained model encodes statistical patterns extracted from data. The source of the logic is different: one is written by hand, the other is learned from examples.<br><br>
-<b>ML is not memorisation.</b> A lookup table that returns the correct answer for every training example is not a model. A useful model finds the pattern behind the examples and applies it to cases it has not seen before. A model that memorises its training data will fail on any new input that differs even slightly from what it was shown.
+<b>ML is not memorisation.</b> A lookup table that returns the correct answer for every training example is not a model. A useful model finds the pattern behind the examples and applies it to cases it hasn't seen before. A model that memorises its training data will fail on any new input that differs even slightly from what it was shown.
 </div>
 
 <div class='ark-activity'>
@@ -90,7 +90,7 @@ By the end of Part 23 you will be able to:
 
 ## 1. The ML Taxonomy
 
-Not all ML problems are the same. Understanding the taxonomy requires separating two questions that are often mixed together.
+Not all ML problems are the same. Understanding the taxonomy means separating two questions that people regularly mix together.
 
 ![The ML taxonomy has two independent dimensions. The left panel shows the four learning paradigms, each colour-coded by how the model relates to its training data. The right panel shows the seven task types, each defined by the structure of the output. Any paradigm can be paired with any task type: the example bar at the bottom shows three common combinations.](figs/ml-taxonomy.svg){fig-alt="Two-panel diagram. Left panel titled How does it learn shows four paradigm cards: Supervised (green), Unsupervised (blue), Self-supervised (amber), Reinforcement (purple). Right panel titled What does it predict shows seven pill chips: Classification, Regression, Forecasting, Ranking, Generation, Clustering, Anomaly Detection. A centre badge reads orthogonal. A bar at the bottom shows three example pairings."}
 
@@ -105,11 +105,11 @@ These are orthogonal. Anomaly detection, for example, can be supervised (you hav
 
 **Supervised learning** is the most common paradigm. You provide a dataset where each example has an input (a set of features) and a known output (a label or target value). The model learns to map inputs to outputs by minimising the difference between its predictions and the known labels on the training set. A spam filter trained on emails labeled spam or not-spam is supervised learning. A model trained to predict house prices from size, location, and age is supervised learning.
 
-**Unsupervised learning** works with data that has no labels. The model is not told what the correct output is. Instead, it discovers structure in the data on its own. Grouping customers by purchase behaviour without knowing in advance what the groups should be is unsupervised learning. Finding unusual transactions in a payment stream without pre-labeled fraud examples is also unsupervised.
+**Unsupervised learning** works with data that has no labels. The model isn't told what the correct output is. Instead, it discovers structure in the data on its own. Grouping customers by purchase behaviour without knowing in advance what the groups should be is unsupervised learning. Finding unusual transactions in a payment stream without pre-labeled fraud examples is also unsupervised.
 
-**Self-supervised learning** sidesteps the cost of human labeling by creating supervision signals from the data itself. A language model learns to predict the next word in a sentence using the sentence as both input and label. This is how foundation models such as GPT and BERT are pre-trained on billions of text examples without any human annotation. It is also how models learn to generate images from text descriptions. Self-supervised learning is the engine behind most modern large-scale AI systems.
+**Self-supervised learning** sidesteps the cost of human labeling by creating supervision signals from the data itself. A language model learns to predict the next word in a sentence using the sentence as both input and label. This is how foundation models such as GPT and BERT are pre-trained on billions of text examples without any human annotation. It's also how models learn to generate images from text descriptions. Self-supervised learning is the engine behind most modern large-scale AI systems.
 
-**Reinforcement learning** is structurally different from the other three. There is no fixed dataset. An agent interacts with an environment by taking actions and receiving rewards or penalties based on the outcomes. The agent learns a policy: a mapping from observed states to actions that maximises cumulative reward over time. AlphaGo learned to play Go this way. A system that decides when to charge or discharge a battery based on electricity prices is also a reinforcement learning problem.
+**Reinforcement learning** is structurally different from the other three. There's no fixed dataset. An agent interacts with an environment by taking actions and receiving rewards or penalties based on the outcomes. The agent learns a policy: a mapping from observed states to actions that maximises cumulative reward over time. AlphaGo learned to play Go this way. A system that decides when to charge or discharge a battery based on electricity prices is also a reinforcement learning problem.
 
 ![Each paradigm has a distinct relationship between the model and its training data. Supervised learning uses labeled pairs. Unsupervised learning finds structure with no labels. Self-supervised learning derives labels from the data itself. Reinforcement learning learns from reward signals through interaction.](figs/ml-paradigms.svg){fig-alt="Four-panel diagram showing the four learning paradigms. Top-left green panel: Supervised Learning, showing three labeled input-output pairs feeding into a model producing a prediction. Top-right blue panel: Unsupervised Learning, showing unlabeled dots self-organising into three colour-coded clusters. Bottom-left amber panel: Self-supervised Learning, showing a sentence with a masked token and the predicted word below it. Bottom-right purple panel: Reinforcement Learning, showing an Agent and Environment connected by an action arrow going right and a reward-penalty arrow returning left."}
 
@@ -129,11 +129,11 @@ The learning paradigm tells you how the model learns. The task type tells you wh
 
 The table is a quick reference. What matters more is being able to tell these types apart when you encounter a new problem. Three pairs cause the most confusion.
 
-**Classification vs anomaly detection.** Classification assigns every input to one of a fixed set of known categories. To train it, you need labeled examples of every class. Anomaly detection has a different goal: it flags inputs that do not resemble the normal pattern, without requiring labeled examples of every possible fault. The energy theft problem from Part 22 is anomaly detection, not classification. You have millions of records of normal consumption, but the patterns of tampering are too varied and too rare to enumerate as training classes. A classifier trained on "normal" and "theft" would miss any theft pattern it had not seen before. An anomaly detector learns only what normal looks like and flags whatever deviates from it.
+**Classification vs anomaly detection.** Classification assigns every input to one of a fixed set of known categories. To train it, you need labeled examples of every class. Anomaly detection has a different goal: it flags inputs that don't resemble the normal pattern, without requiring labeled examples of every possible fault. The energy theft problem from Part 22 is anomaly detection, not classification. You have millions of records of normal consumption, but the patterns of tampering are too varied and too rare to enumerate as training classes. A classifier trained on "normal" and "theft" would miss any theft pattern it hadn't seen before. An anomaly detector learns only what normal looks like and flags whatever deviates from it.
 
-**Regression vs forecasting.** Both produce numbers. The difference is temporal structure. Regression predicts a single value from features that can be presented in any order: shuffle the training rows and the model is unaffected. Forecasting predicts an ordered sequence of future values where the position of each prediction matters. Shuffling training data destroys the temporal relationships that make the forecast meaningful. Predicting the travel time for a single road segment from current speed and time of day is regression. That is the calculation Google Maps runs for every segment in the route. Predicting electricity demand hour-by-hour for the next 24 hours from the last week of readings is forecasting.
+**Regression vs forecasting.** Both produce numbers. The difference is temporal structure. Regression predicts a single value from features that can be presented in any order: shuffle the training rows and the model is unaffected. Forecasting predicts an ordered sequence of future values where the position of each prediction matters. Shuffling training data destroys the temporal relationships that make the forecast meaningful. Predicting the travel time for a single road segment from current speed and time of day is regression -- that's the calculation Google Maps runs for every segment in the route. Predicting electricity demand hour-by-hour for the next 24 hours from the last week of readings is forecasting.
 
-**Ranking vs clustering.** Both involve groups, which is why they are confused. Ranking takes a query and an existing set of items, then orders those items by relevance to that specific query. The items do not change: only their order changes depending on who is asking and what they want. The recommendation engine from Part 22 is ranking: it orders products by predicted enjoyment for one particular user. Clustering takes a set of items with no query and no predefined categories, and discovers groups based on similarity in the data. Grouping electricity customers by usage profile without knowing in advance how many groups there should be or what they represent is clustering. The key distinction: ranking needs a reference point (a user, a query, a goal); clustering does not.
+**Ranking vs clustering.** Both involve groups, which is why they're confused. Ranking takes a query and an existing set of items, then orders those items by relevance to that specific query. The items don't change: only their order changes depending on who is asking and what they want. The recommendation engine from Part 22 is ranking: it orders products by predicted enjoyment for one particular user. Clustering takes a set of items with no query and no predefined categories, and discovers groups based on similarity in the data. Grouping electricity customers by usage profile without knowing in advance how many groups there should be or what they represent is clustering. The key distinction: ranking needs a reference point (a user, a query, a goal); clustering doesn't.
 
 <div class='ark-activity'>
 <span class='ark-activity-title'><i class="bi bi-puzzle-fill"></i> Activity 2 - Classify the Problem</span><br><br>
@@ -158,7 +158,7 @@ Choosing a learning paradigm and a task type narrows down the algorithm family. 
 | **Tree-based models** | Medium | High | Medium | Tabular data; the most reliable family for production ML |
 | **Neural networks** | Low | Very high | Large | Unstructured data: images, text, audio, sequences |
 
-**Linear models** produce a prediction that is a weighted sum of the input features. Their predictions can be explained by inspecting the weights, which makes them auditable and easy to debug. They work well when the relationship between features and the target is approximately linear and when interpretability is a constraint.
+**Linear models** produce a prediction that's a weighted sum of the input features. Their predictions can be explained by inspecting the weights, which makes them auditable and easy to debug. They work well when the relationship between features and the target is approximately linear and when interpretability is a constraint.
 
 **Tree-based models** such as random forests, gradient-boosted trees (XGBoost, LightGBM), and decision trees learn non-linear decision boundaries by splitting the input space recursively. Gradient-boosted trees consistently perform best on tabular data in practice. Individual tree predictions can be explained with tools like SHAP values even when the ensemble is too large to inspect directly.
 
@@ -181,17 +181,17 @@ If a linear model performs nearly as well as a gradient-boosted tree on your pro
 Before opening a notebook, write one sentence that specifies: what the model predicts, using what inputs, evaluated by what metric, to achieve what business goal. "A binary classifier that predicts whether a meter reading is anomalous, using 30-day rolling consumption features, evaluated by F1 score at a 0.5 threshold, to reduce manual review effort by 60%." This sentence forces clarity before any code is written and is the single most effective way to avoid building the wrong thing.
 </div>
 
-Machine learning is a powerful tool, but it is not the right tool for every problem. Using ML where a simpler approach would work adds unnecessary complexity, data requirements, and maintenance overhead. Knowing when not to use ML is as important as knowing how to use it.
+Machine learning is a powerful tool, but it's not the right tool for every problem. Using ML where a simpler approach would work adds unnecessary complexity, data requirements, and maintenance overhead. Knowing when not to use ML is as important as knowing how to use it.
 
 ### Use ML when
 
-**The problem requires recognising patterns too complex for hand-coded rules.** If the logic that separates the two classes or produces the right prediction cannot be reasonably expressed as a decision tree written by a human expert, ML is likely the right approach. Detecting anomalies in high-dimensional sensor data, identifying disease in medical images, and forecasting energy consumption given dozens of interacting variables all fall into this category.
+**The problem requires recognising patterns too complex for hand-coded rules.** If the logic that separates the two classes or produces the right prediction can't be reasonably expressed as a decision tree written by a human expert, ML is likely the right approach. Detecting anomalies in high-dimensional sensor data, identifying disease in medical images, and forecasting energy consumption given dozens of interacting variables all fall into this category.
 
 **The system needs to adapt to changing conditions.** A spam filter with hard-coded rules becomes outdated as spammer tactics evolve. A demand forecasting model retrained on recent data adapts to new consumption patterns. When the underlying distribution of the problem shifts over time, a model that can be retrained is more robust than a static rule set.
 
-**You have sufficient labeled data.** Supervised learning requires examples of both the inputs and the correct outputs. The required volume depends on problem complexity: simple linear problems may work with hundreds of examples, complex classification tasks may need tens of thousands, and deep learning on unstructured data often requires millions. If you do not have enough labeled data, consider whether a semi-supervised or transfer learning approach is feasible before abandoning ML entirely.
+**You have sufficient labeled data.** Supervised learning requires examples of both the inputs and the correct outputs. The required volume depends on problem complexity: simple linear problems may work with hundreds of examples, complex classification tasks may need tens of thousands, and deep learning on unstructured data often requires millions. If you don't have enough labeled data, consider whether a semi-supervised or transfer learning approach is feasible before abandoning ML entirely.
 
-**The scale is beyond what manual review can handle.** Reviewing 100,000 meter readings per day for anomalies, processing millions of transactions for fraud, or ranking thousands of products for each user query are problems where manual review is not an option. ML makes automation at this scale tractable.
+**The scale is beyond what manual review can handle.** Reviewing 100,000 meter readings per day for anomalies, processing millions of transactions for fraud, or ranking thousands of products for each user query are problems where manual review isn't an option. ML makes automation at this scale tractable.
 
 ### Do not use ML when
 
@@ -199,7 +199,7 @@ Machine learning is a powerful tool, but it is not the right tool for every prob
 
 **You have very little data.** If you have fewer examples than model parameters, the model will memorise the training set rather than generalise. Before reaching for ML, exhaust the options for data collection, augmentation, or transfer from a related domain.
 
-**Full interpretability is legally or ethically required.** Some decisions, particularly in regulated domains such as credit scoring, clinical diagnosis, and criminal justice, require explanations that a regulator or affected party can audit. A neural network with millions of parameters does not provide this natively. If the decision must be explainable at the level of individual features and their contributions, start with interpretable models such as logistic regression or decision trees before considering more complex alternatives.
+**Full interpretability is legally or ethically required.** Some decisions, particularly in regulated domains such as credit scoring, clinical diagnosis, and criminal justice, require explanations that a regulator or affected party can audit. A neural network with millions of parameters doesn't provide this natively. If the decision must be explainable at the level of individual features and their contributions, start with interpretable models such as logistic regression or decision trees before considering more complex alternatives.
 
 **The problem definition is unstable.** If the definition of the target changes every few weeks, for instance because the business is still deciding what "at-risk customer" means, the cost of retraining and re-evaluating a model exceeds the benefit. Stabilise the problem definition first.
 
@@ -216,7 +216,7 @@ Machine learning is a powerful tool, but it is not the right tool for every prob
 
 ## 3. Real-World Impact
 
-Machine learning is already embedded in the systems that run modern organisations. Understanding real applications matters not just as motivation. It also develops judgment about which learning paradigm and task type apply to a problem you have not seen before.
+Machine learning is already embedded in the systems that run modern organisations. Understanding real applications matters not just as motivation. It also develops judgment about which learning paradigm and task type apply to a problem you haven't seen before.
 
 The table below maps problem domains to the paradigm and task type that typically apply. Reading across the rows, notice that the domain never changes the technique. The same clustering algorithm that segments electricity profiles segments customers in retail. The same anomaly detection approach that flags energy theft flags fraudulent transactions in finance.
 
@@ -244,13 +244,13 @@ The table below maps problem domains to the paradigm and task type that typicall
 
 Two observations from practice are worth stating directly.
 
-First, most high-value ML applications in industry are not glamorous. The majority of value comes from accurate demand forecasting, reliable anomaly detection, and well-calibrated classifiers for operational decisions. These are not problems that require a new algorithm. They require clean data, sound evaluation, and disciplined deployment.
+First, most high-value ML applications in industry aren't glamorous. The majority of value comes from accurate demand forecasting, reliable anomaly detection, and well-calibrated classifiers for operational decisions. These aren't problems that require a new algorithm. They require clean data, sound evaluation, and disciplined deployment.
 
-Second, the barrier to impact in most organisations is not the model. Research shows that roughly 20% of organisations implementing AI achieve their projected outcomes (Babu et al., 2021), and the primary failures are strategic and organisational rather than technical. Data quality issues, misaligned success metrics, models that solve the wrong problem, and insufficient production infrastructure cause more failures than model accuracy. Getting the problem definition right is more valuable than getting the model right.
+Second, the barrier to impact in most organisations isn't the model. Research shows that roughly 20% of organisations implementing AI achieve their projected outcomes (Babu et al., 2021), and the primary failures are strategic and organisational rather than technical. Data quality issues, misaligned success metrics, models that solve the wrong problem, and insufficient production infrastructure cause more failures than model accuracy does. Getting the problem definition right is more valuable than getting the model right.
 
 <div class='ark-mistake'>
 <span class='ark-mistake-title'><i class="bi bi-bug-fill"></i> Common Mistake: Starting with the algorithm</span><br><br>
-A common failure pattern is choosing a model, often a neural network because it appeared in a recent paper, before defining the problem precisely. The algorithm should be the last decision, not the first. The first decisions are: what does the model predict, using what inputs, and how will you know if it is working? A well-defined problem with a gradient-boosted tree often outperforms a poorly defined problem with a transformer. Start with the problem, not the model.
+A common failure pattern is choosing a model, often a neural network because it appeared in a recent paper, before defining the problem precisely. The algorithm should be the last decision, not the first. The first decisions are: what does the model predict, using what inputs, and how will you know if it's working? A well-defined problem with a gradient-boosted tree often outperforms a poorly defined problem with a transformer. Start with the problem, not the model.
 </div>
 
 ::: {.callout-note collapse="true" icon=false}

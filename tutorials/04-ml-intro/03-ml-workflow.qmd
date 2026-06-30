@@ -8,7 +8,7 @@ title: "Part 24: The ML Workflow and Problem Framing"
 
 **Python 3.12+ | Author: Anthony Faustine**
 
-You classified the energy theft problem in Part 23: anomaly detection, unsupervised paradigm. That classification is necessary but not sufficient. Knowing what kind of problem you have does not tell you how to collect the data, how to split it without leaking the future into training, or how to know when the model is good enough to deploy. This chapter maps the nine-step workflow that every ML project follows, from problem framing to production monitoring.
+You classified the energy theft problem in Part 23: anomaly detection, unsupervised paradigm. Knowing what kind of problem you have doesn't tell you how to collect the data, how to split it without leaking the future into training, or how to know when the model is good enough to deploy. This chapter maps the nine-step workflow that every ML project follows, from problem framing to production monitoring.
 
 Parts 22-23 built the landscape and taxonomy. This workflow is the operating manual for everything in Parts 25-27 (sklearn, pipelines, sklearn-pipeline).
 
@@ -35,7 +35,7 @@ This chapter is conceptual. There is no code to run. The goal is to move from kn
 
 ## Why Workflow Matters
 
-In Part 23 you classified the energy theft problem: it is anomaly detection, unsupervised paradigm. That classification is necessary but not sufficient. Knowing what kind of problem you have does not tell you how to build a working system.
+In Part 23 you classified the energy theft problem: it's anomaly detection, unsupervised paradigm. Knowing what kind of problem you have doesn't tell you how to build a working system.
 
 The naive path is tempting. Load the meter data. Fit an isolation forest. Look at the output. Report a result. This path fails in practice, and it fails in ways that are hard to detect from inside the project.
 
@@ -60,7 +60,7 @@ By the end of Part 24 you will be able to:
 
 ## 1. Translating a business problem into an ML problem
 
-The most consequential step in any ML project happens before a line of model code is written. A vague goal produces a model that is impossible to evaluate and impossible to improve. A precisely specified problem produces a model you can hold accountable.
+The most consequential step in any ML project happens before a line of model code is written. A vague goal produces a model that's impossible to evaluate and impossible to improve. A precisely specified problem produces a model you can hold accountable.
 
 A complete ML problem specification has five components.
 
@@ -75,7 +75,7 @@ A complete ML problem specification has five components.
 | **Acceptable threshold** | What performance level is good enough to be worth deploying? |
 | **Data specification** | What data is available, covering what time period, at what granularity? |
 
-Write this down before touching data. If any row cannot be filled in, the problem is not ready to be modelled.
+Write this down before touching data. If any row can't be filled in, the problem isn't ready to be modelled.
 </div>
 
 ### 1.1 Three worked examples
@@ -112,11 +112,11 @@ The same five components apply regardless of domain or task type.
 | Acceptable threshold | Generated replies preferred in at least 65% of side-by-side comparisons; factual error rate below 3% |
 | Data specification | 18 months of resolved support tickets with agent replies |
 
-The GenAI example shows that the spec card applies even when the output is open-ended text. The metric looks different (a human preference comparison rather than a recall rate), but the discipline is identical: define how you will judge success before touching data.
+The GenAI example shows that the spec card applies even when the output is open-ended text. The metric looks different (a human preference comparison rather than a recall rate), but the discipline is identical: define how you'll judge success before touching data.
 
 <div class='ark-tip'>
 <span class='ark-tip-title'><i class="bi bi-lightbulb-fill"></i> Pro Tip</span><br><br>
-If your success metric and acceptable threshold cannot be agreed on with the stakeholder who will use the model, stop. A model trained toward the wrong objective will be optimised toward the wrong outcome. The spec card is a conversation tool as much as a technical document.
+If your success metric and acceptable threshold can't be agreed on with the stakeholder who will use the model, stop. A model trained toward the wrong objective will be optimised toward the wrong outcome. The spec card is a conversation tool as much as a technical document.
 </div>
 
 <div class='ark-concept'>
@@ -126,7 +126,7 @@ When a spec card lists multiple metrics, designate one as the **optimizing metri
 
 For the energy theft spec: recall at 10% FPR is the optimizing metric (catch as many thieves as possible). Inspector visit budget per month is a satisfying constraint (stay within it). For the GenAI support reply spec: win rate is the optimizing metric. Hallucination rate below 3% is a satisfying constraint, not something to minimise beyond the threshold.
 
-The distinction matters because it governs which trade-offs are acceptable. You can tolerate a slightly lower win rate if it keeps hallucination below the threshold. You cannot sacrifice recall to improve a satisfying metric that already meets its bound.
+The distinction matters because it governs which trade-offs are acceptable. You can tolerate a slightly lower win rate if it keeps hallucination below the threshold. You can't sacrifice recall to improve a satisfying metric that already meets its bound.
 </div>
 
 <div class='ark-activity'>
@@ -142,7 +142,7 @@ For each: identify the target variable, task type and paradigm, success metric, 
 
 ## 2. The end-to-end ML workflow
 
-A machine learning project is not a sequence of steps you execute once. It is a cycle. You return to earlier stages when later stages reveal problems.
+A machine learning project isn't a sequence of steps you execute once. It's a cycle. You return to earlier stages when later stages reveal problems.
 
 ![The end-to-end ML workflow. Problem framing produces a specification that drives data collection. EDA and feature engineering prepare the data for modelling. Model selection and training build the model. Evaluation tests it honestly. Deployment and monitoring close the loop: what happens in production feeds back into the next iteration of the problem specification.](figs/ml-workflow.svg){fig-alt="Horizontal pipeline diagram showing nine stages: Problem Framing, Data Collection, EDA, Feature Engineering, Model Selection, Training, Evaluation, Deployment, Monitoring. Stages are connected by forward arrows. Dashed back-arrows show: Evaluation feeding back to Feature Engineering, and Monitoring feeding back to Problem Framing."}
 
@@ -150,9 +150,9 @@ The nine stages cluster into four phases. **Problem framing** is the only stage 
 
 **Problem framing.** The five-component spec card from Section 1. Everything downstream depends on getting this right.
 
-**Data collection.** Gathering the data specified in the spec card. In practice this often reveals that the data you assumed exists does not, or has quality problems that change the problem definition.
+**Data collection.** Gathering the data specified in the spec card. In practice this often reveals that the data you assumed exists doesn't, or has quality problems that change the problem definition.
 
-**Exploratory data analysis (EDA).** Understanding what is in the data before modelling: distributions, missing values, class imbalances, temporal patterns, obvious anomalies. EDA frequently reveals that a feature you planned to use is contaminated (see Section 3: data leakage).
+**Exploratory data analysis (EDA).** Understanding what's in the data before modelling: distributions, missing values, class imbalances, temporal patterns, obvious anomalies. EDA frequently reveals that a feature you planned to use is contaminated (see Section 3: data leakage).
 
 **Feature engineering.** Transforming raw data into inputs the model can use. For the energy theft problem: aggregating 15-minute readings to daily consumption profiles, computing deviation from neighbourhood median, encoding time-of-day and day-of-week patterns.
 
@@ -160,7 +160,7 @@ The nine stages cluster into four phases. **Problem framing** is the only stage 
 
 **Training.** The model learns by processing training examples repeatedly, adjusting its parameters to reduce error each time. Hyperparameter choices (learning rate, model depth, regularisation strength) are made by observing validation set performance, not training performance.
 
-**Evaluation.** Testing the trained model on the held-out test split using the metric from the spec card. This is the honest assessment. If the model does not meet the acceptable threshold, return to feature engineering or model selection.
+**Evaluation.** Testing the trained model on the held-out test split using the metric from the spec card. This is the honest assessment. If the model doesn't meet the acceptable threshold, return to feature engineering or model selection.
 
 **Deployment.** Packaging the model as a service or embedded component that receives new data and returns predictions. Covered in Part 7.
 
@@ -170,19 +170,19 @@ The three-step process from Part 23 (identify a pattern, build a model, use the 
 
 ## 3. Data splits done right
 
-The goal of training an ML model is generalisation: the ability to make correct predictions on data the model has never seen. The split enforces that honestly. If the model is evaluated on data it trained on, you are measuring memorisation, not learning.
+The goal of training an ML model is generalisation: the ability to make correct predictions on data the model's never seen. The split enforces that honestly. If the model is evaluated on data it trained on, you're measuring memorisation, not learning.
 
 ### 3.1 The three-way split
 
 A well-designed split gives each partition a distinct, non-overlapping role.
 
-The **training set** is where learning happens: the model sees these examples and adjusts its parameters to reduce error on them. The **validation set** is held back throughout training and used to tune hyperparameters and compare candidate models. Although the model never trains directly on validation data, the choices you make based on it shape the final result: it influences the model indirectly, as a guide for development decisions. The **test set** is reserved for the single final evaluation. If you check the test set result and then make any change to the model, you have effectively turned it into a second validation set, and the number it reports is no longer an honest estimate of production performance.
+The **training set** is where learning happens: the model sees these examples and adjusts its parameters to reduce error on them. The **validation set** is held back throughout training and used to tune hyperparameters and compare candidate models. Although the model never trains directly on validation data, the choices you make based on it shape the final result: it influences the model indirectly, as a guide for development decisions. The **test set** is reserved for the single final evaluation. If you check the test set result and then make any change to the model, you've effectively turned it into a second validation set, and the number it reports is no longer an honest estimate of production performance.
 
 A common split ratio is 70/15/15 for large datasets, or 60/20/20 when data is scarcer. For very large datasets with millions of examples, proportions shift toward 98/1/1: the validation set only needs to be large enough to reliably detect differences between models, which is often tens of thousands of examples rather than twenty percent of the full dataset. For very small datasets (under a few thousand examples), cross-validation on the training set replaces the validation split.
 
 <div class='ark-mistake'>
 <span class='ark-mistake-title'><i class="bi bi-x-circle-fill"></i> Common Mistake: Using the test set during development</span><br><br>
-Every time you evaluate on the test set and make a model change based on what you see, you are using the test set as a validation set. After enough such iterations, the model is implicitly overfitted to the test set and the reported metric is no longer an honest estimate of real-world performance. Treat the test set as a sealed envelope. Open it once.
+Every time you evaluate on the test set and make a model change based on what you see, you're using the test set as a validation set. After enough such iterations, the model is implicitly overfitted to the test set and the reported metric is no longer an honest estimate of real-world performance. Treat the test set as a sealed envelope. Open it once.
 </div>
 
 ### 3.2 Temporal splits for time-series problems
@@ -199,26 +199,26 @@ The correct approach for time-series problems is always a chronological split: t
 
 A subtler and often more damaging problem than temporal leakage is distribution mismatch: your training data comes from a different distribution than the data the model will see in production.
 
-A common scenario: you are building a demand forecasting model for agricultural processing sites in rural Tanzania. You have abundant training data from large commercial facilities in Dar es Salaam, but the actual deployment targets are small farm-level sites with very different consumption profiles. The model evaluates well on Dar es Salaam validation data and collapses in production.
+A common scenario: you're building a demand forecasting model for agricultural processing sites in rural Tanzania. You have abundant training data from large commercial facilities in Dar es Salaam, but the actual deployment targets are small farm-level sites with very different consumption profiles. The model evaluates well on Dar es Salaam validation data and collapses in production.
 
-The fix is directional: **your validation and test sets must always reflect the distribution of data the model will encounter in production**, even if this means the training distribution is inconsistent with the val/test distribution. It is better to train on abundant but imperfectly matched data and evaluate on representative production-like data than the reverse. When you have two data sources of very different sizes, populate val and test from the production-representative source and train on whatever you have available. Pooling everything and splitting randomly means val and test will mostly reflect the larger source, not the production environment.
+The fix is directional: **your validation and test sets must always reflect the distribution of data the model will encounter in production**, even if this means the training distribution is inconsistent with the val/test distribution. It's better to train on abundant but imperfectly matched data and evaluate on representative production-like data than the reverse. When you have two data sources of very different sizes, populate val and test from the production-representative source and train on whatever you have available. Pooling everything and splitting randomly means val and test will mostly reflect the larger source, not the production environment.
 
 ### 3.4 Feature leakage
 
-A subtler form of leakage comes from the features themselves rather than the split. Feature leakage occurs when a column used as a model input encodes information that would not be available at prediction time.
+A subtler form of leakage comes from the features themselves rather than the split. Feature leakage occurs when a column used as a model input encodes information that wouldn't be available at prediction time.
 
-In the energy theft problem: if you include a column "flagged by field inspector" as a feature, you are training on the answer. The model will learn that flagged meters are anomalies, which is circular. In production, the inspector visits happen after the model has already flagged an account, so this column does not exist at the time the model runs.
+In the energy theft problem: if you include a column "flagged by field inspector" as a feature, you're training on the answer. The model will learn that flagged meters are anomalies, which is circular. In production, the inspector visits happen after the model has already flagged an account, so this column doesn't exist at the time the model runs.
 
 <div class='ark-mistake'>
 <span class='ark-mistake-title'><i class="bi bi-x-circle-fill"></i> Common Mistake: Features from the future</span><br><br>
-In forecasting problems, a common version of feature leakage is including a feature computed from data that post-dates the prediction target. If you are predicting electricity demand for hour T, any feature derived from readings at hour T or later is leaked. Build features exclusively from data available at the moment the prediction is required.
+In forecasting problems, a common version of feature leakage is including a feature computed from data that post-dates the prediction target. If you're predicting electricity demand for hour T, any feature derived from readings at hour T or later is leaked. Build features exclusively from data available at the moment the prediction is required.
 </div>
 
 ## 4. Evaluation metrics that match the problem
 
 Correct splits and clean features ensure the model is trained and evaluated honestly. The next question is what to measure: how to define success for each task type in a way that reflects the actual business objective.
 
-Before choosing a metric, compute a baseline: the performance of the simplest possible prediction. For regression, predict the mean of the training set. For classification, predict the majority class. For forecasting, use yesterday's value. For anomaly detection, flag nothing. A model that does not beat this baseline is not adding value, regardless of what the metric number says.
+Before choosing a metric, compute a baseline: the performance of the simplest possible prediction. For regression, predict the mean of the training set. For classification, predict the majority class. For forecasting, use yesterday's value. For anomaly detection, flag nothing. A model that doesn't beat this baseline isn't adding value, regardless of what the metric number says.
 
 The seven task types from Part 23 divide into three groups based on how evaluation works.
 
@@ -230,13 +230,13 @@ You have labeled examples. Evaluation is a comparison between the model's output
 
 Use precision (of the accounts you flagged, how many were actually tampered), recall (of all tampered accounts, how many did you catch), and F1 (their harmonic mean). Choose between them based on which error is more costly: missing a theft (low recall) or wasting an inspector visit on a legitimate account (low precision). AUC-ROC summarises performance across all possible thresholds.
 
-**Regression.** MAE (mean absolute error) is interpretable: it is the average prediction error in the same units as the target. RMSE penalises large errors more heavily. MAPE (mean absolute percentage error) is scale-independent and useful when comparing across products or meters of different sizes. R² alone is insufficient because a model with high R² can still be systematically biased in ways that matter: the Google Maps route optimiser from Part 22 depends on accurate per-segment travel time predictions, and a model that overestimates congested roads consistently will produce wrong routes even with a high R² overall.
+**Regression.** MAE (mean absolute error) is interpretable: it's the average prediction error in the same units as the target. RMSE penalises large errors more heavily. MAPE (mean absolute percentage error) is scale-independent and useful when comparing across products or meters of different sizes. R² alone is insufficient because a model with high R² can still be systematically biased in ways that matter: the Google Maps route optimiser from Part 22 depends on accurate per-segment travel time predictions, and a model that consistently overestimates congested roads will produce wrong routes even with a high R² overall.
 
 **Forecasting.** The challenge that separates forecasting from regression is that accuracy degrades as the prediction horizon extends. A metric that averages error across all horizons can hide a model that performs well for one-step-ahead predictions but collapses at longer ranges. Good evaluation checks performance at multiple horizons, not just overall. The specific scale-invariant metrics suited to forecasting are covered in Part 25 alongside forecasting algorithms; the principle to carry from here is that evaluation must respect the time structure of the problem.
 
-**Ranking.** A ranking model is not classifying items as relevant or irrelevant: it is ordering them. This distinction changes how success is measured. Getting the right result to position 1 is far more valuable than getting it to position 10, because users rarely scroll past the first few results. All ranking metrics weight top positions more heavily than lower ones, and Part 25 covers the specific ones alongside ranking algorithms. What matters here is to resist using classification accuracy as a proxy: a model that puts the best result at position 8 out of 10 is not 80% accurate. It has failed its purpose, because no user reaches position 8.
+**Ranking.** A ranking model isn't classifying items as relevant or irrelevant: it's ordering them. This distinction changes how success is measured. Getting the right result to position 1 is far more valuable than getting it to position 10, because users rarely scroll past the first few results. All ranking metrics weight top positions more heavily than lower ones, and Part 25 covers the specific ones alongside ranking algorithms. What matters here is to resist using classification accuracy as a proxy: a model that puts the best result at position 8 out of 10 isn't 80% accurate. It has failed its purpose, because no user reaches position 8.
 
-**Anomaly detection.** Class imbalance makes accuracy meaningless (same problem as classification, but more extreme). Use recall at a fixed false positive rate: given that you are willing to investigate at most 10% of accounts per month, how many anomalies do you catch? The F1 score at the chosen threshold and the precision-recall curve both give a full picture across thresholds.
+**Anomaly detection.** Class imbalance makes accuracy meaningless (same problem as classification, but more extreme). Use recall at a fixed false positive rate: given that you're willing to investigate at most 10% of accounts per month, how many anomalies do you catch? The F1 score at the chosen threshold and the precision-recall curve both give a full picture across thresholds.
 
 <div class='ark-concept'>
 <span class='ark-concept-title'><i class="bi bi-info-circle-fill"></i> Key Concept: Precision-recall tradeoff</span><br><br>
@@ -245,25 +245,25 @@ Every supervised model produces a score for each example rather than a hard pred
 
 ### 4.2 Group 2: Generation tasks
 
-Generation tasks have no single correct output. A good summary of a document is not the only good summary, and there is no label to compare the model's output against. This makes evaluation structurally different from supervised tasks: you are not checking whether the answer is right, you are judging whether the output is useful.
+Generation tasks have no single correct output. A good summary of a document isn't the only good summary, and there's no label to compare the model's output against. This makes evaluation structurally different from supervised tasks: you're not checking whether the answer is right, you're judging whether the output is useful.
 
-For tasks where a reference output exists, such as translation or summarisation, automated metrics measure how closely the model's output resembles a human-written reference. These are useful for detecting regressions (if a new model version produces dramatically different outputs, the score will shift), but they are proxies, not ground truth. A high-scoring output can still miss the point of the source material.
+For tasks where a reference output exists, such as translation or summarisation, automated metrics measure how closely the model's output resembles a human-written reference. These are useful for detecting regressions (if a new model version produces dramatically different outputs, the score will shift), but they're proxies, not ground truth. A high-scoring output can still miss the point of the source material.
 
 For open-ended generation, automated metrics capture even less of what matters. The output may be grammatically correct, fluent, and similar in style to the reference, while being factually wrong or unhelpful. Evaluating these systems requires a combination of human judgment, task-specific checks (does the generated code actually run? does the generated SQL return valid results?), and carefully defined criteria that reflect the specific use case. The evaluation approaches for language models are covered in Part 6.
 
-The principle that applies regardless of generation task type: define in the spec card how you will distinguish a good output from a bad one before training anything. If that question cannot be answered, the spec card is incomplete and the model has no clear objective.
+The principle that applies regardless of generation task type: define in the spec card how you'll distinguish a good output from a bad one before training anything. If that question can't be answered, the spec card is incomplete and the model has no clear objective.
 
 ### 4.3 Group 3: Clustering (no ground truth)
 
-Clustering belongs to the unsupervised paradigm: there are no labels to compare against, so the usual definition of "correct" does not exist. Evaluation works at two levels.
+Clustering belongs to the unsupervised paradigm: there are no labels to compare against, so the usual definition of "correct" doesn't exist. Evaluation works at two levels.
 
-Internal metrics measure mathematical structure: whether points within a cluster are more similar to each other than to points in other clusters. These can help you compare different configurations (five groups versus three groups, for instance), but they cannot tell you whether the groups are meaningful. A result that looks clean by internal measures can still be useless in practice. The specific metrics used are covered in Part 25 alongside clustering algorithms.
+Internal metrics measure mathematical structure: whether points within a cluster are more similar to each other than to points in other clusters. These can help you compare different configurations (five groups versus three groups, for instance), but they can't tell you whether the groups are meaningful. A result that looks clean by internal measures can still be useless in practice. The specific metrics used are covered in Part 25 alongside clustering algorithms.
 
-Domain validation fills the gap that internal metrics cannot. Show the result to someone who knows the domain: do the clusters correspond to recognisable patterns? For the energy theft problem, consumption-profile clusters are only valuable if they correspond to interpretable household types that an analyst can act on. If a clustering result cannot be explained to a domain expert, the metric scores are irrelevant to the business decision.
+Domain validation fills the gap that internal metrics can't. Show the result to someone who knows the domain: do the clusters correspond to recognisable patterns? For the energy theft problem, consumption-profile clusters are only valuable if they correspond to interpretable household types that an analyst can act on. If a clustering result can't be explained to a domain expert, the metric scores are irrelevant to the business decision.
 
 <div class='ark-mistake'>
 <span class='ark-mistake-title'><i class="bi bi-x-circle-fill"></i> Common Mistake: Trusting internal metrics alone</span><br><br>
-It is possible for clusters to score well on mathematical separation measures while representing nothing meaningful in the domain. Always combine internal evaluation with domain-expert review. The two questions are distinct: "are the clusters well-separated?" and "do the clusters mean something useful?"
+It's possible for clusters to score well on mathematical separation measures while representing nothing meaningful in the domain. Always combine internal evaluation with domain-expert review. The two questions are distinct: "are the clusters well-separated?" and "do the clusters mean something useful?"
 </div>
 
 ### 4.4 Reference table
@@ -283,27 +283,29 @@ The table below is a forward reference. Metric names not yet defined are introdu
 
 <div class='ark-tip'>
 <span class='ark-tip-title'><i class="bi bi-lightbulb-fill"></i> In Practice</span><br><br>
-Metric choice is not purely technical. Healthcare screening systems optimise recall: missing a disease is worse than a false alarm, so the threshold is set to catch nearly everything at the cost of more follow-up tests. Fraud alert systems optimise precision: a false accusation damages customer trust more than missing one fraudulent transaction. The asymmetry of errors is a business decision that should be made explicit in the spec card, not discovered during model evaluation.
+Metric choice isn't purely technical. Healthcare screening systems optimise recall: missing a disease is worse than a false alarm, so the threshold is set to catch nearly everything at the cost of more follow-up tests. Fraud alert systems optimise precision: a false accusation damages customer trust more than missing one fraudulent transaction. The asymmetry of errors is a business decision that should be made explicit in the spec card, not discovered during model evaluation.
 </div>
 
 ## 5. Diagnosing failure: bias, variance, and learning curves
 
-Knowing what to measure is half the challenge. The other half is knowing what to do when the number you measure falls short. When a model does not meet the acceptable threshold, the instinct is to reach for more data or a more complex model. Both can help, but applied to the wrong problem, both waste time. The bias-variance framework gives you a way to read failure systematically before reaching for any fix.
+Knowing what to measure is half the challenge. The other half is knowing what to do when the number you measure falls short. When a model doesn't meet the acceptable threshold, the instinct is to reach for more data or a more complex model. Both can help, but applied to the wrong problem, both waste time. The bias-variance framework gives you a way to read failure systematically before reaching for any fix.
 
-**Start with a baseline.** Before diagnosing anything, you need a reference point: what level of performance should a reasonable solution achieve? For tasks humans can perform, human-level performance is a practical ceiling: it approximates the best accuracy achievable given the signal in the data and the quality of the labels. For other tasks, a simple rule-based system or the previous production model serves the same purpose.
+**Start with a baseline.** Before diagnosing anything, you need a reference point: what level of performance should a reasonable solution achieve? For tasks humans can perform, human-level performance is a practical ceiling -- it approximates the best accuracy achievable given the signal in the data and the quality of the labels. For other tasks, a simple rule-based system or the previous production model serves the same purpose.
 
 Two gaps then reveal where the problem lies. The gap between training error and the baseline is **avoidable bias**: the portion of training error that a better model could in principle reduce. The gap between training error and validation error is **variance**: error caused by fitting the noise in the training set rather than the underlying pattern. The larger gap is the bottleneck, and it determines which lever to pull:
 
-- If avoidable bias is much larger than variance: the model is underfitting. Add capacity, enrich features, or train longer. Collecting more data will not close this gap.
+- If avoidable bias is much larger than variance: the model is underfitting. Add capacity, enrich features, or train longer. Collecting more data won't close this gap.
 - If variance is much larger than avoidable bias: the model is overfitting. Add more training data, apply regularisation, or simplify the model. Increasing complexity will make it worse.
 
-**High bias (underfitting)** occurs when the model is too simple to capture the underlying pattern. Both training and validation error are high, and the two curves stay close together. The small gap is not a sign of good generalisation; it means the model fails equally on seen and unseen data. Adding more examples does not fix this.
+**High bias (underfitting)** occurs when the model is too simple to capture the underlying pattern. Both training and validation error are high, and the two curves stay close together. The small gap isn't a sign of good generalisation; it means the model fails equally on seen and unseen data. Adding more examples doesn't fix this.
 
-**High variance (overfitting)** is the opposite failure. The model has memorised its training examples rather than learning a general pattern, so training error is low while validation error remains much higher. The gap between the two curves is the diagnostic signal: what the model learned includes noise specific to the training set, noise that does not transfer to new data.
+**High variance (overfitting)** is the opposite failure. The model has memorised its training examples rather than learning a general pattern, so training error is low while validation error remains much higher. The gap between the two curves is the diagnostic signal: what the model learned includes noise specific to the training set, noise that doesn't transfer to new data.
 
-**A good fit** shows both curves converging at a low error level with a small gap. Training error is low, validation error is close, and both meet the acceptable threshold from the spec card. This is the target state.
+**A good fit** shows both curves converging at a low error level with a small gap. Training error is low, validation error is close, and both meet the acceptable threshold from the spec card.
 
-**Learning curves** make these patterns visible by plotting training and validation error as a function of training data size or training time. The shape of the curves tells you which failure mode you are facing and points to the right intervention.
+That's the target state.
+
+**Learning curves** make these patterns visible by plotting training and validation error as a function of training data size or training time. The shape of the curves tells you which failure mode you're facing and points to the right intervention.
 
 ![Three learning curve patterns. Left panel: underfitting, where both training and validation error plateau at a high value and adding data produces little improvement. Centre panel: good fit, where both curves converge at a low error level. Right panel: overfitting, where training error is low but validation error remains substantially higher, with a persistent gap that indicates the model has memorised training examples rather than learning general patterns.](figs/ml-learning-curves.svg){fig-alt="Three side-by-side panels each showing two curves: training error (solid) and validation error (dashed). Left panel labelled Underfitting shows both curves converging at a high error level. Centre panel labelled Good Fit shows both curves converging at a low error level. Right panel labelled Overfitting shows training error low and flat while validation error remains high, with a wide gap between them."}
 
@@ -320,7 +322,7 @@ For each: name the failure mode (underfitting, overfitting, or well-fitted), exp
 
 ## 6. When performance is insufficient: the decision framework
 
-Knowing the failure mode points directly to the intervention. A useful mental model is to treat performance problems hierarchically: fix training performance first, then validation performance, then test performance, then production performance. Each level has its own levers, and applying a lever at the wrong level wastes time. Regularisation applied when training error is still too high makes underfitting worse. Collecting more data when the training/val gap is not the bottleneck provides no benefit.
+Knowing the failure mode points directly to the intervention. A useful mental model is to treat performance problems hierarchically: fix training performance first, then validation performance, then test performance, then production performance. Each level has its own levers, and applying a lever at the wrong level wastes time. Regularisation applied when training error is still too high makes underfitting worse. Collecting more data when the training/val gap isn't the bottleneck provides no benefit.
 
 The table below maps each diagnostic signal to the right levers.
 
@@ -334,7 +336,11 @@ The table below maps each diagnostic signal to the right levers.
 | Model is accurate; decisions are bad | Prediction feeds wrong decision layer | Review how predictions are used downstream |
 | Cannot diagnose from aggregate metrics | Undetected subgroup failure | Error analysis: slice metrics by subgroup |
 
-The last row deserves emphasis. Aggregate metrics hide failures that are concentrated in specific subgroups. An anomaly detection model with overall recall of 78% looks acceptable until you slice by geography and find recall of 40% for rural meters because their consumption patterns were underrepresented in training. Error analysis, examining individual failures and slicing metrics by region, meter type, time of year, or customer segment, is what separates engineering discipline from benchmark chasing.
+The last row deserves emphasis. Aggregate metrics hide failures that are concentrated in specific subgroups. An anomaly detection model with overall recall of 78% looks acceptable until you slice by geography and find recall of 40% for rural meters because their consumption patterns were underrepresented in training.
+
+Don't declare a model ready until you've sliced the metrics.
+
+Error analysis -- examining individual failures and slicing metrics by region, meter type, time of year, or customer segment -- is what separates engineering discipline from benchmark chasing.
 
 <div class='ark-activity'>
 <span class='ark-activity-title'><i class="bi bi-puzzle-fill"></i> Activity 3 - Audit the Split and Metric</span><br><br>
@@ -365,7 +371,7 @@ For each: identify the specific problem (wrong split, wrong metric, or something
 | Concept | Key rule |
 |---|---|
 | Problem specification | Write the five-component spec card before touching data: target variable, task type and paradigm, success metric, acceptable threshold, data specification |
-| Baseline first | Compute the dumbest possible prediction before any model; a model that cannot beat it is not adding value |
+| Baseline first | Compute the dumbest possible prediction before any model; a model that can't beat it isn't adding value |
 | ML workflow | Nine stages from problem framing to monitoring; the process is iterative, not linear |
 | Train/val/test split | Validation is for development; test set is touched once; for time series always split chronologically |
 | Feature leakage | A feature that encodes future information or the target answer itself will inflate performance during evaluation and collapse in production |

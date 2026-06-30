@@ -9,9 +9,9 @@ title: "Part 13: Project Setup with uv"
 
 **Python 3.12+ | Author: Anthony Faustine**
 
-You install `scikit-learn` for one project. Three weeks later a second project breaks because a shared dependency updated. The fix is per-project isolation -- and `uv` delivers it in one tool: project init, dependency tracking, reproducible lockfiles, and script running, all faster than `pip` alone.
+You install `scikit-learn` for one project. Three weeks later a second project breaks because a shared dependency updated. You didn't change anything. The fix is per-project isolation -- and `uv` delivers it in one tool: project init, dependency tracking, reproducible lockfiles, and script running, all faster than `pip` alone.
 
-Part 12 (`00-vscode-setup.qmd`) set up your editor. The project you build here carries through every remaining Dev Tools chapter -- ruff will lint it in Part 15, git will version it in Part 16, and pytest will test it in Part 17.
+The project you build here carries through every remaining Dev Tools chapter -- ruff will lint it, git will version it, and pytest will test it.
 
 ::: {.callout-note collapse="true" icon=false}
 ## Before you begin
@@ -56,7 +56,7 @@ By the end of Part 13 you will be able to:
 
 ## 0. What is uv and Why Use It
 
-Ask five Python developers how they manage dependencies and you will get five different answers. Some use pip and venv. Some use Poetry. Some use conda. None of them produce the same environment reliably on a colleague's machine. uv is the answer to that fragmentation: one tool, one configuration file, one command prefix.
+Ask five Python developers how they manage dependencies and you'll get five different answers. Some use pip and venv. Some use Poetry. Some use conda. None of them produce the same environment reliably on a colleague's machine. uv is the answer to that fragmentation: one tool, one configuration file, one command prefix.
 
 `uv` is a Python package and project manager written in Rust, built by [Astral](https://astral.sh), the same team behind `ruff`. It replaces a stack of tools that most Python developers use separately: `pip`, `venv`, `pip-tools`, and parts of `Poetry` or `conda`. One binary, one configuration file, one command prefix (`uv run`).
 
@@ -92,7 +92,7 @@ pipx install uv
 uv --version
 ```
 
-After installation, `uv` is available system-wide. You do not need to activate any environment to use it.
+After installation, `uv` is available system-wide. You don't need to activate any environment to use it.
 
 <div class='ark-tip'>
 <span class='ark-tip-title'><i class="bi bi-lightbulb-fill"></i> Pro Tip: Keep uv up to date</span><br><br>
@@ -101,15 +101,15 @@ uv releases frequently. Run <code>uv self update</code> to upgrade to the latest
 
 ## 1. The Reproducibility Problem
 
-Two colleagues share the same script. One gets a clean result; the other gets a `FutureWarning` and a different output. The script has not changed. The problem is the environment: `pandas 1.5` and `pandas 2.0` handle missing values and certain default arguments differently. Without a record of exact package versions, "it works on my machine" is the only guarantee on offer.
+Two colleagues share the same script. One gets a clean result; the other gets a `FutureWarning` and a different output. The script hasn't changed. The problem is the environment: `pandas 1.5` and `pandas 2.0` handle missing values and certain default arguments differently. Without a record of exact package versions, "it works on my machine" is the only guarantee on offer.
 
-The standard Python answer has been to pair a virtual environment (an isolated Python interpreter with its own packages) with a `requirements.txt` file pinning direct dependencies. This solves part of the problem. It does not pin transitive dependencies: the packages that your packages depend on. A project frozen at `pandas==2.1.0` will still install whichever version of `pytz` pip resolves on the day of installation, and that version may differ between colleagues or CI runs.
+The standard Python answer has been to pair a virtual environment with a `requirements.txt` file pinning direct dependencies. This solves part of the problem. It doesn't pin transitive dependencies -- the packages that your packages depend on. A project frozen at `pandas==2.1.0` will still install whichever version of `pytz` pip resolves on the day of installation, and that version may differ between colleagues or CI runs.
 
 A lockfile solves this. It records the exact version of every package in the dependency tree, direct and transitive, so that two different machines installing from the same lockfile get byte-for-byte identical environments. `uv` provides both the virtual environment and the lockfile in a single fast tool.
 
 <div class='ark-concept'>
 <span class='ark-concept-title'><i class="bi bi-info-circle-fill"></i> Key Concept: A lockfile is a snapshot of the environment that worked</span><br><br>
-<code>uv.lock</code> pins the exact version of every dependency, including transitive ones. Commit it alongside your code. Anyone who clones the repo and runs <code>uv sync</code> gets the identical environment, on any machine, at any time.
+Commit <code>uv.lock</code> alongside your code. Anyone who clones the repo and runs <code>uv sync</code> gets the identical environment -- on any machine, at any time -- because the lockfile pins the exact version of every dependency, transitive ones included.
 </div>
 
 ## 2. Initializing a Project
@@ -133,7 +133,7 @@ grade-predictor/
 └── README.md
 ```
 
-The `--package` flag matters. Without it, `uv init` creates a simple script project. With it, it creates a proper Python package with the `src/` layout. In the `src/` layout, the package lives inside `src/` rather than at the project root. This means you cannot accidentally import from the development copy of the code when running scripts from the project root: Python will only find the installed package, which is the version that tests and CI will see.
+The `--package` flag matters. Without it, `uv init` creates a simple script project. With it, you get a proper Python package with the `src/` layout: the package lives inside `src/` rather than at the project root. That means you can't accidentally import from the development copy of the code when running scripts from the project root -- Python will only find the installed package, which is the version tests and CI will see.
 
 Run `uv sync` to create the virtual environment and generate `uv.lock`:
 
@@ -141,7 +141,7 @@ Run `uv sync` to create the virtual environment and generate `uv.lock`:
 uv sync
 ```
 
-The `.venv/` directory appears at the project root. You do not activate it manually. `uv run` handles activation automatically.
+The `.venv/` directory appears at the project root. You don't activate it manually -- `uv run` handles that automatically.
 
 <div class='ark-activity'>
 <span class='ark-activity-title'><i class="bi bi-puzzle-fill"></i> Activity 1 - Initialize and Inspect</span><br><br>
@@ -150,7 +150,7 @@ The `.venv/` directory appears at the project root. You do not activate it manua
 
 ## 3. `pyproject.toml` Anatomy
 
-`pyproject.toml` is the single source of truth for a Python project. It replaces four files that older projects split across: `setup.py`, `setup.cfg`, `requirements.txt`, and `pytest.ini`. Every modern Python tool reads it.
+`pyproject.toml` is the single source of truth for a Python project. It replaces four files that older projects spread across: `setup.py`, `setup.cfg`, `requirements.txt`, and `pytest.ini`. Every modern Python tool reads it.
 
 Here is a complete `pyproject.toml` for `grade-predictor` with annotations:
 
@@ -199,7 +199,7 @@ line-length = 100
 
 <div class='ark-concept'>
 <span class='ark-concept-title'><i class="bi bi-info-circle-fill"></i> Key Concept: <code>pyproject.toml</code> is the single source of truth</span><br><br>
-It replaces <code>setup.py</code>, <code>requirements.txt</code>, <code>setup.cfg</code>, and <code>pytest.ini</code>. Read it and you can understand any modern Python project in under five minutes: what it does, what it depends on, how to test it, and how to build it.
+Read it and you can understand any modern Python project in under five minutes: what it does, what it depends on, how to test it, and how to build it. It replaces <code>setup.py</code>, <code>requirements.txt</code>, <code>setup.cfg</code>, and <code>pytest.ini</code> -- all of them.
 </div>
 
 <div class='ark-activity'>
@@ -217,7 +217,7 @@ uv add --optional dev ruff pytest
 uv sync
 ```
 
-Compare this to `pip install pandas`: pip installs the package into whatever environment is currently active but writes nothing permanent. Next week, on a different machine, there is no record of which version was installed.
+Compare this to `pip install pandas`: pip installs the package into whatever environment is currently active but writes nothing permanent. Next week, on a different machine, there's no record of which version was installed.
 
 Useful commands:
 
@@ -249,7 +249,7 @@ uv run python -c "import pandas; print(pandas.__version__)"
 
 ## 5. Optional Dependency Groups for ML Projects
 
-Heavy ML dependencies are the single biggest cause of slow CI pipelines. A cold install of PyTorch takes three to four minutes. A cold install of scikit-learn and pytest takes under 20 seconds. Separating them into optional groups makes CI run only what it needs.
+Heavy ML dependencies are the single biggest cause of slow CI pipelines. A cold install of PyTorch takes three to four minutes; scikit-learn and pytest take under 20 seconds. Separating them into optional groups means CI only installs what it actually needs.
 
 ```toml
 [project.optional-dependencies]
@@ -291,7 +291,7 @@ A CI run that installs PyTorch takes 3 to 4 minutes on a cold cache. One that in
 
 ## 6. Secret Management with `.env`
 
-A database password or API key committed to a public GitHub repository is searchable, permanent (even after deletion from history via `git rm`), and a real security incident. The correct pattern is to never put secrets in version-controlled files.
+A database password or API key committed to a public GitHub repository is searchable, permanent (even after `git rm`), and a real security incident. Don't put secrets in version-controlled files.
 
 Create `.env` at the project root:
 
@@ -331,7 +331,7 @@ REPORT_TITLE=My Report
 
 <div class='ark-mistake'>
 <span class='ark-mistake-title'><i class="bi bi-bug-fill"></i> Common Mistake: Defaults that are real values</span><br><br>
-Never put a real secret as a default value in code: <code>os.getenv("API_KEY", "sk-prod-abc123")</code>. The moment that file is committed, the key is in git history permanently. A placeholder default like <code>"your-key-here"</code> is safe; a real credential is not. If a key is committed by accident, rotate it immediately.
+<code>os.getenv("API_KEY", "sk-prod-abc123")</code> looks harmless until someone commits that file. The key is in git history permanently at that point -- even if you delete the line later. A placeholder default like <code>"your-key-here"</code> is safe; a real credential isn't. If a key is committed by accident, rotate it immediately.
 </div>
 
 <div class='ark-activity'>
@@ -351,18 +351,18 @@ uv run jupyter lab                         # open Jupyter
 uv run --with httpx python -c "import httpx; print(httpx.__version__)"  # one-off tool
 ```
 
-The `--with` flag installs a package into the run environment for that command only, without adding it to `pyproject.toml`. This is the correct way to use tools you reach for occasionally (`nbmake`, `httpx`, a formatter you are evaluating) without polluting the project's dependency list.
+The `--with` flag installs a package into the run environment for that command only, without adding it to `pyproject.toml`. It's the right way to use tools you reach for occasionally (`nbmake`, `httpx`, a formatter you're evaluating) without polluting the project's dependency list.
 
-`uv run` always uses the project environment defined by `uv.lock`. Shell state (which `conda` environment is active, whether you ran `source .venv/bin/activate` in another terminal) never leaks in.
+`uv run` always uses the project environment defined by `uv.lock`. Shell state -- which `conda` environment is active, whether you ran `source .venv/bin/activate` in another terminal -- never leaks in.
 
 <div class='ark-concept'>
 <span class='ark-concept-title'><i class="bi bi-info-circle-fill"></i> Key Concept: <code>uv run</code> replaces manual venv activation</span><br><br>
-<code>source .venv/bin/activate</code> changes your shell state. Forget to run it and you install into the wrong Python. <code>uv run</code> needs no shell state: it always resolves the project environment from <code>uv.lock</code>. Use it for every command in a project, and activation errors disappear entirely.
+Forget to run <code>source .venv/bin/activate</code> and you install into the wrong Python. <code>uv run</code> doesn't have that problem: it always resolves the project environment from <code>uv.lock</code>, regardless of shell state. Use it for every command in a project and activation errors disappear entirely.
 </div>
 
 ## Capstone - Build `grade-predictor` from Scratch
 
-Build the complete initial structure of the `grade-predictor` project. By the end of this exercise, you will have a runnable Python package with a proper environment.
+Build the complete initial structure of the `grade-predictor` project. By the end, you'll have a runnable Python package with a proper environment.
 
 <div class='ark-activity'>
 <span class='ark-activity-title'><i class="bi bi-puzzle-fill"></i> Capstone: grade-predictor initial setup</span><br><br>
@@ -407,4 +407,4 @@ def compute_grade(midterm: float, final: float, project: float) -> float:
 | `uv run` | Use it for everything. No manual venv activation required. |
 :::
 
-**Next:** [Part 14: Code Quality with ruff](02-code-quality-ruff.qmd) runs `ruff check` and `ruff format` on the `grade-predictor` codebase you just created.
+**Next:** [Part 14: Code Quality with ruff](02-code-quality-ruff.qmd) -- `ruff check` and `ruff format` on the codebase you just built.
