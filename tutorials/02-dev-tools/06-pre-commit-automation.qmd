@@ -9,6 +9,12 @@ title: "Part 18: Automation with pre-commit"
 
 **Python 3.12+ | Author: Anthony Faustine**
 
+You push a commit. CI fails because ruff found an unused import you missed. You fix it and push again. CI fails again -- the commit message format is wrong. Each round trip costs five minutes and breaks your focus.
+
+`pre-commit` catches all of this the moment you type `git commit`. By the end of this chapter, every quality check from the previous four chapters runs automatically before any commit can land.
+
+Part 19 (`07-pydantic-validation.ipynb`) introduces runtime data validation.
+
 ::: {.callout-note collapse="true" icon=false}
 ## Before you begin
 
@@ -51,24 +57,11 @@ By the end of Part 18 you will be able to:
 
 ## 0. What is pre-commit and How to Install It
 
-`pre-commit` is a framework for managing git hooks. It lets you define a set of automated checks in a single YAML file (`.pre-commit-config.yaml`) that is committed with your code. Anyone who clones the repository and runs `pre-commit install` gets the identical set of checks running on their machine, each in its own isolated environment with pinned tool versions.
+`pre-commit` is a framework for managing git hooks. You define your checks in a single YAML file (`.pre-commit-config.yaml`) that's committed with your code. Anyone who clones the repository and runs `pre-commit install` gets the identical set of checks on their machine, each in its own isolated environment with pinned tool versions.
 
-Without pre-commit, quality checks are optional. With pre-commit, they are automatic: the checks run before every commit and block it if they fail. You cannot forget to run ruff, and your colleagues cannot skip it.
+Without pre-commit, quality checks are optional. With pre-commit, they're automatic: the checks run before every commit and block it if they fail. You can't forget to run ruff, and your colleagues can't skip it.
 
-```{mermaid}
-flowchart LR
-    A["git commit -m '...'"] --> B["pre-commit\nhooks run"]
-    B --> C{ruff check}
-    C -->|"auto-fixed"| D["file changed\ngit add + retry"]
-    D --> B
-    C -->|"no findings"| E{commitizen\ncommit-msg}
-    E -->|"invalid format"| F["commit BLOCKED"]
-    E -->|"valid format"| G["commit sealed"]
-
-    style G fill:#EBF5F0,stroke:#059669,color:#065F46
-    style F fill:#FEF2F2,stroke:#DC2626,color:#991B1B
-    style D fill:#EAF3FA,stroke:#0369A1,color:#0C4A6E
-```
+![pre-commit flow: git commit triggers hooks. ruff check either auto-fixes and retries or passes to commitizen. commitizen either blocks the commit for an invalid message format or seals it.](figs/precommit-flow.svg){fig-alt="Flow diagram. git commit (blue) to pre-commit hooks (blue). Diamond: ruff check. Auto-fixed path (amber): file changed, git add, retry. No-findings path to second diamond: commitizen. Invalid format (red): commit BLOCKED. Valid format (green): commit sealed."}
 
 ### Install pre-commit
 
@@ -100,14 +93,14 @@ pre-commit --version
 
 <div class='ark-concept'>
 <span class='ark-concept-title'><i class="bi bi-info-circle-fill"></i> Key Concept: pre-commit install wires the hooks; it must run after every clone</span><br><br>
-The <code>.pre-commit-config.yaml</code> file describes <i>what</i> to run. <code>pre-commit install</code> writes the actual hook scripts into <code>.git/hooks/</code>. This second step is local-only and not version-controlled, so every developer who clones the repo must run it once. A good project README always lists it as a setup step.
+The <code>.pre-commit-config.yaml</code> file describes <i>what</i> to run. <code>pre-commit install</code> writes the actual hook scripts into <code>.git/hooks/</code>. This second step is local-only and not version-controlled, so every developer who clones the repo must run it once. Add it to the project README under "Getting started" -- otherwise new contributors will wonder why the hooks aren't running.
 </div>
 
 ## 1. Git Hooks and Why pre-commit Manages Them
 
 A git hook is a script that runs at a specific point in the git workflow. `pre-commit` runs before `git commit` seals the commit; `commit-msg` runs after you write the message; `pre-push` runs before `git push` sends to the remote. Hooks can block the operation if they exit with a non-zero code.
 
-Without pre-commit, hooks are raw shell scripts in `.git/hooks/`. They are not version-controlled, so every clone starts with no hooks. Each developer installs them differently. Enforcement is inconsistent.
+Without pre-commit, hooks are raw shell scripts in `.git/hooks/`. They're not version-controlled, so every clone starts with no hooks. Each developer installs them differently, and enforcement is inconsistent.
 
 Pre-commit solves this by managing hooks as configuration: `.pre-commit-config.yaml` is committed to the repository. Anyone who clones it and runs `pre-commit install` gets the identical set of hooks, each running in an isolated environment with pinned tool versions.
 
@@ -120,7 +113,7 @@ This two-step setup must happen once after every clone.
 
 <div class='ark-concept'>
 <span class='ark-concept-title'><i class="bi bi-info-circle-fill"></i> Key Concept: <code>pre-commit install</code> must run after every clone</span><br><br>
-The hooks live in <code>.pre-commit-config.yaml</code> (versioned, shared), not in <code>.git/hooks/</code> (not versioned, local only). <code>pre-commit install</code> writes the actual hook scripts into <code>.git/hooks/</code> based on the config. Without running it, no hooks execute. Add it to your project README under "Getting started".
+The hooks live in <code>.pre-commit-config.yaml</code> (versioned, shared), not in <code>.git/hooks/</code> (local only). Without running <code>pre-commit install</code>, no hooks execute -- the config file exists but nothing triggers it. Add it to your project README under "Getting started".
 </div>
 
 ## 2. The Essential DS Hooks
@@ -171,9 +164,9 @@ repos:
 Walking through the important ones:
 
 - `check-added-large-files`: blocks data files committed accidentally. 1.2MB catches most CSVs.
-- `detect-private-key`: scans for PEM headers and common secret patterns. Not foolproof, but catches the common cases.
+- `detect-private-key`: scans for PEM headers and common secret patterns. It's not foolproof, but it catches the common cases.
 - `no-commit-to-branch`: prevents direct commits to `main`. All changes go through branches.
-- `ruff --fix --exit-non-zero-on-fix`: runs ruff, applies auto-fixes, and then exits non-zero if it changed anything. This forces you to stage the fix before re-committing, which keeps the staging area honest.
+- `ruff --fix --exit-non-zero-on-fix`: runs ruff, applies auto-fixes, and exits non-zero if it changed anything. This forces you to stage the fix before re-committing, which keeps the staging area honest.
 
 <div class='ark-activity'>
 <span class='ark-activity-title'><i class="bi bi-puzzle-fill"></i> Activity 1 - First Hook Run</span><br><br>
@@ -189,9 +182,11 @@ git commit -m "style: ruff auto-fixed unused import"</pre>
 
 ## 3. nbstripout: Keeping Notebooks Clean
 
-This is the one hook that almost no standard pre-commit tutorial covers, but it is essential for any DS project with Jupyter notebooks.
+This is the one hook that almost no standard pre-commit tutorial covers, but it's essential for any DS project with Jupyter notebooks.
 
-Jupyter saves cell outputs, plots, and printed values inside the `.ipynb` JSON file. Without stripping them, every re-run of a notebook produces a diff of hundreds of lines even when the code itself has not changed. `git diff` becomes unreadable. `git blame` becomes useless. PRs accumulate thousands of lines of changed JSON that nobody reviews.
+Jupyter saves cell outputs, plots, and printed values inside the `.ipynb` JSON file. Without stripping them, every re-run of a notebook produces a diff of hundreds of lines even when the code itself hasn't changed. `git diff` becomes unreadable. `git blame` becomes useless. PRs accumulate thousands of lines of changed JSON that nobody reviews.
+
+It's not a nice-to-have. It's the difference between a reviewable diff and a wall of base64.
 
 Two modes, two stages:
 
@@ -234,7 +229,7 @@ git diff --staged     # should show code, not output JSON</pre>
 
 ## 4. commitizen: Enforcing Conventional Commits
 
-In [Part 16](04-git-github.qmd), you wrote conventional commit messages by hand. Commitizen enforces the format automatically via a `commit-msg` hook, and provides `cz commit` as an interactive alternative to `git commit -m`.
+In [Part 16](04-git-github.qmd), you wrote conventional commit messages by hand. Commitizen enforces the format automatically via a `commit-msg` hook, and provides `cz commit` as an interactive alternative when you're not sure what type or scope to use.
 
 Add to `pyproject.toml`:
 
@@ -266,7 +261,7 @@ Add to `.pre-commit-config.yaml`:
         stages: [pre-push]
 ```
 
-With this in place, `git commit -m "update stuff"` is blocked. `git commit -m "fix(core): correct weight normalization"` passes. `cz commit` walks you through the format interactively.
+With this in place, `git commit -m "update stuff"` is blocked. `git commit -m "fix(core): correct weight normalization"` passes.
 
 Two more commitizen commands that pay for themselves:
 
@@ -275,11 +270,11 @@ cz bump           # reads commit history, bumps version automatically
 cz changelog      # generates CHANGELOG.md from commit history
 ```
 
-`feat` commits bump the minor version. `fix` commits bump the patch. With `update_changelog_on_bump = true`, the changelog writes itself.
+`feat` commits bump the minor version. `fix` commits bump the patch. With `update_changelog_on_bump = true`, the changelog writes itself -- no manual editing.
 
 <div class='ark-tip'>
 <span class='ark-tip-title'><i class="bi bi-lightbulb-fill"></i> Pro Tip: <code>cz bump</code> replaces manual version management</span><br><br>
-Without commitizen, bumping a version means editing <code>pyproject.toml</code>, updating <code>CHANGELOG.md</code>, tagging the commit, and pushing the tag. With commitizen: <code>cz bump</code> does all four in one command, reading the commit history to determine whether this is a major, minor, or patch release.
+Bumping a version manually means editing <code>pyproject.toml</code>, updating <code>CHANGELOG.md</code>, tagging the commit, and pushing the tag -- four steps, easily forgotten in the wrong order. <code>cz bump</code> does all four in one command, reading the commit history to determine whether this is a major, minor, or patch release.
 </div>
 
 <div class='ark-activity'>
@@ -292,7 +287,7 @@ uv run cz changelog</pre>
 
 ## 5. Stages: `pre-commit` vs `pre-push`
 
-Hooks can run at different stages. The choice determines how much latency you accept:
+Hooks can run at different stages, and the choice matters for how much latency you accept:
 
 | Stage | When it runs | Right for |
 |---|---|---|
@@ -302,7 +297,7 @@ Hooks can run at different stages. The choice determines how much latency you ac
 
 A slow `pre-commit` hook runs on every commit, including small work-in-progress commits on a personal branch. A slow `pre-push` hook runs less often and tolerates more latency, because pushing is a deliberate action.
 
-The rule: if a check takes more than 5 seconds, move it to `pre-push`. If it breaks CI anyway, move it there. Keep `pre-commit` fast so that committing often stays frictionless.
+The rule of thumb: if a check takes more than 5 seconds, move it to `pre-push`. Keep `pre-commit` fast so committing often stays frictionless.
 
 Assign a hook to a stage with `stages: [pre-push]`:
 
@@ -319,7 +314,7 @@ Assign a hook to a stage with `stages: [pre-push]`:
 
 ## 6. Debugging Failures and the SKIP Escape Hatch
 
-When a hook fails, git blocks the commit. The hook output explains why. Read the first line of the failure: it names the hook, the file, and the rule.
+When a hook fails, git blocks the commit. The hook output explains why -- read the first line: it names the hook, the file, and the rule.
 
 The most common failure pattern: ruff finds an issue, fixes it, and exits non-zero. The file is now changed but not staged. The fix is:
 
@@ -334,7 +329,7 @@ The `SKIP` environment variable bypasses specific hooks for one commit:
 SKIP=ruff git commit -m "wip: draft in progress"
 ```
 
-`SKIP` is the right tool for work-in-progress commits on a personal branch where you intend to clean up before merging. It bypasses only the named hook, not all hooks.
+`SKIP` is the right tool for work-in-progress commits on a personal branch where you intend to clean up before merging. It bypasses only the named hook -- not all of them.
 
 `pre-commit run --all-files` runs all hooks on every file, not just staged ones. Use it as a one-time audit when setting up a new project or after adding a new hook:
 
@@ -344,7 +339,7 @@ uv run pre-commit run --all-files
 
 <div class='ark-mistake'>
 <span class='ark-mistake-title'><i class="bi bi-bug-fill"></i> Common Mistake: Using <code>--no-verify</code></span><br><br>
-<code>git commit --no-verify</code> bypasses all hooks at once: commitizen, ruff, detect-private-key, nbstripout, everything. There is almost no legitimate reason for it on a shared branch. Use <code>SKIP=&lt;hook-id&gt;</code> to bypass only the hook that is blocking you. If you find yourself reaching for <code>--no-verify</code> regularly, the hook is probably too slow or misconfigured, and that is the real problem to fix.
+<code>git commit --no-verify</code> bypasses everything at once: commitizen, ruff, detect-private-key, nbstripout, all of it. There's almost no legitimate reason for it on a shared branch. Use <code>SKIP=&lt;hook-id&gt;</code> to bypass only the hook that's blocking you. If you find yourself reaching for <code>--no-verify</code> regularly, the hook is probably too slow or misconfigured -- that's the real problem to fix.
 </div>
 
 ## Capstone - Complete pre-commit Pipeline
@@ -386,5 +381,5 @@ uv run cz commit</pre>
 | commitizen | Enforces conventional commits automatically. `cz commit` is the interactive alternative. |
 | `SKIP=<id>` | Bypass one specific hook for a `wip` commit. Never use `--no-verify`. |
 
-**What is next:** With the full dev tools stack in place, Part 4 covers Classical Machine Learning: building, evaluating, and comparing models on `university_analytics.csv` using the clean, tested, versioned codebase you have built here.
+**What's next:** With the full dev tools stack in place, Part 4 covers Classical Machine Learning: building, evaluating, and comparing models on `university_analytics.csv` using the clean, tested, versioned codebase you've built here.
 :::

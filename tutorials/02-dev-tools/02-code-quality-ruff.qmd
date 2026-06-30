@@ -9,6 +9,10 @@ title: "Part 14: Code Quality with ruff"
 
 **Python 3.12+ | Author: Anthony Faustine**
 
+Your code works on your machine. A colleague checks it out and immediately hits an import error -- your editor sorts imports one way, theirs another, and the difference breaks the pipeline. `ruff` enforces one standard automatically: consistent formatting with `ruff format` and 700+ correctness rules with `ruff check`, both running in milliseconds before any code ships.
+
+The `grade-predictor` project from [Part 13](01-uv-project-setup.qmd) is the codebase you'll run ruff on here. Pre-commit in [Part 18](06-pre-commit-automation.qmd) will automate it on every commit.
+
 ::: {.callout-note collapse="true" icon=false}
 ## Before you begin
 
@@ -49,32 +53,19 @@ By the end of Part 14 you will be able to:
 
 ## 1. Two Different Jobs
 
-Ruff does two separate things, and it is worth being clear about which one you are running.
+Ruff does two separate things, and it's worth being clear about which one you're running.
 
-A **formatter** rewrites the layout of your code: indentation, line length, quote style, trailing commas. It makes no judgements about correctness. It does not care whether a variable is used or a loop is redundant. It just makes the code look consistent.
+A **formatter** rewrites the layout of your code: indentation, line length, quote style, trailing commas. It makes no judgements about correctness. It doesn't care whether a variable is used or a loop is redundant. It just makes the code look consistent.
 
-A **linter** reads the code and flags patterns that are wrong, suspicious, or likely to cause bugs. It cannot fix most of what it finds, because fixing requires understanding intent. It tells you "this import is never used" and lets you decide whether to remove it or rename it.
+A **linter** reads the code and flags patterns that are wrong, suspicious, or likely to cause bugs. It can't fix most of what it finds, because fixing requires understanding intent. It tells you "this import is never used" and lets you decide whether to remove it or rename it.
 
-Ruff handles both. They are separate commands with separate jobs: `ruff format` for layout, `ruff check` for correctness. Running format first is the usual order: get the code looking clean, then read what the linter flags.
+Ruff handles both. They're separate commands with separate jobs: `ruff format` for layout, `ruff check` for correctness. Running format first is the usual order: get the code looking clean, then read what the linter flags.
 
-```{mermaid}
-flowchart LR
-    A[source code] --> B["ruff format\nindentation, quotes,\nline length"]
-    B --> C[formatted code]
-    C --> D["ruff check\nAST rules: unused imports,\nmutable defaults, etc."]
-    D --> E{findings?}
-    E -->|"--fix: auto-fixable"| F["ruff applies fix\nre-stage the file"]
-    F --> D
-    E -->|"none"| G["ready to commit"]
-
-    style G fill:#EBF5F0,stroke:#059669,color:#065F46
-    style B fill:#F5F3FF,stroke:#7C3AED,color:#3B0764
-    style D fill:#EAF3FA,stroke:#0369A1,color:#0C4A6E
-```
+![ruff pipeline: source code passes through ruff format for style, then ruff check for correctness. If findings exist, ruff applies auto-fixes and re-checks. When no findings remain, the code is ready to commit.](figs/ruff-pipeline.svg){fig-alt="Linear flow: source code (gray) to ruff format (purple) to formatted code to ruff check (blue) to a diamond decision. Yes path (amber): ruff applies fix and loops back. No path (green): ready to commit."}
 
 <div class='ark-concept'>
 <span class='ark-concept-title'><i class="bi bi-info-circle-fill"></i> Key Concept: Formatting is about style. Linting is about correctness.</span><br><br>
-A formatter can never catch <code>df.drop("column")</code> without <code>inplace=True</code> silently doing nothing. A linter can. Use both: format automatically on every save, run the linter before every commit.
+<code>df.drop("column")</code> without <code>inplace=True</code> silently does nothing. A formatter won't catch that -- a linter will. Use both: format automatically on every save, run the linter before every commit.
 </div>
 
 ## 2. Running `ruff check`
@@ -119,7 +110,7 @@ Found 6 errors.
 [*] 4 fixable with the `--fix` option.
 ```
 
-Reading the output: each line is `file:line:col: CODE message`. The `[*]` marker means ruff can auto-fix this one. `F401` is the pyflakes family; `B006` is from bugbear; `E722` is from pycodestyle.
+Each line is `file:line:col: CODE message`. The `[*]` marker means ruff can auto-fix this one. `F401` is the pyflakes family; `B006` is from bugbear; `E722` is from pycodestyle.
 
 Auto-fix what can be fixed automatically, then inspect the rest:
 
@@ -156,7 +147,7 @@ uv run ruff check src/</pre>
 
 ## 3. Running `ruff format`
 
-`ruff format` rewrites the layout of every Python file it touches. It is opinionated and non-configurable by design: line length is the only setting. The result is that two developers with different editor preferences produce identical diffs.
+`ruff format` rewrites the layout of every Python file it touches. It's opinionated and non-configurable by design: line length is the only setting. The result is that two developers with different editor preferences produce identical diffs.
 
 ```bash
 uv run ruff format src/              # format in place
@@ -164,7 +155,7 @@ uv run ruff format src/ --check      # exit 1 if anything would change (CI mode)
 uv run ruff format src/ --diff       # show what would change without writing it
 ```
 
-The `--check` flag is what CI uses. If any file needs reformatting, the check fails and the push is blocked. The developer runs `ruff format .` locally, stages the changes, and pushes again.
+The `--check` flag is what CI uses. If any file needs reformatting, the check fails and the push is blocked. Run `ruff format .` locally, stage the changes, and push again.
 
 Before format:
 ```python
@@ -190,7 +181,7 @@ In VS Code, add <code>"editor.formatOnSave": true</code> and <code>"[python]": {
 
 ## 4. Configuring ruff in `pyproject.toml`
 
-Without configuration, ruff checks only the `E` and `F` rules (pycodestyle and pyflakes). For DS work, several more rule groups pay for themselves:
+Without configuration, ruff checks only the `E` and `F` rules (pycodestyle and pyflakes). For DS work, several more rule groups are worth adding:
 
 ```toml
 [tool.ruff]
@@ -216,7 +207,7 @@ ignore = [
 "**/*.ipynb" = ["E501", "F811"] # notebooks: long lines and re-defined names are ok
 ```
 
-The `per-file-ignores` section is where you handle legitimate exceptions. Notebooks need `E501` suppressed because output lines can be long. Tests need `S101` suppressed because `assert` is the whole point.
+The `per-file-ignores` section handles legitimate exceptions. Notebooks need `E501` suppressed because output lines can be long. Tests need `S101` suppressed because `assert` is the whole point.
 
 <div class='ark-activity'>
 <span class='ark-activity-title'><i class="bi bi-puzzle-fill"></i> Activity 2 - Configure and Run</span><br><br>
@@ -228,7 +219,7 @@ uv run ruff format src/</pre>
 
 ## 5. The Rules That Catch Real DS Bugs
 
-The `E` and `F` rules catch syntax and unused-import issues. The rules that catch silent data bugs in DS code come from bugbear (`B`) and simplify (`SIM`).
+The `E` and `F` rules catch syntax and unused-import issues. The rules that catch silent data bugs -- the ones that don't raise exceptions, they just return wrong answers -- come from bugbear (`B`) and simplify (`SIM`).
 
 **B006: Mutable default argument**
 
@@ -244,7 +235,7 @@ def aggregate(df, group_cols: tuple[str, ...] = ("program", "semester")):
     return df.groupby(list(group_cols)).mean()
 ```
 
-The wrong version works fine until someone calls `aggregate(df)` and the default list gets mutated somewhere in the call chain. The bug is silent and the output is wrong.
+The wrong version works fine until someone calls `aggregate(df)` and the default list gets mutated somewhere in the call chain. The output is wrong and there's no exception to tell you why.
 
 **B023: Function defined in a loop**
 
@@ -284,12 +275,12 @@ label = "Pass" if score >= 50 else "Fail"
 
 <div class='ark-mistake'>
 <span class='ark-mistake-title'><i class="bi bi-bug-fill"></i> Common Mistake: Mutable default argument</span><br><br>
-<code>def split(df, cols=[])</code> shares the same list object across every call. The second call gets whatever the first call left in the list. This exact pattern appears in DS code regularly because it looks like a harmless convenience. Use an empty tuple <code>()</code> or <code>None</code> with a guard inside the function.
+<code>def split(df, cols=[])</code> looks like a harmless convenience -- and that's exactly why it shows up in DS code so often. The list is shared across every call, so the second call gets whatever the first call left in it. Use an empty tuple <code>()</code> or <code>None</code> with a guard inside the function.
 </div>
 
 ## 6. Docstrings: Style, Content, and Enforcement
 
-A docstring is the first string literal inside a function, class, or module. It is not a comment; it is data that Python exposes through `help()`, IDEs, and documentation generators. The rule for when to write one: if a function is called from outside the file it lives in, it needs a docstring.
+A docstring is the first string literal inside a function, class, or module. It's not a comment -- it's data that Python exposes through `help()`, IDEs, and documentation generators. The rule for when to write one: if a function is called from outside the file it lives in, it needs a docstring.
 
 **The Google style** is the de facto standard for DS projects:
 
@@ -323,11 +314,11 @@ def compute_grade(
     return midterm * weights[0] + final * weights[1] + project * weights[2]
 ```
 
-The structure: one-line summary, blank line, then named sections. The sections you actually need depend on the function: `Args` and `Returns` for anything non-trivial, `Raises` when exceptions are part of the contract, `Example` for functions that need a concrete demo to be understood.
+The structure is one-line summary, blank line, then named sections. Which sections you need depends on the function: `Args` and `Returns` for anything non-trivial, `Raises` when exceptions are part of the contract, `Example` for functions that need a concrete demo to be understood.
 
 <div class='ark-concept'>
 <span class='ark-concept-title'><i class="bi bi-info-circle-fill"></i> Key Concept: Write for the caller, not the implementer</span><br><br>
-A docstring answers: "what does this function do from the outside?" It does not explain how it works internally. <code>"""Compute weighted average grade"""</code> is useful. <code>"""Multiply midterm by weights[0] and add to final times weights[1]"""</code> is not: it describes the implementation, which the caller can already read. Write what a caller needs to know to use the function correctly: inputs, outputs, edge cases.
+A docstring answers: "what does this function do from the outside?" <code>"""Multiply midterm by weights[0] and add to final times weights[1]"""</code> isn't a docstring -- it's a description of the implementation, which the caller can already read. Write what a caller needs to know to use the function correctly: inputs, outputs, edge cases.
 </div>
 
 **What counts as a module-level docstring?**
@@ -370,12 +361,12 @@ The key rules:
 
 <div class='ark-tip'>
 <span class='ark-tip-title'><i class="bi bi-lightbulb-fill"></i> Pro Tip: Enforce docstrings only on public functions</span><br><br>
-Functions prefixed with <code>_</code> are internal by convention. Ruff's D rules skip them by default when <code>convention = "google"</code> is set. This means you only have to document the API surface: the functions a caller is expected to use. Internal helpers stay undocumented until they grow complex enough to warrant it.
+Functions prefixed with <code>_</code> are internal by convention, and ruff's D rules skip them by default when <code>convention = "google"</code> is set. You only have to document the API surface -- the functions a caller is expected to use. Internal helpers stay undocumented until they grow complex enough to warrant it.
 </div>
 
 **Enforcing spell-checking with codespell**
 
-Docstrings and comments accumulate typos. `codespell` catches them before they reach the repository. Add it to `.pre-commit-config.yaml`:
+Docstrings and comments accumulate typos. `codespell` catches them before they reach the repository -- add it to `.pre-commit-config.yaml`:
 
 ```yaml
 - repo: https://github.com/codespell-project/codespell
@@ -386,7 +377,7 @@ Docstrings and comments accumulate typos. `codespell` catches them before they r
       additional_dependencies: [tomli]
 ```
 
-With `--write-changes`, codespell fixes unambiguous typos automatically. Ambiguous corrections are left for you to resolve. For project-specific words that codespell does not recognise (library names, abbreviations), add them to `pyproject.toml`:
+With `--write-changes`, codespell fixes unambiguous typos automatically. Ambiguous corrections are left for you to resolve. For project-specific words codespell doesn't recognise (library names, abbreviations), add them to `pyproject.toml`:
 
 ```toml
 [tool.codespell]
@@ -404,7 +395,7 @@ uv run ruff check src/ --select D</pre>
 
 ## 7. `# noqa` and When to Use It
 
-`# noqa: E501` suppresses one rule on one line. Use it when suppression is the right answer, not when you want to avoid fixing the real problem.
+`# noqa: E501` suppresses one rule on one line. Use it when suppression is genuinely the right answer -- not when you just want to avoid fixing the real problem.
 
 Legitimate uses:
 
@@ -426,7 +417,7 @@ result = df.groupby("program").agg({"score": "mean", "grade": "first", "cohort":
 # Fix: break the line instead of suppressing
 ```
 
-`per-file-ignores` is better than per-line `# noqa` for patterns that apply to all files of a type, such as `E501` in all notebooks.
+`per-file-ignores` is better than per-line `# noqa` for patterns that apply to all files of a type. `E501` in all notebooks is the clearest example -- suppress it once in config, not on every long line.
 
 <div class='ark-activity'>
 <span class='ark-activity-title'><i class="bi bi-puzzle-fill"></i> Activity 3 - Legitimate Suppression</span><br><br>
@@ -477,4 +468,4 @@ Apply the full ruff workflow to the `grade-predictor` project you have built so 
 | `# noqa` | A deliberate decision, not a shortcut. Include the specific rule code. |
 :::
 
-**Next:** [Part 15: Type Annotations](03-type-annotations.ipynb) adds static type checking on top of the clean codebase you have here.
+**Next:** [Part 15: Type Annotations](03-type-annotations.ipynb) -- static type checking on top of the clean codebase you've built here.

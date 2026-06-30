@@ -9,6 +9,10 @@ title: "Part 17: Testing DS Code with pytest"
 
 **Python 3.12+ | Author: Anthony Faustine**
 
+Your function returns the right answer on the three examples you tested by hand. A colleague adds one line two months later and it silently returns the wrong answer for weeks. A test suite runs every time the code changes and reports the breakage in seconds -- not after it reaches production.
+
+The `grade-predictor` project is now versioned. Here you'll write tests for it using pytest. [Part 18](06-pre-commit-automation.qmd) automates those tests before every commit.
+
 ::: {.callout-note collapse="true" icon=false}
 ## Before you begin
 
@@ -58,16 +62,11 @@ By the end of Part 17 you will be able to:
 
 Python ships with a built-in test runner called `unittest`. It works, but it forces you to subclass `TestCase`, call `self.assertEqual(...)` instead of `assert`, and write substantial boilerplate before a single assertion runs. pytest is the community standard for a reason: it discovers tests automatically, uses plain `assert` statements, and provides richer output with no extra effort.
 
-```{mermaid}
-flowchart LR
-    A["unittest"] -->|"subclass TestCase\nself.assertEqual\nsetUp / tearDown"| B["works\nbut verbose"]
-    C["pytest"] -->|"plain assert\nautodiscovery\nrich output"| D["same tests\nhalf the code"]
+That's it. Less ceremony, same tests.
 
-    style B fill:#FEF2F2,stroke:#DC2626,color:#991B1B
-    style D fill:#EBF5F0,stroke:#059669,color:#065F46
-```
+![pytest vs unittest: unittest requires subclassing TestCase, self.assertEqual, and setUp/tearDown. pytest uses plain assert statements, autodiscovery, and fixtures. Both run the same tests; pytest needs half the code.](figs/pytest-vs-unittest.svg){fig-alt="Two panels. Left red panel: unittest with four bullet points of boilerplate. Right green panel: pytest with four bullet points of cleaner syntax. A center bridge arrow reads same tests."}
 
-Install pytest and the two plugins you will use throughout this chapter:
+Install pytest and the two plugins you'll use throughout this chapter:
 
 ```bash
 uv add --dev pytest pytest-cov pytest-mock
@@ -83,28 +82,16 @@ uv run pytest --version
 
 <div class='ark-concept'>
 <span class='ark-concept-title'><i class="bi bi-info-circle-fill"></i> Key Concept: pytest discovers tests by naming convention</span><br><br>
-pytest collects any file matching <code>test_*.py</code> or <code>*_test.py</code>, and within those files any function starting with <code>test_</code>. No registration, no base class, no import of pytest is required in the test file itself. Name your files and functions correctly and pytest finds them automatically.
+Name your files <code>test_*.py</code> or <code>*_test.py</code>, and prefix your test functions with <code>test_</code>. No registration, no base class, no import of pytest in the test file. pytest finds them automatically.
 </div>
 
 ## 1. Why DS Code Needs Tests
 
-A normalization function applied after the train/test split instead of before. A `fillna(0)` that should have been `fillna(df["score"].mean())`. A boolean column that silently became an integer. These bugs do not raise exceptions; they produce wrong outputs quietly.
+A normalization function applied after the train/test split instead of before. A `fillna(0)` that should have been `fillna(df["score"].mean())`. A boolean column that silently became an integer. These bugs don't raise exceptions; they produce wrong outputs quietly.
 
-In DS, silent bugs are the hard ones. A test suite converts "I think this is right" into "this is verifiably correct, and stays correct when the code changes."
+Silent bugs are the hard ones. A test suite converts "I think this is right" into "this is verifiably correct, and stays correct when the code changes."
 
-```{mermaid}
-flowchart LR
-    A["pytest discovers\ntest_*.py files"] --> B["run @pytest.fixture\nsetup phase"]
-    B --> C["execute test body\nassert statements"]
-    C --> D{assert passes?}
-    D -->|yes| E["PASSED"]
-    D -->|no| F["FAILED\nfull traceback"]
-    E & F --> G["teardown\n(yield fixtures)"]
-    G --> H["next test"]
-
-    style E fill:#EBF5F0,stroke:#059669,color:#065F46
-    style F fill:#FEF2F2,stroke:#DC2626,color:#991B1B
-```
+![pytest test execution lifecycle: discover test files, run fixtures for setup, execute the test body, check whether the assert passes (PASSED in green, FAILED with traceback in red), run teardown, then move to the next test.](figs/pytest-lifecycle.svg){fig-alt="Linear flow with six stages. Discover (gray), fixture setup (blue), test body (blue), assert diamond (PASSED green / FAILED red), teardown (gray), next test (gray with loop arc)."}
 
 Here is the simplest possible test for `compute_grade`:
 
@@ -123,7 +110,7 @@ Run it:
 uv run pytest tests/ -v
 ```
 
-The `-v` flag shows each test name and its pass/fail status. Without it, pytest shows only a dot per passing test. A handful of flags cover the vast majority of what you need day-to-day:
+The `-v` flag shows each test name and its pass/fail status. Without it, pytest shows only a dot per passing test. A handful of flags cover most of what you need day-to-day:
 
 | Flag | What it does |
 |---|---|
@@ -141,12 +128,12 @@ uv run pytest tests/ -k "parametrize" # run tests matching a keyword
 
 <div class='ark-concept'>
 <span class='ark-concept-title'><i class="bi bi-info-circle-fill"></i> Key Concept: A test is an executable specification</span><br><br>
-<code>test_compute_grade_defaults</code> says: given these inputs, this function must return this value. If the function ever changes and breaks this, the test fails immediately. A failing test is not a problem; it is useful information. A passing test on wrong code is the actual problem.
+<code>test_compute_grade_defaults</code> says: given these inputs, this function must return this value. If the function ever changes and breaks this, the test fails immediately. A failing test isn't a problem -- it's useful information. A passing test on wrong code is the actual problem.
 </div>
 
 ## 2. Parametrize: One Test, Many Inputs
 
-Writing one test function per boundary case produces a lot of duplicated code. `@pytest.mark.parametrize` runs the same test body once per row in a table of inputs.
+Writing one test function per boundary case produces a lot of duplicated code. `@pytest.mark.parametrize` runs the same test body once per row in a table of inputs -- adding a new edge case is one extra row, not a new function.
 
 Grade boundaries in `grade-predictor`:
 
@@ -173,7 +160,7 @@ tests/test_core.py::test_grade_letter_boundaries[75.0-78.0-80.0-B] PASSED
 ...
 ```
 
-Adding a new edge case is one extra row. Without parametrize, it is a new function. Parametrize also makes it easy to spot which case failed: the bracket notation shows the exact inputs that produced the failure.
+The bracket notation in the output shows the exact inputs that produced the failure, which makes diagnosis fast.
 
 <div class='ark-activity'>
 <span class='ark-activity-title'><i class="bi bi-puzzle-fill"></i> Activity 1 - Parametrize a Boundary Test</span><br><br>
@@ -188,7 +175,7 @@ def test_normalize_score(raw, min_val, max_val, expected): ...</pre>
 
 ## 3. Fixtures for Reusable Test Data
 
-A fixture is a function that provides a value to a test. Any test that declares the fixture's name as a parameter receives it automatically. Fixtures live in `conftest.py` so they are shared across all test files.
+A fixture is a function that provides a value to a test. Any test that declares the fixture's name as a parameter receives it automatically. Fixtures live in `conftest.py` so they're shared across all test files.
 
 ```python
 # tests/conftest.py
@@ -224,7 +211,7 @@ Fixture scope controls how often the fixture runs:
 | `module` | Once per file | Medium-sized fixtures |
 | `session` | Once per pytest run | Loading a large CSV from disk |
 
-For a fixture that loads `university_analytics.csv`, use `session` scope. Reading 2,400 rows once per run is fast enough; reading it 40 times (once per test) adds up.
+For a fixture that loads `university_analytics.csv`, use `session` scope. Reading 2,400 rows once per run is fast enough; reading it 40 times (once per test) adds up quickly.
 
 ```python
 @pytest.fixture(scope="session")
@@ -264,7 +251,7 @@ def test_filter_passing_students(sample_df):
     pd.testing.assert_frame_equal(result, expected, check_like=True)
 ```
 
-`check_like=True` ignores column and row order. This is usually what you want when testing a filter: the data should match, but the order may vary.
+`check_like=True` ignores column and row order. When testing a filter, that's usually what you want: the data should match, but the order doesn't have to.
 
 **Pattern 3: dtype and schema assertions**
 
@@ -292,11 +279,11 @@ def test_compute_grade_weighted():
 
 `pytest.approx` also works on lists and dicts of floats: `assert [0.1 + 0.2, 0.3] == pytest.approx([0.3, 0.3])`.
 
-These four patterns together test the shape, the values, the types, and numeric precision. A transform that passes all four is well-specified.
+Together these four patterns test the shape, the values, the types, and numeric precision. A transform that passes all four is well-specified.
 
 <div class='ark-mistake'>
 <span class='ark-mistake-title'><i class="bi bi-bug-fill"></i> Common Mistake: <code>assert df1.equals(df2)</code> for floats</span><br><br>
-<code>DataFrame.equals</code> uses exact equality. Floating-point arithmetic means <code>0.30 * 80 + 0.45 * 85 + 0.25 * 90</code> may not equal <code>84.25</code> to the last bit on all platforms. <code>pd.testing.assert_frame_equal</code> has <code>check_exact=False</code> and <code>rtol</code> and <code>atol</code> parameters for numeric tolerance. Use it for all DataFrame comparisons.
+<code>DataFrame.equals</code> uses exact equality, and floating-point arithmetic means <code>0.30 * 80 + 0.45 * 85 + 0.25 * 90</code> may not equal <code>84.25</code> to the last bit on all platforms. Your test passes on your machine and fails in CI. Use <code>pd.testing.assert_frame_equal</code> instead -- it has <code>check_exact=False</code> and <code>rtol</code>/<code>atol</code> parameters for numeric tolerance.
 </div>
 
 <div class='ark-activity'>
@@ -311,7 +298,7 @@ def test_add_average_marks_shape(sample_df):
 
 ## 5. Testing Exception Handling
 
-A function that raises a clear exception on bad input is better than one that silently returns a wrong answer. Test the exception with `pytest.raises`:
+A function that raises a clear exception on bad input is better than one that silently returns a wrong answer. Test the exception:
 
 ```python
 def test_invalid_weights_raises():
@@ -319,7 +306,7 @@ def test_invalid_weights_raises():
         compute_grade(80.0, 85.0, 90.0, weights=(0.5, 0.5, 0.5))
 ```
 
-The `match` argument checks that the error message contains the given string. Without `match`, the test passes for any `ValueError`, even one from an unrelated part of the code. With `match`, you confirm that the right error, from the right place, with the right message, was raised.
+The `match` argument checks that the error message contains the given string. Without it, the test passes for any `ValueError`, even one from an unrelated part of the code. With it, you're confirming the right error from the right place with the right message.
 
 ```python
 # tests/test_core.py
@@ -340,13 +327,13 @@ def test_invalid_weights_all_raise(weights):
 
 ## 6. Coverage
 
-Coverage measures which lines of code are executed during the test suite. Lines that are never executed are either dead code or untested paths.
+Coverage measures which lines of code are executed during the test suite. Lines that are never executed are either dead code or untested paths -- and you want to know which.
 
 ```bash
 uv run pytest tests/ --cov=grade_predictor --cov-report=term-missing
 ```
 
-The `term-missing` report shows which specific lines are not covered. A line number in the "missing" column means no test exercises that path.
+The `term-missing` report shows which specific lines aren't covered. A line number in the "missing" column means no test exercises that path.
 
 Enforce a minimum threshold in `pyproject.toml`:
 
@@ -358,30 +345,18 @@ addopts = "--cov=grade_predictor --cov-report=term-missing --cov-fail-under=80"
 
 With `--cov-fail-under=80`, pytest exits with a non-zero code if coverage drops below 80%. CI catches this automatically.
 
-The right target for DS library code is 80% to 85%. 100% is often counterproductive: it forces testing trivial property accessors and error messages that add no value. What matters is covering every code path that can produce a wrong answer silently.
+The right target for DS library code is 80% to 85%. 100% is often counterproductive -- it forces testing trivial property accessors and error messages that add no value. What matters is covering every code path that can produce a wrong answer silently.
 
 <div class='ark-tip'>
 <span class='ark-tip-title'><i class="bi bi-lightbulb-fill"></i> Pro Tip: Focus coverage on the paths that matter</span><br><br>
-A missing line on a trivial <code>return self._name</code> property is not worth a test. A missing line on the normalization branch of a preprocessing function is. Read the "missing" column as a checklist of untested logic paths, not a number to maximize for its own sake.
+A missing line on a trivial <code>return self._name</code> property isn't worth a test. A missing line on the normalization branch of a preprocessing function is. Read the "missing" column as a checklist of untested logic paths, not a number to maximize for its own sake.
 </div>
 
 ## 7. Organizing a DS Test Suite
 
-The standard structure for a DS project follows the test pyramid: many fast unit tests at the base, fewer integration tests in the middle, and a small number of end-to-end tests at the top.
+The standard structure for a DS project follows the test pyramid: many fast unit tests at the base, fewer integration tests in the middle, a small number of end-to-end tests at the top.
 
-```{mermaid}
-flowchart TD
-    E2E["End-to-End\nfull pipeline: CSV in, report out\nfew, slow, run in CI only"]
-    INT["Integration\nmodule boundaries: pipeline + io\nsome, seconds, run pre-push"]
-    UNIT["Unit\nsingle functions: compute_grade, flag_at_risk\nmany, milliseconds, run on every save"]
-
-    UNIT -->|"build confidence"| INT
-    INT -->|"build confidence"| E2E
-
-    style E2E fill:#FEF2F2,stroke:#DC2626,color:#991B1B
-    style INT fill:#EAF3FA,stroke:#0369A1,color:#0C4A6E
-    style UNIT fill:#EBF5F0,stroke:#059669,color:#065F46
-```
+![Test pyramid: unit tests at the base (many, milliseconds each, run on every save), integration tests in the middle (some, seconds each, run pre-push), end-to-end tests at the top (few, minutes each, run in CI only).](figs/pytest-pyramid.svg){fig-alt="Triangle divided into three horizontal layers. Base (green): Unit tests. Middle (blue): Integration tests. Top (red): End-to-End tests. Side labels: speed increases downward, confidence increases upward."}
 
 ```text
 tests/
@@ -393,7 +368,7 @@ tests/
     └── test_pipeline.py   # end-to-end: load CSV, transform, compute grades
 ```
 
-Unit tests test one function in isolation with synthetic data. They run in milliseconds and should always run. Integration tests test the full pipeline with real data from disk. They run in seconds and should run in CI and before releases.
+Unit tests test one function in isolation with synthetic data. They run in milliseconds and should always run. Integration tests test the full pipeline with real data from disk -- they run in seconds and belong in CI and pre-release checks.
 
 Run only unit tests locally during development, all tests in CI:
 
@@ -404,7 +379,7 @@ uv run pytest tests/ -v --override-ini=addopts=  # full suite, CI
 
 ## 8. Mocking External Dependencies
 
-Some code cannot be tested with real data: a function that calls an API, reads from a database, or writes to a file. Mocking replaces that dependency with a controlled substitute for the duration of the test.
+Some code can't be tested with real data: a function that calls an API, reads from a database, or writes to a file. Mocking replaces that dependency with a controlled substitute for the duration of the test.
 
 `unittest.mock.patch` is the standard tool. It temporarily replaces an object at a given import path with a `MagicMock` that you control:
 
@@ -440,10 +415,10 @@ def test_fetch_course_list_returns_parsed_json():
 
 <div class='ark-concept'>
 <span class='ark-concept-title'><i class="bi bi-info-circle-fill"></i> Key Concept: Patch at the import location, not the definition location</span><br><br>
-<code>requests.get</code> is defined in the <code>requests</code> library, but <code>fetch_course_list</code> imports it into <code>grade_predictor.io</code>. Patching <code>requests.get</code> would not work because the function already has a reference to the original. Patch <code>"grade_predictor.io.requests.get"</code>: the name as it appears inside the module under test. This is the single most common mock mistake.
+Patching <code>requests.get</code> won't work because <code>fetch_course_list</code> already holds a reference to the original. You have to patch <code>"grade_predictor.io.requests.get"</code> -- the name as it appears inside the module under test. This is the single most common mock mistake.
 </div>
 
-For pandas-based code, mock the file read so tests do not depend on a real CSV being present:
+For pandas-based code, mock the file read so tests don't depend on a real CSV being present:
 
 ```python
 from unittest.mock import patch
@@ -463,7 +438,7 @@ def test_load_students_returns_dataframe():
     assert "final_score" in result.columns
 ```
 
-`pytest-mock` is a thin wrapper that makes the same pattern slightly cleaner as a fixture:
+`pytest-mock` wraps the same pattern slightly cleaner as a fixture:
 
 ```toml
 # pyproject.toml
@@ -484,7 +459,7 @@ def test_fetch_course_list_with_mocker(mocker):
 
 <div class='ark-mistake'>
 <span class='ark-mistake-title'><i class="bi bi-bug-fill"></i> Common Mistake: Over-mocking</span><br><br>
-If a test mocks every function the code under test calls, it is no longer testing the code: it is testing the mock. A unit test should run the real logic and mock only the I/O boundary: network calls, file reads, database queries. A function that computes a grade from numbers does not need any mocking. A function that reads grades from an API does. Mock the API; run the computation logic for real.
+If a test mocks every function the code under test calls, it's no longer testing the code -- it's testing the mock. A unit test should run the real logic and mock only the I/O boundary: network calls, file reads, database queries. A function that computes a grade from numbers doesn't need any mocking. Mock the API; run the computation logic for real.
 </div>
 
 <div class='ark-activity'>
@@ -502,11 +477,11 @@ def test_load_grades_mocked():
 
 ## 9. Modern Built-in Fixtures
 
-pytest ships three fixtures that cover a large class of I/O and environment problems without any extra package. They require no import in your test file.
+pytest ships three fixtures that cover a large class of I/O and environment problems without any extra package -- and they don't need to be imported.
 
 **`tmp_path`: isolated temporary directories**
 
-Any test that writes to disk should write to a temporary directory that disappears after the test. `tmp_path` provides a `pathlib.Path` object pointing to a unique directory created for each test:
+Any test that writes to disk should write to a directory that disappears after the test. `tmp_path` provides a `pathlib.Path` pointing to a unique directory created for each test:
 
 ```python
 def test_pipeline_writes_output(tmp_path):
@@ -517,7 +492,7 @@ def test_pipeline_writes_output(tmp_path):
     assert output_file.stat().st_size > 0
 ```
 
-No cleanup needed: pytest removes the directory after the test completes.
+No cleanup needed -- pytest removes the directory after the test completes.
 
 **`monkeypatch`: patching environment variables and objects**
 
@@ -532,11 +507,11 @@ def test_pipeline_config_from_env(monkeypatch):
     assert cfg.model_threshold == 0.75
 ```
 
-Use `monkeypatch.setattr` to patch any object attribute: `monkeypatch.setattr(module, "function_name", mock_fn)`.
+Use `monkeypatch.setattr` to patch any object attribute -- `monkeypatch.setattr(module, "function_name", mock_fn)` -- and the original is restored when the test exits.
 
 **`capfd`: capturing stdout and stderr**
 
-`capfd` captures file-descriptor-level output, including output from C extensions and subprocesses:
+`capfd` captures file-descriptor-level output, including output from C extensions and subprocesses -- useful when the code you're testing prints rather than returns:
 
 ```python
 def test_report_prints_summary(capfd):
@@ -604,4 +579,4 @@ Write a test suite that achieves 80% coverage. It must include:
 | `pytest-mock` mocker fixture | Cleaner syntax for `patch` as a fixture; install as a test dependency. |
 :::
 
-**Next:** [Part 18: Automation with pre-commit](06-pre-commit-automation.qmd) automates every check from Parts 14-17 so they run without thinking.
+**Next:** [Part 18: Automation with pre-commit](06-pre-commit-automation.qmd) -- every check from Parts 14-17, running automatically without having to remember to.
