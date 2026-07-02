@@ -10,7 +10,6 @@ on:
       - "ark/**"
       - "pyproject.toml"
       - "uv.lock"
-      - ".github/workflows/check-notebooks.yml"
   pull_request:
     paths:
       - "tutorials/**/*.ipynb"
@@ -18,7 +17,6 @@ on:
       - "ark/**"
       - "pyproject.toml"
       - "uv.lock"
-      - ".github/workflows/check-notebooks.yml"
   workflow_dispatch:
 
 jobs:
@@ -75,7 +73,7 @@ jobs:
           # Otherwise: only notebooks that changed in this push/PR
           CHANGED=$(git diff --name-only --diff-filter=d "$BASE" "${{ github.sha }}" -- '*.ipynb' | grep -v '/_archive/' | sort)
           for nb in $SKIP_LIST; do CHANGED=$(echo "$CHANGED" | grep -vxF "$nb" || true); done
-          NOTEBOOKS=$(echo "$CHANGED" | tr '\n' ' ')
+          NOTEBOOKS=$(echo "$CHANGED" | tr '\n' ' ' | xargs)
           echo "notebooks=$NOTEBOOKS" >> "$GITHUB_OUTPUT"
 
       - name: Install uv
@@ -83,6 +81,15 @@ jobs:
         uses: astral-sh/setup-uv@v3
         with:
           version: "latest"
+
+      - name: Cache uv dependencies
+        if: steps.changed.outputs.notebooks != ''
+        uses: actions/cache@v4
+        with:
+          path: .venv
+          key: ${{ runner.os }}-uv-notebooks-${{ hashFiles('uv.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-uv-notebooks-
 
       - name: Install dependencies
         if: steps.changed.outputs.notebooks != ''
