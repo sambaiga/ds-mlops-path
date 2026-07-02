@@ -454,6 +454,101 @@ Chapter 22 stays in place. By the time a learner reaches it, they have Python, N
 
 ---
 
+## Chapter 16: Great Tables (`16-great-tables.ipynb`)
+
+**Issues found (62 cells):**
+
+**DS-MLOps header block in cell 2.** Remove `**DS-MLOps Python Foundations**` and `**Python 3.12+ | Author: Anthony Faustine**`.
+
+**Opener is strong.** "You run the analysis, produce the numbers, and paste `df.head()` into the report. The stakeholder replies: 'Which column is which? Why are the numbers...'" -- problem-first hook, keep it. But **missing chapter connection**: cell 2 has no reference to what the previous chapter (Chapter 15 Polars) built or what this chapter enables next.
+
+**6 double-dashes** in prose: fix to commas or colons.
+
+**25 inline `<div style='background:#'>` callouts**: ark class conversion.
+
+**11 title-case headings to fix** (representative examples):
+
+- `## The Last Mile of a Data Story` → `## The last mile of a data story`
+- `## 1. When Tables Beat Charts` → `## 1. When tables beat charts`
+- `## 2. Your First Styled Table` → `## 2. Your first styled table`
+- (fix all remaining headings to sentence case)
+
+**Part refs** (Part 3, 7, 12): replace with Chapter numbers.
+
+**2 code cells without preceding markdown** (cells 28, 47): add bridge markdown before each.
+
+---
+
+## Dev-tools section (`tutorials/02-dev-tools/`)
+
+Six QMDs and four notebooks, all with the same class of issues. Review and fix each file in a single pass.
+
+### Common issues across all dev-tools files
+
+Every file has:
+
+- **`bi-info-circle-fill` icons** in concept callouts -- replace with `bi-key-fill` throughout
+- **Activity title format** `Activity N - Title` -- fix to `Activity N: title (sentence case)`
+- **`<b>Goal:</b>` prefix** in activity bodies -- remove
+- **Part refs** throughout -- replace with Chapter numbers
+- **`## Further Reading`** -- `## Further reading` (where present)
+- **`## Learning Objectives`** -- `## Learning objectives` (where present)
+- **Title-case headings** -- sentence case throughout
+
+### Per-file issues
+
+**`00-vscode-setup.qmd`** (11 double-dashes, 8 title-case headings, Part refs: Part 12, 13, 14, 3)
+
+**`01-uv-project-setup.qmd`** (14 double-dashes, 3 `bi-info-circle-fill`, 8 title-case headings, `pip install` refs, Part refs: Part 13, 14)
+
+**`02-code-quality-ruff.qmd`** (12 double-dashes, 2 `bi-info-circle-fill`, 4 title-case headings, Part refs: Part 13, 14, 15, 18)
+
+**`04-git-github.qmd`** (7 double-dashes, 2 `bi-info-circle-fill`, 11 title-case headings, Part refs: Part 13, 15, 16, 17, 18)
+
+**`05-pytest-testing.qmd`** (15 double-dashes, 3 `bi-info-circle-fill`, 10 title-case headings, Part refs: Part 13, 16, 17, 18)
+
+**`06-pre-commit-automation.qmd`** (8 double-dashes, 2 `bi-info-circle-fill`, 7 title-case headings, `pip install`, Part refs: Part 4, 13, 16, 17, 18, 19)
+
+**`03-type-annotations.ipynb`** (DS-MLOps header, 4 double-dashes, 12 inline divs, 6 title-case headings, Part refs: Part 3, 13, 14, 15, 16)
+
+**`07-pydantic-validation.ipynb`** (DS-MLOps header, 2 double-dashes, 19 inline divs, `pip install`, 10 title-case headings, Part refs: Part 15, 19, 20)
+
+**`08-pandera-schema-validation.ipynb`** (DS-MLOps header, 16 inline divs, `pip install`, 7 title-case headings, Part refs: Part 19, 20, 21)
+
+**`09-logging.ipynb`** (DS-MLOps header, 5 double-dashes, 8 inline divs, 9 title-case headings, Part refs: Part 3, 4, 19, 21; 3 code cells without preceding markdown: cells 17, 21, 34)
+
+---
+
+## ML-intro section (`tutorials/04-ml-intro/`)
+
+The `*a` / `*b` split files have been deleted. `_quarto.yml` now references `04-sklearn-core.ipynb` and `05-sklearn-pipeline.ipynb` directly.
+
+### Common issues across all ml-intro QMDs and notebooks
+
+Every file has:
+
+- **Part refs** -- replace with Chapter numbers
+- **`bi-info-circle-fill`** in concept callouts -- `bi-key-fill`
+- **Activity title format** `Activity N - Title` -- `Activity N: title (sentence case)`
+- **`<b>Goal:</b>`** in activity bodies -- remove
+- **`## Learning Objectives`** -- `## Learning objectives`
+- **`## Further Reading`** -- `## Further reading`
+- **Title-case headings** -- sentence case
+
+### File-by-file issues
+
+**`02-ml-what-is-ml.qmd`** (DS-MLOps block in opener, 2 double-dashes, 2 `bi-info-circle-fill`, Part refs: Part 12, 21, 22, 23, 24; 7 title-case headings including `## What Machine Learning Is`, `### 1.1 Learning Paradigms`, `### 1.2 Task Types`, `### 1.3 The Model Complexity Spectrum`)
+
+**`03-ml-workflow.qmd`** (DS-MLOps block in opener, 3 double-dashes, 3 `bi-info-circle-fill`, Part refs: Part 6, 7, 22, 23, 24, 25; 4 title-case headings including `## Why Workflow Matters`)
+
+**`04-sklearn-core.ipynb`** (34 double-dashes, 3 inline divs, Part refs: Part 12, 13, 23, 24, 25, 26)
+
+**`05-sklearn-pipeline.ipynb`** (31 double-dashes, 7 inline divs, Part refs: Part 5, 13, 23, 24, 25, 26)
+
+Note: the sklearn notebooks have the highest double-dash density in the entire book (30+ each). Many occur in code comments (`# fit -- transform` pattern). A general sweep will clean these.
+
+---
+
 ## Implementation checklist per notebook
 
 For every notebook implementation, verify before finishing:
