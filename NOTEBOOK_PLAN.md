@@ -74,7 +74,7 @@ End with one sentence connecting back to Chapter 1: "Chapter 1 starts with Pytho
 
 ---
 
-## Prerequisite: rename notebooks from a/b to natural progression
+## Prerequisite: rename notebooks from a/b to natural progression -- DONE
 
 The current `03a`/`03b`/`04a`/`04b` naming breaks natural reading order and makes the ToC confusing. Before implementing any individual notebook, rename every file and update `_quarto.yml` and all internal cross-references.
 
