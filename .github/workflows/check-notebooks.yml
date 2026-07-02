@@ -52,7 +52,7 @@ jobs:
             exit 0
           else
             BEFORE="${{ github.event.before }}"
-            if [ -z "$BEFORE" ] || [ "$BEFORE" = "0000000000000000000000000000000000000000" ]; then
+            if [ -z "$BEFORE" ] || [ "$BEFORE" = "0000000000000000000000000000000000000000" ] || ! git cat-file -e "$BEFORE" 2>/dev/null; then
               BASE="$(git rev-parse HEAD~1 2>/dev/null || git rev-parse HEAD)"
             else
               BASE="$BEFORE"
