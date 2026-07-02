@@ -695,7 +695,7 @@ Std   : 8.79</code></pre>
 </section>
 <section id="normalisation" class="level3">
 <h3 class="anchored" data-anchor-id="normalisation">Normalisation</h3>
-<p>Z-score normalisation scales each value to ‘how many standard deviations from the mean’. The result is 0.0 for an average score, positive above the mean, negative below.</p>
+<p>Z-score normalisation rescales each score by how many standard deviations it sits from the mean. The result is 0.0 for an exactly average score, positive above the mean, negative below.</p>
 <div id="21" class="cell" data-execution_count="7">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> normalize(value: <span class="bu">float</span>, mean: <span class="bu">float</span>, std: <span class="bu">float</span>) <span class="op">-&gt;</span> <span class="bu">float</span>:</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Return the z-score of value given distribution parameters.</span></span>
@@ -777,52 +777,63 @@ second : [91.0]</code></pre>
 </div>
 </div>
 <div class="ark-activity">
-<p><span class="ark-activity-title"><i class="bi bi-puzzle-fill"></i> Activity: classify_cohort</span><br><br> Complete <code>classify_cohort</code>: it takes a list of scores and returns a <code>Counter</code> mapping each letter grade to the number of students who earned it.<br><br> Letter grades: A = 90+, B = 80-89, C = 70-79, D = 60-69, F = below 60.</p>
+<p><span class="ark-activity-title"><i class="bi bi-puzzle-fill"></i> Activity: grade_letter</span><br><br> Complete <code>grade_letter</code>: it takes a numeric score and returns the letter grade.<br><br> Letter grades: A = 90+, B = 80-89, C = 70-79, D = 60-69, F = below 60.</p>
 </div>
 <div id="30" class="cell" data-execution_count="11">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> collections <span class="im">import</span> Counter</span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> grade_letter(score: <span class="bu">float</span>) <span class="op">-&gt;</span> <span class="bu">str</span>:</span>
-<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Return the letter grade for a numeric score."""</span></span>
-<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> ...  <span class="co"># </span><span class="al">TODO</span><span class="co">: implement</span></span>
-<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> classify_cohort(scores: <span class="bu">list</span>[<span class="bu">float</span>]) <span class="op">-&gt;</span> Counter[<span class="bu">str</span>]:</span>
-<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Return a Counter mapping letter grades to student counts."""</span></span>
-<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> ...  <span class="co"># </span><span class="al">TODO</span><span class="co">: implement</span></span>
-<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>cohort <span class="op">=</span> [<span class="fl">88.0</span>, <span class="fl">73.5</span>, <span class="fl">55.0</span>, <span class="fl">91.0</span>, <span class="fl">67.0</span>, <span class="fl">82.0</span>, <span class="fl">95.5</span>, <span class="fl">78.0</span>, <span class="fl">61.0</span>, <span class="fl">84.0</span>]</span>
-<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a>distribution <span class="op">=</span> classify_cohort(cohort)</span>
-<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> distribution <span class="kw">is</span> <span class="kw">not</span> ...:</span>
-<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> grade <span class="kw">in</span> <span class="st">"ABCDF"</span>:</span>
-<span id="cb18-18"><a href="#cb18-18" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span>grade<span class="sc">}</span><span class="ss">: </span><span class="sc">{</span>distribution<span class="sc">.</span>get(grade, <span class="dv">0</span>)<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> grade_letter(score: <span class="bu">float</span>) <span class="op">-&gt;</span> <span class="bu">str</span>:</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Return the letter grade for a numeric score."""</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> ...  <span class="co"># </span><span class="al">TODO</span><span class="co">: implement</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(grade_letter(<span class="fl">92.0</span>))  <span class="co"># expected: A</span></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(grade_letter(<span class="fl">75.0</span>))  <span class="co"># expected: C</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Ellipsis
+Ellipsis</code></pre>
+</div>
+</div>
+<div class="ark-activity">
+<p><span class="ark-activity-title"><i class="bi bi-puzzle-fill"></i> Activity: classify_cohort</span><br><br> Complete <code>classify_cohort</code>: it takes a list of scores and returns a <code>Counter</code> mapping each letter grade to the number of students who earned it. Use <code>grade_letter</code> from the cell above.</p>
+</div>
+<div id="32" class="cell" data-execution_count="12">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> collections <span class="im">import</span> Counter</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> classify_cohort(scores: <span class="bu">list</span>[<span class="bu">float</span>]) <span class="op">-&gt;</span> Counter[<span class="bu">str</span>]:</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Return a Counter mapping letter grades to student counts."""</span></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> ...  <span class="co"># </span><span class="al">TODO</span><span class="co">: implement</span></span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>cohort <span class="op">=</span> [<span class="fl">88.0</span>, <span class="fl">73.5</span>, <span class="fl">55.0</span>, <span class="fl">91.0</span>, <span class="fl">67.0</span>, <span class="fl">82.0</span>, <span class="fl">95.5</span>, <span class="fl">78.0</span>, <span class="fl">61.0</span>, <span class="fl">84.0</span>]</span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>distribution <span class="op">=</span> classify_cohort(cohort)</span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> distribution <span class="kw">is</span> <span class="kw">not</span> ...:</span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> grade <span class="kw">in</span> <span class="st">"ABCDF"</span>:</span>
+<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span>grade<span class="sc">}</span><span class="ss">: </span><span class="sc">{</span>distribution<span class="sc">.</span>get(grade, <span class="dv">0</span>)<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="ark-activity">
 <p><span class="ark-activity-title"><i class="bi bi-puzzle-fill"></i> Activity: accept_login</span><br><br> Complete <code>accept_login</code>: it checks a username and password against a dict of approved users and returns <code>True</code> if both match, <code>False</code> otherwise.</p>
 </div>
-<div id="32" class="cell" data-execution_count="12">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> accept_login(users: <span class="bu">dict</span>[<span class="bu">str</span>, <span class="bu">str</span>], username: <span class="bu">str</span>, password: <span class="bu">str</span>) <span class="op">-&gt;</span> <span class="bu">bool</span>:</span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Return True if username exists and password matches.</span></span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="co">    Args:</span></span>
-<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a><span class="co">        users:    Mapping of username to hashed password.</span></span>
-<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a><span class="co">        username: The submitted username.</span></span>
-<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a><span class="co">        password: The submitted password.</span></span>
-<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a><span class="co">    Returns:</span></span>
-<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a><span class="co">        True on success, False on any mismatch.</span></span>
-<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
-<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> ...  <span class="co"># </span><span class="al">TODO</span><span class="co">: implement</span></span>
-<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a>approved: <span class="bu">dict</span>[<span class="bu">str</span>, <span class="bu">str</span>] <span class="op">=</span> {<span class="st">"alice"</span>: <span class="st">"s3cr3t"</span>, <span class="st">"bob"</span>: <span class="st">"pa$$w0rd"</span>}</span>
-<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> accept_login(approved, <span class="st">"alice"</span>, <span class="st">"s3cr3t"</span>) <span class="kw">is</span> <span class="kw">not</span> ...:</span>
-<span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(accept_login(approved, <span class="st">"alice"</span>, <span class="st">"s3cr3t"</span>))  <span class="co"># True</span></span>
-<span id="cb19-19"><a href="#cb19-19" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(accept_login(approved, <span class="st">"alice"</span>, <span class="st">"wrong"</span>))  <span class="co"># False</span></span>
-<span id="cb19-20"><a href="#cb19-20" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(accept_login(approved, <span class="st">"carol"</span>, <span class="st">"s3cr3t"</span>))  <span class="co"># False</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="34" class="cell" data-execution_count="13">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> accept_login(users: <span class="bu">dict</span>[<span class="bu">str</span>, <span class="bu">str</span>], username: <span class="bu">str</span>, password: <span class="bu">str</span>) <span class="op">-&gt;</span> <span class="bu">bool</span>:</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Return True if username exists and password matches.</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="co">    Args:</span></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a><span class="co">        users:    Mapping of username to hashed password.</span></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a><span class="co">        username: The submitted username.</span></span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a><span class="co">        password: The submitted password.</span></span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a><span class="co">    Returns:</span></span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a><span class="co">        True on success, False on any mismatch.</span></span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> ...  <span class="co"># </span><span class="al">TODO</span><span class="co">: implement</span></span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a>approved: <span class="bu">dict</span>[<span class="bu">str</span>, <span class="bu">str</span>] <span class="op">=</span> {<span class="st">"alice"</span>: <span class="st">"s3cr3t"</span>, <span class="st">"bob"</span>: <span class="st">"pa$$w0rd"</span>}</span>
+<span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> accept_login(approved, <span class="st">"alice"</span>, <span class="st">"s3cr3t"</span>) <span class="kw">is</span> <span class="kw">not</span> ...:</span>
+<span id="cb21-18"><a href="#cb21-18" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(accept_login(approved, <span class="st">"alice"</span>, <span class="st">"s3cr3t"</span>))  <span class="co"># True</span></span>
+<span id="cb21-19"><a href="#cb21-19" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(accept_login(approved, <span class="st">"alice"</span>, <span class="st">"wrong"</span>))  <span class="co"># False</span></span>
+<span id="cb21-20"><a href="#cb21-20" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(accept_login(approved, <span class="st">"carol"</span>, <span class="st">"s3cr3t"</span>))  <span class="co"># False</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 </section>
@@ -832,32 +843,32 @@ second : [91.0]</code></pre>
 <div class="ark-concept">
 <p><span class="ark-concept-title"><i class="bi bi-key-fill"></i> Key Concept: when to use a lambda</span><br><br> Use a lambda when you need a throwaway function in one place: a sort key, a <code>map()</code> transform, or a <code>filter()</code> predicate. If the logic is more than one expression, or if you need it in more than one place, write a named function instead.</p>
 </div>
-<div id="35" class="cell" data-execution_count="13">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Lambda syntax: lambda params: expression</span></span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>square <span class="op">=</span> <span class="kw">lambda</span> x: x<span class="op">**</span><span class="dv">2</span>  <span class="co"># noqa: E731</span></span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>clamp <span class="op">=</span> <span class="kw">lambda</span> x, lo, hi: <span class="bu">max</span>(lo, <span class="bu">min</span>(x, hi))  <span class="co"># noqa: E731</span></span>
-<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"square(5)          = </span><span class="sc">{</span>square(<span class="dv">5</span>)<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"clamp(115, 0, 100) = </span><span class="sc">{</span>clamp(<span class="dv">115</span>, <span class="dv">0</span>, <span class="dv">100</span>)<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="37" class="cell" data-execution_count="14">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Lambda syntax: lambda params: expression</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>square <span class="op">=</span> <span class="kw">lambda</span> x: x<span class="op">**</span><span class="dv">2</span>  <span class="co"># noqa: E731</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>clamp <span class="op">=</span> <span class="kw">lambda</span> x, lo, hi: <span class="bu">max</span>(lo, <span class="bu">min</span>(x, hi))  <span class="co"># noqa: E731</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"square(5)          = </span><span class="sc">{</span>square(<span class="dv">5</span>)<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"clamp(115, 0, 100) = </span><span class="sc">{</span>clamp(<span class="dv">115</span>, <span class="dv">0</span>, <span class="dv">100</span>)<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>square(5)          = 25
 clamp(115, 0, 100) = 100</code></pre>
 </div>
 </div>
 <p>The most common use for lambdas is as a <strong>sort key</strong>: a function that extracts the comparison value from each element:</p>
-<div id="37" class="cell" data-execution_count="14">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>students: <span class="bu">list</span>[<span class="bu">dict</span>[<span class="bu">str</span>, <span class="bu">object</span>]] <span class="op">=</span> [</span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"name"</span>: <span class="st">"Alice"</span>, <span class="st">"gpa"</span>: <span class="fl">3.95</span>, <span class="st">"major"</span>: <span class="st">"CS"</span>},</span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"name"</span>: <span class="st">"Bob"</span>, <span class="st">"gpa"</span>: <span class="fl">2.80</span>, <span class="st">"major"</span>: <span class="st">"Math"</span>},</span>
-<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"name"</span>: <span class="st">"Carol"</span>, <span class="st">"gpa"</span>: <span class="fl">3.40</span>, <span class="st">"major"</span>: <span class="st">"Physics"</span>},</span>
-<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"name"</span>: <span class="st">"Dan"</span>, <span class="st">"gpa"</span>: <span class="fl">3.70</span>, <span class="st">"major"</span>: <span class="st">"CS"</span>},</span>
-<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>]</span>
-<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Sort by GPA descending</span></span>
-<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>by_gpa <span class="op">=</span> <span class="bu">sorted</span>(students, key<span class="op">=</span><span class="kw">lambda</span> s: s[<span class="st">"gpa"</span>], reverse<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> s <span class="kw">in</span> by_gpa:</span>
-<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span>s[<span class="st">'name'</span>]<span class="sc">:&lt;8}</span><span class="ss"> GPA=</span><span class="sc">{</span>s[<span class="st">'gpa'</span>]<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="39" class="cell" data-execution_count="15">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>students: <span class="bu">list</span>[<span class="bu">dict</span>[<span class="bu">str</span>, <span class="bu">object</span>]] <span class="op">=</span> [</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"name"</span>: <span class="st">"Alice"</span>, <span class="st">"gpa"</span>: <span class="fl">3.95</span>, <span class="st">"major"</span>: <span class="st">"CS"</span>},</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"name"</span>: <span class="st">"Bob"</span>, <span class="st">"gpa"</span>: <span class="fl">2.80</span>, <span class="st">"major"</span>: <span class="st">"Math"</span>},</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"name"</span>: <span class="st">"Carol"</span>, <span class="st">"gpa"</span>: <span class="fl">3.40</span>, <span class="st">"major"</span>: <span class="st">"Physics"</span>},</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"name"</span>: <span class="st">"Dan"</span>, <span class="st">"gpa"</span>: <span class="fl">3.70</span>, <span class="st">"major"</span>: <span class="st">"CS"</span>},</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>]</span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Sort by GPA descending</span></span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>by_gpa <span class="op">=</span> <span class="bu">sorted</span>(students, key<span class="op">=</span><span class="kw">lambda</span> s: s[<span class="st">"gpa"</span>], reverse<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> s <span class="kw">in</span> by_gpa:</span>
+<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span>s[<span class="st">'name'</span>]<span class="sc">:&lt;8}</span><span class="ss"> GPA=</span><span class="sc">{</span>s[<span class="st">'gpa'</span>]<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Alice    GPA=3.95
 Dan      GPA=3.7
@@ -868,25 +879,25 @@ Bob      GPA=2.8</code></pre>
 <section id="map-and-filter" class="level3">
 <h3 class="anchored" data-anchor-id="map-and-filter">map() and filter()</h3>
 <p><code>map(func, iterable)</code> applies <code>func</code> to every element and returns a lazy iterator. Wrap with <code>list()</code> to materialise the result:</p>
-<div id="39" class="cell" data-execution_count="15">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>raw_scores: <span class="bu">list</span>[<span class="bu">str</span>] <span class="op">=</span> [<span class="st">"78.5"</span>, <span class="st">"85.0"</span>, <span class="st">"92.3"</span>, <span class="st">"61.0"</span>, <span class="st">"88.7"</span>]</span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert strings to floats</span></span>
-<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>scores: <span class="bu">list</span>[<span class="bu">float</span>] <span class="op">=</span> <span class="bu">list</span>(<span class="bu">map</span>(<span class="bu">float</span>, raw_scores))</span>
-<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Parsed: </span><span class="sc">{</span>scores<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="41" class="cell" data-execution_count="16">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>raw_scores: <span class="bu">list</span>[<span class="bu">str</span>] <span class="op">=</span> [<span class="st">"78.5"</span>, <span class="st">"85.0"</span>, <span class="st">"92.3"</span>, <span class="st">"61.0"</span>, <span class="st">"88.7"</span>]</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert strings to floats</span></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>scores: <span class="bu">list</span>[<span class="bu">float</span>] <span class="op">=</span> <span class="bu">list</span>(<span class="bu">map</span>(<span class="bu">float</span>, raw_scores))</span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Parsed: </span><span class="sc">{</span>scores<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Parsed: [78.5, 85.0, 92.3, 61.0, 88.7]</code></pre>
 </div>
 </div>
 <p><code>filter(func, iterable)</code> keeps only elements where <code>func</code> returns <code>True</code>. Equivalent to a comprehension with an <code>if</code> clause, but more expressive with a named predicate:</p>
-<div id="41" class="cell" data-execution_count="16">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Keep only passing scores (&gt;= 70)</span></span>
-<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>passing: <span class="bu">list</span>[<span class="bu">float</span>] <span class="op">=</span> <span class="bu">list</span>(<span class="bu">filter</span>(<span class="kw">lambda</span> s: s <span class="op">&gt;=</span> <span class="dv">70</span>, scores))</span>
-<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Passing: </span><span class="sc">{</span>passing<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Same result as a comprehension</span></span>
-<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>passing_comp <span class="op">=</span> [s <span class="cf">for</span> s <span class="kw">in</span> scores <span class="cf">if</span> s <span class="op">&gt;=</span> <span class="dv">70</span>]</span>
-<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Match:   </span><span class="sc">{</span>passing <span class="op">==</span> passing_comp<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="43" class="cell" data-execution_count="17">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Keep only passing scores (&gt;= 70)</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>passing: <span class="bu">list</span>[<span class="bu">float</span>] <span class="op">=</span> <span class="bu">list</span>(<span class="bu">filter</span>(<span class="kw">lambda</span> s: s <span class="op">&gt;=</span> <span class="dv">70</span>, scores))</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Passing: </span><span class="sc">{</span>passing<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Same result as a comprehension</span></span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>passing_comp <span class="op">=</span> [s <span class="cf">for</span> s <span class="kw">in</span> scores <span class="cf">if</span> s <span class="op">&gt;=</span> <span class="dv">70</span>]</span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Match:   </span><span class="sc">{</span>passing <span class="op">==</span> passing_comp<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Passing: [78.5, 85.0, 92.3, 88.7]
 Match:   True</code></pre>
@@ -895,19 +906,19 @@ Match:   True</code></pre>
 <div class="ark-activity">
 <p><span class="ark-activity-title"><i class="bi bi-puzzle-fill"></i> Activity: top students by GPA</span><br><br> Using <code>filter</code> and <code>sorted</code>, write a one-liner that returns the names of students with GPA &gt;= 3.5, sorted by GPA descending.</p>
 </div>
-<div id="43" class="cell" data-execution_count="17">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>students: <span class="bu">list</span>[<span class="bu">dict</span>[<span class="bu">str</span>, <span class="bu">object</span>]] <span class="op">=</span> [</span>
-<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"name"</span>: <span class="st">"Alice"</span>, <span class="st">"gpa"</span>: <span class="fl">3.95</span>, <span class="st">"major"</span>: <span class="st">"CS"</span>},</span>
-<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"name"</span>: <span class="st">"Bob"</span>, <span class="st">"gpa"</span>: <span class="fl">2.80</span>, <span class="st">"major"</span>: <span class="st">"Math"</span>},</span>
-<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"name"</span>: <span class="st">"Carol"</span>, <span class="st">"gpa"</span>: <span class="fl">3.40</span>, <span class="st">"major"</span>: <span class="st">"Physics"</span>},</span>
-<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"name"</span>: <span class="st">"Dan"</span>, <span class="st">"gpa"</span>: <span class="fl">3.70</span>, <span class="st">"major"</span>: <span class="st">"CS"</span>},</span>
-<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>]</span>
-<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: one expression using filter + sorted</span></span>
-<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>top: <span class="bu">list</span>[<span class="bu">str</span>] <span class="op">=</span> ...</span>
-<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> top <span class="kw">is</span> <span class="kw">not</span> ...:</span>
-<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(top)  <span class="co"># ['Alice', 'Dan']</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="45" class="cell" data-execution_count="18">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>students: <span class="bu">list</span>[<span class="bu">dict</span>[<span class="bu">str</span>, <span class="bu">object</span>]] <span class="op">=</span> [</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"name"</span>: <span class="st">"Alice"</span>, <span class="st">"gpa"</span>: <span class="fl">3.95</span>, <span class="st">"major"</span>: <span class="st">"CS"</span>},</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"name"</span>: <span class="st">"Bob"</span>, <span class="st">"gpa"</span>: <span class="fl">2.80</span>, <span class="st">"major"</span>: <span class="st">"Math"</span>},</span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"name"</span>: <span class="st">"Carol"</span>, <span class="st">"gpa"</span>: <span class="fl">3.40</span>, <span class="st">"major"</span>: <span class="st">"Physics"</span>},</span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"name"</span>: <span class="st">"Dan"</span>, <span class="st">"gpa"</span>: <span class="fl">3.70</span>, <span class="st">"major"</span>: <span class="st">"CS"</span>},</span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>]</span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: one expression using filter + sorted</span></span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>top: <span class="bu">list</span>[<span class="bu">str</span>] <span class="op">=</span> ...</span>
+<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> top <span class="kw">is</span> <span class="kw">not</span> ...:</span>
+<span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(top)  <span class="co"># ['Alice', 'Dan']</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 </section>
@@ -918,30 +929,30 @@ Match:   True</code></pre>
 <p><span class="ark-concept-title"><i class="bi bi-key-fill"></i> Key Concept: *args and **kwargs</span><br><br> <code>*args</code> collects any number of <strong>positional</strong> arguments into a tuple.<br> <code>**kwargs</code> collects any number of <strong>keyword</strong> arguments into a dict.<br><br> Neither name is magic: <code>*scores</code> or <code>**attrs</code> work equally well. The <code>*</code> and <code>**</code> are what matter.</p>
 </div>
 <p><code>*args</code> lets callers pass one list, three lists, or unpack a list of lists without changing the function signature:</p>
-<div id="47" class="cell" data-execution_count="18">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> aggregate_scores(<span class="op">*</span>score_lists: <span class="bu">list</span>[<span class="bu">float</span>]) <span class="op">-&gt;</span> <span class="bu">float</span>:</span>
-<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Return the mean of all scores across any number of lists.</span></span>
-<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a><span class="co">    Args:</span></span>
-<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a><span class="co">        *score_lists: One or more lists of numeric scores.</span></span>
-<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a><span class="co">    Returns:</span></span>
-<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a><span class="co">        Overall mean, or 0.0 if no scores were provided.</span></span>
-<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
-<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a>    all_scores <span class="op">=</span> [s <span class="cf">for</span> lst <span class="kw">in</span> score_lists <span class="cf">for</span> s <span class="kw">in</span> lst]</span>
-<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="kw">not</span> all_scores:</span>
-<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="fl">0.0</span></span>
-<span id="cb29-13"><a href="#cb29-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="bu">round</span>(<span class="bu">sum</span>(all_scores) <span class="op">/</span> <span class="bu">len</span>(all_scores), <span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="49" class="cell" data-execution_count="19">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> aggregate_scores(<span class="op">*</span>score_lists: <span class="bu">list</span>[<span class="bu">float</span>]) <span class="op">-&gt;</span> <span class="bu">float</span>:</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Return the mean of all scores across any number of lists.</span></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a><span class="co">    Args:</span></span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a><span class="co">        *score_lists: One or more lists of numeric scores.</span></span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a><span class="co">    Returns:</span></span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a><span class="co">        Overall mean, or 0.0 if no scores were provided.</span></span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a>    all_scores <span class="op">=</span> [s <span class="cf">for</span> lst <span class="kw">in</span> score_lists <span class="cf">for</span> s <span class="kw">in</span> lst]</span>
+<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="kw">not</span> all_scores:</span>
+<span id="cb31-12"><a href="#cb31-12" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="fl">0.0</span></span>
+<span id="cb31-13"><a href="#cb31-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="bu">round</span>(<span class="bu">sum</span>(all_scores) <span class="op">/</span> <span class="bu">len</span>(all_scores), <span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Call with one list, multiple lists, or unpack with <code>*</code>. The function handles all three cases the same way:</p>
-<div id="49" class="cell" data-execution_count="19">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>midterms: <span class="bu">list</span>[<span class="bu">float</span>] <span class="op">=</span> [<span class="fl">78.0</span>, <span class="fl">85.0</span>, <span class="fl">91.0</span>]</span>
-<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>finals: <span class="bu">list</span>[<span class="bu">float</span>] <span class="op">=</span> [<span class="fl">82.0</span>, <span class="fl">88.0</span>, <span class="fl">94.0</span>]</span>
-<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>projects: <span class="bu">list</span>[<span class="bu">float</span>] <span class="op">=</span> [<span class="fl">90.0</span>, <span class="fl">87.0</span>, <span class="fl">92.0</span>]</span>
-<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(aggregate_scores(midterms))</span>
-<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(aggregate_scores(midterms, finals))</span>
-<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(aggregate_scores(midterms, finals, projects))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="51" class="cell" data-execution_count="20">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>midterms: <span class="bu">list</span>[<span class="bu">float</span>] <span class="op">=</span> [<span class="fl">78.0</span>, <span class="fl">85.0</span>, <span class="fl">91.0</span>]</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>finals: <span class="bu">list</span>[<span class="bu">float</span>] <span class="op">=</span> [<span class="fl">82.0</span>, <span class="fl">88.0</span>, <span class="fl">94.0</span>]</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>projects: <span class="bu">list</span>[<span class="bu">float</span>] <span class="op">=</span> [<span class="fl">90.0</span>, <span class="fl">87.0</span>, <span class="fl">92.0</span>]</span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(aggregate_scores(midterms))</span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(aggregate_scores(midterms, finals))</span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(aggregate_scores(midterms, finals, projects))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>84.67
 86.33
@@ -949,29 +960,29 @@ Match:   True</code></pre>
 </div>
 </div>
 <p><code>**kwargs</code> collects any number of keyword arguments into a dict. It is useful when you want to build a record from whatever attributes the caller provides:</p>
-<div id="51" class="cell" data-execution_count="20">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> build_student_profile(student_id: <span class="bu">str</span>, <span class="op">**</span>attributes: <span class="bu">object</span>) <span class="op">-&gt;</span> <span class="bu">dict</span>[<span class="bu">str</span>, <span class="bu">object</span>]:</span>
-<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Build a student profile dict from keyword attributes.</span></span>
-<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a><span class="co">    Args:</span></span>
-<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a><span class="co">        student_id:   Unique student identifier.</span></span>
-<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a><span class="co">        **attributes: Any additional fields to attach.</span></span>
-<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a><span class="co">    Returns:</span></span>
-<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a><span class="co">        Dict with student_id plus all provided attributes.</span></span>
-<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
-<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> {<span class="st">"student_id"</span>: student_id, <span class="op">**</span>attributes}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="53" class="cell" data-execution_count="21">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> build_student_profile(student_id: <span class="bu">str</span>, <span class="op">**</span>attributes: <span class="bu">object</span>) <span class="op">-&gt;</span> <span class="bu">dict</span>[<span class="bu">str</span>, <span class="bu">object</span>]:</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Build a student profile dict from keyword attributes.</span></span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a><span class="co">    Args:</span></span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a><span class="co">        student_id:   Unique student identifier.</span></span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a><span class="co">        **attributes: Any additional fields to attach.</span></span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a><span class="co">    Returns:</span></span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a><span class="co">        Dict with student_id plus all provided attributes.</span></span>
+<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb34-11"><a href="#cb34-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> {<span class="st">"student_id"</span>: student_id, <span class="op">**</span>attributes}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Pass any combination of keyword arguments. <code>**</code> also unpacks a dict at the call site:</p>
-<div id="53" class="cell" data-execution_count="21">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>p1 <span class="op">=</span> build_student_profile(<span class="st">"S1042"</span>, name<span class="op">=</span><span class="st">"Alice"</span>, gpa<span class="op">=</span><span class="fl">3.95</span>, major<span class="op">=</span><span class="st">"CS"</span>)</span>
-<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>p2 <span class="op">=</span> build_student_profile(<span class="st">"S1043"</span>, name<span class="op">=</span><span class="st">"Bob"</span>, gpa<span class="op">=</span><span class="fl">2.80</span>)</span>
-<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>extra <span class="op">=</span> {<span class="st">"program"</span>: <span class="st">"exchange"</span>, <span class="st">"cohort"</span>: <span class="dv">2024</span>}</span>
-<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>p3 <span class="op">=</span> build_student_profile(<span class="st">"S1044"</span>, name<span class="op">=</span><span class="st">"Carol"</span>, <span class="op">**</span>extra)</span>
-<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> p <span class="kw">in</span> (p1, p2, p3):</span>
-<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(p)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="55" class="cell" data-execution_count="22">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>p1 <span class="op">=</span> build_student_profile(<span class="st">"S1042"</span>, name<span class="op">=</span><span class="st">"Alice"</span>, gpa<span class="op">=</span><span class="fl">3.95</span>, major<span class="op">=</span><span class="st">"CS"</span>)</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>p2 <span class="op">=</span> build_student_profile(<span class="st">"S1043"</span>, name<span class="op">=</span><span class="st">"Bob"</span>, gpa<span class="op">=</span><span class="fl">2.80</span>)</span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>extra <span class="op">=</span> {<span class="st">"program"</span>: <span class="st">"exchange"</span>, <span class="st">"cohort"</span>: <span class="dv">2024</span>}</span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>p3 <span class="op">=</span> build_student_profile(<span class="st">"S1044"</span>, name<span class="op">=</span><span class="st">"Carol"</span>, <span class="op">**</span>extra)</span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> p <span class="kw">in</span> (p1, p2, p3):</span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(p)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>{'student_id': 'S1042', 'name': 'Alice', 'gpa': 3.95, 'major': 'CS'}
 {'student_id': 'S1043', 'name': 'Bob', 'gpa': 2.8}
@@ -979,46 +990,46 @@ Match:   True</code></pre>
 </div>
 </div>
 <p>You can combine all four argument forms in one signature: fixed positional, <code>*args</code>, keyword-only (must be named at the call site), and <code>**kwargs</code>:</p>
-<div id="55" class="cell" data-execution_count="22">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> log_cohort_stats(</span>
-<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>    semester: <span class="bu">str</span>,</span>
-<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>    <span class="op">*</span>courses: <span class="bu">str</span>,</span>
-<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>    verbose: <span class="bu">bool</span> <span class="op">=</span> <span class="va">False</span>,</span>
-<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>    <span class="op">**</span>metrics: <span class="bu">float</span>,</span>
-<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>) <span class="op">-&gt;</span> <span class="bu">dict</span>[<span class="bu">str</span>, <span class="bu">object</span>]:</span>
-<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Log and return stats for a semester cohort.</span></span>
-<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a><span class="co">    Args:</span></span>
-<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a><span class="co">        semester: Semester label, e.g. "2024-S1".</span></span>
-<span id="cb35-11"><a href="#cb35-11" aria-hidden="true" tabindex="-1"></a><span class="co">        *courses: Course codes included in this run.</span></span>
-<span id="cb35-12"><a href="#cb35-12" aria-hidden="true" tabindex="-1"></a><span class="co">        verbose:  If True, print each metric.</span></span>
-<span id="cb35-13"><a href="#cb35-13" aria-hidden="true" tabindex="-1"></a><span class="co">        **metrics: Named statistics to record.</span></span>
-<span id="cb35-14"><a href="#cb35-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-15"><a href="#cb35-15" aria-hidden="true" tabindex="-1"></a><span class="co">    Returns:</span></span>
-<span id="cb35-16"><a href="#cb35-16" aria-hidden="true" tabindex="-1"></a><span class="co">        Dict with semester, courses, and metrics.</span></span>
-<span id="cb35-17"><a href="#cb35-17" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
-<span id="cb35-18"><a href="#cb35-18" aria-hidden="true" tabindex="-1"></a>    record: <span class="bu">dict</span>[<span class="bu">str</span>, <span class="bu">object</span>] <span class="op">=</span> {</span>
-<span id="cb35-19"><a href="#cb35-19" aria-hidden="true" tabindex="-1"></a>        <span class="st">"semester"</span>: semester,</span>
-<span id="cb35-20"><a href="#cb35-20" aria-hidden="true" tabindex="-1"></a>        <span class="st">"courses"</span>: <span class="bu">list</span>(courses),</span>
-<span id="cb35-21"><a href="#cb35-21" aria-hidden="true" tabindex="-1"></a>        <span class="st">"metrics"</span>: metrics,</span>
-<span id="cb35-22"><a href="#cb35-22" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb35-23"><a href="#cb35-23" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> verbose:</span>
-<span id="cb35-24"><a href="#cb35-24" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> key, val <span class="kw">in</span> metrics.items():</span>
-<span id="cb35-25"><a href="#cb35-25" aria-hidden="true" tabindex="-1"></a>            <span class="bu">print</span>(<span class="ss">f"  </span><span class="sc">{</span>key<span class="sc">}</span><span class="ss">: </span><span class="sc">{</span>val<span class="sc">:.3f}</span><span class="ss">"</span>)</span>
-<span id="cb35-26"><a href="#cb35-26" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> record</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="57" class="cell" data-execution_count="23">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> log_cohort_stats(</span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>    semester: <span class="bu">str</span>,</span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>    <span class="op">*</span>courses: <span class="bu">str</span>,</span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>    verbose: <span class="bu">bool</span> <span class="op">=</span> <span class="va">False</span>,</span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>    <span class="op">**</span>metrics: <span class="bu">float</span>,</span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>) <span class="op">-&gt;</span> <span class="bu">dict</span>[<span class="bu">str</span>, <span class="bu">object</span>]:</span>
+<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Log and return stats for a semester cohort.</span></span>
+<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-9"><a href="#cb37-9" aria-hidden="true" tabindex="-1"></a><span class="co">    Args:</span></span>
+<span id="cb37-10"><a href="#cb37-10" aria-hidden="true" tabindex="-1"></a><span class="co">        semester: Semester label, e.g. "2024-S1".</span></span>
+<span id="cb37-11"><a href="#cb37-11" aria-hidden="true" tabindex="-1"></a><span class="co">        *courses: Course codes included in this run.</span></span>
+<span id="cb37-12"><a href="#cb37-12" aria-hidden="true" tabindex="-1"></a><span class="co">        verbose:  If True, print each metric.</span></span>
+<span id="cb37-13"><a href="#cb37-13" aria-hidden="true" tabindex="-1"></a><span class="co">        **metrics: Named statistics to record.</span></span>
+<span id="cb37-14"><a href="#cb37-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-15"><a href="#cb37-15" aria-hidden="true" tabindex="-1"></a><span class="co">    Returns:</span></span>
+<span id="cb37-16"><a href="#cb37-16" aria-hidden="true" tabindex="-1"></a><span class="co">        Dict with semester, courses, and metrics.</span></span>
+<span id="cb37-17"><a href="#cb37-17" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb37-18"><a href="#cb37-18" aria-hidden="true" tabindex="-1"></a>    record: <span class="bu">dict</span>[<span class="bu">str</span>, <span class="bu">object</span>] <span class="op">=</span> {</span>
+<span id="cb37-19"><a href="#cb37-19" aria-hidden="true" tabindex="-1"></a>        <span class="st">"semester"</span>: semester,</span>
+<span id="cb37-20"><a href="#cb37-20" aria-hidden="true" tabindex="-1"></a>        <span class="st">"courses"</span>: <span class="bu">list</span>(courses),</span>
+<span id="cb37-21"><a href="#cb37-21" aria-hidden="true" tabindex="-1"></a>        <span class="st">"metrics"</span>: metrics,</span>
+<span id="cb37-22"><a href="#cb37-22" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb37-23"><a href="#cb37-23" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> verbose:</span>
+<span id="cb37-24"><a href="#cb37-24" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> key, val <span class="kw">in</span> metrics.items():</span>
+<span id="cb37-25"><a href="#cb37-25" aria-hidden="true" tabindex="-1"></a>            <span class="bu">print</span>(<span class="ss">f"  </span><span class="sc">{</span>key<span class="sc">}</span><span class="ss">: </span><span class="sc">{</span>val<span class="sc">:.3f}</span><span class="ss">"</span>)</span>
+<span id="cb37-26"><a href="#cb37-26" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> record</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p><code>verbose</code> is keyword-only: it cannot be passed positionally because <code>*courses</code> comes before it in the signature:</p>
-<div id="57" class="cell" data-execution_count="23">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>result <span class="op">=</span> log_cohort_stats(</span>
-<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"2024-S1"</span>,</span>
-<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"CS101"</span>,</span>
-<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"MATH201"</span>,</span>
-<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>    verbose<span class="op">=</span><span class="va">True</span>,</span>
-<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>    pass_rate<span class="op">=</span><span class="fl">0.821</span>,</span>
-<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>    mean_gpa<span class="op">=</span><span class="fl">3.12</span>,</span>
-<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a>    median_score<span class="op">=</span><span class="fl">74.5</span>,</span>
-<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(result)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="59" class="cell" data-execution_count="24">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>result <span class="op">=</span> log_cohort_stats(</span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"2024-S1"</span>,</span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"CS101"</span>,</span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"MATH201"</span>,</span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>    verbose<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>    pass_rate<span class="op">=</span><span class="fl">0.821</span>,</span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>    mean_gpa<span class="op">=</span><span class="fl">3.12</span>,</span>
+<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a>    median_score<span class="op">=</span><span class="fl">74.5</span>,</span>
+<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb38-10"><a href="#cb38-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(result)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>  pass_rate: 0.821
   mean_gpa: 3.120
@@ -1029,23 +1040,23 @@ Match:   True</code></pre>
 <div class="ark-activity">
 <p><span class="ark-activity-title"><i class="bi bi-puzzle-fill"></i> Activity: add a timestamp</span><br><br> Extend <code>log_cohort_stats</code> to also include a <code>timestamp</code> key in the returned dict. Use <code>datetime.now(tz=UTC)</code> from the <code>datetime</code> module and format it with <code>.isoformat()</code>.</p>
 </div>
-<div id="59" class="cell" data-execution_count="24">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> datetime <span class="im">import</span> UTC, datetime</span>
-<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> log_cohort_stats_v2(</span>
-<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>    semester: <span class="bu">str</span>,</span>
-<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>    <span class="op">*</span>courses: <span class="bu">str</span>,</span>
-<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>    verbose: <span class="bu">bool</span> <span class="op">=</span> <span class="va">False</span>,</span>
-<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a>    <span class="op">**</span>metrics: <span class="bu">float</span>,</span>
-<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a>) <span class="op">-&gt;</span> <span class="bu">dict</span>[<span class="bu">str</span>, <span class="bu">object</span>]:</span>
-<span id="cb38-10"><a href="#cb38-10" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Extended version: adds a UTC timestamp to the returned record."""</span></span>
-<span id="cb38-11"><a href="#cb38-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> ...  <span class="co"># </span><span class="al">TODO</span><span class="co">: reuse log_cohort_stats logic and add timestamp</span></span>
-<span id="cb38-12"><a href="#cb38-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-13"><a href="#cb38-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-14"><a href="#cb38-14" aria-hidden="true" tabindex="-1"></a>result <span class="op">=</span> log_cohort_stats_v2(<span class="st">"2024-S1"</span>, <span class="st">"CS101"</span>, pass_rate<span class="op">=</span><span class="fl">0.821</span>)</span>
-<span id="cb38-15"><a href="#cb38-15" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> result <span class="kw">is</span> <span class="kw">not</span> ...:</span>
-<span id="cb38-16"><a href="#cb38-16" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(result.get(<span class="st">"timestamp"</span>, <span class="st">"missing"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="61" class="cell" data-execution_count="25">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> datetime <span class="im">import</span> UTC, datetime</span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> log_cohort_stats_v2(</span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>    semester: <span class="bu">str</span>,</span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a>    <span class="op">*</span>courses: <span class="bu">str</span>,</span>
+<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a>    verbose: <span class="bu">bool</span> <span class="op">=</span> <span class="va">False</span>,</span>
+<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a>    <span class="op">**</span>metrics: <span class="bu">float</span>,</span>
+<span id="cb40-9"><a href="#cb40-9" aria-hidden="true" tabindex="-1"></a>) <span class="op">-&gt;</span> <span class="bu">dict</span>[<span class="bu">str</span>, <span class="bu">object</span>]:</span>
+<span id="cb40-10"><a href="#cb40-10" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Extended version: adds a UTC timestamp to the returned record."""</span></span>
+<span id="cb40-11"><a href="#cb40-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> ...  <span class="co"># </span><span class="al">TODO</span><span class="co">: reuse log_cohort_stats logic and add timestamp</span></span>
+<span id="cb40-12"><a href="#cb40-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-13"><a href="#cb40-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-14"><a href="#cb40-14" aria-hidden="true" tabindex="-1"></a>result <span class="op">=</span> log_cohort_stats_v2(<span class="st">"2024-S1"</span>, <span class="st">"CS101"</span>, pass_rate<span class="op">=</span><span class="fl">0.821</span>)</span>
+<span id="cb40-15"><a href="#cb40-15" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> result <span class="kw">is</span> <span class="kw">not</span> ...:</span>
+<span id="cb40-16"><a href="#cb40-16" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(result.get(<span class="st">"timestamp"</span>, <span class="st">"missing"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="modules-and-the-standard-library" class="level2">
@@ -1066,17 +1077,17 @@ Choose whichever form makes the call site most readable.
 </ul>
 </div>
 <p>The <code>math</code> module provides precise arithmetic for single numeric values:</p>
-<div id="63" class="cell" data-execution_count="25">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> math</span>
-<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"pi           = </span><span class="sc">{</span>math<span class="sc">.</span>pi<span class="sc">:.6f}</span><span class="ss">"</span>)</span>
-<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"e            = </span><span class="sc">{</span>math<span class="sc">.</span>e<span class="sc">:.6f}</span><span class="ss">"</span>)</span>
-<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"sqrt(2)      = </span><span class="sc">{</span>math<span class="sc">.</span>sqrt(<span class="dv">2</span>)<span class="sc">:.6f}</span><span class="ss">"</span>)</span>
-<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"log10(1000)  = </span><span class="sc">{</span>math<span class="sc">.</span>log10(<span class="dv">1000</span>)<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"ceil(4.2)    = </span><span class="sc">{</span>math<span class="sc">.</span>ceil(<span class="fl">4.2</span>)<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb39-8"><a href="#cb39-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"floor(4.8)   = </span><span class="sc">{</span>math<span class="sc">.</span>floor(<span class="fl">4.8</span>)<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb39-9"><a href="#cb39-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"isnan(0.0)   = </span><span class="sc">{</span>math<span class="sc">.</span>isnan(<span class="fl">0.0</span>)<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb39-10"><a href="#cb39-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"isinf(1e400) = </span><span class="sc">{</span>math<span class="sc">.</span>isinf(<span class="fl">1e400</span>)<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="65" class="cell" data-execution_count="26">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> math</span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"pi           = </span><span class="sc">{</span>math<span class="sc">.</span>pi<span class="sc">:.6f}</span><span class="ss">"</span>)</span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"e            = </span><span class="sc">{</span>math<span class="sc">.</span>e<span class="sc">:.6f}</span><span class="ss">"</span>)</span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"sqrt(2)      = </span><span class="sc">{</span>math<span class="sc">.</span>sqrt(<span class="dv">2</span>)<span class="sc">:.6f}</span><span class="ss">"</span>)</span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"log10(1000)  = </span><span class="sc">{</span>math<span class="sc">.</span>log10(<span class="dv">1000</span>)<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"ceil(4.2)    = </span><span class="sc">{</span>math<span class="sc">.</span>ceil(<span class="fl">4.2</span>)<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"floor(4.8)   = </span><span class="sc">{</span>math<span class="sc">.</span>floor(<span class="fl">4.8</span>)<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb41-9"><a href="#cb41-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"isnan(0.0)   = </span><span class="sc">{</span>math<span class="sc">.</span>isnan(<span class="fl">0.0</span>)<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb41-10"><a href="#cb41-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"isinf(1e400) = </span><span class="sc">{</span>math<span class="sc">.</span>isinf(<span class="fl">1e400</span>)<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>pi           = 3.141593
 e            = 2.718282
@@ -1089,19 +1100,19 @@ isinf(1e400) = True</code></pre>
 </div>
 </div>
 <p><code>json</code> converts Python dicts, lists, and primitives to JSON strings and back. It is the standard format for saving run configs and logging result metadata:</p>
-<div id="65" class="cell" data-execution_count="26">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> json</span>
-<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>run_result: <span class="bu">dict</span>[<span class="bu">str</span>, <span class="bu">object</span>] <span class="op">=</span> {</span>
-<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"run_id"</span>: <span class="st">"2024-S1-001"</span>,</span>
-<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">"course"</span>: <span class="st">"CS101"</span>,</span>
-<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">"pass_rate"</span>: <span class="fl">0.821</span>,</span>
-<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">"mean_score"</span>: <span class="fl">74.5</span>,</span>
-<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">"flags"</span>: [<span class="st">"regrade"</span>, <span class="st">"audit"</span>],</span>
-<span id="cb41-9"><a href="#cb41-9" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb41-10"><a href="#cb41-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb41-11"><a href="#cb41-11" aria-hidden="true" tabindex="-1"></a>serialised <span class="op">=</span> json.dumps(run_result, indent<span class="op">=</span><span class="dv">2</span>)</span>
-<span id="cb41-12"><a href="#cb41-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(serialised)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="67" class="cell" data-execution_count="27">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> json</span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>run_result: <span class="bu">dict</span>[<span class="bu">str</span>, <span class="bu">object</span>] <span class="op">=</span> {</span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"run_id"</span>: <span class="st">"2024-S1-001"</span>,</span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">"course"</span>: <span class="st">"CS101"</span>,</span>
+<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">"pass_rate"</span>: <span class="fl">0.821</span>,</span>
+<span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">"mean_score"</span>: <span class="fl">74.5</span>,</span>
+<span id="cb43-8"><a href="#cb43-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">"flags"</span>: [<span class="st">"regrade"</span>, <span class="st">"audit"</span>],</span>
+<span id="cb43-9"><a href="#cb43-9" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb43-10"><a href="#cb43-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-11"><a href="#cb43-11" aria-hidden="true" tabindex="-1"></a>serialised <span class="op">=</span> json.dumps(run_result, indent<span class="op">=</span><span class="dv">2</span>)</span>
+<span id="cb43-12"><a href="#cb43-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(serialised)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>{
   "run_id": "2024-S1-001",
@@ -1115,28 +1126,28 @@ isinf(1e400) = True</code></pre>
 }</code></pre>
 </div>
 </div>
-<div id="66" class="cell" data-execution_count="27">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="co"># JSON string back to Python dict</span></span>
-<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>loaded: <span class="bu">dict</span>[<span class="bu">str</span>, <span class="bu">object</span>] <span class="op">=</span> json.loads(serialised)</span>
-<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"pass_rate : </span><span class="sc">{</span>loaded[<span class="st">'pass_rate'</span>]<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"flags     : </span><span class="sc">{</span>loaded[<span class="st">'flags'</span>]<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="68" class="cell" data-execution_count="28">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb45"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="co"># JSON string back to Python dict</span></span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>loaded: <span class="bu">dict</span>[<span class="bu">str</span>, <span class="bu">object</span>] <span class="op">=</span> json.loads(serialised)</span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"pass_rate : </span><span class="sc">{</span>loaded[<span class="st">'pass_rate'</span>]<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"flags     : </span><span class="sc">{</span>loaded[<span class="st">'flags'</span>]<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>pass_rate : 0.821
 flags     : ['regrade', 'audit']</code></pre>
 </div>
 </div>
 <p><code>datetime</code> represents a point in time. Always attach <code>timezone.utc</code> to avoid ambiguous naive datetime objects that can silently shift across time zones:</p>
-<div id="68" class="cell" data-execution_count="28">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb45"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>now <span class="op">=</span> datetime.now(tz<span class="op">=</span>UTC)</span>
-<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Timestamp  : </span><span class="sc">{</span>now<span class="sc">.</span>isoformat()<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Date part  : </span><span class="sc">{</span>now<span class="sc">.</span>strftime(<span class="st">'%Y-%m-</span><span class="sc">%d</span><span class="st">'</span>)<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Year       : </span><span class="sc">{</span>now<span class="sc">.</span>year<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Unix epoch : </span><span class="sc">{</span>now<span class="sc">.</span>timestamp()<span class="sc">:.0f}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="70" class="cell" data-execution_count="29">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb47"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>now <span class="op">=</span> datetime.now(tz<span class="op">=</span>UTC)</span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Timestamp  : </span><span class="sc">{</span>now<span class="sc">.</span>isoformat()<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Date part  : </span><span class="sc">{</span>now<span class="sc">.</span>strftime(<span class="st">'%Y-%m-</span><span class="sc">%d</span><span class="st">'</span>)<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Year       : </span><span class="sc">{</span>now<span class="sc">.</span>year<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Unix epoch : </span><span class="sc">{</span>now<span class="sc">.</span>timestamp()<span class="sc">:.0f}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Timestamp  : 2026-07-02T13:19:02.335493+00:00
+<pre><code>Timestamp  : 2026-07-02T13:57:41.006355+00:00
 Date part  : 2026-07-02
 Year       : 2026
-Unix epoch : 1782998342</code></pre>
+Unix epoch : 1783000661</code></pre>
 </div>
 </div>
 </section>
@@ -1146,55 +1157,55 @@ Unix epoch : 1782998342</code></pre>
 <div class="ark-activity">
 <p><span class="ark-activity-title"><i class="bi bi-puzzle-fill"></i> Activity: student record processor</span><br><br> Write a function <code>process_records(rows)</code> that takes a list of raw row dicts (each has <code>name</code>, <code>scores</code> as a list of floats, and <code>major</code>) and returns a list of summary dicts with keys: <code>name</code>, <code>major</code>, <code>mean</code>, <code>grade</code>.<br><br> Use <code>score_summary</code> from Section 1 to get the mean, and <code>grade_letter</code> from Activity 1 to get the grade.</p>
 </div>
-<div id="71" class="cell" data-execution_count="29">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb47"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> process_records(</span>
-<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>    rows: <span class="bu">list</span>[<span class="bu">dict</span>[<span class="bu">str</span>, <span class="bu">object</span>]],</span>
-<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>) <span class="op">-&gt;</span> <span class="bu">list</span>[<span class="bu">dict</span>[<span class="bu">str</span>, <span class="bu">object</span>]]:</span>
-<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Summarise a list of raw student rows.</span></span>
-<span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb47-6"><a href="#cb47-6" aria-hidden="true" tabindex="-1"></a><span class="co">    Args:</span></span>
-<span id="cb47-7"><a href="#cb47-7" aria-hidden="true" tabindex="-1"></a><span class="co">        rows: Each dict has "name", "scores", and "major".</span></span>
-<span id="cb47-8"><a href="#cb47-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb47-9"><a href="#cb47-9" aria-hidden="true" tabindex="-1"></a><span class="co">    Returns:</span></span>
-<span id="cb47-10"><a href="#cb47-10" aria-hidden="true" tabindex="-1"></a><span class="co">        List of summary dicts with name, major, mean, grade.</span></span>
-<span id="cb47-11"><a href="#cb47-11" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
-<span id="cb47-12"><a href="#cb47-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> ...  <span class="co"># </span><span class="al">TODO</span><span class="co">: implement</span></span>
-<span id="cb47-13"><a href="#cb47-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb47-14"><a href="#cb47-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb47-15"><a href="#cb47-15" aria-hidden="true" tabindex="-1"></a>students: <span class="bu">list</span>[<span class="bu">dict</span>[<span class="bu">str</span>, <span class="bu">object</span>]] <span class="op">=</span> [</span>
-<span id="cb47-16"><a href="#cb47-16" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"name"</span>: <span class="st">"Alice"</span>, <span class="st">"scores"</span>: [<span class="fl">88.0</span>, <span class="fl">92.0</span>, <span class="fl">85.0</span>], <span class="st">"major"</span>: <span class="st">"CS"</span>},</span>
-<span id="cb47-17"><a href="#cb47-17" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"name"</span>: <span class="st">"Bob"</span>, <span class="st">"scores"</span>: [<span class="fl">62.0</span>, <span class="fl">70.0</span>, <span class="fl">58.0</span>], <span class="st">"major"</span>: <span class="st">"Math"</span>},</span>
-<span id="cb47-18"><a href="#cb47-18" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"name"</span>: <span class="st">"Carol"</span>, <span class="st">"scores"</span>: [<span class="fl">91.0</span>, <span class="fl">94.0</span>, <span class="fl">89.0</span>], <span class="st">"major"</span>: <span class="st">"Physics"</span>},</span>
-<span id="cb47-19"><a href="#cb47-19" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"name"</span>: <span class="st">"Dan"</span>, <span class="st">"scores"</span>: [<span class="fl">74.0</span>, <span class="fl">68.0</span>, <span class="fl">71.0</span>], <span class="st">"major"</span>: <span class="st">"CS"</span>},</span>
-<span id="cb47-20"><a href="#cb47-20" aria-hidden="true" tabindex="-1"></a>]</span>
-<span id="cb47-21"><a href="#cb47-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb47-22"><a href="#cb47-22" aria-hidden="true" tabindex="-1"></a>result <span class="op">=</span> process_records(students)</span>
-<span id="cb47-23"><a href="#cb47-23" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> result <span class="kw">is</span> <span class="kw">not</span> ...:</span>
-<span id="cb47-24"><a href="#cb47-24" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> r <span class="kw">in</span> result:</span>
-<span id="cb47-25"><a href="#cb47-25" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span>r[<span class="st">'name'</span>]<span class="sc">:&lt;8}</span><span class="ss"> </span><span class="sc">{</span>r[<span class="st">'major'</span>]<span class="sc">:&lt;10}</span><span class="ss"> mean=</span><span class="sc">{</span>r[<span class="st">'mean'</span>]<span class="sc">:.1f}</span><span class="ss">  </span><span class="sc">{</span>r[<span class="st">'grade'</span>]<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="73" class="cell" data-execution_count="30">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb49"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> process_records(</span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>    rows: <span class="bu">list</span>[<span class="bu">dict</span>[<span class="bu">str</span>, <span class="bu">object</span>]],</span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>) <span class="op">-&gt;</span> <span class="bu">list</span>[<span class="bu">dict</span>[<span class="bu">str</span>, <span class="bu">object</span>]]:</span>
+<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Summarise a list of raw student rows.</span></span>
+<span id="cb49-5"><a href="#cb49-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-6"><a href="#cb49-6" aria-hidden="true" tabindex="-1"></a><span class="co">    Args:</span></span>
+<span id="cb49-7"><a href="#cb49-7" aria-hidden="true" tabindex="-1"></a><span class="co">        rows: Each dict has "name", "scores", and "major".</span></span>
+<span id="cb49-8"><a href="#cb49-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-9"><a href="#cb49-9" aria-hidden="true" tabindex="-1"></a><span class="co">    Returns:</span></span>
+<span id="cb49-10"><a href="#cb49-10" aria-hidden="true" tabindex="-1"></a><span class="co">        List of summary dicts with name, major, mean, grade.</span></span>
+<span id="cb49-11"><a href="#cb49-11" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb49-12"><a href="#cb49-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> ...  <span class="co"># </span><span class="al">TODO</span><span class="co">: implement</span></span>
+<span id="cb49-13"><a href="#cb49-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-14"><a href="#cb49-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-15"><a href="#cb49-15" aria-hidden="true" tabindex="-1"></a>students: <span class="bu">list</span>[<span class="bu">dict</span>[<span class="bu">str</span>, <span class="bu">object</span>]] <span class="op">=</span> [</span>
+<span id="cb49-16"><a href="#cb49-16" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"name"</span>: <span class="st">"Alice"</span>, <span class="st">"scores"</span>: [<span class="fl">88.0</span>, <span class="fl">92.0</span>, <span class="fl">85.0</span>], <span class="st">"major"</span>: <span class="st">"CS"</span>},</span>
+<span id="cb49-17"><a href="#cb49-17" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"name"</span>: <span class="st">"Bob"</span>, <span class="st">"scores"</span>: [<span class="fl">62.0</span>, <span class="fl">70.0</span>, <span class="fl">58.0</span>], <span class="st">"major"</span>: <span class="st">"Math"</span>},</span>
+<span id="cb49-18"><a href="#cb49-18" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"name"</span>: <span class="st">"Carol"</span>, <span class="st">"scores"</span>: [<span class="fl">91.0</span>, <span class="fl">94.0</span>, <span class="fl">89.0</span>], <span class="st">"major"</span>: <span class="st">"Physics"</span>},</span>
+<span id="cb49-19"><a href="#cb49-19" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"name"</span>: <span class="st">"Dan"</span>, <span class="st">"scores"</span>: [<span class="fl">74.0</span>, <span class="fl">68.0</span>, <span class="fl">71.0</span>], <span class="st">"major"</span>: <span class="st">"CS"</span>},</span>
+<span id="cb49-20"><a href="#cb49-20" aria-hidden="true" tabindex="-1"></a>]</span>
+<span id="cb49-21"><a href="#cb49-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-22"><a href="#cb49-22" aria-hidden="true" tabindex="-1"></a>result <span class="op">=</span> process_records(students)</span>
+<span id="cb49-23"><a href="#cb49-23" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> result <span class="kw">is</span> <span class="kw">not</span> ...:</span>
+<span id="cb49-24"><a href="#cb49-24" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> r <span class="kw">in</span> result:</span>
+<span id="cb49-25"><a href="#cb49-25" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span>r[<span class="st">'name'</span>]<span class="sc">:&lt;8}</span><span class="ss"> </span><span class="sc">{</span>r[<span class="st">'major'</span>]<span class="sc">:&lt;10}</span><span class="ss"> mean=</span><span class="sc">{</span>r[<span class="st">'mean'</span>]<span class="sc">:.1f}</span><span class="ss">  </span><span class="sc">{</span>r[<span class="st">'grade'</span>]<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="ark-activity">
 <p><span class="ark-activity-title"><i class="bi bi-puzzle-fill"></i> Activity: moving window average</span><br><br> Complete <code>moving_window_average</code>: it replaces each value with the mean of the values within <code>n_neighbors</code> positions on each side. Edge values use whatever neighbors are available.</p>
 </div>
-<div id="73" class="cell" data-execution_count="30">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb48"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> moving_window_average(x: <span class="bu">list</span>[<span class="bu">float</span>], n_neighbors: <span class="bu">int</span> <span class="op">=</span> <span class="dv">1</span>) <span class="op">-&gt;</span> <span class="bu">list</span>[<span class="bu">float</span>]:</span>
-<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Replace each value with the mean of its n_neighbors on each side.</span></span>
-<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a><span class="co">    Args:</span></span>
-<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a><span class="co">        x:            Input list of numeric values.</span></span>
-<span id="cb48-6"><a href="#cb48-6" aria-hidden="true" tabindex="-1"></a><span class="co">        n_neighbors:  Window half-width.</span></span>
-<span id="cb48-7"><a href="#cb48-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb48-8"><a href="#cb48-8" aria-hidden="true" tabindex="-1"></a><span class="co">    Returns:</span></span>
-<span id="cb48-9"><a href="#cb48-9" aria-hidden="true" tabindex="-1"></a><span class="co">        Smoothed list of the same length as x.</span></span>
-<span id="cb48-10"><a href="#cb48-10" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
-<span id="cb48-11"><a href="#cb48-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> ...  <span class="co"># </span><span class="al">TODO</span><span class="co">: implement</span></span>
-<span id="cb48-12"><a href="#cb48-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb48-13"><a href="#cb48-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb48-14"><a href="#cb48-14" aria-hidden="true" tabindex="-1"></a>readings: <span class="bu">list</span>[<span class="bu">float</span>] <span class="op">=</span> [<span class="fl">36.5</span>, <span class="fl">36.7</span>, <span class="fl">36.8</span>, <span class="fl">36.6</span>, <span class="fl">36.9</span>, <span class="fl">39.5</span>, <span class="fl">36.7</span>, <span class="fl">36.8</span>]</span>
-<span id="cb48-15"><a href="#cb48-15" aria-hidden="true" tabindex="-1"></a>smoothed <span class="op">=</span> moving_window_average(readings, n_neighbors<span class="op">=</span><span class="dv">2</span>)</span>
-<span id="cb48-16"><a href="#cb48-16" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> smoothed <span class="kw">is</span> <span class="kw">not</span> ...:</span>
-<span id="cb48-17"><a href="#cb48-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> raw, sm <span class="kw">in</span> <span class="bu">zip</span>(readings, smoothed, strict<span class="op">=</span><span class="va">False</span>):</span>
-<span id="cb48-18"><a href="#cb48-18" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span>raw<span class="sc">:.1f}</span><span class="ss">  -&gt;  </span><span class="sc">{</span>sm<span class="sc">:.2f}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="75" class="cell" data-execution_count="31">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb50"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> moving_window_average(x: <span class="bu">list</span>[<span class="bu">float</span>], n_neighbors: <span class="bu">int</span> <span class="op">=</span> <span class="dv">1</span>) <span class="op">-&gt;</span> <span class="bu">list</span>[<span class="bu">float</span>]:</span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Replace each value with the mean of its n_neighbors on each side.</span></span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a><span class="co">    Args:</span></span>
+<span id="cb50-5"><a href="#cb50-5" aria-hidden="true" tabindex="-1"></a><span class="co">        x:            Input list of numeric values.</span></span>
+<span id="cb50-6"><a href="#cb50-6" aria-hidden="true" tabindex="-1"></a><span class="co">        n_neighbors:  Window half-width.</span></span>
+<span id="cb50-7"><a href="#cb50-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-8"><a href="#cb50-8" aria-hidden="true" tabindex="-1"></a><span class="co">    Returns:</span></span>
+<span id="cb50-9"><a href="#cb50-9" aria-hidden="true" tabindex="-1"></a><span class="co">        Smoothed list of the same length as x.</span></span>
+<span id="cb50-10"><a href="#cb50-10" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb50-11"><a href="#cb50-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> ...  <span class="co"># </span><span class="al">TODO</span><span class="co">: implement</span></span>
+<span id="cb50-12"><a href="#cb50-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-13"><a href="#cb50-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-14"><a href="#cb50-14" aria-hidden="true" tabindex="-1"></a>readings: <span class="bu">list</span>[<span class="bu">float</span>] <span class="op">=</span> [<span class="fl">36.5</span>, <span class="fl">36.7</span>, <span class="fl">36.8</span>, <span class="fl">36.6</span>, <span class="fl">36.9</span>, <span class="fl">39.5</span>, <span class="fl">36.7</span>, <span class="fl">36.8</span>]</span>
+<span id="cb50-15"><a href="#cb50-15" aria-hidden="true" tabindex="-1"></a>smoothed <span class="op">=</span> moving_window_average(readings, n_neighbors<span class="op">=</span><span class="dv">2</span>)</span>
+<span id="cb50-16"><a href="#cb50-16" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> smoothed <span class="kw">is</span> <span class="kw">not</span> ...:</span>
+<span id="cb50-17"><a href="#cb50-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> raw, sm <span class="kw">in</span> <span class="bu">zip</span>(readings, smoothed, strict<span class="op">=</span><span class="va">False</span>):</span>
+<span id="cb50-18"><a href="#cb50-18" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span>raw<span class="sc">:.1f}</span><span class="ss">  -&gt;  </span><span class="sc">{</span>sm<span class="sc">:.2f}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="further-reading" class="level2">
