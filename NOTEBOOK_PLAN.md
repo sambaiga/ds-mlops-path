@@ -18,11 +18,11 @@ Each notebook must be implemented aligning with the skills and feedback in memor
 
 ---
 
-## Part 0: The ML and data science landscape (`tutorials/00-landscape.qmd`) -- NEW
+## Introduction: The ML and data science landscape (`tutorials/00-landscape.qmd`) -- NEW
 
-*A QMD file (no code cells) that sits at the top of the book before Chapter 1. Rewritten from the current Part 22 for complete beginners: no Python knowledge assumed.*
+*A QMD file (no code cells) that sits at the top of the book before Chapter 1. Rewritten from the current Chapter 22 for complete beginners: no Python knowledge assumed.*
 
-**Purpose:** Answer the question every learner brings on page one: "Why am I spending eight chapters on Python before touching ML?" Part 0 gives them the destination before they take the first step, then hands them back to Chapter 1 with a reason to continue.
+**Purpose:** Answer the question every learner brings on page one: "Why am I spending eight chapters on Python before touching ML?" The Introduction gives them the destination before they take the first step, then hands them back to Chapter 1 with a reason to continue.
 
 **File location:** `tutorials/00-landscape.qmd` (root of tutorials, no subfolder).
 
@@ -32,21 +32,47 @@ Each notebook must be implemented aligning with the skills and feedback in memor
 
 **Section 1: The problem that motivates this book**
 
-Keep the energy theft hook from the current Part 22. It is the strongest motivating example in the book. Rewrite the framing for a complete beginner: no references to "Parts 1-3 gave you Python," no code examples. End the section with the core insight: traditional programming gives the computer rules; machine learning gives it examples and lets it find the rules itself.
+Keep the energy theft hook from the current Chapter 22. It is the strongest motivating example in the book. Rewrite the framing for a complete beginner: no references to "chapters gave you Python," no code examples. End the section with the core insight: traditional programming gives the computer rules; machine learning gives it examples and lets it find the rules itself.
 
 **Section 2: Precise terms for a noisy conversation**
 
-Open directly with the claim: "AI is what headlines use. It covers everything from a chess engine to a chatbot. What this book is about is more specific." Then define the three terms the book actually uses:
+First use of "AI": write the full term "Artificial Intelligence (AI)" before using the abbreviation. Then define the four terms the book actually uses, ordered from broadest to narrowest:
 
-- **Machine Learning:** a system that learns patterns from data instead of following rules written by hand
+- **Artificial Intelligence (AI):** the broad goal of making machines behave intelligently; the umbrella term headlines use
+- **Machine Learning (ML):** one approach to AI: a system that learns patterns from data instead of following rules written by hand
 - **Data Science:** the practice of extracting insight and decisions from data, using ML as one of many tools
-- **MLOps:** the engineering discipline that puts models into production and keeps them working
+- **MLOps:** the engineering discipline that takes a trained model and puts it into production, keeps it monitored, and replaces it when it drifts
 
-Adapt the existing three-tier capability diagram from Part 22. The key message: ML is the technical substance; AI is the umbrella term that business and journalism use for all of it.
+**Diagram: the relationship between AI, ML, Data Science, and MLOps.**
+
+Replace the existing three-tier capability diagram (which shows AI, Deep Learning, ML as nested circles without MLOps). Use a new SVG that shows:
+
+- Three nested ovals: AI (outermost), ML (inside AI), Deep Learning (inside ML) -- this shows the subset relationship
+- A bracket outside the ovals labelled "Data Science" with a note: "uses ML as a tool, but also statistics, domain knowledge, and communication"
+- A separate column or bracket labelled "MLOps" with a note: "the engineering practice that takes ML to production"
+- Clear labels on every shape; no abbreviations on first appearance in the diagram itself
+
+The key message: ML is the technical substance; AI is the umbrella. Data Science is a practice that uses ML. MLOps is the engineering layer that operationalises the output.
 
 **Section 3: The tool stack**
 
-One diagram: Python at the base, NumPy and Pandas above it, then sklearn and XGBoost, then MLflow and Docker at the top. One sentence per layer. The learner sees their full destination before taking the first step. No code.
+Two-column diagram: left column is what this book covers in full; right column shows where it connects to the wider ecosystem.
+
+Left column (what the book teaches, bottom to top):
+
+- Python (language foundation)
+- NumPy, Pandas (data manipulation)
+- Matplotlib, Lets-Plot, Great Tables (data communication)
+- scikit-learn, XGBoost (model building)
+- MLflow, Docker (model deployment and tracking)
+
+Right column (connects to, but not covered in depth):
+
+- System design: how ML services fit into software architecture
+- Value-driven AI/ML: how business value, ethics, and stakeholder needs shape what gets built
+- Deep Learning: PyTorch, TensorFlow (introduced but not the primary focus)
+
+One sentence per layer. The right column makes explicit that the book covers a focused path, not the entire field.
 
 **Section 4: Why you learn Python before ML**
 
@@ -54,23 +80,26 @@ The microscope analogy. A biology student who wants to study cells spends their 
 
 **Section 5: Your learning path**
 
-A clean roadmap table (own simplified version, not a copy of the index.qmd Acts cards):
+A clean roadmap table using "Chapter" consistently, not "Part":
 
-| Part | Chapters | What you build | What it unlocks |
-|------|----------|----------------|-----------------|
-| Python foundations | 1-8 | Variables, control flow, functions, classes, data tools | You can write Python and work with structured data |
-| Data tools | 9-16 | NumPy, Pandas, Matplotlib, Polars, Great Tables | You can load, clean, transform, and visualise real datasets |
-| Machine learning | 17+ | sklearn, model evaluation, MLflow, deployment | You can build, evaluate, and ship ML models |
+| Chapters | Topic | What you build | What it unlocks |
+| --- | --- | --- | --- |
+| 1-5 | Python foundations | Variables, control flow, functions, classes, standard library | You can write and reason about Python programs |
+| 6-10 | Scientific Python | NumPy, Matplotlib, Lets-Plot, data storytelling | You can process and visualise numerical data |
+| 11-16 | Data tools | Pandas, time series, Polars, Great Tables | You can load, clean, transform, and present real datasets |
+| 17+ | Machine learning | sklearn, evaluation, MLflow, deployment | You can build, evaluate, and ship ML models |
 
 End with one sentence connecting back to Chapter 1: "Chapter 1 starts with Python because everything else is built on it."
 
-### What changes from the current Part 22
+### What changes from the current Chapter 22
 
-- Remove the "Before you begin" prerequisites block (nothing precedes Part 0)
-- Remove all references to "Parts 1-3 gave you Python" and similar
-- Remove forward references to specific part numbers (numbering is changing)
-- Remove the Learning Objectives table (Part 0 is orientation, not a skill chapter)
-- Keep: energy theft hook, rules-vs-patterns framing, capability diagram
+- Remove the "Before you begin" prerequisites block (nothing precedes the Introduction)
+- Remove all references to "chapters gave you Python" and similar
+- Remove forward references to specific chapter numbers (numbering is changing)
+- Remove the Learning Objectives table (the Introduction is orientation, not a skill chapter)
+- Keep: energy theft hook, rules-vs-patterns framing
+- Replace: the AI/ML/Deep Learning nested diagram -- add MLOps, Data Science, and the two-column tool stack
+- Fix: "AI" always written as "Artificial Intelligence (AI)" on first use, then abbreviated
 
 ---
 
