@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Part 25a: Scikit-learn Core – Foundations – From Data to Impact</title>
+<title>Part 25: Scikit-learn Core API – From Data to Impact</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -68,7 +68,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../../">
-<link href="../../tutorials/04-ml-intro/04b-sklearn-core.html" rel="next">
+<link href="../../tutorials/04-ml-intro/05-sklearn-pipeline.html" rel="next">
 <link href="../../tutorials/04-ml-intro/03-ml-workflow.html" rel="prev">
 <script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
@@ -160,7 +160,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
         <a class="flex-grow-1 no-decor" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
-          <h1 class="quarto-secondary-nav-title"><span class="chapter-title">Part 25a: Scikit-learn Core – Foundations</span></h1>
+          <h1 class="quarto-secondary-nav-title"><span class="chapter-title">Part 25: Scikit-learn Core API</span></h1>
         </a>     
     </div>
   </nav>
@@ -380,22 +380,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../tutorials/04-ml-intro/04a-sklearn-core.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">Part 25a: Scikit-learn Core – Foundations</span></a>
+  <a href="../../tutorials/04-ml-intro/04-sklearn-core.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">Part 25: Scikit-learn Core API</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../tutorials/04-ml-intro/04b-sklearn-core.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 25b: Scikit-learn Core – Validation and Modern Features</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../tutorials/04-ml-intro/05a-sklearn-pipeline.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 26a: sklearn Pipeline – Foundations</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../tutorials/04-ml-intro/05b-sklearn-pipeline.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 26b: sklearn Pipeline – Hyperparameter Search and Evaluation</span></a>
+  <a href="../../tutorials/04-ml-intro/05-sklearn-pipeline.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Part 26: Sklearn Pipeline and Hyperparameter Search</span></a>
   </div>
 </li>
       </ul>
@@ -481,15 +471,39 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#fit-logisticregression-for-cancellation" id="toc-fit-logisticregression-for-cancellation" class="nav-link" data-scroll-target="#fit-logisticregression-for-cancellation">6.7 Fit LogisticRegression for cancellation</a></li>
   <li><a href="#evaluate-the-classifier-with-classification_report" id="toc-evaluate-the-classifier-with-classification_report" class="nav-link" data-scroll-target="#evaluate-the-classifier-with-classification_report">6.8 Evaluate the classifier with classification_report</a></li>
   </ul></li>
+  <li><a href="#cross-validation" id="toc-cross-validation" class="nav-link" data-scroll-target="#cross-validation">7. Cross-Validation</a>
+  <ul class="collapse">
+  <li><a href="#define-the-regression-pipeline-for-cv" id="toc-define-the-regression-pipeline-for-cv" class="nav-link" data-scroll-target="#define-the-regression-pipeline-for-cv">7.1 Define the regression pipeline for CV</a></li>
+  <li><a href="#run-kfold-cross-validation-for-regression" id="toc-run-kfold-cross-validation-for-regression" class="nav-link" data-scroll-target="#run-kfold-cross-validation-for-regression">7.2 Run KFold cross-validation for regression</a></li>
+  <li><a href="#define-the-classification-pipeline-for-cv" id="toc-define-the-classification-pipeline-for-cv" class="nav-link" data-scroll-target="#define-the-classification-pipeline-for-cv">7.3 Define the classification pipeline for CV</a></li>
+  <li><a href="#run-stratifiedkfold-cross-validation-for-classification" id="toc-run-stratifiedkfold-cross-validation-for-classification" class="nav-link" data-scroll-target="#run-stratifiedkfold-cross-validation-for-classification">7.4 Run StratifiedKFold cross-validation for classification</a></li>
+  </ul></li>
+  <li><a href="#learning-curves" id="toc-learning-curves" class="nav-link" data-scroll-target="#learning-curves">8. Learning Curves</a>
+  <ul class="collapse">
+  <li><a href="#compute-the-learning-curve" id="toc-compute-the-learning-curve" class="nav-link" data-scroll-target="#compute-the-learning-curve">8.1 Compute the learning curve</a></li>
+  <li><a href="#plot-the-learning-curve" id="toc-plot-the-learning-curve" class="nav-link" data-scroll-target="#plot-the-learning-curve">8.2 Plot the learning curve</a></li>
+  </ul></li>
+  <li><a href="#saving-and-loading-a-model" id="toc-saving-and-loading-a-model" class="nav-link" data-scroll-target="#saving-and-loading-a-model">9. Saving and Loading a Model</a>
+  <ul class="collapse">
+  <li><a href="#save-the-training-bundle" id="toc-save-the-training-bundle" class="nav-link" data-scroll-target="#save-the-training-bundle">9.1 Save the training bundle</a></li>
+  <li><a href="#reload-and-predict-on-one-booking" id="toc-reload-and-predict-on-one-booking" class="nav-link" data-scroll-target="#reload-and-predict-on-one-booking">9.2 Reload and predict on one booking</a></li>
+  </ul></li>
+  <li><a href="#capstone-end-to-end-training-function" id="toc-capstone-end-to-end-training-function" class="nav-link" data-scroll-target="#capstone-end-to-end-training-function">Capstone: End-to-End Training Function</a>
+  <ul class="collapse">
+  <li><a href="#define-the-capstone-function" id="toc-define-the-capstone-function" class="nav-link" data-scroll-target="#define-the-capstone-function">Define the capstone function</a></li>
+  <li><a href="#run-the-capstone-for-regression-adr" id="toc-run-the-capstone-for-regression-adr" class="nav-link" data-scroll-target="#run-the-capstone-for-regression-adr">Run the capstone for regression (ADR)</a></li>
+  <li><a href="#run-the-capstone-for-classification-cancellation" id="toc-run-the-capstone-for-classification-cancellation" class="nav-link" data-scroll-target="#run-the-capstone-for-classification-cancellation">Run the capstone for classification (cancellation)</a></li>
+  </ul></li>
+  <li><a href="#further-reading" id="toc-further-reading" class="nav-link" data-scroll-target="#further-reading">Further Reading</a></li>
   </ul>
-<div class="toc-actions"><ul><li><a href="https://github.dev/sambaiga/ds-mlops-path/blob/main/tutorials/04-ml-intro/04a-sklearn-core.ipynb" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/sambaiga/ds-mlops-path/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li><li><a href="https://github.com/sambaiga/ds-mlops-path/blob/main/tutorials/04-ml-intro/04a-sklearn-core.ipynb" class="toc-action"><i class="bi empty"></i>View source</a></li></ul></div></nav>
+<div class="toc-actions"><ul><li><a href="https://github.dev/sambaiga/ds-mlops-path/blob/main/tutorials/04-ml-intro/04-sklearn-core.ipynb" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/sambaiga/ds-mlops-path/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li><li><a href="https://github.com/sambaiga/ds-mlops-path/blob/main/tutorials/04-ml-intro/04-sklearn-core.ipynb" class="toc-action"><i class="bi empty"></i>View source</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title d-none d-lg-block"><span class="chapter-title">Part 25a: Scikit-learn Core – Foundations</span></h1>
+<h1 class="title d-none d-lg-block"><span class="chapter-title">Part 25: Scikit-learn Core API</span></h1>
 </div>
 
 
@@ -506,13 +520,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<p><strong>Dataset:</strong> Hotel Booking Demand (117,429 reservations, 32 features)</p>
-<p><strong>Covers sections 1-6:</strong> sklearn API contract, data prep, feature scaling, baselines, and linear models.</p>
-<p>Part 24 gave you the workflow: problem framing, data splits, baselines, evaluation. Now you need the tool that actually implements it. This chapter maps the full workflow onto sklearn’s API – <code>fit</code>, <code>transform</code>, <code>predict</code> – so you can apply the same discipline to any algorithm in the library. Part 25b then adds the machinery for reliable estimates: cross-validation, learning curves, and model persistence.</p>
+<p><strong>Dataset:</strong> Hotel Booking Demand (Antonio et al., 2019) – 117,429 real bookings from two Portuguese hotels.</p>
+<p><strong>What you will learn:</strong> - The two core sklearn abstractions: Transformer and Predictor - Feature scaling with StandardScaler and MinMaxScaler - Train/test splitting without data leakage - Fitting LinearRegression and LogisticRegression - Evaluating models with cross-validation and learning curves - Saving a trained model with joblib</p>
+<p><strong>Prerequisites:</strong> Parts 22-24 (ML Landscape, ML Taxonomy, ML Workflow).</p>
 <section id="setup" class="level2">
 <h2 class="anchored" data-anchor-id="setup">1. Setup</h2>
 <p>All imports at the top – PEP 8 import ordering enforced by <code>ruff --select I</code>. <code>from __future__ import annotations</code> enables the modern union syntax <code>X | Y</code> on Python 3.9.</p>
-<div id="3" class="cell" data-execution_count="1">
+<div id="2" class="cell" data-execution_count="1">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> __future__ <span class="im">import</span> annotations</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># stdlib</span></span>
@@ -582,7 +596,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-67"><a href="#cb1-67" aria-hidden="true" tabindex="-1"></a>LetsPlot.setup_html()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 
-            <div id="gSBqn2"></div>
+            <div id="DFhKgl"></div>
             <script type="text/javascript" data-lets-plot-script="library">
                 if(!window.letsPlotCallQueue) {
                     window.letsPlotCallQueue = [];
@@ -606,9 +620,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
                         var div = document.createElement("div");
                         div.style.color = 'darkred';
                         div.textContent = 'Error loading Lets-Plot JS';
-                        document.getElementById("gSBqn2").appendChild(div);
+                        document.getElementById("DFhKgl").appendChild(div);
                     };
-                    var e = document.getElementById("gSBqn2");
+                    var e = document.getElementById("DFhKgl");
                     e.appendChild(script);
                 })()
             </script>
@@ -618,7 +632,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="project-constants" class="level3">
 <h3 class="anchored" data-anchor-id="project-constants">1.1 Project constants</h3>
 <p>Paths and URLs as SCREAMING_SNAKE_CASE module-level constants – easy to find and change without searching function bodies. Covered in Part 12 (Dev Tools: code style).</p>
-<div id="5" class="cell" data-execution_count="2">
+<div id="4" class="cell" data-execution_count="2">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>DATA_URL: <span class="bu">str</span> <span class="op">=</span> <span class="st">"https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-02-11/hotels.csv"</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>DATA_PATH: Path <span class="op">=</span> Path(<span class="st">"data/hotel_bookings.csv"</span>)</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>MODEL_DIR: Path <span class="op">=</span> Path(<span class="st">"models"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -627,7 +641,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="define-the-data-loading-function" class="level3">
 <h3 class="anchored" data-anchor-id="define-the-data-loading-function">1.2 Define the data loading function</h3>
 <p>A typed function wraps the download-and-cache logic. The function is idempotent: it downloads once; subsequent calls load from disk.</p>
-<div id="7" class="cell" data-execution_count="3">
+<div id="6" class="cell" data-execution_count="3">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> load_hotel_data(</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    path: Path <span class="op">=</span> DATA_PATH,</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    url: <span class="bu">str</span> <span class="op">=</span> DATA_URL,</span>
@@ -649,13 +663,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="load-the-data" class="level3">
 <h3 class="anchored" data-anchor-id="load-the-data">1.3 Load the data</h3>
 <p>Execute the loader. <code>df</code> now holds 117 k cleaned hotel booking records.</p>
-<div id="9" class="cell" data-execution_count="4">
+<div id="8" class="cell" data-execution_count="4">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>df: pd.DataFrame <span class="op">=</span> load_hotel_data()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="inspect-shape-and-class-balance" class="level3">
 <h3 class="anchored" data-anchor-id="inspect-shape-and-class-balance">1.4 Inspect shape and class balance</h3>
-<div id="11" class="cell" data-execution_count="5">
+<div id="10" class="cell" data-execution_count="5">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>logger.info(<span class="ss">f"Shape: </span><span class="sc">{</span>df<span class="sc">.</span>shape[<span class="dv">0</span>]<span class="sc">:,}</span><span class="ss"> rows x </span><span class="sc">{</span>df<span class="sc">.</span>shape[<span class="dv">1</span>]<span class="sc">}</span><span class="ss"> columns"</span>)</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>logger.info(<span class="ss">f"Hotels in dataset: </span><span class="sc">{</span>df[<span class="st">'hotel'</span>]<span class="sc">.</span>value_counts()<span class="sc">.</span>to_dict()<span class="sc">}</span><span class="ss">"</span>)</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>logger.info(<span class="ss">f"Overall cancellation rate: </span><span class="sc">{</span>df[<span class="st">'is_canceled'</span>]<span class="sc">.</span>mean()<span class="sc">:.1%}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -664,7 +678,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="summary-statistics" class="level3">
 <h3 class="anchored" data-anchor-id="summary-statistics">1.5 Summary statistics</h3>
 <p>A branded GT table gives a cleaner overview than <code>df.describe()</code>.</p>
-<div id="13" class="cell" data-execution_count="6">
+<div id="12" class="cell" data-execution_count="6">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>stats: pd.DataFrame <span class="op">=</span> df.describe().<span class="bu">round</span>(<span class="dv">2</span>).T.reset_index().rename(columns<span class="op">=</span>{<span class="st">"index"</span>: <span class="st">"feature"</span>})</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>(</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    themed_gt(GT(stats), n_rows<span class="op">=</span><span class="bu">len</span>(stats))</span>
@@ -675,55 +689,55 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    .tab_source_note(<span class="st">"Antonio et al., 2019 | Data in Brief"</span>)</span>
 <span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="6">
-<div id="pupaezxryb" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:100%;height:auto;">
+<div id="lshkxuofbd" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:100%;height:auto;">
 <style>
-#pupaezxryb table {
+#lshkxuofbd table {
           font-family: 'Libre Franklin', 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
           -webkit-font-smoothing: antialiased;
           -moz-osx-font-smoothing: grayscale;
         }
 
-#pupaezxryb thead, tbody, tfoot, tr, td, th { border-style: none; }
+#lshkxuofbd thead, tbody, tfoot, tr, td, th { border-style: none; }
  tr { background-color: transparent; }
-#pupaezxryb p { margin: 0; padding: 0; }
- #pupaezxryb .gt_table { display: table; border-collapse: collapse; line-height: normal; margin-left: auto; margin-right: auto; color: #171717; font-size: 13px; font-weight: normal; font-style: normal; background-color: #FFFFFF; width: 100%; border-top-style: solid; border-top-width: 2px; border-top-color: #1E293B; border-right-style: none; border-right-width: 2px; border-right-color: #D3D3D3; border-bottom-style: solid; border-bottom-width: 1px; border-bottom-color: #1E293B; border-left-style: none; border-left-width: 2px; border-left-color: #D3D3D3; }
- #pupaezxryb .gt_caption { padding-top: 4px; padding-bottom: 4px; }
- #pupaezxryb .gt_title { color: #171717; font-size: 16px; font-weight: bold; padding-top: 10px; padding-bottom: 10px; padding-left: 5px; padding-right: 5px; border-bottom-color: #FFFFFF; border-bottom-width: 0; }
- #pupaezxryb .gt_subtitle { color: #171717; font-size: 13px; font-weight: initial; padding-top: 9px; padding-bottom: 11px; padding-left: 5px; padding-right: 5px; border-top-color: #FFFFFF; border-top-width: 0; }
- #pupaezxryb .gt_heading { background-color: #FFFFFF; text-align: center; border-bottom-color: #FFFFFF; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; }
- #pupaezxryb .gt_bottom_border { border-bottom-style: solid; border-bottom-width: 2px; border-bottom-color: #D3D3D3; }
- #pupaezxryb .gt_col_headings { border-top-style: solid; border-top-width: 2px; border-top-color: #D3D3D3; border-bottom-style: solid; border-bottom-width: 1px; border-bottom-color: #D3D3D3; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; }
- #pupaezxryb .gt_col_heading { color: #FFFFFF; background-color: #1E293B; font-size: 13px; font-weight: bold; text-transform: inherit; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; vertical-align: bottom; padding-top: 9px; padding-bottom: 11px; padding-left: 5px; padding-right: 5px; overflow-x: hidden; }
- #pupaezxryb .gt_column_spanner_outer { color: #FFFFFF; background-color: #1E293B; font-size: 13px; font-weight: bold; text-transform: inherit; padding-top: 0; padding-bottom: 0; padding-left: 4px; padding-right: 4px; }
- #pupaezxryb .gt_column_spanner_outer:first-child { padding-left: 0; }
- #pupaezxryb .gt_column_spanner_outer:last-child { padding-right: 0; }
- #pupaezxryb .gt_column_spanner { border-bottom-style: solid; border-bottom-width: 1px; border-bottom-color: #D3D3D3; vertical-align: bottom; padding-top: 9px; padding-bottom: 9px; overflow-x: hidden; display: inline-block; width: 100%; }
- #pupaezxryb .gt_spanner_row { border-bottom-style: hidden; }
- #pupaezxryb .gt_group_heading { padding-top: 8px; padding-bottom: 8px; padding-left: 5px; padding-right: 5px; color: #171717; background-color: #FFFFFF; font-size: 100%; font-weight: initial; text-transform: inherit; border-top-style: solid; border-top-width: 2px; border-top-color: #D3D3D3; border-bottom-style: solid; border-bottom-width: 2px; border-bottom-color: #D3D3D3; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; vertical-align: middle; text-align: left; }
- #pupaezxryb .gt_empty_group_heading { padding: 0.5px; color: #171717; background-color: #FFFFFF; font-size: 100%; font-weight: initial; border-top-style: solid; border-top-width: 2px; border-top-color: #D3D3D3; border-bottom-style: solid; border-bottom-width: 2px; border-bottom-color: #D3D3D3; vertical-align: middle; }
- #pupaezxryb .gt_from_md> :first-child { margin-top: 0; }
- #pupaezxryb .gt_from_md> :last-child { margin-bottom: 0; }
- #pupaezxryb .gt_row { padding-top: 7px; padding-bottom: 7px; padding-left: 5px; padding-right: 5px; margin: 10px; border-top-style: solid; border-top-width: 1px; border-top-color: #D3D3D3; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; vertical-align: middle; overflow-x: hidden; }
- #pupaezxryb .gt_stub { color: #171717; background-color: #FFFFFF; font-size: 100%; font-weight: initial; text-transform: inherit; border-right-style: solid; border-right-width: 2px; border-right-color: #D3D3D3; padding-left: 5px; padding-right: 5px; }
- #pupaezxryb .gt_stub_row_group { color: #171717; background-color: #FFFFFF; font-size: 100%; font-weight: initial; text-transform: inherit; border-right-style: solid; border-right-width: 2px; border-right-color: #D3D3D3; padding-left: 5px; padding-right: 5px; vertical-align: top; }
- #pupaezxryb .gt_row_group_first td { border-top-width: 2px; }
- #pupaezxryb .gt_row_group_first th { border-top-width: 2px; }
- #pupaezxryb .gt_striped { color: #171717; background-color: #F4F4F4; }
- #pupaezxryb .gt_table_body { border-top-style: solid; border-top-width: 2px; border-top-color: #D3D3D3; border-bottom-style: solid; border-bottom-width: 1px; border-bottom-color: #DEE2E6; }
- #pupaezxryb .gt_grand_summary_row { color: #171717; background-color: #FFFFFF; text-transform: inherit; padding-top: 8px; padding-bottom: 8px; padding-left: 5px; padding-right: 5px; }
- #pupaezxryb .gt_first_grand_summary_row_bottom { border-top-style: double; border-top-width: 6px; border-top-color: #D3D3D3; }
- #pupaezxryb .gt_last_grand_summary_row_top { border-bottom-style: double; border-bottom-width: 6px; border-bottom-color: #D3D3D3; }
- #pupaezxryb .gt_sourcenotes { color: #171717; background-color: #FFFFFF; border-bottom-style: none; border-bottom-width: 2px; border-bottom-color: #D3D3D3; border-left-style: none; border-left-width: 2px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 2px; border-right-color: #D3D3D3; }
- #pupaezxryb .gt_sourcenote { font-size: 11px; padding-top: 6px; padding-bottom: 6px; padding-left: 5px; padding-right: 5px; text-align: left; }
- #pupaezxryb .gt_left { text-align: left; }
- #pupaezxryb .gt_center { text-align: center; }
- #pupaezxryb .gt_right { text-align: right; font-variant-numeric: tabular-nums; }
- #pupaezxryb .gt_font_normal { font-weight: normal; }
- #pupaezxryb .gt_font_bold { font-weight: bold; }
- #pupaezxryb .gt_font_italic { font-style: italic; }
- #pupaezxryb .gt_super { font-size: 65%; }
- #pupaezxryb .gt_footnote_marks { font-size: 75%; vertical-align: 0.4em; position: initial; }
- #pupaezxryb .gt_asterisk { font-size: 100%; vertical-align: 0; }
+#lshkxuofbd p { margin: 0; padding: 0; }
+ #lshkxuofbd .gt_table { display: table; border-collapse: collapse; line-height: normal; margin-left: auto; margin-right: auto; color: #171717; font-size: 13px; font-weight: normal; font-style: normal; background-color: #FFFFFF; width: 100%; border-top-style: solid; border-top-width: 2px; border-top-color: #1E293B; border-right-style: none; border-right-width: 2px; border-right-color: #D3D3D3; border-bottom-style: solid; border-bottom-width: 1px; border-bottom-color: #1E293B; border-left-style: none; border-left-width: 2px; border-left-color: #D3D3D3; }
+ #lshkxuofbd .gt_caption { padding-top: 4px; padding-bottom: 4px; }
+ #lshkxuofbd .gt_title { color: #171717; font-size: 16px; font-weight: bold; padding-top: 10px; padding-bottom: 10px; padding-left: 5px; padding-right: 5px; border-bottom-color: #FFFFFF; border-bottom-width: 0; }
+ #lshkxuofbd .gt_subtitle { color: #171717; font-size: 13px; font-weight: initial; padding-top: 9px; padding-bottom: 11px; padding-left: 5px; padding-right: 5px; border-top-color: #FFFFFF; border-top-width: 0; }
+ #lshkxuofbd .gt_heading { background-color: #FFFFFF; text-align: center; border-bottom-color: #FFFFFF; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; }
+ #lshkxuofbd .gt_bottom_border { border-bottom-style: solid; border-bottom-width: 2px; border-bottom-color: #D3D3D3; }
+ #lshkxuofbd .gt_col_headings { border-top-style: solid; border-top-width: 2px; border-top-color: #D3D3D3; border-bottom-style: solid; border-bottom-width: 1px; border-bottom-color: #D3D3D3; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; }
+ #lshkxuofbd .gt_col_heading { color: #FFFFFF; background-color: #1E293B; font-size: 13px; font-weight: bold; text-transform: inherit; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; vertical-align: bottom; padding-top: 9px; padding-bottom: 11px; padding-left: 5px; padding-right: 5px; overflow-x: hidden; }
+ #lshkxuofbd .gt_column_spanner_outer { color: #FFFFFF; background-color: #1E293B; font-size: 13px; font-weight: bold; text-transform: inherit; padding-top: 0; padding-bottom: 0; padding-left: 4px; padding-right: 4px; }
+ #lshkxuofbd .gt_column_spanner_outer:first-child { padding-left: 0; }
+ #lshkxuofbd .gt_column_spanner_outer:last-child { padding-right: 0; }
+ #lshkxuofbd .gt_column_spanner { border-bottom-style: solid; border-bottom-width: 1px; border-bottom-color: #D3D3D3; vertical-align: bottom; padding-top: 9px; padding-bottom: 9px; overflow-x: hidden; display: inline-block; width: 100%; }
+ #lshkxuofbd .gt_spanner_row { border-bottom-style: hidden; }
+ #lshkxuofbd .gt_group_heading { padding-top: 8px; padding-bottom: 8px; padding-left: 5px; padding-right: 5px; color: #171717; background-color: #FFFFFF; font-size: 100%; font-weight: initial; text-transform: inherit; border-top-style: solid; border-top-width: 2px; border-top-color: #D3D3D3; border-bottom-style: solid; border-bottom-width: 2px; border-bottom-color: #D3D3D3; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; vertical-align: middle; text-align: left; }
+ #lshkxuofbd .gt_empty_group_heading { padding: 0.5px; color: #171717; background-color: #FFFFFF; font-size: 100%; font-weight: initial; border-top-style: solid; border-top-width: 2px; border-top-color: #D3D3D3; border-bottom-style: solid; border-bottom-width: 2px; border-bottom-color: #D3D3D3; vertical-align: middle; }
+ #lshkxuofbd .gt_from_md> :first-child { margin-top: 0; }
+ #lshkxuofbd .gt_from_md> :last-child { margin-bottom: 0; }
+ #lshkxuofbd .gt_row { padding-top: 7px; padding-bottom: 7px; padding-left: 5px; padding-right: 5px; margin: 10px; border-top-style: solid; border-top-width: 1px; border-top-color: #D3D3D3; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; vertical-align: middle; overflow-x: hidden; }
+ #lshkxuofbd .gt_stub { color: #171717; background-color: #FFFFFF; font-size: 100%; font-weight: initial; text-transform: inherit; border-right-style: solid; border-right-width: 2px; border-right-color: #D3D3D3; padding-left: 5px; padding-right: 5px; }
+ #lshkxuofbd .gt_stub_row_group { color: #171717; background-color: #FFFFFF; font-size: 100%; font-weight: initial; text-transform: inherit; border-right-style: solid; border-right-width: 2px; border-right-color: #D3D3D3; padding-left: 5px; padding-right: 5px; vertical-align: top; }
+ #lshkxuofbd .gt_row_group_first td { border-top-width: 2px; }
+ #lshkxuofbd .gt_row_group_first th { border-top-width: 2px; }
+ #lshkxuofbd .gt_striped { color: #171717; background-color: #F4F4F4; }
+ #lshkxuofbd .gt_table_body { border-top-style: solid; border-top-width: 2px; border-top-color: #D3D3D3; border-bottom-style: solid; border-bottom-width: 1px; border-bottom-color: #DEE2E6; }
+ #lshkxuofbd .gt_grand_summary_row { color: #171717; background-color: #FFFFFF; text-transform: inherit; padding-top: 8px; padding-bottom: 8px; padding-left: 5px; padding-right: 5px; }
+ #lshkxuofbd .gt_first_grand_summary_row_bottom { border-top-style: double; border-top-width: 6px; border-top-color: #D3D3D3; }
+ #lshkxuofbd .gt_last_grand_summary_row_top { border-bottom-style: double; border-bottom-width: 6px; border-bottom-color: #D3D3D3; }
+ #lshkxuofbd .gt_sourcenotes { color: #171717; background-color: #FFFFFF; border-bottom-style: none; border-bottom-width: 2px; border-bottom-color: #D3D3D3; border-left-style: none; border-left-width: 2px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 2px; border-right-color: #D3D3D3; }
+ #lshkxuofbd .gt_sourcenote { font-size: 11px; padding-top: 6px; padding-bottom: 6px; padding-left: 5px; padding-right: 5px; text-align: left; }
+ #lshkxuofbd .gt_left { text-align: left; }
+ #lshkxuofbd .gt_center { text-align: center; }
+ #lshkxuofbd .gt_right { text-align: right; font-variant-numeric: tabular-nums; }
+ #lshkxuofbd .gt_font_normal { font-weight: normal; }
+ #lshkxuofbd .gt_font_bold { font-weight: bold; }
+ #lshkxuofbd .gt_font_italic { font-style: italic; }
+ #lshkxuofbd .gt_super { font-size: 65%; }
+ #lshkxuofbd .gt_footnote_marks { font-size: 75%; vertical-align: 0.4em; position: initial; }
+ #lshkxuofbd .gt_asterisk { font-size: 100%; vertical-align: 0; }
  
 </style>
 
@@ -992,7 +1006,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="transformer-the-fit-step" class="level3">
 <h3 class="anchored" data-anchor-id="transformer-the-fit-step">2.1 Transformer – the fit step</h3>
 <p>We use a toy array to isolate the API from the hotel data.</p>
-<div id="16" class="cell" data-execution_count="7">
+<div id="15" class="cell" data-execution_count="7">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>demo_x: np.ndarray <span class="op">=</span> np.array([[<span class="fl">1.0</span>, <span class="fl">100.0</span>], [<span class="fl">2.0</span>, <span class="fl">200.0</span>], [<span class="fl">3.0</span>, <span class="fl">300.0</span>]])</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>demo_scaler: StandardScaler <span class="op">=</span> StandardScaler()</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>demo_scaler.fit(demo_x)</span>
@@ -1003,7 +1017,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="transformer-the-transform-step" class="level3">
 <h3 class="anchored" data-anchor-id="transformer-the-transform-step">2.2 Transformer – the transform step</h3>
 <p>Apply the learned parameters to a new point. The scaler uses the same mean and scale every time – only the input changes.</p>
-<div id="18" class="cell" data-execution_count="8">
+<div id="17" class="cell" data-execution_count="8">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>new_point: np.ndarray <span class="op">=</span> np.array([[<span class="fl">4.0</span>, <span class="fl">400.0</span>]])</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>scaled_point: np.ndarray <span class="op">=</span> demo_scaler.transform(new_point)</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>logger.info(<span class="ss">f"Raw input:  </span><span class="sc">{</span>new_point<span class="sc">}</span><span class="ss">"</span>)</span>
@@ -1013,7 +1027,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="predictor-fit-with-labels-then-predict" class="level3">
 <h3 class="anchored" data-anchor-id="predictor-fit-with-labels-then-predict">2.3 Predictor – fit with labels, then predict</h3>
 <p>A Predictor learns weights from labeled data <code>(X, y)</code> and maps new <code>X</code> values to predicted <code>y</code> values.</p>
-<div id="20" class="cell" data-execution_count="9">
+<div id="19" class="cell" data-execution_count="9">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>demo_y: np.ndarray <span class="op">=</span> np.array([<span class="fl">1.0</span>, <span class="fl">2.0</span>, <span class="fl">3.0</span>])</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>demo_lr: LinearRegression <span class="op">=</span> LinearRegression()</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>demo_lr.fit(demo_x, demo_y)</span>
@@ -1061,7 +1075,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </table>
 <section id="define-prediction-targets" class="level3">
 <h3 class="anchored" data-anchor-id="define-prediction-targets">3.1 Define prediction targets</h3>
-<div id="24" class="cell" data-execution_count="10">
+<div id="23" class="cell" data-execution_count="10">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>TARGET_REG: <span class="bu">str</span> <span class="op">=</span> <span class="st">"adr"</span>  <span class="co"># Average Daily Rate in euros (continuous)</span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>TARGET_CLF: <span class="bu">str</span> <span class="op">=</span> <span class="st">"is_canceled"</span>  <span class="co"># 0 = kept, 1 = cancelled (binary)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
@@ -1069,7 +1083,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="select-numerical-features" class="level3">
 <h3 class="anchored" data-anchor-id="select-numerical-features">3.2 Select numerical features</h3>
 <p>We start with six interpretable columns. Part 26 extends this to a full mixed feature set.</p>
-<div id="26" class="cell" data-execution_count="11">
+<div id="25" class="cell" data-execution_count="11">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>FEATURES: <span class="bu">list</span>[<span class="bu">str</span>] <span class="op">=</span> [</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"lead_time"</span>,  <span class="co"># days booked in advance</span></span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"stays_in_weekend_nights"</span>,  <span class="co"># weekend nights stayed</span></span>
@@ -1083,7 +1097,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="build-feature-matrix-x-and-target-vectors" class="level3">
 <h3 class="anchored" data-anchor-id="build-feature-matrix-x-and-target-vectors">3.3 Build feature matrix X and target vectors</h3>
 <p><code>to_numpy()</code> produces a plain NumPy array. We specify <code>dtype=float</code> to catch implicit integer promotion early.</p>
-<div id="28" class="cell" data-execution_count="12">
+<div id="27" class="cell" data-execution_count="12">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>X: np.ndarray <span class="op">=</span> df[FEATURES].to_numpy(dtype<span class="op">=</span><span class="bu">float</span>)</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>y_reg: np.ndarray <span class="op">=</span> df[TARGET_REG].to_numpy(dtype<span class="op">=</span><span class="bu">float</span>)</span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>y_clf: np.ndarray <span class="op">=</span> df[TARGET_CLF].to_numpy(dtype<span class="op">=</span><span class="bu">int</span>)</span>
@@ -1093,7 +1107,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="explore-the-regression-target-adr-distribution" class="level3">
 <h3 class="anchored" data-anchor-id="explore-the-regression-target-adr-distribution">3.4 Explore the regression target: ADR distribution</h3>
 <p><strong>From Part 23 (Section 3.1):</strong> check the distribution of the target before modelling. Skewed targets may benefit from a log transform.</p>
-<div id="30" class="cell" data-execution_count="13">
+<div id="29" class="cell" data-execution_count="13">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>adr_df: pd.DataFrame <span class="op">=</span> df[[<span class="st">"adr"</span>]].copy()</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>(</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    ggplot(adr_df, aes(x<span class="op">=</span><span class="st">"adr"</span>))</span>
@@ -1107,7 +1121,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> modern_theme(grid<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="13">
-   <div id="lGsFlM"></div>
+   <div id="T1ezAD"></div>
    <script type="text/javascript" data-lets-plot-script="plot">
    
    (function() {
@@ -1132,7 +1146,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
        };
    }
    
-   const containerDiv = document.getElementById("lGsFlM");
+   const containerDiv = document.getElementById("T1ezAD");
    let fig = null;
    
    function renderPlot() {
@@ -1341,7 +1355,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="explore-the-classification-target-cancellation-by-hotel-type" class="level3">
 <h3 class="anchored" data-anchor-id="explore-the-classification-target-cancellation-by-hotel-type">3.5 Explore the classification target: cancellation by hotel type</h3>
 <p><strong>From Part 23 (Section 4):</strong> class imbalance affects which metrics are meaningful. The chart reveals whether both hotels share the same base rate.</p>
-<div id="32" class="cell" data-execution_count="14">
+<div id="31" class="cell" data-execution_count="14">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>cancel_df: pd.DataFrame <span class="op">=</span> (</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    df.groupby(<span class="st">"hotel"</span>, as_index<span class="op">=</span><span class="va">False</span>)[<span class="st">"is_canceled"</span>]</span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    .agg(total<span class="op">=</span><span class="st">"count"</span>, canceled<span class="op">=</span><span class="st">"sum"</span>)</span>
@@ -1360,7 +1374,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> modern_theme(legend_pos<span class="op">=</span><span class="st">"none"</span>)</span>
 <span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="14">
-   <div id="EyXtPN"></div>
+   <div id="85OAYG"></div>
    <script type="text/javascript" data-lets-plot-script="plot">
    
    (function() {
@@ -1385,7 +1399,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
        };
    }
    
-   const containerDiv = document.getElementById("EyXtPN");
+   const containerDiv = document.getElementById("85OAYG");
    let fig = null;
    
    function renderPlot() {
@@ -1627,7 +1641,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="feature-ranges-before-scaling" class="level3">
 <h3 class="anchored" data-anchor-id="feature-ranges-before-scaling">4.1 Feature ranges before scaling</h3>
 <p>Look at the raw min/max for each feature to see the scale mismatch.</p>
-<div id="36" class="cell" data-execution_count="15">
+<div id="35" class="cell" data-execution_count="15">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i, feat <span class="kw">in</span> <span class="bu">enumerate</span>(FEATURES):</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>    logger.info(<span class="ss">f"  </span><span class="sc">{</span>feat<span class="sc">:&lt;30}</span><span class="ss"> min=</span><span class="sc">{</span>X[:, i]<span class="sc">.</span><span class="bu">min</span>()<span class="sc">:&gt;7.1f}</span><span class="ss">  max=</span><span class="sc">{</span>X[:, i]<span class="sc">.</span><span class="bu">max</span>()<span class="sc">:&gt;7.1f}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
@@ -1635,7 +1649,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="split-the-data-before-fitting-any-scaler" class="level3">
 <h3 class="anchored" data-anchor-id="split-the-data-before-fitting-any-scaler">4.2 Split the data before fitting any scaler</h3>
 <p><strong>Splitting before scaling</strong> is the most important ordering constraint in the workflow.</p>
-<div id="38" class="cell" data-execution_count="16">
+<div id="37" class="cell" data-execution_count="16">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>X_tr, X_te, y_tr, y_te <span class="op">=</span> train_test_split(X, y_reg, test_size<span class="op">=</span><span class="fl">0.2</span>, random_state<span class="op">=</span><span class="dv">42</span>)</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>logger.info(<span class="ss">f"Train: </span><span class="sc">{</span>X_tr<span class="sc">.</span>shape<span class="sc">}</span><span class="ss">  Test: </span><span class="sc">{</span>X_te<span class="sc">.</span>shape<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
@@ -1643,7 +1657,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="fit-standardscaler-on-training-data-only" class="level3">
 <h3 class="anchored" data-anchor-id="fit-standardscaler-on-training-data-only">4.3 Fit StandardScaler on training data only</h3>
 <p><code>fit</code> learns mean and std from <code>X_tr</code>. These values describe the training distribution – the test set should not influence them.</p>
-<div id="40" class="cell" data-execution_count="17">
+<div id="39" class="cell" data-execution_count="17">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>scaler: StandardScaler <span class="op">=</span> StandardScaler()</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>scaler.fit(X_tr)</span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>logger.info(<span class="ss">f"Learned means:  </span><span class="sc">{</span>scaler<span class="sc">.</span>mean_<span class="sc">.</span><span class="bu">round</span>(<span class="dv">2</span>)<span class="sc">}</span><span class="ss">"</span>)</span>
@@ -1653,7 +1667,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="apply-the-fitted-scaler-to-train-and-test" class="level3">
 <h3 class="anchored" data-anchor-id="apply-the-fitted-scaler-to-train-and-test">4.4 Apply the fitted scaler to train and test</h3>
 <p>Same scaler object, same parameters, different input arrays.</p>
-<div id="42" class="cell" data-execution_count="18">
+<div id="41" class="cell" data-execution_count="18">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>X_train_s: np.ndarray <span class="op">=</span> scaler.transform(X_tr)</span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>X_test_s: np.ndarray <span class="op">=</span> scaler.transform(X_te)</span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i, feat <span class="kw">in</span> <span class="bu">enumerate</span>(FEATURES):</span>
@@ -1663,7 +1677,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="alternative-minmaxscaler" class="level3">
 <h3 class="anchored" data-anchor-id="alternative-minmaxscaler">4.5 Alternative: MinMaxScaler</h3>
 <p>MinMaxScaler maps every feature to [0, 1]. Prefer it for algorithms that need bounded inputs (neural networks, some distance-based methods).</p>
-<div id="44" class="cell" data-execution_count="19">
+<div id="43" class="cell" data-execution_count="19">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>mms: MinMaxScaler <span class="op">=</span> MinMaxScaler()</span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>mms.fit(X_tr)</span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>X_mm: np.ndarray <span class="op">=</span> mms.transform(X_tr)</span>
@@ -1715,7 +1729,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>sklearn’s <code>DummyRegressor</code> and <code>DummyClassifier</code> implement the dumbest possible strategies.</p>
 <section id="regression-baseline-always-predict-the-training-mean" class="level3">
 <h3 class="anchored" data-anchor-id="regression-baseline-always-predict-the-training-mean">5.1 Regression baseline: always predict the training mean</h3>
-<div id="49" class="cell" data-execution_count="20">
+<div id="48" class="cell" data-execution_count="20">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>dummy_reg: DummyRegressor <span class="op">=</span> DummyRegressor(strategy<span class="op">=</span><span class="st">"mean"</span>)</span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>dummy_reg.fit(X_train_s, y_tr)</span>
 <span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>dummy_pred: np.ndarray <span class="op">=</span> dummy_reg.predict(X_test_s)</span>
@@ -1728,7 +1742,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="classification-split-and-baseline" class="level3">
 <h3 class="anchored" data-anchor-id="classification-split-and-baseline">5.2 Classification split and baseline</h3>
 <p>Stratify on the binary target to preserve the class ratio in both splits.</p>
-<div id="51" class="cell" data-execution_count="21">
+<div id="50" class="cell" data-execution_count="21">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>Xc_tr, Xc_te, yc_tr, yc_te <span class="op">=</span> train_test_split(X, y_clf, test_size<span class="op">=</span><span class="fl">0.2</span>, random_state<span class="op">=</span><span class="dv">42</span>, stratify<span class="op">=</span>y_clf)</span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>sc_clf: StandardScaler <span class="op">=</span> StandardScaler()</span>
 <span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>Xc_train_s: np.ndarray <span class="op">=</span> sc_clf.fit_transform(Xc_tr)</span>
@@ -1738,7 +1752,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="classification-baseline-always-predict-the-majority-class" class="level3">
 <h3 class="anchored" data-anchor-id="classification-baseline-always-predict-the-majority-class">5.3 Classification baseline: always predict the majority class</h3>
-<div id="53" class="cell" data-execution_count="22">
+<div id="52" class="cell" data-execution_count="22">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>dummy_clf: DummyClassifier <span class="op">=</span> DummyClassifier(strategy<span class="op">=</span><span class="st">"most_frequent"</span>)</span>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>dummy_clf.fit(Xc_train_s, yc_tr)</span>
 <span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>dummy_clf_pred: np.ndarray <span class="op">=</span> dummy_clf.predict(Xc_test_s)</span>
@@ -1769,7 +1783,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="define-a-typed-evaluation-helper" class="level3">
 <h3 class="anchored" data-anchor-id="define-a-typed-evaluation-helper">6.1 Define a typed evaluation helper</h3>
 <p>One function covers all regression comparisons throughout the notebook.</p>
-<div id="57" class="cell" data-execution_count="23">
+<div id="56" class="cell" data-execution_count="23">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> evaluate_regressor(</span>
 <span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>    model: Any,</span>
 <span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>    X_eval: np.ndarray,</span>
@@ -1788,7 +1802,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="fit-linearregression" class="level3">
 <h3 class="anchored" data-anchor-id="fit-linearregression">6.2 Fit LinearRegression</h3>
-<div id="59" class="cell" data-execution_count="24">
+<div id="58" class="cell" data-execution_count="24">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>lin_reg: LinearRegression <span class="op">=</span> LinearRegression()</span>
 <span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>lin_reg.fit(X_train_s, y_tr)</span>
 <span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>logger.success(<span class="st">"LinearRegression fitted"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -1796,7 +1810,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="compare-against-the-baseline" class="level3">
 <h3 class="anchored" data-anchor-id="compare-against-the-baseline">6.3 Compare against the baseline</h3>
-<div id="61" class="cell" data-execution_count="25">
+<div id="60" class="cell" data-execution_count="25">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>reg_results: pd.DataFrame <span class="op">=</span> pd.DataFrame(</span>
 <span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>    [</span>
 <span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>        evaluate_regressor(dummy_reg, X_test_s, y_te, <span class="st">"DummyRegressor (mean)"</span>),</span>
@@ -1812,55 +1826,55 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb28-13"><a href="#cb28-13" aria-hidden="true" tabindex="-1"></a>    subtitle<span class="op">=</span><span class="st">"Test set | Hotel Booking Demand dataset"</span>,</span>
 <span id="cb28-14"><a href="#cb28-14" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="25">
-<div id="aronumjosl" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:100%;height:auto;">
+<div id="idakbmypqp" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:100%;height:auto;">
 <style>
-#aronumjosl table {
+#idakbmypqp table {
           font-family: 'Libre Franklin', 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
           -webkit-font-smoothing: antialiased;
           -moz-osx-font-smoothing: grayscale;
         }
 
-#aronumjosl thead, tbody, tfoot, tr, td, th { border-style: none; }
+#idakbmypqp thead, tbody, tfoot, tr, td, th { border-style: none; }
  tr { background-color: transparent; }
-#aronumjosl p { margin: 0; padding: 0; }
- #aronumjosl .gt_table { display: table; border-collapse: collapse; line-height: normal; margin-left: auto; margin-right: auto; color: #171717; font-size: 13px; font-weight: normal; font-style: normal; background-color: #FFFFFF; width: 100%; border-top-style: solid; border-top-width: 2px; border-top-color: #1E293B; border-right-style: none; border-right-width: 2px; border-right-color: #D3D3D3; border-bottom-style: solid; border-bottom-width: 1px; border-bottom-color: #1E293B; border-left-style: none; border-left-width: 2px; border-left-color: #D3D3D3; }
- #aronumjosl .gt_caption { padding-top: 4px; padding-bottom: 4px; }
- #aronumjosl .gt_title { color: #171717; font-size: 16px; font-weight: bold; padding-top: 10px; padding-bottom: 10px; padding-left: 5px; padding-right: 5px; border-bottom-color: #FFFFFF; border-bottom-width: 0; }
- #aronumjosl .gt_subtitle { color: #171717; font-size: 13px; font-weight: initial; padding-top: 9px; padding-bottom: 11px; padding-left: 5px; padding-right: 5px; border-top-color: #FFFFFF; border-top-width: 0; }
- #aronumjosl .gt_heading { background-color: #FFFFFF; text-align: center; border-bottom-color: #FFFFFF; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; }
- #aronumjosl .gt_bottom_border { border-bottom-style: solid; border-bottom-width: 2px; border-bottom-color: #D3D3D3; }
- #aronumjosl .gt_col_headings { border-top-style: solid; border-top-width: 2px; border-top-color: #D3D3D3; border-bottom-style: solid; border-bottom-width: 1px; border-bottom-color: #D3D3D3; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; }
- #aronumjosl .gt_col_heading { color: #FFFFFF; background-color: #1E293B; font-size: 13px; font-weight: bold; text-transform: inherit; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; vertical-align: bottom; padding-top: 9px; padding-bottom: 11px; padding-left: 5px; padding-right: 5px; overflow-x: hidden; }
- #aronumjosl .gt_column_spanner_outer { color: #FFFFFF; background-color: #1E293B; font-size: 13px; font-weight: bold; text-transform: inherit; padding-top: 0; padding-bottom: 0; padding-left: 4px; padding-right: 4px; }
- #aronumjosl .gt_column_spanner_outer:first-child { padding-left: 0; }
- #aronumjosl .gt_column_spanner_outer:last-child { padding-right: 0; }
- #aronumjosl .gt_column_spanner { border-bottom-style: solid; border-bottom-width: 1px; border-bottom-color: #D3D3D3; vertical-align: bottom; padding-top: 9px; padding-bottom: 9px; overflow-x: hidden; display: inline-block; width: 100%; }
- #aronumjosl .gt_spanner_row { border-bottom-style: hidden; }
- #aronumjosl .gt_group_heading { padding-top: 8px; padding-bottom: 8px; padding-left: 5px; padding-right: 5px; color: #171717; background-color: #FFFFFF; font-size: 100%; font-weight: initial; text-transform: inherit; border-top-style: solid; border-top-width: 2px; border-top-color: #D3D3D3; border-bottom-style: solid; border-bottom-width: 2px; border-bottom-color: #D3D3D3; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; vertical-align: middle; text-align: left; }
- #aronumjosl .gt_empty_group_heading { padding: 0.5px; color: #171717; background-color: #FFFFFF; font-size: 100%; font-weight: initial; border-top-style: solid; border-top-width: 2px; border-top-color: #D3D3D3; border-bottom-style: solid; border-bottom-width: 2px; border-bottom-color: #D3D3D3; vertical-align: middle; }
- #aronumjosl .gt_from_md> :first-child { margin-top: 0; }
- #aronumjosl .gt_from_md> :last-child { margin-bottom: 0; }
- #aronumjosl .gt_row { padding-top: 7px; padding-bottom: 7px; padding-left: 5px; padding-right: 5px; margin: 10px; border-top-style: solid; border-top-width: 1px; border-top-color: #D3D3D3; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; vertical-align: middle; overflow-x: hidden; }
- #aronumjosl .gt_stub { color: #171717; background-color: #FFFFFF; font-size: 100%; font-weight: initial; text-transform: inherit; border-right-style: solid; border-right-width: 2px; border-right-color: #D3D3D3; padding-left: 5px; padding-right: 5px; }
- #aronumjosl .gt_stub_row_group { color: #171717; background-color: #FFFFFF; font-size: 100%; font-weight: initial; text-transform: inherit; border-right-style: solid; border-right-width: 2px; border-right-color: #D3D3D3; padding-left: 5px; padding-right: 5px; vertical-align: top; }
- #aronumjosl .gt_row_group_first td { border-top-width: 2px; }
- #aronumjosl .gt_row_group_first th { border-top-width: 2px; }
- #aronumjosl .gt_striped { color: #171717; background-color: #F4F4F4; }
- #aronumjosl .gt_table_body { border-top-style: solid; border-top-width: 2px; border-top-color: #D3D3D3; border-bottom-style: solid; border-bottom-width: 1px; border-bottom-color: #DEE2E6; }
- #aronumjosl .gt_grand_summary_row { color: #171717; background-color: #FFFFFF; text-transform: inherit; padding-top: 8px; padding-bottom: 8px; padding-left: 5px; padding-right: 5px; }
- #aronumjosl .gt_first_grand_summary_row_bottom { border-top-style: double; border-top-width: 6px; border-top-color: #D3D3D3; }
- #aronumjosl .gt_last_grand_summary_row_top { border-bottom-style: double; border-bottom-width: 6px; border-bottom-color: #D3D3D3; }
- #aronumjosl .gt_sourcenotes { color: #171717; background-color: #FFFFFF; border-bottom-style: none; border-bottom-width: 2px; border-bottom-color: #D3D3D3; border-left-style: none; border-left-width: 2px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 2px; border-right-color: #D3D3D3; }
- #aronumjosl .gt_sourcenote { font-size: 11px; padding-top: 6px; padding-bottom: 6px; padding-left: 5px; padding-right: 5px; text-align: left; }
- #aronumjosl .gt_left { text-align: left; }
- #aronumjosl .gt_center { text-align: center; }
- #aronumjosl .gt_right { text-align: right; font-variant-numeric: tabular-nums; }
- #aronumjosl .gt_font_normal { font-weight: normal; }
- #aronumjosl .gt_font_bold { font-weight: bold; }
- #aronumjosl .gt_font_italic { font-style: italic; }
- #aronumjosl .gt_super { font-size: 65%; }
- #aronumjosl .gt_footnote_marks { font-size: 75%; vertical-align: 0.4em; position: initial; }
- #aronumjosl .gt_asterisk { font-size: 100%; vertical-align: 0; }
+#idakbmypqp p { margin: 0; padding: 0; }
+ #idakbmypqp .gt_table { display: table; border-collapse: collapse; line-height: normal; margin-left: auto; margin-right: auto; color: #171717; font-size: 13px; font-weight: normal; font-style: normal; background-color: #FFFFFF; width: 100%; border-top-style: solid; border-top-width: 2px; border-top-color: #1E293B; border-right-style: none; border-right-width: 2px; border-right-color: #D3D3D3; border-bottom-style: solid; border-bottom-width: 1px; border-bottom-color: #1E293B; border-left-style: none; border-left-width: 2px; border-left-color: #D3D3D3; }
+ #idakbmypqp .gt_caption { padding-top: 4px; padding-bottom: 4px; }
+ #idakbmypqp .gt_title { color: #171717; font-size: 16px; font-weight: bold; padding-top: 10px; padding-bottom: 10px; padding-left: 5px; padding-right: 5px; border-bottom-color: #FFFFFF; border-bottom-width: 0; }
+ #idakbmypqp .gt_subtitle { color: #171717; font-size: 13px; font-weight: initial; padding-top: 9px; padding-bottom: 11px; padding-left: 5px; padding-right: 5px; border-top-color: #FFFFFF; border-top-width: 0; }
+ #idakbmypqp .gt_heading { background-color: #FFFFFF; text-align: center; border-bottom-color: #FFFFFF; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; }
+ #idakbmypqp .gt_bottom_border { border-bottom-style: solid; border-bottom-width: 2px; border-bottom-color: #D3D3D3; }
+ #idakbmypqp .gt_col_headings { border-top-style: solid; border-top-width: 2px; border-top-color: #D3D3D3; border-bottom-style: solid; border-bottom-width: 1px; border-bottom-color: #D3D3D3; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; }
+ #idakbmypqp .gt_col_heading { color: #FFFFFF; background-color: #1E293B; font-size: 13px; font-weight: bold; text-transform: inherit; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; vertical-align: bottom; padding-top: 9px; padding-bottom: 11px; padding-left: 5px; padding-right: 5px; overflow-x: hidden; }
+ #idakbmypqp .gt_column_spanner_outer { color: #FFFFFF; background-color: #1E293B; font-size: 13px; font-weight: bold; text-transform: inherit; padding-top: 0; padding-bottom: 0; padding-left: 4px; padding-right: 4px; }
+ #idakbmypqp .gt_column_spanner_outer:first-child { padding-left: 0; }
+ #idakbmypqp .gt_column_spanner_outer:last-child { padding-right: 0; }
+ #idakbmypqp .gt_column_spanner { border-bottom-style: solid; border-bottom-width: 1px; border-bottom-color: #D3D3D3; vertical-align: bottom; padding-top: 9px; padding-bottom: 9px; overflow-x: hidden; display: inline-block; width: 100%; }
+ #idakbmypqp .gt_spanner_row { border-bottom-style: hidden; }
+ #idakbmypqp .gt_group_heading { padding-top: 8px; padding-bottom: 8px; padding-left: 5px; padding-right: 5px; color: #171717; background-color: #FFFFFF; font-size: 100%; font-weight: initial; text-transform: inherit; border-top-style: solid; border-top-width: 2px; border-top-color: #D3D3D3; border-bottom-style: solid; border-bottom-width: 2px; border-bottom-color: #D3D3D3; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; vertical-align: middle; text-align: left; }
+ #idakbmypqp .gt_empty_group_heading { padding: 0.5px; color: #171717; background-color: #FFFFFF; font-size: 100%; font-weight: initial; border-top-style: solid; border-top-width: 2px; border-top-color: #D3D3D3; border-bottom-style: solid; border-bottom-width: 2px; border-bottom-color: #D3D3D3; vertical-align: middle; }
+ #idakbmypqp .gt_from_md> :first-child { margin-top: 0; }
+ #idakbmypqp .gt_from_md> :last-child { margin-bottom: 0; }
+ #idakbmypqp .gt_row { padding-top: 7px; padding-bottom: 7px; padding-left: 5px; padding-right: 5px; margin: 10px; border-top-style: solid; border-top-width: 1px; border-top-color: #D3D3D3; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; vertical-align: middle; overflow-x: hidden; }
+ #idakbmypqp .gt_stub { color: #171717; background-color: #FFFFFF; font-size: 100%; font-weight: initial; text-transform: inherit; border-right-style: solid; border-right-width: 2px; border-right-color: #D3D3D3; padding-left: 5px; padding-right: 5px; }
+ #idakbmypqp .gt_stub_row_group { color: #171717; background-color: #FFFFFF; font-size: 100%; font-weight: initial; text-transform: inherit; border-right-style: solid; border-right-width: 2px; border-right-color: #D3D3D3; padding-left: 5px; padding-right: 5px; vertical-align: top; }
+ #idakbmypqp .gt_row_group_first td { border-top-width: 2px; }
+ #idakbmypqp .gt_row_group_first th { border-top-width: 2px; }
+ #idakbmypqp .gt_striped { color: #171717; background-color: #F4F4F4; }
+ #idakbmypqp .gt_table_body { border-top-style: solid; border-top-width: 2px; border-top-color: #D3D3D3; border-bottom-style: solid; border-bottom-width: 1px; border-bottom-color: #DEE2E6; }
+ #idakbmypqp .gt_grand_summary_row { color: #171717; background-color: #FFFFFF; text-transform: inherit; padding-top: 8px; padding-bottom: 8px; padding-left: 5px; padding-right: 5px; }
+ #idakbmypqp .gt_first_grand_summary_row_bottom { border-top-style: double; border-top-width: 6px; border-top-color: #D3D3D3; }
+ #idakbmypqp .gt_last_grand_summary_row_top { border-bottom-style: double; border-bottom-width: 6px; border-bottom-color: #D3D3D3; }
+ #idakbmypqp .gt_sourcenotes { color: #171717; background-color: #FFFFFF; border-bottom-style: none; border-bottom-width: 2px; border-bottom-color: #D3D3D3; border-left-style: none; border-left-width: 2px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 2px; border-right-color: #D3D3D3; }
+ #idakbmypqp .gt_sourcenote { font-size: 11px; padding-top: 6px; padding-bottom: 6px; padding-left: 5px; padding-right: 5px; text-align: left; }
+ #idakbmypqp .gt_left { text-align: left; }
+ #idakbmypqp .gt_center { text-align: center; }
+ #idakbmypqp .gt_right { text-align: right; font-variant-numeric: tabular-nums; }
+ #idakbmypqp .gt_font_normal { font-weight: normal; }
+ #idakbmypqp .gt_font_bold { font-weight: bold; }
+ #idakbmypqp .gt_font_italic { font-style: italic; }
+ #idakbmypqp .gt_super { font-size: 65%; }
+ #idakbmypqp .gt_footnote_marks { font-size: 75%; vertical-align: 0.4em; position: initial; }
+ #idakbmypqp .gt_asterisk { font-size: 100%; vertical-align: 0; }
  
 </style>
 
@@ -1908,7 +1922,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="inspect-learned-coefficients" class="level3">
 <h3 class="anchored" data-anchor-id="inspect-learned-coefficients">6.4 Inspect learned coefficients</h3>
 <p>Each coefficient: “holding other features constant, how many euros does ADR change when this standardised feature increases by 1?”</p>
-<div id="63" class="cell" data-execution_count="26">
+<div id="62" class="cell" data-execution_count="26">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>coef_df: pd.DataFrame <span class="op">=</span> (</span>
 <span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>    pd.DataFrame({<span class="st">"feature"</span>: FEATURES, <span class="st">"coefficient"</span>: lin_reg.coef_})</span>
 <span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>    .sort_values(<span class="st">"coefficient"</span>, key<span class="op">=</span><span class="bu">abs</span>, ascending<span class="op">=</span><span class="va">False</span>)</span>
@@ -1921,55 +1935,55 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a>    )</span>
 <span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="26">
-<div id="fjfxiwiubv" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:100%;height:auto;">
+<div id="usoftypphw" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:100%;height:auto;">
 <style>
-#fjfxiwiubv table {
+#usoftypphw table {
           font-family: 'Libre Franklin', 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
           -webkit-font-smoothing: antialiased;
           -moz-osx-font-smoothing: grayscale;
         }
 
-#fjfxiwiubv thead, tbody, tfoot, tr, td, th { border-style: none; }
+#usoftypphw thead, tbody, tfoot, tr, td, th { border-style: none; }
  tr { background-color: transparent; }
-#fjfxiwiubv p { margin: 0; padding: 0; }
- #fjfxiwiubv .gt_table { display: table; border-collapse: collapse; line-height: normal; margin-left: auto; margin-right: auto; color: #171717; font-size: 13px; font-weight: normal; font-style: normal; background-color: #FFFFFF; width: 100%; border-top-style: solid; border-top-width: 2px; border-top-color: #1E293B; border-right-style: none; border-right-width: 2px; border-right-color: #D3D3D3; border-bottom-style: solid; border-bottom-width: 1px; border-bottom-color: #1E293B; border-left-style: none; border-left-width: 2px; border-left-color: #D3D3D3; }
- #fjfxiwiubv .gt_caption { padding-top: 4px; padding-bottom: 4px; }
- #fjfxiwiubv .gt_title { color: #171717; font-size: 16px; font-weight: bold; padding-top: 10px; padding-bottom: 10px; padding-left: 5px; padding-right: 5px; border-bottom-color: #FFFFFF; border-bottom-width: 0; }
- #fjfxiwiubv .gt_subtitle { color: #171717; font-size: 13px; font-weight: initial; padding-top: 9px; padding-bottom: 11px; padding-left: 5px; padding-right: 5px; border-top-color: #FFFFFF; border-top-width: 0; }
- #fjfxiwiubv .gt_heading { background-color: #FFFFFF; text-align: center; border-bottom-color: #FFFFFF; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; }
- #fjfxiwiubv .gt_bottom_border { border-bottom-style: solid; border-bottom-width: 2px; border-bottom-color: #D3D3D3; }
- #fjfxiwiubv .gt_col_headings { border-top-style: solid; border-top-width: 2px; border-top-color: #D3D3D3; border-bottom-style: solid; border-bottom-width: 1px; border-bottom-color: #D3D3D3; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; }
- #fjfxiwiubv .gt_col_heading { color: #FFFFFF; background-color: #1E293B; font-size: 13px; font-weight: bold; text-transform: inherit; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; vertical-align: bottom; padding-top: 9px; padding-bottom: 11px; padding-left: 5px; padding-right: 5px; overflow-x: hidden; }
- #fjfxiwiubv .gt_column_spanner_outer { color: #FFFFFF; background-color: #1E293B; font-size: 13px; font-weight: bold; text-transform: inherit; padding-top: 0; padding-bottom: 0; padding-left: 4px; padding-right: 4px; }
- #fjfxiwiubv .gt_column_spanner_outer:first-child { padding-left: 0; }
- #fjfxiwiubv .gt_column_spanner_outer:last-child { padding-right: 0; }
- #fjfxiwiubv .gt_column_spanner { border-bottom-style: solid; border-bottom-width: 1px; border-bottom-color: #D3D3D3; vertical-align: bottom; padding-top: 9px; padding-bottom: 9px; overflow-x: hidden; display: inline-block; width: 100%; }
- #fjfxiwiubv .gt_spanner_row { border-bottom-style: hidden; }
- #fjfxiwiubv .gt_group_heading { padding-top: 8px; padding-bottom: 8px; padding-left: 5px; padding-right: 5px; color: #171717; background-color: #FFFFFF; font-size: 100%; font-weight: initial; text-transform: inherit; border-top-style: solid; border-top-width: 2px; border-top-color: #D3D3D3; border-bottom-style: solid; border-bottom-width: 2px; border-bottom-color: #D3D3D3; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; vertical-align: middle; text-align: left; }
- #fjfxiwiubv .gt_empty_group_heading { padding: 0.5px; color: #171717; background-color: #FFFFFF; font-size: 100%; font-weight: initial; border-top-style: solid; border-top-width: 2px; border-top-color: #D3D3D3; border-bottom-style: solid; border-bottom-width: 2px; border-bottom-color: #D3D3D3; vertical-align: middle; }
- #fjfxiwiubv .gt_from_md> :first-child { margin-top: 0; }
- #fjfxiwiubv .gt_from_md> :last-child { margin-bottom: 0; }
- #fjfxiwiubv .gt_row { padding-top: 7px; padding-bottom: 7px; padding-left: 5px; padding-right: 5px; margin: 10px; border-top-style: solid; border-top-width: 1px; border-top-color: #D3D3D3; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; vertical-align: middle; overflow-x: hidden; }
- #fjfxiwiubv .gt_stub { color: #171717; background-color: #FFFFFF; font-size: 100%; font-weight: initial; text-transform: inherit; border-right-style: solid; border-right-width: 2px; border-right-color: #D3D3D3; padding-left: 5px; padding-right: 5px; }
- #fjfxiwiubv .gt_stub_row_group { color: #171717; background-color: #FFFFFF; font-size: 100%; font-weight: initial; text-transform: inherit; border-right-style: solid; border-right-width: 2px; border-right-color: #D3D3D3; padding-left: 5px; padding-right: 5px; vertical-align: top; }
- #fjfxiwiubv .gt_row_group_first td { border-top-width: 2px; }
- #fjfxiwiubv .gt_row_group_first th { border-top-width: 2px; }
- #fjfxiwiubv .gt_striped { color: #171717; background-color: #F4F4F4; }
- #fjfxiwiubv .gt_table_body { border-top-style: solid; border-top-width: 2px; border-top-color: #D3D3D3; border-bottom-style: solid; border-bottom-width: 1px; border-bottom-color: #DEE2E6; }
- #fjfxiwiubv .gt_grand_summary_row { color: #171717; background-color: #FFFFFF; text-transform: inherit; padding-top: 8px; padding-bottom: 8px; padding-left: 5px; padding-right: 5px; }
- #fjfxiwiubv .gt_first_grand_summary_row_bottom { border-top-style: double; border-top-width: 6px; border-top-color: #D3D3D3; }
- #fjfxiwiubv .gt_last_grand_summary_row_top { border-bottom-style: double; border-bottom-width: 6px; border-bottom-color: #D3D3D3; }
- #fjfxiwiubv .gt_sourcenotes { color: #171717; background-color: #FFFFFF; border-bottom-style: none; border-bottom-width: 2px; border-bottom-color: #D3D3D3; border-left-style: none; border-left-width: 2px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 2px; border-right-color: #D3D3D3; }
- #fjfxiwiubv .gt_sourcenote { font-size: 11px; padding-top: 6px; padding-bottom: 6px; padding-left: 5px; padding-right: 5px; text-align: left; }
- #fjfxiwiubv .gt_left { text-align: left; }
- #fjfxiwiubv .gt_center { text-align: center; }
- #fjfxiwiubv .gt_right { text-align: right; font-variant-numeric: tabular-nums; }
- #fjfxiwiubv .gt_font_normal { font-weight: normal; }
- #fjfxiwiubv .gt_font_bold { font-weight: bold; }
- #fjfxiwiubv .gt_font_italic { font-style: italic; }
- #fjfxiwiubv .gt_super { font-size: 65%; }
- #fjfxiwiubv .gt_footnote_marks { font-size: 75%; vertical-align: 0.4em; position: initial; }
- #fjfxiwiubv .gt_asterisk { font-size: 100%; vertical-align: 0; }
+#usoftypphw p { margin: 0; padding: 0; }
+ #usoftypphw .gt_table { display: table; border-collapse: collapse; line-height: normal; margin-left: auto; margin-right: auto; color: #171717; font-size: 13px; font-weight: normal; font-style: normal; background-color: #FFFFFF; width: 100%; border-top-style: solid; border-top-width: 2px; border-top-color: #1E293B; border-right-style: none; border-right-width: 2px; border-right-color: #D3D3D3; border-bottom-style: solid; border-bottom-width: 1px; border-bottom-color: #1E293B; border-left-style: none; border-left-width: 2px; border-left-color: #D3D3D3; }
+ #usoftypphw .gt_caption { padding-top: 4px; padding-bottom: 4px; }
+ #usoftypphw .gt_title { color: #171717; font-size: 16px; font-weight: bold; padding-top: 10px; padding-bottom: 10px; padding-left: 5px; padding-right: 5px; border-bottom-color: #FFFFFF; border-bottom-width: 0; }
+ #usoftypphw .gt_subtitle { color: #171717; font-size: 13px; font-weight: initial; padding-top: 9px; padding-bottom: 11px; padding-left: 5px; padding-right: 5px; border-top-color: #FFFFFF; border-top-width: 0; }
+ #usoftypphw .gt_heading { background-color: #FFFFFF; text-align: center; border-bottom-color: #FFFFFF; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; }
+ #usoftypphw .gt_bottom_border { border-bottom-style: solid; border-bottom-width: 2px; border-bottom-color: #D3D3D3; }
+ #usoftypphw .gt_col_headings { border-top-style: solid; border-top-width: 2px; border-top-color: #D3D3D3; border-bottom-style: solid; border-bottom-width: 1px; border-bottom-color: #D3D3D3; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; }
+ #usoftypphw .gt_col_heading { color: #FFFFFF; background-color: #1E293B; font-size: 13px; font-weight: bold; text-transform: inherit; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; vertical-align: bottom; padding-top: 9px; padding-bottom: 11px; padding-left: 5px; padding-right: 5px; overflow-x: hidden; }
+ #usoftypphw .gt_column_spanner_outer { color: #FFFFFF; background-color: #1E293B; font-size: 13px; font-weight: bold; text-transform: inherit; padding-top: 0; padding-bottom: 0; padding-left: 4px; padding-right: 4px; }
+ #usoftypphw .gt_column_spanner_outer:first-child { padding-left: 0; }
+ #usoftypphw .gt_column_spanner_outer:last-child { padding-right: 0; }
+ #usoftypphw .gt_column_spanner { border-bottom-style: solid; border-bottom-width: 1px; border-bottom-color: #D3D3D3; vertical-align: bottom; padding-top: 9px; padding-bottom: 9px; overflow-x: hidden; display: inline-block; width: 100%; }
+ #usoftypphw .gt_spanner_row { border-bottom-style: hidden; }
+ #usoftypphw .gt_group_heading { padding-top: 8px; padding-bottom: 8px; padding-left: 5px; padding-right: 5px; color: #171717; background-color: #FFFFFF; font-size: 100%; font-weight: initial; text-transform: inherit; border-top-style: solid; border-top-width: 2px; border-top-color: #D3D3D3; border-bottom-style: solid; border-bottom-width: 2px; border-bottom-color: #D3D3D3; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; vertical-align: middle; text-align: left; }
+ #usoftypphw .gt_empty_group_heading { padding: 0.5px; color: #171717; background-color: #FFFFFF; font-size: 100%; font-weight: initial; border-top-style: solid; border-top-width: 2px; border-top-color: #D3D3D3; border-bottom-style: solid; border-bottom-width: 2px; border-bottom-color: #D3D3D3; vertical-align: middle; }
+ #usoftypphw .gt_from_md> :first-child { margin-top: 0; }
+ #usoftypphw .gt_from_md> :last-child { margin-bottom: 0; }
+ #usoftypphw .gt_row { padding-top: 7px; padding-bottom: 7px; padding-left: 5px; padding-right: 5px; margin: 10px; border-top-style: solid; border-top-width: 1px; border-top-color: #D3D3D3; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; vertical-align: middle; overflow-x: hidden; }
+ #usoftypphw .gt_stub { color: #171717; background-color: #FFFFFF; font-size: 100%; font-weight: initial; text-transform: inherit; border-right-style: solid; border-right-width: 2px; border-right-color: #D3D3D3; padding-left: 5px; padding-right: 5px; }
+ #usoftypphw .gt_stub_row_group { color: #171717; background-color: #FFFFFF; font-size: 100%; font-weight: initial; text-transform: inherit; border-right-style: solid; border-right-width: 2px; border-right-color: #D3D3D3; padding-left: 5px; padding-right: 5px; vertical-align: top; }
+ #usoftypphw .gt_row_group_first td { border-top-width: 2px; }
+ #usoftypphw .gt_row_group_first th { border-top-width: 2px; }
+ #usoftypphw .gt_striped { color: #171717; background-color: #F4F4F4; }
+ #usoftypphw .gt_table_body { border-top-style: solid; border-top-width: 2px; border-top-color: #D3D3D3; border-bottom-style: solid; border-bottom-width: 1px; border-bottom-color: #DEE2E6; }
+ #usoftypphw .gt_grand_summary_row { color: #171717; background-color: #FFFFFF; text-transform: inherit; padding-top: 8px; padding-bottom: 8px; padding-left: 5px; padding-right: 5px; }
+ #usoftypphw .gt_first_grand_summary_row_bottom { border-top-style: double; border-top-width: 6px; border-top-color: #D3D3D3; }
+ #usoftypphw .gt_last_grand_summary_row_top { border-bottom-style: double; border-bottom-width: 6px; border-bottom-color: #D3D3D3; }
+ #usoftypphw .gt_sourcenotes { color: #171717; background-color: #FFFFFF; border-bottom-style: none; border-bottom-width: 2px; border-bottom-color: #D3D3D3; border-left-style: none; border-left-width: 2px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 2px; border-right-color: #D3D3D3; }
+ #usoftypphw .gt_sourcenote { font-size: 11px; padding-top: 6px; padding-bottom: 6px; padding-left: 5px; padding-right: 5px; text-align: left; }
+ #usoftypphw .gt_left { text-align: left; }
+ #usoftypphw .gt_center { text-align: center; }
+ #usoftypphw .gt_right { text-align: right; font-variant-numeric: tabular-nums; }
+ #usoftypphw .gt_font_normal { font-weight: normal; }
+ #usoftypphw .gt_font_bold { font-weight: bold; }
+ #usoftypphw .gt_font_italic { font-style: italic; }
+ #usoftypphw .gt_super { font-size: 65%; }
+ #usoftypphw .gt_footnote_marks { font-size: 75%; vertical-align: 0.4em; position: initial; }
+ #usoftypphw .gt_asterisk { font-size: 100%; vertical-align: 0; }
  
 </style>
 
@@ -2021,7 +2035,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="visualise-coefficients" class="level3">
 <h3 class="anchored" data-anchor-id="visualise-coefficients">6.5 Visualise coefficients</h3>
-<div id="65" class="cell" data-execution_count="27">
+<div id="64" class="cell" data-execution_count="27">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>coef_plot: pd.DataFrame <span class="op">=</span> coef_df.assign(</span>
 <span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>    color<span class="op">=</span><span class="kw">lambda</span> d: d[<span class="st">"coefficient"</span>].<span class="bu">apply</span>(<span class="kw">lambda</span> v: <span class="st">"positive"</span> <span class="cf">if</span> v <span class="op">&gt;=</span> <span class="dv">0</span> <span class="cf">else</span> <span class="st">"negative"</span>)</span>
 <span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>)</span>
@@ -2045,7 +2059,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb30-21"><a href="#cb30-21" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> modern_theme(x_axis_angle<span class="op">=</span><span class="dv">30</span>, legend_pos<span class="op">=</span><span class="st">"none"</span>)</span>
 <span id="cb30-22"><a href="#cb30-22" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="27">
-   <div id="FjUVu0"></div>
+   <div id="3jnAkB"></div>
    <script type="text/javascript" data-lets-plot-script="plot">
    
    (function() {
@@ -2070,7 +2084,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
        };
    }
    
-   const containerDiv = document.getElementById("FjUVu0");
+   const containerDiv = document.getElementById("3jnAkB");
    let fig = null;
    
    function renderPlot() {
@@ -2297,7 +2311,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="residual-plot" class="level3">
 <h3 class="anchored" data-anchor-id="residual-plot">6.6 Residual plot</h3>
 <p>Random scatter around zero means the model has no systematic bias. Patterns (curved shape, funnel) indicate the linear model is missing something.</p>
-<div id="67" class="cell" data-execution_count="28">
+<div id="66" class="cell" data-execution_count="28">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>y_pred_lin: np.ndarray <span class="op">=</span> lin_reg.predict(X_test_s)</span>
 <span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>resid_df: pd.DataFrame <span class="op">=</span> pd.DataFrame(</span>
 <span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>    {</span>
@@ -2318,7 +2332,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb31-18"><a href="#cb31-18" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> modern_theme(grid<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb31-19"><a href="#cb31-19" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="28">
-   <div id="9st1bS"></div>
+   <div id="1Ophph"></div>
    <script type="text/javascript" data-lets-plot-script="plot">
    
    (function() {
@@ -2343,7 +2357,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
        };
    }
    
-   const containerDiv = document.getElementById("9st1bS");
+   const containerDiv = document.getElementById("1Ophph");
    let fig = null;
    
    function renderPlot() {
@@ -2568,7 +2582,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h3 class="anchored" data-anchor-id="fit-logisticregression-for-cancellation">6.7 Fit LogisticRegression for cancellation</h3>
 <p><code>class_weight="balanced"</code> adjusts the loss inversely proportional to class frequencies. Without it, the model learns to predict “not cancelled” for almost everything because that minimises raw error on an imbalanced dataset.</p>
 <p><strong>From Part 23 (Section 4):</strong> class imbalance is one of the most common failure modes in binary classification.</p>
-<div id="69" class="cell" data-execution_count="29">
+<div id="68" class="cell" data-execution_count="29">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>log_reg: LogisticRegression <span class="op">=</span> LogisticRegression(</span>
 <span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>    class_weight<span class="op">=</span><span class="st">"balanced"</span>,</span>
 <span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>    max_iter<span class="op">=</span><span class="dv">1000</span>,</span>
@@ -2580,7 +2594,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="evaluate-the-classifier-with-classification_report" class="level3">
 <h3 class="anchored" data-anchor-id="evaluate-the-classifier-with-classification_report">6.8 Evaluate the classifier with classification_report</h3>
-<div id="71" class="cell" data-execution_count="30">
+<div id="70" class="cell" data-execution_count="30">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>yc_pred: np.ndarray <span class="op">=</span> log_reg.predict(Xc_test_s)</span>
 <span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>report: <span class="bu">str</span> <span class="op">=</span> classification_report(yc_te, yc_pred, target_names<span class="op">=</span>[<span class="st">"Kept"</span>, <span class="st">"Cancelled"</span>])</span>
 <span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>logger.info(<span class="st">"</span><span class="ch">\n</span><span class="st">"</span> <span class="op">+</span> report)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -2603,12 +2617,557 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p><strong>Question:</strong> does Ridge lower the gap between train and test MAE?</p>
 </div>
 </div>
-<div style="background:#EAF3FA;border-left:5px solid #0369A1;padding:14px 18px;border-radius:6px;margin:16px 0">
-<span style="color:#0369A1;font-weight:bold"><i class="bi bi-info-circle-fill"></i> What’s Next</span><br><br>Part 25b continues with cross-validation, learning curves, model persistence, and modern sklearn features (<code>set_output</code>, <code>get_feature_names_out</code>, <code>TunedThresholdClassifierCV</code>).
-</div>
-
-
 </section>
+</section>
+<section id="cross-validation" class="level2">
+<h2 class="anchored" data-anchor-id="cross-validation">7. Cross-Validation</h2>
+<p><strong>From Part 24 (ML Workflow, Section 5):</strong> a single train/test split gives a noisy, variance-prone estimate of generalisation. Cross-validation rotates the held-out subset across the entire training set.</p>
+<div style="font-family:monospace;background:#F8FAFC;border:1px solid #E2E8F0;border-radius:8px;padding:14px 18px;margin:12px 0;font-size:13px;line-height:1.9">
+<p>Fold 1: [<b>val</b>][train][train][train][train] → score<sub>1</sub><br> Fold 2: [train][<b>val</b>][train][train][train] → score<sub>2</sub><br> Fold 3: [train][train][<b>val</b>][train][train] → score<sub>3</sub><br> Fold 4: [train][train][train][<b>val</b>][train] → score<sub>4</sub><br> Fold 5: [train][train][train][train][<b>val</b>] → score<sub>5</sub><br> Final estimate = mean(score<sub>1..5</sub>) +/- std</p>
+</div>
+<p>Each fold acts as a validation set exactly once. The final estimate is <code>mean +/- std</code> across all folds.</p>
+<section id="define-the-regression-pipeline-for-cv" class="level3">
+<h3 class="anchored" data-anchor-id="define-the-regression-pipeline-for-cv">7.1 Define the regression pipeline for CV</h3>
+<p>We wrap scaler + model in a <code>Pipeline</code> so the scaler is re-fit on each fold’s training subset automatically – no leakage.</p>
+<div id="74" class="cell" data-execution_count="31">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>reg_pipe: Pipeline <span class="op">=</span> Pipeline(</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>    [</span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>        (<span class="st">"scaler"</span>, StandardScaler()),</span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>        (<span class="st">"model"</span>, LinearRegression()),</span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>    ]</span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="run-kfold-cross-validation-for-regression" class="level3">
+<h3 class="anchored" data-anchor-id="run-kfold-cross-validation-for-regression">7.2 Run KFold cross-validation for regression</h3>
+<div id="76" class="cell" data-execution_count="32">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>kf: KFold <span class="op">=</span> KFold(n_splits<span class="op">=</span><span class="dv">5</span>, shuffle<span class="op">=</span><span class="va">True</span>, random_state<span class="op">=</span><span class="dv">42</span>)</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>cv_reg: np.ndarray <span class="op">=</span> cross_val_score(</span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>    reg_pipe,</span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>    X_tr,</span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>    y_tr,</span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>    cv<span class="op">=</span>kf,</span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>    scoring<span class="op">=</span><span class="st">"neg_mean_absolute_error"</span>,</span>
+<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a>logger.info(<span class="ss">f"CV MAE per fold: </span><span class="sc">{</span>(<span class="op">-</span>cv_reg)<span class="sc">.</span><span class="bu">round</span>(<span class="dv">2</span>)<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a>logger.info(<span class="ss">f"Mean +/- Std: </span><span class="sc">{</span><span class="op">-</span>cv_reg<span class="sc">.</span>mean()<span class="sc">:.2f}</span><span class="ss"> +/- </span><span class="sc">{</span>cv_reg<span class="sc">.</span>std()<span class="sc">:.2f}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="define-the-classification-pipeline-for-cv" class="level3">
+<h3 class="anchored" data-anchor-id="define-the-classification-pipeline-for-cv">7.3 Define the classification pipeline for CV</h3>
+<div id="78" class="cell" data-execution_count="33">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>clf_pipe: Pipeline <span class="op">=</span> Pipeline(</span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>    [</span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>        (<span class="st">"scaler"</span>, StandardScaler()),</span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>        (<span class="st">"model"</span>, LogisticRegression(class_weight<span class="op">=</span><span class="st">"balanced"</span>, max_iter<span class="op">=</span><span class="dv">1000</span>, random_state<span class="op">=</span><span class="dv">42</span>)),</span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>    ]</span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="run-stratifiedkfold-cross-validation-for-classification" class="level3">
+<h3 class="anchored" data-anchor-id="run-stratifiedkfold-cross-validation-for-classification">7.4 Run StratifiedKFold cross-validation for classification</h3>
+<p><code>StratifiedKFold</code> ensures the class ratio is preserved in every fold.</p>
+<div id="80" class="cell" data-execution_count="34">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>skf: StratifiedKFold <span class="op">=</span> StratifiedKFold(n_splits<span class="op">=</span><span class="dv">5</span>, shuffle<span class="op">=</span><span class="va">True</span>, random_state<span class="op">=</span><span class="dv">42</span>)</span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>cv_clf: np.ndarray <span class="op">=</span> cross_val_score(</span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>    clf_pipe,</span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>    Xc_tr,</span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>    yc_tr,</span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>    cv<span class="op">=</span>skf,</span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>    scoring<span class="op">=</span><span class="st">"f1"</span>,</span>
+<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a>logger.info(<span class="ss">f"CV F1 per fold: </span><span class="sc">{</span>cv_clf<span class="sc">.</span><span class="bu">round</span>(<span class="dv">3</span>)<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb38-10"><a href="#cb38-10" aria-hidden="true" tabindex="-1"></a>logger.info(<span class="ss">f"Mean +/- Std: </span><span class="sc">{</span>cv_clf<span class="sc">.</span>mean()<span class="sc">:.3f}</span><span class="ss"> +/- </span><span class="sc">{</span>cv_clf<span class="sc">.</span>std()<span class="sc">:.3f}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span><i class="bi bi-info-circle-fill" style="color:#0369A1"></i>&nbsp; KFold vs StratifiedKFold
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>KFold</strong> – use for regression (continuous targets).</p>
+<p><strong>StratifiedKFold</strong> – use for classification. Preserves the class ratio in every fold, preventing a fold from being all one class on heavily imbalanced datasets.</p>
+</div>
+</div>
+</section>
+</section>
+<section id="learning-curves" class="level2">
+<h2 class="anchored" data-anchor-id="learning-curves">8. Learning Curves</h2>
+<p><strong>From Part 24 (ML Workflow, Section 6 – Bias-Variance tradeoff):</strong> a learning curve plots train and validation score as training set size grows.</p>
+<ul>
+<li><strong>Train &gt;&gt; validation, gap shrinks</strong>: high variance (overfitting) – gather more data or add regularisation.</li>
+<li><strong>Both scores high error, flat</strong>: high bias (underfitting) – add features or try a more expressive model.</li>
+</ul>
+<section id="compute-the-learning-curve" class="level3">
+<h3 class="anchored" data-anchor-id="compute-the-learning-curve">8.1 Compute the learning curve</h3>
+<p><code>learning_curve</code> re-trains the pipeline at each specified size using CV for the validation score.</p>
+<div id="84" class="cell" data-execution_count="35">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>train_sizes: np.ndarray</span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>train_lc_scores: np.ndarray</span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>val_lc_scores: np.ndarray</span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>train_sizes, train_lc_scores, val_lc_scores <span class="op">=</span> learning_curve(</span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>    reg_pipe,</span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a>    X_tr,</span>
+<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a>    y_tr,</span>
+<span id="cb39-8"><a href="#cb39-8" aria-hidden="true" tabindex="-1"></a>    train_sizes<span class="op">=</span>np.linspace(<span class="fl">0.1</span>, <span class="fl">1.0</span>, <span class="dv">8</span>),</span>
+<span id="cb39-9"><a href="#cb39-9" aria-hidden="true" tabindex="-1"></a>    cv<span class="op">=</span>KFold(n_splits<span class="op">=</span><span class="dv">5</span>, shuffle<span class="op">=</span><span class="va">True</span>, random_state<span class="op">=</span><span class="dv">42</span>),</span>
+<span id="cb39-10"><a href="#cb39-10" aria-hidden="true" tabindex="-1"></a>    scoring<span class="op">=</span><span class="st">"neg_mean_absolute_error"</span>,</span>
+<span id="cb39-11"><a href="#cb39-11" aria-hidden="true" tabindex="-1"></a>    n_jobs<span class="op">=-</span><span class="dv">1</span>,</span>
+<span id="cb39-12"><a href="#cb39-12" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb39-13"><a href="#cb39-13" aria-hidden="true" tabindex="-1"></a>logger.info(<span class="ss">f"Training sizes used: </span><span class="sc">{</span>train_sizes<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="plot-the-learning-curve" class="level3">
+<h3 class="anchored" data-anchor-id="plot-the-learning-curve">8.2 Plot the learning curve</h3>
+<div id="86" class="cell" data-execution_count="36">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>lc_df: pd.DataFrame <span class="op">=</span> pd.DataFrame(</span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>    {</span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>        <span class="st">"n"</span>: np.tile(train_sizes, <span class="dv">2</span>),</span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>        <span class="st">"score"</span>: np.concatenate([<span class="op">-</span>train_lc_scores.mean(<span class="dv">1</span>), <span class="op">-</span>val_lc_scores.mean(<span class="dv">1</span>)]),</span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>        <span class="st">"err"</span>: np.concatenate([train_lc_scores.std(<span class="dv">1</span>), val_lc_scores.std(<span class="dv">1</span>)]),</span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a>        <span class="st">"split"</span>: [<span class="st">"Train"</span>] <span class="op">*</span> <span class="bu">len</span>(train_sizes) <span class="op">+</span> [<span class="st">"Validation"</span>] <span class="op">*</span> <span class="bu">len</span>(train_sizes),</span>
+<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a>).assign(</span>
+<span id="cb40-9"><a href="#cb40-9" aria-hidden="true" tabindex="-1"></a>    ymin<span class="op">=</span><span class="kw">lambda</span> d: d[<span class="st">"score"</span>] <span class="op">-</span> d[<span class="st">"err"</span>],</span>
+<span id="cb40-10"><a href="#cb40-10" aria-hidden="true" tabindex="-1"></a>    ymax<span class="op">=</span><span class="kw">lambda</span> d: d[<span class="st">"score"</span>] <span class="op">+</span> d[<span class="st">"err"</span>],</span>
+<span id="cb40-11"><a href="#cb40-11" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb40-12"><a href="#cb40-12" aria-hidden="true" tabindex="-1"></a>(</span>
+<span id="cb40-13"><a href="#cb40-13" aria-hidden="true" tabindex="-1"></a>    ggplot(lc_df, aes(x<span class="op">=</span><span class="st">"n"</span>, y<span class="op">=</span><span class="st">"score"</span>, color<span class="op">=</span><span class="st">"split"</span>, fill<span class="op">=</span><span class="st">"split"</span>))</span>
+<span id="cb40-14"><a href="#cb40-14" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> geom_line(size<span class="op">=</span><span class="fl">1.2</span>)</span>
+<span id="cb40-15"><a href="#cb40-15" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> geom_ribbon(aes(ymin<span class="op">=</span><span class="st">"ymin"</span>, ymax<span class="op">=</span><span class="st">"ymax"</span>), alpha<span class="op">=</span><span class="fl">0.15</span>, color<span class="op">=</span><span class="va">None</span>)</span>
+<span id="cb40-16"><a href="#cb40-16" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> scale_color_manual(values<span class="op">=</span>{<span class="st">"Train"</span>: INFO, <span class="st">"Validation"</span>: WARNING})</span>
+<span id="cb40-17"><a href="#cb40-17" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> scale_fill_manual(values<span class="op">=</span>{<span class="st">"Train"</span>: INFO, <span class="st">"Validation"</span>: WARNING})</span>
+<span id="cb40-18"><a href="#cb40-18" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> labs(</span>
+<span id="cb40-19"><a href="#cb40-19" aria-hidden="true" tabindex="-1"></a>        title<span class="op">=</span><span class="st">"Learning Curve -- LinearRegression on ADR"</span>,</span>
+<span id="cb40-20"><a href="#cb40-20" aria-hidden="true" tabindex="-1"></a>        subtitle<span class="op">=</span><span class="st">"Gap between train and validation = variance; flat high error = bias"</span>,</span>
+<span id="cb40-21"><a href="#cb40-21" aria-hidden="true" tabindex="-1"></a>        x<span class="op">=</span><span class="st">"Training Set Size"</span>,</span>
+<span id="cb40-22"><a href="#cb40-22" aria-hidden="true" tabindex="-1"></a>        y<span class="op">=</span><span class="st">"MAE (lower = better)"</span>,</span>
+<span id="cb40-23"><a href="#cb40-23" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb40-24"><a href="#cb40-24" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> modern_theme(grid<span class="op">=</span><span class="va">True</span>, legend_pos<span class="op">=</span><span class="st">"bottom"</span>)</span>
+<span id="cb40-25"><a href="#cb40-25" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="36">
+   <div id="gAKrcF"></div>
+   <script type="text/javascript" data-lets-plot-script="plot">
+   
+   (function() {
+   // ----------
+   
+   const forceImmediateRender = false;
+   const responsive = false;
+   
+   let sizing = {
+       width_mode: "MIN",
+       height_mode: "SCALED",
+       width: null, 
+       height: null 
+   };
+   
+   const preferredWidth = document.body.dataset.letsPlotPreferredWidth;
+   if (preferredWidth !== undefined) {
+       sizing = {
+           width_mode: 'FIXED',
+           height_mode: 'SCALED',
+           width: parseFloat(preferredWidth)
+       };
+   }
+   
+   const containerDiv = document.getElementById("gAKrcF");
+   let fig = null;
+   
+   function renderPlot() {
+       if (fig === null) {
+           const plotSpec = {
+"data":{
+"n":[7515.0,17178.0,26840.0,36503.0,46166.0,55828.0,65491.0,75154.0,7515.0,17178.0,26840.0,36503.0,46166.0,55828.0,65491.0,75154.0],
+"score":[33.7850560370757,33.48782831823452,33.66100437778407,33.81451049749277,33.757804831614635,33.605781212422514,33.57361725615529,33.56198790781536,33.72946570072478,33.58370736932495,33.5682461148961,33.572826104922605,33.570795911954974,33.56441501375899,33.5687388222928,33.567059371109096],
+"split":["Train","Train","Train","Train","Train","Train","Train","Train","Validation","Validation","Validation","Validation","Validation","Validation","Validation","Validation"],
+"ymin":[33.570634557276534,33.34565158951903,33.58756891810223,33.74646328903015,33.70134931743234,33.5770877507481,33.52775148500127,33.5194318439155,33.5877116301766,33.45440516289231,33.437029365358484,33.42856474496973,33.43067699265627,33.423039969221136,33.43011949149803,33.42660174633597],
+"ymax":[33.99947751687486,33.63000504695001,33.73443983746591,33.882557705955385,33.81426034579693,33.63447467409693,33.61948302730931,33.604543971715216,33.87121977127296,33.71300957575759,33.69946286443371,33.71708746487548,33.71091483125368,33.70579005829684,33.70735815308757,33.70751699588222]
+},
+"mapping":{
+"x":"n",
+"y":"score",
+"color":"split",
+"fill":"split"
+},
+"data_meta":{
+"series_annotations":[{
+"type":"int",
+"column":"n"
+},{
+"type":"float",
+"column":"score"
+},{
+"type":"float",
+"column":"err"
+},{
+"type":"str",
+"column":"split"
+},{
+"type":"float",
+"column":"ymin"
+},{
+"type":"float",
+"column":"ymax"
+}]
+},
+"ggtitle":{
+"text":"Learning Curve -- LinearRegression on ADR",
+"subtitle":"Gap between train and validation = variance; flat high error = bias"
+},
+"guides":{
+"x":{
+"title":"Training Set Size"
+},
+"y":{
+"title":"MAE (lower = better)"
+}
+},
+"theme":{
+"text":{
+"color":"#2d2d2d",
+"family":"'Libre Franklin', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
+"size":12.0,
+"blank":false
+},
+"axis_title_x":{
+"face":"bold",
+"size":14.0,
+"margin":[10.0,0.0,0.0,0.0],
+"blank":false
+},
+"axis_title_y":{
+"face":"bold",
+"size":14.0,
+"margin":[0.0,10.0,0.0,0.0],
+"blank":false
+},
+"axis_text_x":{
+"color":"#666666",
+"angle":0.0,
+"hjust":0.5,
+"margin":[8.0,0.0,0.0,0.0],
+"blank":false
+},
+"axis_text_y":{
+"color":"#666666",
+"margin":[0.0,0.0,0.0,8.0],
+"blank":false
+},
+"axis_ticks":{
+"color":"#bbbbbb",
+"size":0.75,
+"blank":false
+},
+"axis_line":{
+"color":"#bbbbbb",
+"size":1.0,
+"blank":false
+},
+"legend_background":{
+"blank":true
+},
+"legend_text":{
+"size":12.0,
+"blank":false
+},
+"legend_title":{
+"face":"bold",
+"size":14.0,
+"blank":false
+},
+"legend_position":"bottom",
+"legend_spacing":10.0,
+"legend_key":{
+"blank":true
+},
+"panel_background":{
+"blank":true
+},
+"panel_border":{
+"blank":true
+},
+"panel_grid_minor":{
+"blank":true
+},
+"panel_grid_major_x":{
+"blank":true
+},
+"panel_grid_major_y":{
+"color":"#e8e8e8",
+"size":0.4,
+"blank":false
+},
+"plot_background":{
+"blank":true
+},
+"plot_title":{
+"color":"#333333",
+"face":"bold",
+"size":19.0,
+"hjust":0.0,
+"margin":[0.0,0.0,6.0,0.0],
+"blank":false
+},
+"plot_subtitle":{
+"color":"#6b6b6b",
+"size":16.0,
+"hjust":0.0,
+"margin":[0.0,0.0,18.0,0.0],
+"blank":false
+},
+"plot_caption":{
+"color":"#999999",
+"face":"italic",
+"size":9.0,
+"hjust":1.0,
+"margin":[12.0,0.0,0.0,0.0],
+"blank":false
+},
+"plot_margin":[16.0,16.0,10.0,10.0],
+"strip_background":{
+"blank":true
+},
+"strip_text":{
+"family":"'Libre Franklin', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
+"face":"bold",
+"size":12.0,
+"hjust":0.0,
+"blank":false
+}
+},
+"kind":"plot",
+"scales":[{
+"aesthetic":"color",
+"breaks":["Train","Validation"],
+"values":["#0369A1","#EA580C"]
+},{
+"aesthetic":"fill",
+"breaks":["Train","Validation"],
+"values":["#0369A1","#EA580C"]
+}],
+"layers":[{
+"geom":"line",
+"mapping":{
+},
+"data_meta":{
+},
+"size":1.2,
+"data":{
+}
+},{
+"geom":"ribbon",
+"mapping":{
+"ymin":"ymin",
+"ymax":"ymax"
+},
+"data_meta":{
+},
+"alpha":0.15,
+"data":{
+}
+}],
+"metainfo_list":[],
+"spec_id":"5"
+};
+           window.letsPlotCall(function() { fig = LetsPlot.buildPlotFromProcessedSpecs(plotSpec, containerDiv, sizing); });
+       } else {
+           fig.updateView({});
+       }
+   }
+   
+   const renderImmediately = 
+       forceImmediateRender || (
+           sizing.width_mode === 'FIXED' && 
+           (sizing.height_mode === 'FIXED' || sizing.height_mode === 'SCALED')
+       );
+   
+   if (renderImmediately) {
+       renderPlot();
+   }
+   
+   if (!renderImmediately || responsive) {
+       // Set up observer for initial sizing or continuous monitoring
+       var observer = new ResizeObserver(function(entries) {
+           for (let entry of entries) {
+               if (entry.contentBoxSize && 
+                   entry.contentBoxSize[0].inlineSize > 0) {
+                   if (!responsive && observer) {
+                       observer.disconnect();
+                       observer = null;
+                   }
+                   renderPlot();
+                   if (!responsive) {
+                       break;
+                   }
+               }
+           }
+       });
+       
+       observer.observe(containerDiv);
+   }
+   
+   // ----------
+   })();
+   
+   </script>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span><i class="bi bi-lightbulb-fill" style="color:#8B5CF6"></i>&nbsp; Pro Tip: read the learning curve
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>If train and validation scores have <strong>converged</strong> and are both high-error: more data will not help – the model lacks capacity.</p>
+<p>If there is a <strong>large gap</strong> that shrinks as n grows: more data reduces variance. The gap tells you roughly how much.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span><i class="bi bi-puzzle-fill" style="color:#059669"></i>&nbsp; Activity 4: learning curve for LogisticRegression
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Compute and plot a learning curve for <code>clf_pipe</code> using <code>scoring='f1'</code> and <code>StratifiedKFold</code>.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb41"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Your code here</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><strong>Question:</strong> does the classifier need more data or a more complex model?</p>
+</div>
+</div>
+</section>
+</section>
+<section id="saving-and-loading-a-model" class="level2">
+<h2 class="anchored" data-anchor-id="saving-and-loading-a-model">9. Saving and Loading a Model</h2>
+<p><strong>From Part 13 (Dev Tools, Reproducibility):</strong> a trained model is an artefact. Save the full bundle – scaler, model, and feature list – so downstream code can reconstruct the prediction pipeline exactly.</p>
+<section id="save-the-training-bundle" class="level3">
+<h3 class="anchored" data-anchor-id="save-the-training-bundle">9.1 Save the training bundle</h3>
+<div id="91" class="cell" data-execution_count="37">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb42"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>MODEL_DIR.mkdir(exist_ok<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>model_path: Path <span class="op">=</span> MODEL_DIR <span class="op">/</span> <span class="st">"lin_reg_adr.joblib"</span></span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>bundle: <span class="bu">dict</span>[<span class="bu">str</span>, Any] <span class="op">=</span> {</span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"scaler"</span>: scaler,</span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">"model"</span>: lin_reg,</span>
+<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">"features"</span>: FEATURES,</span>
+<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">"target"</span>: TARGET_REG,</span>
+<span id="cb42-8"><a href="#cb42-8" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb42-9"><a href="#cb42-9" aria-hidden="true" tabindex="-1"></a>joblib.dump(bundle, model_path)</span>
+<span id="cb42-10"><a href="#cb42-10" aria-hidden="true" tabindex="-1"></a>logger.success(<span class="ss">f"Bundle saved to </span><span class="sc">{</span>model_path<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="reload-and-predict-on-one-booking" class="level3">
+<h3 class="anchored" data-anchor-id="reload-and-predict-on-one-booking">9.2 Reload and predict on one booking</h3>
+<div id="93" class="cell" data-execution_count="38">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>loaded: <span class="bu">dict</span>[<span class="bu">str</span>, Any] <span class="op">=</span> joblib.load(model_path)</span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>sample: np.ndarray <span class="op">=</span> X_te[:<span class="dv">1</span>]</span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>sample_scaled: np.ndarray <span class="op">=</span> loaded[<span class="st">"scaler"</span>].transform(sample)</span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>predicted: <span class="bu">float</span> <span class="op">=</span> <span class="bu">float</span>(loaded[<span class="st">"model"</span>].predict(sample_scaled)[<span class="dv">0</span>])</span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>actual: <span class="bu">float</span> <span class="op">=</span> <span class="bu">float</span>(y_te[<span class="dv">0</span>])</span>
+<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a>logger.info(<span class="ss">f"Predicted ADR: </span><span class="sc">{</span>predicted<span class="sc">:.2f}</span><span class="ss">  Actual ADR: </span><span class="sc">{</span>actual<span class="sc">:.2f}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="callout callout-style-default callout-tip no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span><i class="bi bi-lightbulb-fill" style="color:#8B5CF6"></i>&nbsp; Pro Tip: save the scaler with the model
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Save the scaler <strong>inside</strong> the bundle, never separately. A model evaluated on unscaled inputs in production is one of the most common silent bugs in deployed ML systems. The scaler and model must travel together.</p>
+</div>
+</div>
+</section>
+</section>
+<section id="capstone-end-to-end-training-function" class="level2">
+<h2 class="anchored" data-anchor-id="capstone-end-to-end-training-function">Capstone: End-to-End Training Function</h2>
+<p>Combine the full workflow – split, scale, fit, evaluate, save – into a single typed function. This is the design pattern you will use in Part 26 and throughout the MLOps path.</p>
+<section id="define-the-capstone-function" class="level3">
+<h3 class="anchored" data-anchor-id="define-the-capstone-function">Define the capstone function</h3>
+<div id="97" class="cell" data-execution_count="39">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb44"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> train_and_evaluate(</span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>    df: pd.DataFrame,</span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>    features: <span class="bu">list</span>[<span class="bu">str</span>],</span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a>    target: <span class="bu">str</span>,</span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a>    task: <span class="bu">str</span>,</span>
+<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a>    out_dir: Path <span class="op">=</span> Path(<span class="st">"models"</span>),</span>
+<span id="cb44-7"><a href="#cb44-7" aria-hidden="true" tabindex="-1"></a>) <span class="op">-&gt;</span> <span class="bu">dict</span>[<span class="bu">str</span>, Any]:</span>
+<span id="cb44-8"><a href="#cb44-8" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Run the full train-evaluate-save workflow for one task."""</span></span>
+<span id="cb44-9"><a href="#cb44-9" aria-hidden="true" tabindex="-1"></a>    X_all: np.ndarray <span class="op">=</span> df[features].to_numpy(dtype<span class="op">=</span><span class="bu">float</span>)</span>
+<span id="cb44-10"><a href="#cb44-10" aria-hidden="true" tabindex="-1"></a>    y_all: np.ndarray <span class="op">=</span> df[target].to_numpy()</span>
+<span id="cb44-11"><a href="#cb44-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-12"><a href="#cb44-12" aria-hidden="true" tabindex="-1"></a>    stratify: np.ndarray <span class="op">|</span> <span class="va">None</span> <span class="op">=</span> y_all <span class="cf">if</span> task <span class="op">==</span> <span class="st">"classification"</span> <span class="cf">else</span> <span class="va">None</span></span>
+<span id="cb44-13"><a href="#cb44-13" aria-hidden="true" tabindex="-1"></a>    Xtr, Xte, ytr, yte <span class="op">=</span> train_test_split(X_all, y_all, test_size<span class="op">=</span><span class="fl">0.2</span>, random_state<span class="op">=</span><span class="dv">42</span>, stratify<span class="op">=</span>stratify)</span>
+<span id="cb44-14"><a href="#cb44-14" aria-hidden="true" tabindex="-1"></a>    sc: StandardScaler <span class="op">=</span> StandardScaler()</span>
+<span id="cb44-15"><a href="#cb44-15" aria-hidden="true" tabindex="-1"></a>    Xtr_s: np.ndarray <span class="op">=</span> sc.fit_transform(Xtr)</span>
+<span id="cb44-16"><a href="#cb44-16" aria-hidden="true" tabindex="-1"></a>    Xte_s: np.ndarray <span class="op">=</span> sc.transform(Xte)</span>
+<span id="cb44-17"><a href="#cb44-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-18"><a href="#cb44-18" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> task <span class="op">==</span> <span class="st">"regression"</span>:</span>
+<span id="cb44-19"><a href="#cb44-19" aria-hidden="true" tabindex="-1"></a>        model: Any <span class="op">=</span> LinearRegression()</span>
+<span id="cb44-20"><a href="#cb44-20" aria-hidden="true" tabindex="-1"></a>        baseline: Any <span class="op">=</span> DummyRegressor(strategy<span class="op">=</span><span class="st">"mean"</span>)</span>
+<span id="cb44-21"><a href="#cb44-21" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb44-22"><a href="#cb44-22" aria-hidden="true" tabindex="-1"></a>        model <span class="op">=</span> LogisticRegression(class_weight<span class="op">=</span><span class="st">"balanced"</span>, max_iter<span class="op">=</span><span class="dv">1000</span>, random_state<span class="op">=</span><span class="dv">42</span>)</span>
+<span id="cb44-23"><a href="#cb44-23" aria-hidden="true" tabindex="-1"></a>        baseline <span class="op">=</span> DummyClassifier(strategy<span class="op">=</span><span class="st">"most_frequent"</span>)</span>
+<span id="cb44-24"><a href="#cb44-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-25"><a href="#cb44-25" aria-hidden="true" tabindex="-1"></a>    baseline.fit(Xtr_s, ytr)</span>
+<span id="cb44-26"><a href="#cb44-26" aria-hidden="true" tabindex="-1"></a>    model.fit(Xtr_s, ytr)</span>
+<span id="cb44-27"><a href="#cb44-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-28"><a href="#cb44-28" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> task <span class="op">==</span> <span class="st">"regression"</span>:</span>
+<span id="cb44-29"><a href="#cb44-29" aria-hidden="true" tabindex="-1"></a>        m: <span class="bu">dict</span>[<span class="bu">str</span>, <span class="bu">float</span>] <span class="op">=</span> {</span>
+<span id="cb44-30"><a href="#cb44-30" aria-hidden="true" tabindex="-1"></a>            <span class="st">"baseline_mae"</span>: <span class="bu">float</span>(mean_absolute_error(yte, baseline.predict(Xte_s))),</span>
+<span id="cb44-31"><a href="#cb44-31" aria-hidden="true" tabindex="-1"></a>            <span class="st">"model_mae"</span>: <span class="bu">float</span>(mean_absolute_error(yte, model.predict(Xte_s))),</span>
+<span id="cb44-32"><a href="#cb44-32" aria-hidden="true" tabindex="-1"></a>            <span class="st">"model_r2"</span>: <span class="bu">float</span>(r2_score(yte, model.predict(Xte_s))),</span>
+<span id="cb44-33"><a href="#cb44-33" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb44-34"><a href="#cb44-34" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb44-35"><a href="#cb44-35" aria-hidden="true" tabindex="-1"></a>        m <span class="op">=</span> {</span>
+<span id="cb44-36"><a href="#cb44-36" aria-hidden="true" tabindex="-1"></a>            <span class="st">"baseline_f1"</span>: <span class="bu">float</span>(f1_score(yte, baseline.predict(Xte_s), zero_division<span class="op">=</span><span class="dv">0</span>)),</span>
+<span id="cb44-37"><a href="#cb44-37" aria-hidden="true" tabindex="-1"></a>            <span class="st">"model_f1"</span>: <span class="bu">float</span>(f1_score(yte, model.predict(Xte_s))),</span>
+<span id="cb44-38"><a href="#cb44-38" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb44-39"><a href="#cb44-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-40"><a href="#cb44-40" aria-hidden="true" tabindex="-1"></a>    out_dir.mkdir(exist_ok<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb44-41"><a href="#cb44-41" aria-hidden="true" tabindex="-1"></a>    save_path: Path <span class="op">=</span> out_dir <span class="op">/</span> <span class="ss">f"</span><span class="sc">{</span>target<span class="sc">}</span><span class="ss">.joblib"</span></span>
+<span id="cb44-42"><a href="#cb44-42" aria-hidden="true" tabindex="-1"></a>    joblib.dump({<span class="st">"scaler"</span>: sc, <span class="st">"model"</span>: model, <span class="st">"features"</span>: features, <span class="st">"target"</span>: target}, save_path)</span>
+<span id="cb44-43"><a href="#cb44-43" aria-hidden="true" tabindex="-1"></a>    logger.success(<span class="ss">f"Saved </span><span class="sc">{</span>task<span class="sc">}</span><span class="ss"> bundle for '</span><span class="sc">{</span>target<span class="sc">}</span><span class="ss">' to </span><span class="sc">{</span>save_path<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb44-44"><a href="#cb44-44" aria-hidden="true" tabindex="-1"></a>    logger.info(<span class="ss">f"Metrics: </span><span class="sc">{</span>m<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb44-45"><a href="#cb44-45" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> {<span class="st">"model"</span>: model, <span class="st">"scaler"</span>: sc, <span class="st">"metrics"</span>: m}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="run-the-capstone-for-regression-adr" class="level3">
+<h3 class="anchored" data-anchor-id="run-the-capstone-for-regression-adr">Run the capstone for regression (ADR)</h3>
+<div id="99" class="cell" data-execution_count="40">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb45"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>reg_result: <span class="bu">dict</span>[<span class="bu">str</span>, Any] <span class="op">=</span> train_and_evaluate(df, FEATURES, TARGET_REG, task<span class="op">=</span><span class="st">"regression"</span>, out_dir<span class="op">=</span>MODEL_DIR)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="run-the-capstone-for-classification-cancellation" class="level3">
+<h3 class="anchored" data-anchor-id="run-the-capstone-for-classification-cancellation">Run the capstone for classification (cancellation)</h3>
+<div id="101" class="cell" data-execution_count="41">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb46"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>clf_result: <span class="bu">dict</span>[<span class="bu">str</span>, Any] <span class="op">=</span> train_and_evaluate(df, FEATURES, TARGET_CLF, task<span class="op">=</span><span class="st">"classification"</span>, out_dir<span class="op">=</span>MODEL_DIR)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+</section>
+<section id="further-reading" class="level2">
+<h2 class="anchored" data-anchor-id="further-reading">Further Reading</h2>
+<ul>
+<li><a href="https://scikit-learn.org/stable/user_guide.html">Scikit-learn User Guide</a> – comprehensive API reference</li>
+<li>Geron, A. (2022), <em>Hands-On Machine Learning</em>, Ch 2-4 – end-to-end pipeline walkthrough</li>
+<li>Antonio et al.&nbsp;(2019), <em>Hotel booking demand datasets</em>, Data in Brief – dataset reference</li>
+<li><a href="https://scikit-learn.org/stable/modules/compose.html">sklearn Pipeline docs</a> – full ColumnTransformer + Pipeline API (covered in Part 26)</li>
+</ul>
+<p><strong>Next up:</strong> Part 26 (nb05) extends this to a full mixed feature set, introduces <code>ColumnTransformer</code> and <code>SimpleImputer</code>, and covers GridSearchCV, RandomizedSearchCV, and Optuna hyperparameter optimisation.</p>
+
+
 </section>
 
 </main> <!-- /main -->
@@ -3019,8 +3578,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../../tutorials/04-ml-intro/04b-sklearn-core.html" class="pagination-link" aria-label="Part 25b: Scikit-learn Core -- Validation and Modern Features">
-        <span class="nav-page-text"><span class="chapter-title">Part 25b: Scikit-learn Core – Validation and Modern Features</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="../../tutorials/04-ml-intro/05-sklearn-pipeline.html" class="pagination-link" aria-label="Part 26: Sklearn Pipeline and Hyperparameter Search">
+        <span class="nav-page-text"><span class="chapter-title">Part 26: Sklearn Pipeline and Hyperparameter Search</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
@@ -3034,7 +3593,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="footer-social">
 <p><a href="mailto:sambaiga@gmail.com" title="Email"><i class="bi bi-envelope-at-fill"></i></a> <a href="https://github.com/sambaiga" title="GitHub"><i class="bi bi-github"></i></a> <a href="https://www.linkedin.com/in/sambaiga" title="LinkedIn"><i class="bi bi-linkedin"></i></a></p>
 </div>
-<div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.dev/sambaiga/ds-mlops-path/blob/main/tutorials/04-ml-intro/04a-sklearn-core.ipynb" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/sambaiga/ds-mlops-path/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li><li><a href="https://github.com/sambaiga/ds-mlops-path/blob/main/tutorials/04-ml-intro/04a-sklearn-core.ipynb" class="toc-action"><i class="bi empty"></i>View source</a></li></ul></div></div>
+<div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.dev/sambaiga/ds-mlops-path/blob/main/tutorials/04-ml-intro/04-sklearn-core.ipynb" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/sambaiga/ds-mlops-path/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li><li><a href="https://github.com/sambaiga/ds-mlops-path/blob/main/tutorials/04-ml-intro/04-sklearn-core.ipynb" class="toc-action"><i class="bi empty"></i>View source</a></li></ul></div></div>
     <div class="nav-footer-right">
 <p><span class="faux-block">Made with <a href="https://quarto.org">Quarto</a></span> <span class="faux-block"><a href="https://github.com/sambaiga/ds-mlops-path"><i class="bi bi-github"></i> View source</a></span></p>
 </div>
