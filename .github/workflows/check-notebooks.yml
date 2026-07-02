@@ -73,7 +73,7 @@ jobs:
           fi
 
           # Otherwise: only notebooks that changed in this push/PR
-          CHANGED=$(git diff --name-only "$BASE" "${{ github.sha }}" -- '*.ipynb' | grep -v '/_archive/' | sort)
+          CHANGED=$(git diff --name-only --diff-filter=d "$BASE" "${{ github.sha }}" -- '*.ipynb' | grep -v '/_archive/' | sort)
           for nb in $SKIP_LIST; do CHANGED=$(echo "$CHANGED" | grep -vxF "$nb" || true); done
           NOTEBOOKS=$(echo "$CHANGED" | tr '\n' ' ')
           echo "notebooks=$NOTEBOOKS" >> "$GITHUB_OUTPUT"
