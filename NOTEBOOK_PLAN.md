@@ -187,6 +187,14 @@ Detailed review to follow when this chapter is reached.
 
 **"Feature matrix" framing:** Setup cell uses `X` and ML terminology -- reframe as student data matrix.
 
+**Add strides section:** Strides are how NumPy knows where each element lives in memory. Understanding `arr.strides` and `arr.itemsize` is what makes broadcasting make sense -- you stop seeing it as magic and start seeing it as "NumPy is adjusting the step size, not copying data." Add one section after broadcasting:
+
+- Show what `arr.strides` returns and how it relates to `arr.shape` and `arr.itemsize`
+- Demonstrate how a 2D array is just a 1D block of memory with two step sizes
+- Keep it conceptual -- the practical rolling-window application belongs in Chapter 14
+
+Do NOT teach `np.lib.stride_tricks.as_strided()` here. It is dangerous (silently reads memory outside the array if the shape is wrong) and the safe modern API lives in Chapter 14.
+
 Detailed review to follow when this chapter is reached.
 
 ---
@@ -215,7 +223,11 @@ Detailed review to follow when this chapter is reached.
 Chapters 9-16 will be reviewed and improved one at a time after the foundations (Chapters 1-8) are complete. Key notes flagged during the overall review:
 
 - **Chapter 9 (Lets-Plot):** Review for consistency with the plotting ecosystem framing in Chapter 8
-- **Chapter 14 (Time series):** This is where `deque` (removed from Chapter 1) will be introduced in context of rolling windows
+- **Chapter 14 (Time series):** This is where `deque` (removed from Chapter 1) and `sliding_window_view` come together. Introduce two tools for rolling windows side by side:
+  - `np.lib.stride_tricks.sliding_window_view(arr, window_shape=n)` -- NumPy-speed batch computation over the whole array at once; preferred when you need to process all windows in one pass
+  - `collections.deque(maxlen=n)` -- append one value at a time in a live stream; preferred when data arrives incrementally
+  - Show both non-overlapping (`[::step]` on the view) and overlapping (default step=1) patterns
+  - Do NOT use `as_strided` directly -- `sliding_window_view` is the safe modern API (NumPy 1.20+) and the right level of abstraction for a learner
 - **Chapter 11 (Pandas core):** This is where the `statistics` module comparison belongs ("before pandas you'd write `statistics.mean(scores)` -- now you write `df['score'].mean()`")
 - **Chapter 15 (Polars):** Review for connection to Chapter 11 and 12
 
