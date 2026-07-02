@@ -41,6 +41,14 @@ jobs:
       - name: Register ark kernel
         run: uv run python -m ipykernel install --user --name ark --display-name "ark"
 
+      - name: Restore Quarto freeze cache
+        uses: actions/cache@v4
+        with:
+          path: _freeze
+          key: quarto-freeze-${{ runner.os }}-${{ hashFiles('tutorials/**/*.ipynb', 'tutorials/**/*.qmd', '_quarto.yml') }}
+          restore-keys: |
+            quarto-freeze-${{ runner.os }}-
+
       - name: Render book
         run: uv run quarto render
 
