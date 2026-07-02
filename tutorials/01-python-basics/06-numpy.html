@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Part 4a: NumPy Fundamentals – From Data to Impact</title>
+<title>Chapter 6: NumPy basics – From Data to Impact</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -157,7 +157,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
         <a class="flex-grow-1 no-decor" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
-          <h1 class="quarto-secondary-nav-title"><span class="chapter-title">Part 4a: NumPy Fundamentals</span></h1>
+          <h1 class="quarto-secondary-nav-title"><span class="chapter-title">Chapter 6: NumPy basics</span></h1>
         </a>     
     </div>
   </nav>
@@ -224,7 +224,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../tutorials/01-python-basics/06-numpy.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">Part 4a: NumPy Fundamentals</span></a>
+  <a href="../../tutorials/01-python-basics/06-numpy.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">Chapter 6: NumPy basics</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -444,12 +444,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#shape-size-and-dtype" id="toc-shape-size-and-dtype" class="nav-link" data-scroll-target="#shape-size-and-dtype">3. Shape, Size, and dtype</a>
   <ul class="collapse">
   <li><a href="#reshaping" id="toc-reshaping" class="nav-link" data-scroll-target="#reshaping">Reshaping</a></li>
-  <li><a href="#combining-arrays-column_stack-hstack-vstack" id="toc-combining-arrays-column_stack-hstack-vstack" class="nav-link" data-scroll-target="#combining-arrays-column_stack-hstack-vstack">Combining Arrays: <code>column_stack</code>, <code>hstack</code>, <code>vstack</code></a></li>
+  <li><a href="#combining-arrays-column_stack-hstack-vstack" id="toc-combining-arrays-column_stack-hstack-vstack" class="nav-link" data-scroll-target="#combining-arrays-column_stack-hstack-vstack">Combining arrays: <code>column_stack</code>, <code>hstack</code>, <code>vstack</code></a></li>
   </ul></li>
   <li><a href="#indexing-and-slicing" id="toc-indexing-and-slicing" class="nav-link" data-scroll-target="#indexing-and-slicing">4. Indexing and Slicing</a></li>
-  <li><a href="#boolean-masking-vectorised-conditionals" id="toc-boolean-masking-vectorised-conditionals" class="nav-link" data-scroll-target="#boolean-masking-vectorised-conditionals">5. Boolean Masking &amp; Vectorised Conditionals</a></li>
-  <li><a href="#aggregations-along-an-axis" id="toc-aggregations-along-an-axis" class="nav-link" data-scroll-target="#aggregations-along-an-axis">6. Aggregations Along an Axis</a></li>
-  <li><a href="#capstone-exercises" id="toc-capstone-exercises" class="nav-link" data-scroll-target="#capstone-exercises">12. Capstone Exercises</a></li>
+  <li><a href="#boolean-masking-and-vectorised-conditionals" id="toc-boolean-masking-and-vectorised-conditionals" class="nav-link" data-scroll-target="#boolean-masking-and-vectorised-conditionals">5. Boolean masking and vectorised conditionals</a></li>
+  <li><a href="#aggregations-along-an-axis" id="toc-aggregations-along-an-axis" class="nav-link" data-scroll-target="#aggregations-along-an-axis">6. Aggregations along an axis</a></li>
+  <li><a href="#capstone-exercises" id="toc-capstone-exercises" class="nav-link" data-scroll-target="#capstone-exercises">7. Capstone exercises</a></li>
   <li><a href="#further-reading" id="toc-further-reading" class="nav-link" data-scroll-target="#further-reading">Further Reading</a></li>
   <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary">Summary</a></li>
   </ul>
@@ -460,7 +460,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title d-none d-lg-block"><span class="chapter-title">Part 4a: NumPy Fundamentals</span></h1>
+<h1 class="title d-none d-lg-block"><span class="chapter-title">Chapter 6: NumPy basics</span></h1>
 </div>
 
 
@@ -477,12 +477,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<p><a href="https://colab.research.google.com/github/sambaiga/ds-mlops-path/blob/main/tutorials/01-python-basics/06-numpy.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open In Colab"></a> <a href="https://raw.githubusercontent.com/sambaiga/ds-mlops-path/main/tutorials/01-python-basics/06-numpy.ipynb"><img src="https://img.shields.io/badge/Download-Notebook-blue.svg?logo=jupyter&amp;logoColor=white" class="img-fluid" alt="Download Notebook"></a></p>
-<p><strong>DS-MLOps Python Foundations</strong></p>
-<p><strong>Python 3.12+ | Author: Anthony Faustine</strong></p>
-<p>You have 2,400 exam scores. You need to subtract the mean and divide by the standard deviation – across three columns at once. A Python loop would work. It would also be thirty lines, ten seconds, and nothing like the code your teammates expect to read.</p>
-<p>NumPy solves this with one expression: <code>(X - X.mean(axis=0)) / X.std(axis=0)</code>. No loop. No temporary variables. Just the operation, stated directly.</p>
-<p>Part 3b built the full Python vocabulary: classes, exceptions, and file I/O. This notebook applies that vocabulary to arrays – the data structure that underlies every ML library you will use. Part 4b (<code>07-numpy-advanced.ipynb</code>) continues with broadcasting, vectorisation, and linear algebra.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="https://github.com/sambaiga/ds-mlops-path/blob/main/tutorials/01-python-basics/06-numpy.ipynb"><img src="https://img.shields.io/badge/Source-GitHub-181717.svg?logo=github" class="img-fluid figure-img"></a></p>
+<figcaption>View Source on GitHub</figcaption>
+</figure>
+</div>
+<p>A Python loop can normalise 2,400 exam scores. It can. It takes thirty lines, runs ten times slower than it should, and looks nothing like the code the person reviewing your pull request expects to see.</p>
+<p>NumPy does it in one: <code>(student_data - student_data.mean(axis=0)) / student_data.std(axis=0)</code>. No loop. No temporary variables. The operation, stated directly.</p>
+<p>That shape — a short expression operating on an entire matrix — is the syntax that Pandas, scikit-learn, and PyTorch all speak. The standard library tools from Chapter 5 handle exact arithmetic on small collections; this chapter introduces the data structure that handles numbers at scale. Chapter 7 (<code>07-numpy-advanced.ipynb</code>) extends it with broadcasting, vectorisation, and linear algebra.</p>
 <blockquote class="blockquote">
 <p>Callout markers: <a href="../../index.html#callout-guide">book cover page</a>.</p>
 </blockquote>
@@ -498,13 +501,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <div id="callout-1" class="callout-1-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>This notebook follows Parts 1-3. You should be comfortable with functions, list comprehensions, and <code>@dataclass</code>. NumPy is imported as <code>import numpy as np</code> throughout.</p>
+<p>This chapter follows Chapters 1-5. You should be comfortable with functions, list comprehensions, and <code>@dataclass</code>. NumPy is imported as <code>import numpy as np</code> throughout.</p>
 </div>
 </div>
 </div>
 <section id="meet-numpy" class="level2">
 <h2 class="anchored" data-anchor-id="meet-numpy">Meet NumPy</h2>
-<p>You have written Python for three chapters. You can loop, slice, and unpack. Now imagine you need to normalise 2,400 exam scores: subtract the mean, divide by the standard deviation, do it across three columns. A Python <code>for</code> loop would work. It would also be slow, verbose, and nothing like the code your colleagues expect to read.</p>
 <p>NumPy (<a href="https://numpy.org">numpy.org</a>) was created in 2005 by Travis Oliphant to give Python scientists the numeric performance of Fortran and C without leaving the language. The idea was simple: store numbers in a contiguous block of memory with a fixed type, and let a thin Python wrapper call heavily optimised C and Fortran routines on that block. Two decades later, nearly every numerical computing library in Python (pandas, scikit-learn, PyTorch, TensorFlow) uses NumPy arrays as its currency.</p>
 <section id="how-it-compares" class="level3">
 <h3 class="anchored" data-anchor-id="how-it-compares">How it compares</h3>
@@ -616,7 +618,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </tr>
 <tr class="even">
 <td>6</td>
-<td>Compute per-feature and per-sample statistics with <code>axis</code></td>
+<td>Compute per-column and per-row statistics with <code>axis</code></td>
 <td>Sec. 6</td>
 </tr>
 </tbody>
@@ -651,26 +653,26 @@ array * 2 : [24 10 36 18 44]</code></pre>
 <figcaption>Memory layout comparison: Python list stores pointers to scattered heap objects, while NumPy ndarray stores uniform float64 values in a single contiguous block.</figcaption>
 </figure>
 </div>
-<div style="background:#EAF3FA;border-left:5px solid #0369A1;padding:14px 18px;border-radius:6px;margin:16px 0">
-<p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-info-circle-fill"></i> Key Concept: ndarray = dtype + shape + contiguous memory</span><br><br> A NumPy array is homogeneous (one <code>dtype</code> for every element) and has a fixed <code>shape</code>. Because elements sit next to each other in memory, NumPy can vectorise operations: apply one compiled loop to the whole array instead of looping in Python.<br><br>Lists are general-purpose containers; arrays are <b>numeric data structures</b>. Use a list for a heterogeneous bag of objects, an array for a column of numbers.</p>
+<div class="ark-concept">
+<p><span class="ark-concept-title"><i class="bi bi-info-circle-fill"></i> Key Concept: ndarray = dtype + shape + contiguous memory</span><br><br> A NumPy array is homogeneous (one <code>dtype</code> for every element) and has a fixed <code>shape</code>. Because elements sit next to each other in memory, NumPy can vectorise operations: apply one compiled loop to the whole array instead of looping in Python.<br><br>Lists are general-purpose containers; arrays are <b>numeric data structures</b>. Use a list for a heterogeneous bag of objects, an array for a column of numbers.</p>
 </div>
-<div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
-<p><span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 1 - ndarray vs list arithmetic</span><br><br> <b>Goal:</b> Feel the difference between Python lists and NumPy arrays.<br><br><b>Steps:</b><br>1. Create <code>scores_list = [78, 85, 92, 91, 55]</code> and <code>scores_arr = np.array(scores_list)</code>.<br>2. Compute the z-score: <code>(scores_arr - scores_arr.mean()) / scores_arr.std()</code>.<br>3. Confirm the result has mean ~0 and std ~1 using <code>.mean()</code> and <code>.std()</code>.<br>4. Try <code>scores_list - scores_list[0]</code> and note the error.<br><br><b>Expected:</b> z-scores around <code>[-0.3, 0.3, 1.1, 0.9, -2.0]</code>.</p>
+<div class="ark-activity">
+<p><span class="ark-activity-title"><i class="bi bi-puzzle-fill"></i> Activity 1: ndarray vs list arithmetic</span><br><br> <b>Goal:</b> Feel the difference between Python lists and NumPy arrays.<br><br><b>Steps:</b><br> 1. Create <code>scores_list = [78, 85, 92, 91, 55]</code> and <code>scores_arr = np.array(scores_list)</code>.<br> 2. Compute the z-score: <code>(scores_arr - scores_arr.mean()) / scores_arr.std()</code>.<br> 3. Confirm the result has mean ~0 and std ~1 using <code>.mean()</code> and <code>.std()</code>.<br> 4. Try <code>scores_list - scores_list[0]</code> and note the error.<br><br> <b>Expected:</b> z-scores around <code>[-0.3, 0.3, 1.1, 0.9, -2.0]</code>.</p>
 </div>
 </section>
 <section id="creating-arrays" class="level2">
 <h2 class="anchored" data-anchor-id="creating-arrays">2. Creating Arrays</h2>
 <p>The most direct way to create an array is <code>np.array()</code> from a Python list (or list of lists, for 2D data). For larger or synthetic data, NumPy provides dedicated creation functions so you never have to type out values by hand.</p>
-<div style="background:#EFF6FF;border-left:5px solid #0369A1;padding:14px 18px;border-radius:6px;margin:16px 0">
-<p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-key-fill"></i> Key Concept: Use default_rng, not the legacy random API</span><br><br> <code>rng = np.random.default_rng(42)</code> creates an independent, reproducible stream. The legacy <code>np.random.seed(42)</code> sets global state shared by every library in your process – a hidden coupling that makes results hard to reproduce. Prefer <code>default_rng</code> for all new code.</p>
+<div class="ark-concept">
+<p><span class="ark-concept-title"><i class="bi bi-key-fill"></i> Key Concept: use default_rng, not the legacy random API</span><br><br> <code>rng = np.random.default_rng(42)</code> creates an independent, reproducible stream. The legacy <code>np.random.seed(42)</code> sets global state shared by every library in your process: a hidden coupling that makes results hard to reproduce. Prefer <code>default_rng</code> for all new code.</p>
 </div>
 <div id="12" class="cell" data-execution_count="2">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 1D array: one feature for five students</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 1D array: one measurement per student</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>study_hours <span class="op">=</span> np.array([<span class="dv">12</span>, <span class="dv">5</span>, <span class="dv">18</span>, <span class="dv">9</span>, <span class="dv">22</span>])</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 2D array: rows = students, columns = features</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 2D array: rows = students, columns = measurements</span></span>
 <span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co"># columns: [study_hours, attendance_pct, prior_gpa]</span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>features <span class="op">=</span> np.array(</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>student_data <span class="op">=</span> np.array(</span>
 <span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    [</span>
 <span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>        [<span class="dv">12</span>, <span class="dv">85</span>, <span class="fl">3.1</span>],</span>
 <span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>        [<span class="dv">5</span>, <span class="dv">60</span>, <span class="fl">2.4</span>],</span>
@@ -679,8 +681,8 @@ array * 2 : [24 10 36 18 44]</code></pre>
 <span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>        [<span class="dv">22</span>, <span class="dv">98</span>, <span class="fl">3.9</span>],</span>
 <span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>    ]</span>
 <span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(features)</span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"shape: </span><span class="sc">{</span>features<span class="sc">.</span>shape<span class="sc">}</span><span class="ss">"</span>)  <span class="co"># (5 students, 3 features)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(student_data)</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"shape: </span><span class="sc">{</span>student_data<span class="sc">.</span>shape<span class="sc">}</span><span class="ss">"</span>)  <span class="co"># (5 students, 3 columns)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[[12.  85.   3.1]
  [ 5.  60.   2.4]
@@ -761,11 +763,11 @@ integers [60, 100)  : [89 90 88 91 80]</code></pre>
 </div>
 </div>
 <div style="background:#F5F3FF;border-left:5px solid #7C3AED;padding:14px 18px;border-radius:6px;margin:16px 0">
-<p><span style="color:#5B21B6;font-weight:bold"><i class="bi bi-lightbulb-fill"></i> Pro Tip: Prefer <code>default_rng</code> over <code>np.random.seed</code></span><br><br> <code>np.random.seed(42)</code> mutates a single <b>global</b> random state shared by your whole program. Any other code (or library) calling <code>np.random.*</code> shifts that shared state and breaks your reproducibility. <code>rng = np.random.default_rng(42)</code> gives you an isolated generator: pass it around explicitly, and your results stay reproducible no matter what else runs.</p>
+<p><span style="color:#5B21B6;font-weight:bold"><i class="bi bi-lightbulb-fill"></i> Pro Tip: prefer <code>default_rng</code> over <code>np.random.seed</code></span><br><br> <code>np.random.seed(42)</code> mutates a single <b>global</b> random state shared by your whole program. Any other code (or library) calling <code>np.random.*</code> shifts that shared state and breaks your reproducibility. <code>rng = np.random.default_rng(42)</code> gives you an isolated generator: pass it around explicitly, and your results stay reproducible no matter what else runs.</p>
 </div>
-<div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
-<p><span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 2 - Build a Synthetic Student Dataset</span><br><br></p>
-<b>Goal:</b> Using <code>rng = np.random.default_rng(7)</code>, generate a feature matrix <code>X</code> of shape <code>(50, 3)</code> for 50 students with columns:<br><br>
+<div class="ark-activity">
+<p><span class="ark-activity-title"><i class="bi bi-puzzle-fill"></i> Activity 2: build a synthetic student dataset</span><br><br></p>
+<b>Goal:</b> Using <code>rng = np.random.default_rng(7)</code>, generate a <code>student_data</code> array of shape <code>(50, 3)</code> for 50 students with columns:<br><br>
 <ul>
 <li>
 <code>study_hours</code>: <code>rng.uniform(0, 25, size=50)</code>
@@ -778,8 +780,8 @@ integers [60, 100)  : [89 90 88 91 80]</code></pre>
 </li>
 </ul>
 Combine the three 1D arrays into one <code>(50, 3)</code> array with <code>np.column_stack</code>.
-<pre style="background:#FCE8DA;padding:10px;border-radius:4px;font-size:0.9em">X.shape  # -&gt; (50, 3)
-X[0]     # -&gt; array([study_hours_0, attendance_pct_0, prior_gpa_0])</pre>
+<pre style="background:#FCE8DA;padding:10px;border-radius:4px;font-size:0.9em">student_data.shape  # -&gt; (50, 3)
+student_data[0]     # -&gt; array([study_hours_0, attendance_pct_0, prior_gpa_0])</pre>
 <p><b>Hint:</b> <code>np.column_stack([a, b, c])</code> stacks 1D arrays as columns of a 2D array.</p>
 </div>
 <div id="19" class="cell" data-execution_count="5">
@@ -789,21 +791,21 @@ X[0]     # -&gt; array([study_hours_0, attendance_pct_0, prior_gpa_0])</pre>
 <span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>attendance_pct <span class="op">=</span> rng.uniform(<span class="dv">50</span>, <span class="dv">100</span>, size<span class="op">=</span><span class="dv">50</span>)</span>
 <span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>prior_gpa <span class="op">=</span> rng.uniform(<span class="fl">2.0</span>, <span class="fl">4.0</span>, size<span class="op">=</span><span class="dv">50</span>)</span>
 <span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> ...  <span class="co"># </span><span class="al">TODO</span><span class="co">: combine the three arrays into one (50, 3) feature matrix</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>student_data <span class="op">=</span> ...  <span class="co"># </span><span class="al">TODO</span><span class="co">: combine the three arrays into one (50, 3) array</span></span>
 <span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="co"># print(f"X.shape : {X.shape}")</span></span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="co"># print(f"X[0]    : {X[0]}")</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="co"># print(f"student_data.shape : {student_data.shape}")</span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="co"># print(f"student_data[0]    : {student_data[0]}")</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 </section>
 <section id="shape-size-and-dtype" class="level2">
 <h2 class="anchored" data-anchor-id="shape-size-and-dtype">3. Shape, Size, and dtype</h2>
 <p>Every array carries metadata you should check before trusting a computation: <code>shape</code> (size along each dimension), <code>ndim</code> (number of dimensions), <code>size</code> (total element count), and <code>dtype</code> (the single data type of every element).</p>
-<div style="background:#EFF6FF;border-left:5px solid #0369A1;padding:14px 18px;border-radius:6px;margin:16px 0">
-<p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-key-fill"></i> Key Concept: Check .shape and .dtype before any computation</span><br><br> Shape mismatches and dtype surprises are the most common silent NumPy bugs. A <code>(5, 3)</code> array minus a <code>(3, 5)</code> array either errors or broadcasts in a way you did not intend. Print <code>arr.shape, arr.dtype</code> whenever a result looks wrong.</p>
+<div class="ark-concept">
+<p><span class="ark-concept-title"><i class="bi bi-key-fill"></i> Key Concept: check .shape and .dtype before any computation</span><br><br> Shape mismatches and dtype surprises are the most common silent NumPy bugs. A <code>(5, 3)</code> array minus a <code>(3, 5)</code> array either errors or broadcasts in a way you did not intend. Print <code>arr.shape, arr.dtype</code> whenever a result looks wrong.</p>
 </div>
 <div id="22" class="cell" data-execution_count="6">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> np.array(</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>student_data <span class="op">=</span> np.array(</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    [</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>        [<span class="fl">12.0</span>, <span class="fl">85.0</span>, <span class="fl">3.1</span>],</span>
 <span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>        [<span class="fl">5.0</span>, <span class="fl">60.0</span>, <span class="fl">2.4</span>],</span>
@@ -812,10 +814,10 @@ X[0]     # -&gt; array([study_hours_0, attendance_pct_0, prior_gpa_0])</pre>
 <span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>    ]</span>
 <span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"shape : </span><span class="sc">{</span>X<span class="sc">.</span>shape<span class="sc">}</span><span class="ss">"</span>)  <span class="co"># (rows, columns)</span></span>
-<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"ndim  : </span><span class="sc">{</span>X<span class="sc">.</span>ndim<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"size  : </span><span class="sc">{</span>X<span class="sc">.</span>size<span class="sc">}</span><span class="ss">"</span>)  <span class="co"># rows * columns</span></span>
-<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"dtype : </span><span class="sc">{</span>X<span class="sc">.</span>dtype<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"shape : </span><span class="sc">{</span>student_data<span class="sc">.</span>shape<span class="sc">}</span><span class="ss">"</span>)  <span class="co"># (rows, columns)</span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"ndim  : </span><span class="sc">{</span>student_data<span class="sc">.</span>ndim<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"size  : </span><span class="sc">{</span>student_data<span class="sc">.</span>size<span class="sc">}</span><span class="ss">"</span>)  <span class="co"># rows * columns</span></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"dtype : </span><span class="sc">{</span>student_data<span class="sc">.</span>dtype<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>shape : (4, 3)
 ndim  : 2
@@ -823,8 +825,8 @@ size  : 12
 dtype : float64</code></pre>
 </div>
 </div>
-<div style="background:#FEF2F2;border-left:5px solid #DC2626;padding:14px 18px;border-radius:6px;margin:16px 0">
-<p><span style="color:#991B1B;font-weight:bold"><i class="bi bi-bug-fill"></i> Common Mistake: Mixed int/float input silently upcasts</span><br><br> <code>np.array([1, 2, 3.5])</code> produces a <code>float64</code> array, not a mix of <code>int</code> and <code>float</code>. NumPy must pick <b>one</b> dtype for the whole array and silently widens every element to fit. This is usually harmless, but <code>np.array([1, 2, 3], dtype=np.int32) / 2</code> truncating, or an unexpected <code>int8</code> overflowing past 127, are the same root cause: always check <code>.dtype</code> when results look wrong.</p>
+<div class="ark-mistake">
+<p><span class="ark-mistake-title"><i class="bi bi-bug-fill"></i> Common Mistake: mixed int/float input silently upcasts</span><br><br> <code>np.array([1, 2, 3.5])</code> produces a <code>float64</code> array, not a mix of <code>int</code> and <code>float</code>. NumPy must pick <b>one</b> dtype for the whole array and silently widens every element to fit. This is usually harmless, but <code>np.array([1, 2, 3], dtype=np.int32) / 2</code> truncating, or an unexpected <code>int8</code> overflowing past 127, are the same root cause: always check <code>.dtype</code> when results look wrong.</p>
 </div>
 <section id="reshaping" class="level3">
 <h3 class="anchored" data-anchor-id="reshaping">Reshaping</h3>
@@ -852,8 +854,8 @@ reshape(-1,1) shape: (12, 1)
 flatten()   : [ 0  1  2  3  4  5  6  7  8  9 10 11]</code></pre>
 </div>
 </div>
-<div style="background:#FEF2F2;border-left:5px solid #DC2626;padding:14px 18px;border-radius:6px;margin:16px 0">
-<p><span style="color:#991B1B;font-weight:bold"><i class="bi bi-bug-fill"></i> Common Mistake: <code>reshape()</code> returns a view, <code>flatten()</code> returns a copy</span><br><br> Mutating the result of <code>.reshape()</code> mutates the <b>original</b> array too. They share the same underlying memory. <code>.flatten()</code> always copies, so mutating it’s safe. This distinction (view vs.&nbsp;copy) comes up constantly in NumPy; Sec. 11 covers it in more depth.</p>
+<div class="ark-mistake">
+<p><span class="ark-mistake-title"><i class="bi bi-bug-fill"></i> Common Mistake: <code>reshape()</code> returns a view, <code>flatten()</code> returns a copy</span><br><br> Mutating the result of <code>.reshape()</code> mutates the <b>original</b> array too. They share the same underlying memory. <code>.flatten()</code> always copies, so mutating it is safe. This distinction (view vs.&nbsp;copy) comes up constantly in NumPy; Sec. 11 covers it in more depth.</p>
 </div>
 <div id="27" class="cell" data-execution_count="8">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>original <span class="op">=</span> np.arange(<span class="dv">6</span>)</span>
@@ -871,8 +873,8 @@ original : [99  1  2  3  4  5]</code></pre>
 </div>
 </section>
 <section id="combining-arrays-column_stack-hstack-vstack" class="level3">
-<h3 class="anchored" data-anchor-id="combining-arrays-column_stack-hstack-vstack">Combining Arrays: <code>column_stack</code>, <code>hstack</code>, <code>vstack</code></h3>
-<p>Feature engineering often means assembling separate 1D feature vectors into one 2D matrix, or stacking two matrices together. Use the right function for the shape change you want:</p>
+<h3 class="anchored" data-anchor-id="combining-arrays-column_stack-hstack-vstack">Combining arrays: <code>column_stack</code>, <code>hstack</code>, <code>vstack</code></h3>
+<p>Assembling separate 1D arrays into one 2D matrix, or stacking two matrices together, is a common pattern. Use the right function for the shape change you want:</p>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 50%">
@@ -907,7 +909,7 @@ original : [99  1  2  3  4  5]</code></pre>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>gpa <span class="op">=</span> np.array([<span class="fl">3.1</span>, <span class="fl">2.4</span>, <span class="fl">3.8</span>, <span class="fl">2.9</span>])</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>attendance <span class="op">=</span> np.array([<span class="dv">85</span>, <span class="dv">60</span>, <span class="dv">95</span>, <span class="dv">70</span>])</span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Two 1D feature vectors -&gt; one (4, 2) matrix</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Two 1D arrays -&gt; one (4, 2) matrix</span></span>
 <span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>combined <span class="op">=</span> np.column_stack([gpa, attendance])</span>
 <span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"column_stack:</span><span class="ch">\n</span><span class="sc">{</span>combined<span class="sc">}</span><span class="ss">"</span>)</span>
 <span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a></span>
@@ -924,16 +926,16 @@ original : [99  1  2  3  4  5]</code></pre>
 vstack shape: (6, 2)</code></pre>
 </div>
 </div>
-<div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
-<p><span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 3 - Build a feature matrix</span><br><br> <b>Goal:</b> Stack 1D arrays into a 2D feature matrix and inspect its metadata.<br><br><code>study_hours = np.array([12, 5, 18, 9, 22])</code><br><code>attendance = np.array([85, 60, 95, 70, 98])</code><br><code>gpa = np.array([3.1, 2.4, 3.8, 2.9, 3.9])</code><br><br><b>Steps:</b><br>1. Stack them into a <code>(5, 3)</code> matrix with <code>np.column_stack</code>.<br>2. Print <code>.shape</code> and <code>.dtype</code>.<br>3. Reshape to <code>(3, 5)</code> and confirm shapes swapped.<br><br><b>Expected:</b> original shape <code>(5, 3)</code>, reshaped <code>(3, 5)</code>.</p>
+<div class="ark-activity">
+<p><span class="ark-activity-title"><i class="bi bi-puzzle-fill"></i> Activity 3: build a student data matrix</span><br><br> <b>Goal:</b> Stack 1D arrays into a 2D student data matrix and inspect its metadata.<br><br> <code>study_hours = np.array([12, 5, 18, 9, 22])</code><br> <code>attendance = np.array([85, 60, 95, 70, 98])</code><br> <code>gpa = np.array([3.1, 2.4, 3.8, 2.9, 3.9])</code><br><br> <b>Steps:</b><br> 1. Stack them into a <code>(5, 3)</code> matrix with <code>np.column_stack</code>.<br> 2. Print <code>.shape</code> and <code>.dtype</code>.<br> 3. Reshape to <code>(3, 5)</code> and confirm shapes swapped.<br><br> <b>Expected:</b> original shape <code>(5, 3)</code>, reshaped <code>(3, 5)</code>.</p>
 </div>
 </section>
 </section>
 <section id="indexing-and-slicing" class="level2">
 <h2 class="anchored" data-anchor-id="indexing-and-slicing">4. Indexing and Slicing</h2>
 <p>NumPy indexing extends Python’s list slicing to multiple dimensions. For a 2D array, the convention is <code>array[rows, columns]</code>, and negative indices still count from the end.</p>
-<div style="background:#EFF6FF;border-left:5px solid #0369A1;padding:14px 18px;border-radius:6px;margin:16px 0">
-<p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-key-fill"></i> Key Concept: Basic slices return views, not copies</span><br><br> Writing <code>sub = X[:2]</code> doesn’t copy data – <code>sub</code> shares memory with <code>X</code>. Modifying <code>sub[0, 0] = 99</code> also changes <code>X[0, 0]</code>. Call <code>.copy()</code> when you need an independent array.</p>
+<div class="ark-concept">
+<p><span class="ark-concept-title"><i class="bi bi-key-fill"></i> Key Concept: basic slices return views, not copies</span><br><br> Writing <code>sub = student_data[:2]</code> does not copy data: <code>sub</code> shares memory with <code>student_data</code>. Modifying <code>sub[0, 0] = 99</code> also changes <code>student_data[0, 0]</code>. Call <code>.copy()</code> when you need an independent array.</p>
 </div>
 <div id="33" class="cell" data-execution_count="10">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>scores <span class="op">=</span> np.array([<span class="dv">62</span>, <span class="dv">78</span>, <span class="dv">85</span>, <span class="dv">91</span>, <span class="dv">55</span>, <span class="dv">73</span>, <span class="dv">88</span>, <span class="dv">95</span>, <span class="dv">67</span>, <span class="dv">80</span>])</span>
@@ -952,7 +954,7 @@ reversed      : [80 67 95 88 73 55 91 85 78 62]</code></pre>
 </div>
 </div>
 <div id="34" class="cell" data-execution_count="11">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> np.array(</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>student_data <span class="op">=</span> np.array(</span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>    [</span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>        [<span class="dv">12</span>, <span class="dv">85</span>, <span class="fl">3.1</span>],</span>
 <span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>        [<span class="dv">5</span>, <span class="dv">60</span>, <span class="fl">2.4</span>],</span>
@@ -962,10 +964,10 @@ reversed      : [80 67 95 88 73 55 91 85 78 62]</code></pre>
 <span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>    ]</span>
 <span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"row 0              : </span><span class="sc">{</span>X[<span class="dv">0</span>]<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"column 1 (all rows): </span><span class="sc">{</span>X[:, <span class="dv">1</span>]<span class="sc">}</span><span class="ss">"</span>)  <span class="co"># every row, attendance column</span></span>
-<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"rows 1-3, col 0 &amp; 2: </span><span class="ch">\n</span><span class="sc">{</span>X[<span class="dv">1</span>:<span class="dv">4</span>, [<span class="dv">0</span>, <span class="dv">2</span>]]<span class="sc">}</span><span class="ss">"</span>)  <span class="co"># fancy column indexing</span></span>
-<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"single cell [2, 1] : </span><span class="sc">{</span>X[<span class="dv">2</span>, <span class="dv">1</span>]<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"row 0              : </span><span class="sc">{</span>student_data[<span class="dv">0</span>]<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"column 1 (all rows): </span><span class="sc">{</span>student_data[:, <span class="dv">1</span>]<span class="sc">}</span><span class="ss">"</span>)  <span class="co"># every row, attendance column</span></span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"rows 1-3, col 0 &amp; 2: </span><span class="ch">\n</span><span class="sc">{</span>student_data[<span class="dv">1</span>:<span class="dv">4</span>, [<span class="dv">0</span>, <span class="dv">2</span>]]<span class="sc">}</span><span class="ss">"</span>)  <span class="co"># fancy column indexing</span></span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"single cell [2, 1] : </span><span class="sc">{</span>student_data[<span class="dv">2</span>, <span class="dv">1</span>]<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>row 0              : [12.  85.   3.1]
 column 1 (all rows): [85. 60. 95. 70. 98.]
@@ -976,12 +978,12 @@ rows 1-3, col 0 &amp; 2:
 single cell [2, 1] : 95.0</code></pre>
 </div>
 </div>
-<div style="background:#FEF2F2;border-left:5px solid #DC2626;padding:14px 18px;border-radius:6px;margin:16px 0">
-<p><span style="color:#991B1B;font-weight:bold"><i class="bi bi-bug-fill"></i> Common Mistake: Basic slices are views; fancy/boolean indexing copies</span><br><br> <code>X[:, 1]</code> (a slice) returns a <b>view</b>: mutating it mutates <code>X</code>. <code>X[1:4, [0, 2]]</code> (a list of indices, known as “fancy indexing”) always returns a <b>copy</b>. If you need an independent array from a slice, call <code>.copy()</code> explicitly: <code>col = X[:, 1].copy()</code>.</p>
+<div class="ark-mistake">
+<p><span class="ark-mistake-title"><i class="bi bi-bug-fill"></i> Common Mistake: basic slices are views; fancy/boolean indexing copies</span><br><br> <code>student_data[:, 1]</code> (a slice) returns a <b>view</b>: mutating it mutates <code>student_data</code>. <code>student_data[1:4, [0, 2]]</code> (a list of indices, known as “fancy indexing”) always returns a <b>copy</b>. If you need an independent array from a slice, call <code>.copy()</code> explicitly: <code>col = student_data[:, 1].copy()</code>.</p>
 </div>
-<div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
-<p><span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 4 - Select Top Performers</span><br><br></p>
-<b>Goal:</b> Given the <code>X</code> feature matrix above (columns: study_hours, attendance_pct, prior_gpa), use slicing to print:<br><br>
+<div class="ark-activity">
+<p><span class="ark-activity-title"><i class="bi bi-puzzle-fill"></i> Activity 4: select top performers</span><br><br></p>
+<b>Goal:</b> Given the <code>student_data</code> array above (columns: study_hours, attendance_pct, prior_gpa), use slicing to print:<br><br>
 <ol>
 <li>
 The <code>prior_gpa</code> column (all rows)
@@ -993,10 +995,10 @@ The first two rows, all columns
 The <code>study_hours</code> and <code>prior_gpa</code> columns (skip attendance) for every row
 </li>
 </ol>
-<p><b>Hint:</b> For (3), use fancy column indexing: <code>X[:, [0, 2]]</code>.</p>
+<p><b>Hint:</b> For (3), use fancy column indexing: <code>student_data[:, [0, 2]]</code>.</p>
 </div>
 <div id="37" class="cell" data-execution_count="12">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> np.array(</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>student_data <span class="op">=</span> np.array(</span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>    [</span>
 <span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>        [<span class="dv">12</span>, <span class="dv">85</span>, <span class="fl">3.1</span>],</span>
 <span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>        [<span class="dv">5</span>, <span class="dv">60</span>, <span class="fl">2.4</span>],</span>
@@ -1022,11 +1024,11 @@ Ellipsis</code></pre>
 </div>
 </div>
 </section>
-<section id="boolean-masking-vectorised-conditionals" class="level2">
-<h2 class="anchored" data-anchor-id="boolean-masking-vectorised-conditionals">5. Boolean Masking &amp; Vectorised Conditionals</h2>
+<section id="boolean-masking-and-vectorised-conditionals" class="level2">
+<h2 class="anchored" data-anchor-id="boolean-masking-and-vectorised-conditionals">5. Boolean masking and vectorised conditionals</h2>
 <p>Comparing an array to a value produces a <strong>boolean array</strong> of the same shape: a “mask.” Using that mask to index the original array keeps only the <code>True</code> positions. This replaces <code>if</code>/<code>for</code> filtering loops entirely.</p>
-<div style="background:#EFF6FF;border-left:5px solid #0369A1;padding:14px 18px;border-radius:6px;margin:16px 0">
-<p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-key-fill"></i> Key Concept: Use &amp; and | for array logic, not and / or</span><br><br> <code>scores &gt;= 70 and attendance &gt;= 80</code> raises <code>ValueError</code> on arrays. Write <code>(scores &gt;= 70) &amp; (attendance &gt;= 80)</code>. The parentheses matter because <code>&amp;</code> binds tighter than <code>&gt;=</code>.</p>
+<div class="ark-concept">
+<p><span class="ark-concept-title"><i class="bi bi-key-fill"></i> Key Concept: use &amp; and | for array logic, not and / or</span><br><br> <code>scores &gt;= 70 and attendance &gt;= 80</code> raises <code>ValueError</code> on arrays. Write <code>(scores &gt;= 70) &amp; (attendance &gt;= 80)</code>. The parentheses matter because <code>&amp;</code> binds tighter than <code>&gt;=</code>.</p>
 </div>
 <div id="40" class="cell" data-execution_count="13">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>scores <span class="op">=</span> np.array([<span class="dv">62</span>, <span class="dv">78</span>, <span class="dv">85</span>, <span class="dv">91</span>, <span class="dv">55</span>, <span class="dv">73</span>, <span class="dv">88</span>, <span class="dv">95</span>, <span class="dv">67</span>, <span class="dv">80</span>])</span>
@@ -1072,8 +1074,8 @@ n at risk    : 1</code></pre>
 ['D' 'C' 'B' 'A' 'F' 'C' 'B' 'A' 'D' 'B']</code></pre>
 </div>
 </div>
-<div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
-<p><span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 5 - Flag Students Needing Intervention</span><br><br></p>
+<div class="ark-activity">
+<p><span class="ark-activity-title"><i class="bi bi-puzzle-fill"></i> Activity 5: flag students needing intervention</span><br><br></p>
 <b>Goal:</b> Given <code>scores</code> and <code>attendance</code> arrays, build a boolean mask <code>needs_help</code> that flags students with <code>score &lt; 70</code> <b>or</b> <code>attendance &lt; 60</code>, then print how many students were flagged and their scores.
 <pre style="background:#FCE8DA;padding:10px;border-radius:4px;font-size:0.9em">scores     = [62, 78, 85, 91, 55, 73, 88, 95, 67, 80]
 attendance = [85, 60, 95, 70, 98, 45, 88, 92, 55, 80]
@@ -1094,17 +1096,17 @@ attendance = [85, 60, 95, 70, 98, 45, 88, 92, 55, 80]
 </div>
 </section>
 <section id="aggregations-along-an-axis" class="level2">
-<h2 class="anchored" data-anchor-id="aggregations-along-an-axis">6. Aggregations Along an Axis</h2>
-<p><code>mean()</code>, <code>sum()</code>, <code>std()</code>, <code>min()</code>, <code>max()</code> collapse an array to a single number by default. On a 2D matrix, the <code>axis</code> argument controls <strong>which dimension gets collapsed</strong> : this is the single most common source of “right function, wrong number” bugs in DS/ML code, so get the convention straight now:</p>
+<h2 class="anchored" data-anchor-id="aggregations-along-an-axis">6. Aggregations along an axis</h2>
+<p><code>mean()</code>, <code>sum()</code>, <code>std()</code>, <code>min()</code>, <code>max()</code> collapse an array to a single number by default. On a 2D matrix, the <code>axis</code> argument controls <strong>which dimension gets collapsed</strong>: this is the single most common source of “right function, wrong number” bugs in NumPy code, so get the convention straight now:</p>
 <ul>
-<li><strong><code>axis=0</code></strong> collapses <strong>rows</strong> -&gt; one result <strong>per column</strong> (per feature)</li>
-<li><strong><code>axis=1</code></strong> collapses <strong>columns</strong> -&gt; one result <strong>per row</strong> (per sample)</li>
+<li><strong><code>axis=0</code></strong> collapses <strong>rows</strong> -&gt; one result <strong>per column</strong></li>
+<li><strong><code>axis=1</code></strong> collapses <strong>columns</strong> -&gt; one result <strong>per row</strong></li>
 </ul>
-<div style="background:#EFF6FF;border-left:5px solid #0369A1;padding:14px 18px;border-radius:6px;margin:16px 0">
-<p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-key-fill"></i> Key Concept: axis=0 collapses rows, axis=1 collapses columns</span><br><br> <code>X.mean(axis=0)</code> gives one value per column – per-feature statistics. <code>X.mean(axis=1)</code> gives one value per row – per-sample statistics. Omitting <code>axis</code> collapses everything to a single scalar.</p>
+<div class="ark-concept">
+<p><span class="ark-concept-title"><i class="bi bi-key-fill"></i> Key Concept: axis=0 collapses rows, axis=1 collapses columns</span><br><br> <code>student_data.mean(axis=0)</code> gives one value per column: per-column statistics. <code>student_data.mean(axis=1)</code> gives one value per row: per-row statistics. Omitting <code>axis</code> collapses everything to a single scalar.</p>
 </div>
 <div id="49" class="cell" data-execution_count="17">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> np.array(</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>student_data <span class="op">=</span> np.array(</span>
 <span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>    [</span>
 <span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>        [<span class="fl">12.0</span>, <span class="fl">85.0</span>, <span class="fl">3.1</span>],</span>
 <span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>        [<span class="fl">5.0</span>, <span class="fl">60.0</span>, <span class="fl">2.4</span>],</span>
@@ -1114,44 +1116,44 @@ attendance = [85, 60, 95, 70, 98, 45, 88, 92, 55, 80]
 <span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a>    ]</span>
 <span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-11"><a href="#cb33-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"overall mean        : </span><span class="sc">{</span>X<span class="sc">.</span>mean()<span class="sc">:.2f}</span><span class="ss">"</span>)  <span class="co"># one number, all 15 values</span></span>
-<span id="cb33-12"><a href="#cb33-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"per-feature mean    : </span><span class="sc">{</span>X<span class="sc">.</span>mean(axis<span class="op">=</span><span class="dv">0</span>)<span class="sc">}</span><span class="ss">"</span>)  <span class="co"># shape (3,): one per column</span></span>
-<span id="cb33-13"><a href="#cb33-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"per-student mean    : </span><span class="sc">{</span>X<span class="sc">.</span>mean(axis<span class="op">=</span><span class="dv">1</span>)<span class="sc">}</span><span class="ss">"</span>)  <span class="co"># shape (5,): one per row</span></span>
-<span id="cb33-14"><a href="#cb33-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"per-feature std     : </span><span class="sc">{</span>X<span class="sc">.</span>std(axis<span class="op">=</span><span class="dv">0</span>)<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb33-15"><a href="#cb33-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"per-feature min/max : </span><span class="sc">{</span>X<span class="sc">.</span><span class="bu">min</span>(axis<span class="op">=</span><span class="dv">0</span>)<span class="sc">}</span><span class="ss"> / </span><span class="sc">{</span>X<span class="sc">.</span><span class="bu">max</span>(axis<span class="op">=</span><span class="dv">0</span>)<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb33-11"><a href="#cb33-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"overall mean        : </span><span class="sc">{</span>student_data<span class="sc">.</span>mean()<span class="sc">:.2f}</span><span class="ss">"</span>)  <span class="co"># one number, all 15 values</span></span>
+<span id="cb33-12"><a href="#cb33-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"per-column mean     : </span><span class="sc">{</span>student_data<span class="sc">.</span>mean(axis<span class="op">=</span><span class="dv">0</span>)<span class="sc">}</span><span class="ss">"</span>)  <span class="co"># shape (3,): one per column</span></span>
+<span id="cb33-13"><a href="#cb33-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"per-student mean    : </span><span class="sc">{</span>student_data<span class="sc">.</span>mean(axis<span class="op">=</span><span class="dv">1</span>)<span class="sc">}</span><span class="ss">"</span>)  <span class="co"># shape (5,): one per row</span></span>
+<span id="cb33-14"><a href="#cb33-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"per-column std      : </span><span class="sc">{</span>student_data<span class="sc">.</span>std(axis<span class="op">=</span><span class="dv">0</span>)<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb33-15"><a href="#cb33-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"per-column min/max  : </span><span class="sc">{</span>student_data<span class="sc">.</span><span class="bu">min</span>(axis<span class="op">=</span><span class="dv">0</span>)<span class="sc">}</span><span class="ss"> / </span><span class="sc">{</span>student_data<span class="sc">.</span><span class="bu">max</span>(axis<span class="op">=</span><span class="dv">0</span>)<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>overall mean        : 32.67
-per-feature mean    : [13.2  81.6   3.22]
+per-column mean     : [13.2  81.6   3.22]
 per-student mean    : [33.36666667 22.46666667 38.93333333 27.3        41.3       ]
-per-feature std     : [ 6.11228272 14.56845908  0.56356011]
-per-feature min/max : [ 5.  60.   2.4] / [22.  98.   3.9]</code></pre>
+per-column std      : [ 6.11228272 14.56845908  0.56356011]
+per-column min/max  : [ 5.  60.   2.4] / [22.  98.   3.9]</code></pre>
 </div>
 </div>
 <div style="background:#F5F3FF;border-left:5px solid #7C3AED;padding:14px 18px;border-radius:6px;margin:16px 0">
-<p><span style="color:#5B21B6;font-weight:bold"><i class="bi bi-lightbulb-fill"></i> Pro Tip: Say the axis name out loud</span><br><br> “<code>axis=0</code>” is easy to misremember. Read it as: “collapse <b>axis 0</b> (the row axis): what’s left is one value per column.” If you want one statistic per <i>feature</i> (the usual case before normalising a feature matrix), that is always <code>axis=0</code>.</p>
+<p><span style="color:#5B21B6;font-weight:bold"><i class="bi bi-lightbulb-fill"></i> Pro Tip: say the axis name out loud</span><br><br> “<code>axis=0</code>” is easy to misremember. Read it as: “collapse <b>axis 0</b> (the row axis): what’s left is one value per column.” If you want one statistic per <i>column</i> (the usual case before normalising a student data matrix), that is always <code>axis=0</code>.</p>
 </div>
-<div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
-<p><span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 6 - Per-feature and per-sample statistics</span><br><br> <b>Goal:</b> Compute aggregations along both axes.<br><br>Using the feature matrix <code>X</code> from Activity 3:<br>1. Compute the mean and std of each feature (<code>axis=0</code>).<br>2. Compute each student’s mean score across all features (<code>axis=1</code>).<br>3. Z-score normalise the entire matrix with one expression:<br><code>X_z = (X - X.mean(axis=0)) / X.std(axis=0)</code><br>4. Confirm <code>X_z.mean(axis=0)</code> is all zeros (within floating-point tolerance).</p>
+<div class="ark-activity">
+<p><span class="ark-activity-title"><i class="bi bi-puzzle-fill"></i> Activity 6: per-column and per-row statistics</span><br><br> <b>Goal:</b> Compute aggregations along both axes.<br><br> Using the <code>student_data</code> array from Activity 3:<br> 1. Compute the mean and std of each column (<code>axis=0</code>).<br> 2. Compute each student’s mean score across all columns (<code>axis=1</code>).<br> 3. Z-score normalise the entire matrix with one expression:<br> <code>student_data_z = (student_data - student_data.mean(axis=0)) / student_data.std(axis=0)</code><br> 4. Confirm <code>student_data_z.mean(axis=0)</code> is all zeros (within floating-point tolerance).</p>
 </div>
-<div style="background:#EFF6FF;border-left:5px solid #0369A1;padding:14px 18px;border-radius:6px;margin:16px 0">
-<p><span style="color:#0369A1;font-weight:bold"><i class="bi bi-arrow-right-circle-fill"></i> What’s Next</span><br><br> Part 4a covered the NumPy fundamentals: creating arrays, shapes, indexing, masking, and aggregations. <b>Part 4b</b> (<code>07-numpy-advanced.ipynb</code>) builds on these with the four topics that make NumPy genuinely powerful: broadcasting, vectorisation, linear algebra, and common gotchas.</p>
+<div class="ark-concept">
+<p><span class="ark-concept-title"><i class="bi bi-arrow-right-circle-fill"></i> What’s Next</span><br><br> Chapter 6 covered the NumPy fundamentals: creating arrays, shapes, indexing, masking, and aggregations. <b>Chapter 7</b> (<code>07-numpy-advanced.ipynb</code>) builds on these with the four topics that make NumPy genuinely powerful: broadcasting, vectorisation, linear algebra, and common gotchas.</p>
 </div>
 </section>
 <section id="capstone-exercises" class="level2">
-<h2 class="anchored" data-anchor-id="capstone-exercises">12. Capstone Exercises</h2>
+<h2 class="anchored" data-anchor-id="capstone-exercises">7. Capstone exercises</h2>
 <p>Apply everything from this notebook together. Each exercise is self-contained.</p>
-<div style="background:#EBF5F0;border-left:5px solid #009E73;padding:14px 18px;border-radius:6px;margin:16px 0">
-<p><span style="color:#065F46;font-weight:bold"><i class="bi bi-puzzle-fill"></i> Activity 7 - Build, Normalise, and Predict</span><br><br></p>
+<div class="ark-activity">
+<p><span class="ark-activity-title"><i class="bi bi-puzzle-fill"></i> Activity 7: build, normalise, and predict</span><br><br></p>
 <b>Goal:</b> Using the <code>students</code> dataset below:<br><br>
 <ol>
 <li>
-Build a <code>(6, 3)</code> feature matrix <code>X</code> with <code>np.column_stack</code>
+Build a <code>(6, 3)</code> array <code>student_data</code> with <code>np.column_stack</code>
 </li>
 <li>
-Z-score normalise <code>X</code> (Sec. 7)
+Z-score normalise <code>student_data</code> (Sec. 6)
 </li>
 <li>
-Predict <code>exam_score</code> with the given <code>weights</code>/<code>bias</code> using <code>@</code> (Sec. 9), applied to the <b>normalised</b> features
+Predict <code>exam_score</code> with the given <code>weights</code>/<code>bias</code> using <code>@</code> (Sec. 9), applied to the <b>normalised</b> data
 </li>
 <li>
 Compute the RMSE against <code>actual_scores</code> using <code>np.linalg.norm</code>
@@ -1167,9 +1169,9 @@ Compute the RMSE against <code>actual_scores</code> using <code>np.linalg.norm</
 <span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>weights <span class="op">=</span> np.array([<span class="fl">0.8</span>, <span class="fl">0.5</span>, <span class="fl">6.0</span>])</span>
 <span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>bias <span class="op">=</span> <span class="fl">55.0</span></span>
 <span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: 1) build X, 2) normalise it, 3) predict, 4) compute RMSE</span></span>
-<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> ...</span>
-<span id="cb35-11"><a href="#cb35-11" aria-hidden="true" tabindex="-1"></a>X_normalised <span class="op">=</span> ...</span>
+<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: 1) build student_data, 2) normalise it, 3) predict, 4) compute RMSE</span></span>
+<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a>student_data <span class="op">=</span> ...</span>
+<span id="cb35-11"><a href="#cb35-11" aria-hidden="true" tabindex="-1"></a>student_data_z <span class="op">=</span> ...</span>
 <span id="cb35-12"><a href="#cb35-12" aria-hidden="true" tabindex="-1"></a>predicted <span class="op">=</span> ...</span>
 <span id="cb35-13"><a href="#cb35-13" aria-hidden="true" tabindex="-1"></a>rmse <span class="op">=</span> ...</span>
 <span id="cb35-14"><a href="#cb35-14" aria-hidden="true" tabindex="-1"></a></span>
@@ -1248,7 +1250,7 @@ Compute the RMSE against <code>actual_scores</code> using <code>np.linalg.norm</
 </tr>
 <tr class="even">
 <td>Slicing</td>
-<td>Basic slices (<code>X[:, 0]</code>) are views; fancy/boolean indexing always copies</td>
+<td>Basic slices (<code>student_data[:, 0]</code>) are views; fancy/boolean indexing always copies</td>
 </tr>
 <tr class="odd">
 <td>Boolean masks</td>
