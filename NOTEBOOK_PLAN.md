@@ -297,25 +297,255 @@ Detailed review to follow when this chapter is reached.
 
 ## Chapters 9-16: deferred review
 
-Chapters 9-16 will be reviewed and improved one at a time after the foundations (Chapters 1-8) are complete. Key notes:
-
-- **Chapter 9 (Lets-Plot):** Review for consistency with the plotting ecosystem framing in Chapter 8
-- **Chapter 11 (Pandas core):** This is where the `statistics` module comparison belongs ("before pandas you'd write `statistics.mean(scores)`; now you write `df['score'].mean()`")
-- **Chapter 14 (Time series):** This is where `deque` and `sliding_window_view` come together. Introduce two tools for rolling windows side by side:
-  - `np.lib.stride_tricks.sliding_window_view(arr, window_shape=n)`: NumPy-speed batch computation; preferred when you process all windows in one pass
-  - `collections.deque(maxlen=n)`: append one value at a time in a live stream; preferred when data arrives incrementally
-  - Do NOT use `as_strided` directly; `sliding_window_view` is the safe modern API (NumPy 1.20+)
-- **Chapter 15 (Polars):** Review for connection to Chapters 11 and 12
+Chapters 9-16 are reviewed and improved one at a time after the foundations (Chapters 1-8) are complete. The individual chapter plans below reflect the actual state of each file.
 
 ---
 
-## Part 22: The ML landscape (`tutorials/04-ml-intro/01-ml-introduction.qmd`) -- REVISE HOOK ONLY
+## Chapter 9: Grammar of graphics with lets-plot (`09-lets-plot.ipynb`)
 
-Part 22 stays in place. By the time a learner reaches it, they have Python, NumPy, and Pandas. They can appreciate the technical depth that Part 0 only sketched.
+**Issues found (62 cells):**
 
-**The only change needed:** The current hook opens with "Parts 1-3 gave you Python, data tools, and a professional dev setup." Replace that with a connection back to Part 0: "Part 0 showed you the destination. You have now built the tools to understand it properly." Then continue into the deeper ML taxonomy as currently written.
+**DS-MLOps header block in cell 2.** `**DS-MLOps Python Foundations**` and `**Python 3.12+ | Author: Anthony Faustine**` must be removed. After removal, the opener reads "Part 5 built charts by calling functions..." -- the contrast framing is good but "Part 5" must become "Chapter 8".
 
-**Why keep it:** Part 0 is orientation for a beginner. Part 22 is a deeper look at the same landscape, now that the learner has the vocabulary and tools to appreciate the distinctions. This is the spiral curriculum: the same idea revisited at increasing depth.
+**Cell 2 and cell 3 duplicate content.** Cell 2 explains that Matplotlib required separate function calls for each visual channel. Cell 3 opens "You have already drawn scatter plots with Matplotlib. You called `ax.scatter(x, y, c=color, s=size)`..." -- same argument, same code reference. Remove the first two paragraphs of cell 3; keep from "There is another way to think about it. A chart isn't a list of drawing commands..." onward. This mirrors the fix applied to Ch8 and Ch11.
+
+**8 title-case headings to fix:**
+
+- `## Before You Begin` -- `## Before you begin`
+- `## Why Grammar of Graphics?` -- `## Why the grammar of graphics?`
+- `## Learning Objectives` -- `## Learning objectives`
+- `## 1. Declarative vs. Imperative` -- `## 1. Declarative vs. imperative`
+- `## 3. Mapping vs. Setting` -- `## 3. Mapping vs. setting`
+- `## 4. Layering: Raw Data and a Statistical Summary Together` -- `## 4. Layering: raw data and a statistical summary together`
+- `## 5. Faceting: One Plot, Many Panels` -- `## 5. Faceting: one plot, many panels`
+- `## 6. Titles, Labels, and Scales` -- `## 6. Titles, labels, and scales`
+- `## Capstone: The Three-Panel Report, Declaratively` -- `## Capstone: the three-panel report, declaratively`
+
+**3 double-dashes** (`--`) in cell 2 prose. Fix each to a comma or colon.
+
+**20 inline `<div style='background:#'>` callouts** need ark class conversion (same pattern as Ch8: concept, activity, mistake, tip). Apply the same ARK_CONV table used for Ch8.
+
+**`pip install lets-plot`** in cell 2 "Before you begin" -- replace with `uv add lets-plot`.
+
+**"Part 5", "Part 6", "Part 7" refs** throughout -- replace with "Chapter 8", "Chapter 9", "Chapter 10" respectively.
+
+**Consistency with Ch8 ecosystem table:** Cell 3 already mentions Vega-Altair in the "Alternatives that use the same grammar" table. This is consistent with the Altair row added to Ch8. No change needed here.
+
+**`By the end of Part 5`** in Learning Objectives cell -- replace with "Chapter 9".
+
+---
+
+## Chapter 11: Pandas core (`11-pandas-core.ipynb`)
+
+**Issues found (73 cells):**
+
+**DS-MLOps header block in cell 2.** `**DS-MLOps Data Analysis**` and `**Python 3.12+ | Author: Anthony Faustine**` must be removed. After removal, cell 2 opens "You have a CSV. It has 2,400 rows, 10 columns, and three questions from your manager..." -- this is the correct problem-first hook, keep it.
+
+**Cell 3 duplicates cell 2 hook.** Cell 3 section "## The Tool That Thinks in Tables" opens with the exact same sentences: "You have a CSV. It has 2,400 rows, 10 columns, and three questions from your manager..." Remove those two opening paragraphs from cell 3; keep from "**pandas** ([pandas.pydata.org](https://pandas.pydata.org)) was created at AQR Capital in 2008..." onward.
+
+**8 title-case headings to fix:**
+
+- `## Before You Begin` -- `## Before you begin`
+- `## The Tool That Thinks in Tables` -- `## The tool that thinks in tables`
+- `## Learning Objectives` -- `## Learning objectives`
+- `## 1. Series and DataFrame` -- `## 1. Series and DataFrame` (acronym, keep capitalisation)
+- `## 2. Reading and Inspecting Data` -- `## 2. Reading and inspecting data`
+- `## 3. Selecting Rows and Columns` -- `## 3. Selecting rows and columns`
+- `## 4. Boolean Filtering` -- `## 4. Boolean filtering` (Boolean is a proper noun, keep)
+- `## 8. Memory Usage and the Categorical Dtype` -- `## 8. Memory usage and the categorical dtype`
+
+**7 double-dashes** in prose -- fix each to comma or colon.
+
+**22 inline `<div style='background:#'>` callouts** need ark class conversion.
+
+**2 `pip install pandas` references** -- replace with `uv add pandas`.
+
+**Part refs** (Part 3, 4, 7, 8, 9, 11) -- replace with Chapter numbers throughout.
+
+**`By the end of Part X`** in LO cell -- replace with "Chapter 11".
+
+**Missing `statistics` module comparison.** Add one markdown cell in the Series and DataFrame section (Section 1) that reads: "Before pandas, you'd write `statistics.mean(scores)` to get the mean of a list. With pandas, you write `df['score'].mean()` -- the same idea, but it works across any column in a table, handles missing values automatically, and stays readable when you chain it with other operations." This is the canonical comparison the plan identified for this chapter.
+
+---
+
+## Chapter 14: Time series (`14-time-series.ipynb`)
+
+**Issues found (57 cells):**
+
+**Opener is strong.** "The attendance report says 87% for Monday. Is that better or worse than last month?" -- no change needed.
+
+**3 double-dashes** in cell 2 and later cells -- fix to commas or colons.
+
+**17 inline `<div style='background:#'>` callouts** need ark class conversion. One non-standard color variant: `background:#EAF7F0;border-left:5px solid #059669` (a lighter green used for "Example" callouts) -- map to `ark-activity` since it is a worked example for the learner.
+
+**5 title-case headings to fix:**
+
+- `## Learning Objectives` -- `## Learning objectives`
+- `## 1. Date and Time Data Types` -- `## 1. Date and time data types`
+- `## 3. Selecting Data from a Time Series` -- `## 3. Selecting data from a time series`
+- `## 4. The Power of Pandas: resample` -- `## 4. The power of pandas: resample` (The Power = title case)
+- `## 6. Lag, Lead, and Autocorrelation` -- `## 6. Lag, lead, and autocorrelation`
+
+**Part refs** (Part 3, 10, 11, 12) -- replace with Chapter numbers.
+
+**`By the end of Part 11`** in LO -- replace with "Chapter 14".
+
+**Missing `deque` and `sliding_window_view` section.** Section 6 currently shows only pandas `.rolling()`. Add a new Section 7 that introduces two lower-level tools side by side, with clear "when to use each" framing:
+
+- `np.lib.stride_tricks.sliding_window_view(arr, window_shape=n)`: produces a 2D view where each row is one window; compute statistics across all windows in a single vectorised call. Use when the full dataset fits in memory and you want batch computation.
+- `collections.deque(maxlen=n)`: processes one value at a time; the oldest value drops off automatically as new ones arrive. Use when data arrives as a stream and you cannot load it all at once.
+
+Do NOT use `np.lib.stride_tricks.as_strided()` directly -- it reads outside the array silently. `sliding_window_view` is the safe wrapper (NumPy 1.20+).
+
+Keep all examples on the attendance data already in the notebook. A 7-day rolling window is a natural use case.
+
+---
+
+## Chapter 15: Polars (`15-polars.ipynb`)
+
+**Issues found (84 cells):**
+
+**Opener is strong.** "Your pandas pipeline handles 10,000 rows without complaint. Then the dataset grows to 10 million rows..." -- contrast hook, keep it.
+
+**Cell 2 and cell 4 partial overlap.** Cell 2 says "10 million rows and a groupby takes 40 seconds." Cell 4 (## When pandas Is Not Enough) opens "Your pandas pipeline works perfectly at 50,000 rows. The groupby runs in a second..." -- different numbers but the same argument. Remove the opening two sentences of cell 4; start from "This isn't a pandas bug. It is a design trade-off..." or from the sentence that explains WHY pandas is slow (single-threaded, Python object model).
+
+**7 double-dashes** in prose -- fix to commas or colons.
+
+**25 inline `<div style='background:#'>` callouts** need ark class conversion -- the heaviest conversion task in Chapters 9-16.
+
+**6 title-case headings to fix:**
+
+- `## When pandas Is Not Enough` -- `## When pandas is not enough`
+- `## 1. DataFrame Construction` -- `## 1. DataFrame construction` (DataFrame is a proper noun compound, capitalise D and F)
+- `## 2. The Expression API: select, filter, with_columns` -- `## 2. The expression API: select, filter, with_columns`
+- `## 3. GroupBy and Aggregation` -- `## 3. GroupBy and aggregation` (GroupBy is the pandas/polars term, keep capitalisation)
+- `## 4. LazyFrame and Lazy Evaluation` -- `## 4. LazyFrame and lazy evaluation` (LazyFrame is a type name, keep; "Lazy Evaluation" is not)
+- `## 4.5 SQL Interface` -- rename to `## 5. SQL interface` and renumber subsequent sections accordingly
+
+**Part refs** (Part 7, 8, 9, 10, 11) -- replace with Chapter numbers.
+
+**Stale ref in cell 2:** "Polars concepts carry forward into the MLOps section and streaming pipelines in Part 7" -- "Part 7" is ambiguous. Replace with the specific chapter reference (Chapter 10 or the relevant MLOps chapter).
+
+**Missing Chapter 12 connection.** Cell 2 connects to Chapter 13 (combining/reshaping) but not Chapter 12 (pandas operations). The Polars expression API (`select`, `filter`, `groupby`) maps directly to Chapter 12 operations (`df.groupby()`, `df.merge()`). Add one sentence to cell 2: "The expression API in Section 2 mirrors the groupby and merge patterns from Chapter 12 (`12-pandas-operations.ipynb`), so you can compare both styles on the same problems."
+
+---
+
+## Chapter 22: The ML landscape (`tutorials/04-ml-intro/01-ml-introduction.qmd`)
+
+Chapter 22 stays in place. By the time a learner reaches it, they have Python, NumPy, and Pandas. They can appreciate the technical depth that the Introduction only sketched.
+
+**Hook change: done.** "The Introduction showed you the destination. You have now built the tools to understand it properly." -- this matches the plan's intent. No change needed.
+
+**4 callout issues remaining:**
+
+**`bi-info-circle-fill` in two concept callouts** -- replace with `bi-key-fill` (the correct icon for `ark-concept` callouts, as established in Ch8).
+
+**Activity title format:** `Activity 1 - Map the System` -- fix to `Activity 1: map the system` (colon separator, sentence case, consistent with Ch8 format).
+
+**`<b>Goal:</b>` in activity body** -- remove the `<b>Goal:</b>` prefix from the activity description (same pattern applied to Ch8 and Ch4).
+
+**3 title-case headings to fix:**
+
+- `## Learning Objectives` -- `## Learning objectives`
+- `## 1. The AI Landscape` -- `## 1. The AI landscape` (AI is an acronym, keep; "Landscape" is not a proper noun)
+- `## Further Reading` -- `## Further reading`
+
+**Part refs** (Part 12, 21, 22, 23, 24) -- replace with Chapter numbers throughout. "Part 22" in the Learning Objectives self-reference becomes "this chapter". "Part 23", "Part 24" become Chapter 23, Chapter 24.
+
+---
+
+## Chapter 16: Great Tables (`16-great-tables.ipynb`)
+
+**Issues found (62 cells):**
+
+**DS-MLOps header block in cell 2.** Remove `**DS-MLOps Python Foundations**` and `**Python 3.12+ | Author: Anthony Faustine**`.
+
+**Opener is strong.** "You run the analysis, produce the numbers, and paste `df.head()` into the report. The stakeholder replies: 'Which column is which? Why are the numbers...'" -- problem-first hook, keep it. But **missing chapter connection**: cell 2 has no reference to what the previous chapter (Chapter 15 Polars) built or what this chapter enables next.
+
+**6 double-dashes** in prose: fix to commas or colons.
+
+**25 inline `<div style='background:#'>` callouts**: ark class conversion.
+
+**11 title-case headings to fix** (representative examples):
+
+- `## The Last Mile of a Data Story` → `## The last mile of a data story`
+- `## 1. When Tables Beat Charts` → `## 1. When tables beat charts`
+- `## 2. Your First Styled Table` → `## 2. Your first styled table`
+- (fix all remaining headings to sentence case)
+
+**Part refs** (Part 3, 7, 12): replace with Chapter numbers.
+
+**2 code cells without preceding markdown** (cells 28, 47): add bridge markdown before each.
+
+---
+
+## Dev-tools section (`tutorials/02-dev-tools/`)
+
+Six QMDs and four notebooks, all with the same class of issues. Review and fix each file in a single pass.
+
+### Common issues across all dev-tools files
+
+Every file has:
+
+- **`bi-info-circle-fill` icons** in concept callouts -- replace with `bi-key-fill` throughout
+- **Activity title format** `Activity N - Title` -- fix to `Activity N: title (sentence case)`
+- **`<b>Goal:</b>` prefix** in activity bodies -- remove
+- **Part refs** throughout -- replace with Chapter numbers
+- **`## Further Reading`** -- `## Further reading` (where present)
+- **`## Learning Objectives`** -- `## Learning objectives` (where present)
+- **Title-case headings** -- sentence case throughout
+
+### Per-file issues
+
+**`00-vscode-setup.qmd`** (11 double-dashes, 8 title-case headings, Part refs: Part 12, 13, 14, 3)
+
+**`01-uv-project-setup.qmd`** (14 double-dashes, 3 `bi-info-circle-fill`, 8 title-case headings, `pip install` refs, Part refs: Part 13, 14)
+
+**`02-code-quality-ruff.qmd`** (12 double-dashes, 2 `bi-info-circle-fill`, 4 title-case headings, Part refs: Part 13, 14, 15, 18)
+
+**`04-git-github.qmd`** (7 double-dashes, 2 `bi-info-circle-fill`, 11 title-case headings, Part refs: Part 13, 15, 16, 17, 18)
+
+**`05-pytest-testing.qmd`** (15 double-dashes, 3 `bi-info-circle-fill`, 10 title-case headings, Part refs: Part 13, 16, 17, 18)
+
+**`06-pre-commit-automation.qmd`** (8 double-dashes, 2 `bi-info-circle-fill`, 7 title-case headings, `pip install`, Part refs: Part 4, 13, 16, 17, 18, 19)
+
+**`03-type-annotations.ipynb`** (DS-MLOps header, 4 double-dashes, 12 inline divs, 6 title-case headings, Part refs: Part 3, 13, 14, 15, 16)
+
+**`07-pydantic-validation.ipynb`** (DS-MLOps header, 2 double-dashes, 19 inline divs, `pip install`, 10 title-case headings, Part refs: Part 15, 19, 20)
+
+**`08-pandera-schema-validation.ipynb`** (DS-MLOps header, 16 inline divs, `pip install`, 7 title-case headings, Part refs: Part 19, 20, 21)
+
+**`09-logging.ipynb`** (DS-MLOps header, 5 double-dashes, 8 inline divs, 9 title-case headings, Part refs: Part 3, 4, 19, 21; 3 code cells without preceding markdown: cells 17, 21, 34)
+
+---
+
+## ML-intro section (`tutorials/04-ml-intro/`)
+
+The `*a` / `*b` split files have been deleted. `_quarto.yml` now references `04-sklearn-core.ipynb` and `05-sklearn-pipeline.ipynb` directly.
+
+### Common issues across all ml-intro QMDs and notebooks
+
+Every file has:
+
+- **Part refs** -- replace with Chapter numbers
+- **`bi-info-circle-fill`** in concept callouts -- `bi-key-fill`
+- **Activity title format** `Activity N - Title` -- `Activity N: title (sentence case)`
+- **`<b>Goal:</b>`** in activity bodies -- remove
+- **`## Learning Objectives`** -- `## Learning objectives`
+- **`## Further Reading`** -- `## Further reading`
+- **Title-case headings** -- sentence case
+
+### File-by-file issues
+
+**`02-ml-what-is-ml.qmd`** (DS-MLOps block in opener, 2 double-dashes, 2 `bi-info-circle-fill`, Part refs: Part 12, 21, 22, 23, 24; 7 title-case headings including `## What Machine Learning Is`, `### 1.1 Learning Paradigms`, `### 1.2 Task Types`, `### 1.3 The Model Complexity Spectrum`)
+
+**`03-ml-workflow.qmd`** (DS-MLOps block in opener, 3 double-dashes, 3 `bi-info-circle-fill`, Part refs: Part 6, 7, 22, 23, 24, 25; 4 title-case headings including `## Why Workflow Matters`)
+
+**`04-sklearn-core.ipynb`** (34 double-dashes, 3 inline divs, Part refs: Part 12, 13, 23, 24, 25, 26)
+
+**`05-sklearn-pipeline.ipynb`** (31 double-dashes, 7 inline divs, Part refs: Part 5, 13, 23, 24, 25, 26)
+
+Note: the sklearn notebooks have the highest double-dash density in the entire book (30+ each). Many occur in code comments (`# fit -- transform` pattern). A general sweep will clean these.
 
 ---
 
