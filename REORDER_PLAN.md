@@ -5,11 +5,17 @@ data storytelling) before pandas, which means Chapter 9 already builds and reads
 `pd.DataFrame`s three chapters before pandas itself is taught. Reordering fixes
 this and matches the real workflow: load and wrangle data, then visualize it.
 
+**Status: all three phases below are done** (renumbering, dataset unification,
+capstone chapter + Dev Tools/ML shift). Book is now 32 chapters: Foundation
+(1-7), Data analysis (8-13), Data visualization (14-17, capstone included),
+Dev tools (18-27), ML landscape (28-32). This file is kept as the record of
+what changed and why, in case a future pass needs the reasoning.
+
 ---
 
-## 1. Deferred: the data-storytelling capstone chapter
+## 1. The data-storytelling capstone chapter
 
-**Status: on hold until the reorder below lands.**
+**Status: done.** Built as `tutorials/01-python-basics/17-storytelling-capstone.ipynb`.
 
 ### Why a new chapter, and why not yet
 
@@ -52,12 +58,25 @@ judgment loop against one real case rather than drilling isolated concepts:
 4. Pick the chart, write the narrative, build the explanatory version
 5. Capstone artifact: one polished chart plus a one-paragraph "so what"
 
-### Why it waits
+### What actually got built
 
-Its chapter number, its backward references (which chapter is "the previous
-one" depends on final Data Viz chapter order), and possibly its running
-dataset all depend on the reorder below being settled first. Building it now
-means rewriting it again once files move.
+The by-course framing sketched below ("which course needs a tutoring
+session") turned out to have a real-data problem once written against the
+actual dataset: course explains almost nothing in the three-course, three-
+Fall-cohort slice used throughout Chapters 14-17 (a one-point spread in
+`final_score`, under one percentage point in pass rate). Building a capstone
+around a gap that thin would have made its own central "so what" false
+stakes, exactly what Section 2's Trifecta Checkup teaches you to catch.
+
+Pivoted to study-hours buckets instead, which show a real ~10-point spread
+in `final_score` (correlation 0.29 with study hours) — a genuine, honest
+finding to build the explore-to-explain narrative around. Same three-step
+structure (audience/decision/medium, Trifecta Checkup, explore vs. explain),
+same capstone exercise shape, different and truer running example.
+
+This chapter landed as Chapter 17, which meant Dev Tools (17-26) and ML
+landscape (27-31) both had to shift by one (see Part 3 below) — the
+renumbering cascade flagged as a risk when this was first deferred.
 
 ---
 
@@ -111,23 +130,39 @@ data-storytelling."
    "Python foundations" part (which held both language basics and
    visualization together) into three: "Python foundations" (1-7),
    "Data analysis" (8-13), "Data visualization" (14-16).
-5. Re-execute every touched notebook end-to-end; zero tolerance for errors
-6. Commit on `feature/let-plot-udate`
+5. Re-execute every touched notebook end-to-end; zero tolerance for errors — **done**
+6. Commit on `feature/let-plot-udate` — **done**
 
-## 3. Deferred: unify the running dataset
+## 3. Unify the running dataset
 
-**Status: not done, deliberately deferred as its own follow-up.**
+**Status: done.** Chapters 14-16 (matplotlib, lets-plot, data-storytelling)
+now load `university_analytics.csv` and filter to three courses that share
+the same Fall track (Machine Learning, Data Structures, Python Programming)
+across three real cohorts (Fall 2022-24) — the one real subset whose shape
+matched the existing pedagogy closely enough that exercises and activity
+instructions carried over almost unchanged. `exam_score` (synthetic) was
+retired in favor of the real `final_score` column throughout. Chapter 16 was
+already loading the real CSV but aliasing `final_score` back to the fake
+`exam_score` name; that aliasing is gone too.
 
-The original scope included rewriting Chapters 14-16 (matplotlib, lets-plot,
-data-storytelling — 199 cells combined) to use the pandas-taught
-`university_analytics.csv` as their primary example instead of the
-hand-built numpy `DataFrame`s they currently construct from scratch, since
-pandas is now taught first and could supply the running dataset directly.
+Two things deliberately stayed synthetic: Chapter 16's Datasaurus/Anscombe
+demonstration needs precisely engineered matching-statistics-different-shape
+data that real data will not reliably produce, and one isolated practice
+drill in Chapter 14 that was never part of the running dataset to begin with.
 
-This is a substantially bigger job than the renumbering above: every
-example, every stated statistic in prose, and every chart's pedagogical
-point needs re-deriving against real data, then re-executing and
-re-reviewing for craft, not just correctness. Rushing it in the same pass
-as the reorder risked exactly the kind of shallow, inconsistent rewrite
-the book's own standards argue against. Do this as a dedicated pass, one
-chapter at a time, after this reorder has landed and been sanity-checked.
+Sweeping this also surfaced several pre-existing citation bugs unrelated to
+the dataset itself (wrong chapter numbers, a plural "Chapters N and M" the
+regex sweep missed the first time, one external citation to Wilke's own book
+that a later, broader sweep almost mis-remapped as if it were this book's
+numbering) — all fixed along the way.
+
+## 4. Dev Tools and ML landscape shift
+
+**Status: done.** Adding the capstone as Chapter 17 pushed Dev Tools from
+17-26 to 18-27 and ML landscape from 27-31 to 28-32. Same sweep methodology
+as Part 2: file renames, badge URLs, `Chapter N` remapping via a filename-
+verified script, `_quarto.yml` nav update, full re-execution. One more
+pre-existing mis-citation caught here too: pandas-operations' Further
+Reading pointed its Wickham "Tidy data" citation at Chapter 16 (data
+storytelling) when the `.melt()`/`.pivot_table()` material it actually
+describes lives in Chapter 10 (combining-reshaping).
