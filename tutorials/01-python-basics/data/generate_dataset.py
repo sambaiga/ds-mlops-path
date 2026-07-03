@@ -98,19 +98,44 @@ SEMESTER_DATES = {
     "Spring 2025": "2025-01-13",
 }
 
+# Course difficulty: intro/applied courses grade easier than theory-heavy
+# ones. Spread is deliberately smaller than individual variation (sigma
+# 12-14 below) so a single student's score is still dominated by their own
+# study habits, but a course-level average is a real, visible effect.
+COURSE_DIFFICULTY = {
+    "Python Programming": 4,
+    "Databases": 2,
+    "Statistics": -1,
+    "Data Structures": -3,
+    "Linear Algebra": -4,
+    "Machine Learning": -5,
+}
+
+# Modest, direction-neutral resource-access effect by region: no region is
+# named as "the good one" in any narrative, this exists so Chapter 16's
+# "highlight the top region" activity has a real, reproducible answer.
+REGION_BONUS = {"North": 2, "West": 1, "East": 0, "South": -1, "Central": -2}
+
+# Small year-over-year improvement, e.g. better advising and materials.
+COHORT_BONUS = {2022: 0.0, 2023: 0.8, 2024: 1.6}
+
 rows = []
 for _, student in students.iterrows():
     semesters_for_cohort = SEMESTER_MAP[student["cohort"]]
     for i, course_row in COURSES.iterrows():
         semester = semesters_for_cohort[i % 2]
 
-        # Base performance correlated with program and internet access
+        # Base performance correlated with program, internet access, course
+        # difficulty, regional access, and cohort year
         program_bonus = {"Computer Science": 3, "Data Science": 4, "Engineering": 2, "Information Technology": 1}[
             student["program"]
         ]
         internet_bonus = 4 if student["has_internet"] else -2
+        course_bonus = COURSE_DIFFICULTY[course_row["course"]]
+        region_bonus = REGION_BONUS[student["region"]]
+        cohort_bonus = COHORT_BONUS[student["cohort"]]
 
-        base = 55 + program_bonus + internet_bonus
+        base = 55 + program_bonus + internet_bonus + course_bonus + region_bonus + cohort_bonus
         study_hours = float(np.clip(RNG.normal(18, 7), 2, 45))
         study_bonus = (study_hours - 18) * 0.6
         attendance_pct = float(np.clip(RNG.normal(75, 15), 20, 100))

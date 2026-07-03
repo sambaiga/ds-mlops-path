@@ -72,6 +72,20 @@ Pivoted to study-hours buckets instead, which show a real ~10-point spread
 in `final_score` (correlation 0.29 with study hours) — a genuine, honest
 finding to build the explore-to-explain narrative around. Same three-step
 structure (audience/decision/medium, Trifecta Checkup, explore vs. explain),
+
+**Update (later session):** the root cause of the one-point course spread
+was found: `generate_dataset.py`'s score formula never included a
+course-level term at all, so "course" was statistically noise by
+construction, not a genuinely weak real-world effect. Fixed by adding a
+moderate, explainable per-course difficulty offset (grounded in the
+real, well-documented grade-compression pattern where intro/applied
+courses grade easier than theory-heavy ones), plus a smaller regional
+and cohort-year effect. Course now shows a real ~7.5-point spread. Ch17
+Section 2 was rewritten to use this: the chart now has real content, but
+the Trifecta Checkup catches a subtler problem instead — real content
+that still isn't the actionable variable for the department head's
+decision. See the "improve the generator" work for the full effect-size
+audit.
 same capstone exercise shape, different and truer running example.
 
 This chapter landed as Chapter 17, which meant Dev Tools (17-26) and ML
