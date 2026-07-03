@@ -1,23 +1,23 @@
 ---
-title: "Part 23: What Is Machine Learning?"
+title: "What is machine learning?"
 ---
 
-[![View Source on GitHub](https://img.shields.io/badge/Source-GitHub-181717.svg?logo=github)](https://github.com/sambaiga/ds-mlops-path/blob/main/tutorials/04-ml-intro/02-ml-what-is-ml.qmd)
+[![View Source on GitHub](https://img.shields.io/badge/Source-GitHub-181717.svg?logo=github)](https://github.com/sambaiga/ds-mlops-path/blob/main/tutorials/04-ml-intro/28-ml-what-is-ml.qmd)
 
 **DS-MLOps ML Landscape**
 
 **Python 3.12+ | Author: Anthony Faustine**
 
-You have 50,000 emails and a single question: is this one spam? You could write a rule: if the subject contains 'FREE MONEY', block it. Spam writers learn the rule in a day. An ML model learns the pattern from the 50,000 examples and keeps working as the pattern shifts -- you retrain it, not rewrite it.
+You have 50,000 emails and a single question: is this one spam? You could write a rule: if the subject contains 'FREE MONEY', block it. Spam writers learn the rule in a day. An ML model learns the pattern from the 50,000 examples and keeps working as the pattern shifts: you retrain it, not rewrite it.
 
-Part 22 (`01-ml-introduction.qmd`) placed ML in the broader AI landscape. This chapter defines exactly what machine learning is, maps the four learning paradigms and seven task types, and gives you the vocabulary to classify any new problem before writing a line of code. Part 24 (`03-ml-workflow.qmd`) then shows how to build a solution end to end.
+Chapter 27 (`27-ml-introduction.qmd`) placed ML in the broader AI landscape. This chapter defines exactly what machine learning is, maps the four learning paradigms and seven task types, and gives you the vocabulary to classify any new problem before writing a line of code. Chapter 29 (`29-ml-workflow.qmd`) then shows how to build a solution end to end.
 
 ::: {.callout-note collapse="true" icon=false}
 ## Before you begin
 
-This chapter continues directly from [Part 22: The AI Landscape](01-ml-introduction.qmd). You should understand the three-tier AI capability framework and the distinction between rule-based programming and machine learning before reading further. You should also have completed [Part 12: IDE Setup](../02-dev-tools/00-vscode-setup.qmd) through [Part 21: Logging](../02-dev-tools/09-logging.ipynb): those practical skills are the foundation on which all hands-on ML work in later chapters builds.
+This chapter continues directly from [Chapter 27: The AI Landscape](27-ml-introduction.qmd). You should understand the three-tier AI capability framework and the distinction between rule-based programming and machine learning before reading further. You should also have completed [Chapter 17: IDE Setup](../02-dev-tools/17-vscode-setup.qmd) through [Chapter 26: Logging](../02-dev-tools/26-logging.ipynb): those practical skills are the foundation on which all hands-on ML work in later chapters builds.
 
-This chapter is conceptual. There is no code to run. The goal is to move from the landscape overview in Part 22 to a precise, working understanding of what ML is, how it learns, what it can produce, and when to reach for it.
+This chapter is conceptual. There is no code to run. The goal is to move from the landscape overview in Chapter 27 to a precise, working understanding of what ML is, how it learns, what it can produce, and when to reach for it.
 
 > Callout markers used throughout this chapter are explained on the [book cover page](../../index.qmd#callout-guide).
 
@@ -32,7 +32,7 @@ This chapter is conceptual. There is no code to run. The goal is to move from th
 | **Real-world impact** | Grounding the theory in concrete problems across multiple domains |
 :::
 
-## What Machine Learning Is
+## What machine learning is
 
 Consider 50,000 emails, each labeled as spam or not spam. Show them to an ML algorithm and it adjusts its internal parameters until it can reliably separate the two. Show it a new email it's never seen and it returns a judgment. No one wrote a rule that says "emails containing the words 'free', 'winner', and 'click here' together are probably spam." The algorithm found that pattern on its own, from the examples.
 
@@ -53,7 +53,7 @@ A new email arrives. The model applies what it learned and returns a judgment. C
 This is what distinguishes ML from a lookup table. A lookup table returns the correct answer for every case it has seen before. A trained model can answer questions about cases it's never encountered, because it learned the pattern behind the examples, not the examples themselves.
 
 <div class='ark-concept'>
-<span class='ark-concept-title'><i class="bi bi-info-circle-fill"></i> Key Concept: Generalisation is the goal</span><br><br>
+<span class='ark-concept-title'><i class="bi bi-key-fill"></i> Key Concept: Generalisation is the goal</span><br><br>
 A model that performs perfectly on training data but fails on new data is useless in practice. The goal of training isn't to memorise examples but to generalise: to capture the underlying structure of the problem well enough to make accurate predictions on data the model was never shown. Every design decision in ML, from choosing a model family to setting regularisation, is ultimately about improving generalisation.
 </div>
 
@@ -64,7 +64,7 @@ A model that performs perfectly on training data but fails on new data is useles
 </div>
 
 <div class='ark-activity'>
-<span class='ark-activity-title'><i class="bi bi-puzzle-fill"></i> Activity 1 - Rules or Learning?</span><br><br>
+<span class='ark-activity-title'><i class="bi bi-puzzle-fill"></i> Activity 1: rules or Learning?</span><br><br>
 <b>Goal:</b> For each of the following problems, decide whether rule-based programming or machine learning is more appropriate, and explain your reasoning in one sentence.<br><br>
 <ol>
 <li>Calculate VAT on a purchase: 20% of the price if the item is taxable, 0% otherwise.</li>
@@ -76,9 +76,9 @@ A model that performs perfectly on training data but fails on new data is useles
 </div>
 
 ::: {.callout-note collapse="true" icon=false}
-## Learning Objectives
+## Learning objectives
 
-By the end of Part 23 you will be able to:
+By the end of this chapter you will be able to:
 
 | # | Skill | Covered in |
 |---|---|---|
@@ -88,7 +88,7 @@ By the end of Part 23 you will be able to:
 | 4 | Map ML paradigms to real problems across energy, supply chain, healthcare, and manufacturing | Sec. 3 |
 :::
 
-## 1. The ML Taxonomy
+## 1. The ML taxonomy
 
 Not all ML problems are the same. Understanding the taxonomy means separating two questions that people regularly mix together.
 
@@ -129,14 +129,14 @@ The learning paradigm tells you how the model learns. The task type tells you wh
 
 The table is a quick reference. What matters more is being able to tell these types apart when you encounter a new problem. Three pairs cause the most confusion.
 
-**Classification vs anomaly detection.** Classification assigns every input to one of a fixed set of known categories. To train it, you need labeled examples of every class. Anomaly detection has a different goal: it flags inputs that don't resemble the normal pattern, without requiring labeled examples of every possible fault. The energy theft problem from Part 22 is anomaly detection, not classification. You have millions of records of normal consumption, but the patterns of tampering are too varied and too rare to enumerate as training classes. A classifier trained on "normal" and "theft" would miss any theft pattern it hadn't seen before. An anomaly detector learns only what normal looks like and flags whatever deviates from it.
+**Classification vs anomaly detection.** Classification assigns every input to one of a fixed set of known categories. To train it, you need labeled examples of every class. Anomaly detection has a different goal: it flags inputs that don't resemble the normal pattern, without requiring labeled examples of every possible fault. The energy theft problem from Chapter 27 is anomaly detection, not classification. You have millions of records of normal consumption, but the patterns of tampering are too varied and too rare to enumerate as training classes. A classifier trained on "normal" and "theft" would miss any theft pattern it hadn't seen before. An anomaly detector learns only what normal looks like and flags whatever deviates from it.
 
-**Regression vs forecasting.** Both produce numbers. The difference is temporal structure. Regression predicts a single value from features that can be presented in any order: shuffle the training rows and the model is unaffected. Forecasting predicts an ordered sequence of future values where the position of each prediction matters. Shuffling training data destroys the temporal relationships that make the forecast meaningful. Predicting the travel time for a single road segment from current speed and time of day is regression -- that's the calculation Google Maps runs for every segment in the route. Predicting electricity demand hour-by-hour for the next 24 hours from the last week of readings is forecasting.
+**Regression vs forecasting.** Both produce numbers. The difference is temporal structure. Regression predicts a single value from features that can be presented in any order: shuffle the training rows and the model is unaffected. Forecasting predicts an ordered sequence of future values where the position of each prediction matters. Shuffling training data destroys the temporal relationships that make the forecast meaningful. Predicting the travel time for a single road segment from current speed and time of day is regression: that's the calculation Google Maps runs for every segment in the route. Predicting electricity demand hour-by-hour for the next 24 hours from the last week of readings is forecasting.
 
-**Ranking vs clustering.** Both involve groups, which is why they're confused. Ranking takes a query and an existing set of items, then orders those items by relevance to that specific query. The items don't change: only their order changes depending on who is asking and what they want. The recommendation engine from Part 22 is ranking: it orders products by predicted enjoyment for one particular user. Clustering takes a set of items with no query and no predefined categories, and discovers groups based on similarity in the data. Grouping electricity customers by usage profile without knowing in advance how many groups there should be or what they represent is clustering. The key distinction: ranking needs a reference point (a user, a query, a goal); clustering doesn't.
+**Ranking vs clustering.** Both involve groups, which is why they're confused. Ranking takes a query and an existing set of items, then orders those items by relevance to that specific query. The items don't change: only their order changes depending on who is asking and what they want. The recommendation engine from Chapter 27 is ranking: it orders products by predicted enjoyment for one particular user. Clustering takes a set of items with no query and no predefined categories, and discovers groups based on similarity in the data. Grouping electricity customers by usage profile without knowing in advance how many groups there should be or what they represent is clustering. The key distinction: ranking needs a reference point (a user, a query, a goal); clustering doesn't.
 
 <div class='ark-activity'>
-<span class='ark-activity-title'><i class="bi bi-puzzle-fill"></i> Activity 2 - Classify the Problem</span><br><br>
+<span class='ark-activity-title'><i class="bi bi-puzzle-fill"></i> Activity 2: classify the Problem</span><br><br>
 <b>Goal:</b> For each problem below, identify the learning paradigm and the task type.<br><br>
 <ol>
 <li>Given patient vital signs and lab results from the past 24 hours, predict whether the patient will need ICU transfer in the next 6 hours. You have records from 50,000 past admissions, each labeled with the outcome.</li>
@@ -165,7 +165,7 @@ Choosing a learning paradigm and a task type narrows down the algorithm family. 
 **Neural networks** learn hierarchical representations through stacked layers of computation. They excel when the input is unstructured: an image is a grid of pixels with no obvious feature structure; a sentence is a sequence of tokens whose meaning depends on order and context. Neural networks find structure in that raw form automatically. The cost is opacity: the relationship between inputs and outputs runs through millions of learned parameters with no simple interpretation.
 
 <div class='ark-concept'>
-<span class='ark-concept-title'><i class="bi bi-info-circle-fill"></i> Key Concept: The interpretability-capacity tradeoff</span><br><br>
+<span class='ark-concept-title'><i class="bi bi-key-fill"></i> Key Concept: The interpretability-capacity tradeoff</span><br><br>
 Higher capacity means the model can represent more complex patterns. Higher interpretability means humans can understand why the model makes a given prediction. These two properties generally trade off. The right position on the spectrum depends on three questions: How much data do you have? Are predictions on unstructured data required? Does the problem domain require human-auditable explanations? Defaulting to a neural network when a gradient-boosted tree would work is a common and costly mistake.
 </div>
 
@@ -174,7 +174,7 @@ Higher capacity means the model can represent more complex patterns. Higher inte
 If a linear model performs nearly as well as a gradient-boosted tree on your problem, the relationship is approximately linear and the simpler model is the right production choice. If a gradient-boosted tree performs nearly as well as a neural network on tabular data, the neural network is probably adding complexity without adding accuracy. Work up the complexity spectrum only when simpler models leave meaningful performance on the table.
 </div>
 
-## 2. When to Use ML
+## 2. When to use ML
 
 <div class='ark-tip'>
 <span class='ark-tip-title'><i class="bi bi-lightbulb-fill"></i> Pro Tip: Write the problem statement before choosing a model</span><br><br>
@@ -204,7 +204,7 @@ Machine learning is a powerful tool, but it's not the right tool for every probl
 **The problem definition is unstable.** If the definition of the target changes every few weeks, for instance because the business is still deciding what "at-risk customer" means, the cost of retraining and re-evaluating a model exceeds the benefit. Stabilise the problem definition first.
 
 <div class='ark-activity'>
-<span class='ark-activity-title'><i class="bi bi-puzzle-fill"></i> Activity 3 - Should You Use ML?</span><br><br>
+<span class='ark-activity-title'><i class="bi bi-puzzle-fill"></i> Activity 3: should You Use ML?</span><br><br>
 <b>Goal:</b> For each scenario, apply the decision checklist. State whether ML is the right approach and explain your reasoning. If ML is not appropriate, suggest what should be used instead.<br><br>
 <ol>
 <li>A logistics company wants to calculate the shortest delivery route between 10 warehouse locations. They have a list of distances and want to minimise total travel time.</li>
@@ -214,7 +214,7 @@ Machine learning is a powerful tool, but it's not the right tool for every probl
 </ol>
 </div>
 
-## 3. Real-World Impact
+## 3. Real-World impact
 
 Machine learning is already embedded in the systems that run modern organisations. Understanding real applications matters not just as motivation. It also develops judgment about which learning paradigm and task type apply to a problem you haven't seen before.
 
@@ -254,7 +254,7 @@ A common failure pattern is choosing a model, often a neural network because it 
 </div>
 
 ::: {.callout-note collapse="true" icon=false}
-## Further Reading
+## Further reading
 
 | Resource | Why it matters |
 |---|---|
@@ -281,4 +281,4 @@ A common failure pattern is choosing a model, often a neural network because it 
 | First decision | Define what the model predicts, using what inputs, measured by what metric |
 :::
 
-**Next:** Part 24: The ML Workflow and Problem Framing builds directly on this taxonomy. Given a problem that belongs to one of these paradigms, how do you turn it into a well-specified ML task, choose the right evaluation metric, and avoid the most common failure modes before you write a line of model code.
+**Next:** Chapter 29: The ML Workflow and Problem Framing builds directly on this taxonomy. Given a problem that belongs to one of these paradigms, how do you turn it into a well-specified ML task, choose the right evaluation metric, and avoid the most common failure modes before you write a line of model code.

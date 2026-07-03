@@ -1,8 +1,8 @@
 ---
-title: "Part 12: IDE Setup with VS Code"
+title: "VS Code setup"
 ---
 
-[![View Source on GitHub](https://img.shields.io/badge/Source-GitHub-181717.svg?logo=github)](https://github.com/sambaiga/ds-mlops-path/blob/main/tutorials/02-dev-tools/00-vscode-setup.qmd)
+[![View Source on GitHub](https://img.shields.io/badge/Source-GitHub-181717.svg?logo=github)](https://github.com/sambaiga/ds-mlops-path/blob/main/tutorials/02-dev-tools/17-vscode-setup.qmd)
 
 
 **DS-MLOps Dev Tools**
@@ -10,12 +10,12 @@ title: "Part 12: IDE Setup with VS Code"
 **Python 3.12+ | Author: Anthony Faustine**
 You can run Python in any text editor. But without type hints catching errors before you run, function signatures appearing inline, and a terminal that already knows your project interpreter, you're developing blind.
 
-Setting up VS Code properly takes under 30 minutes. Part 14 (`01-uv-project-setup.qmd`) uses this editor to build and run a real project for the first time -- so get this right first.
+Setting up VS Code properly takes under 30 minutes. Chapter 19 (`18-uv-project-setup.qmd`) uses this editor to build and run a real project for the first time: so get this right first.
 
 ::: {.callout-note collapse="true" icon=false}
 ## Before you begin
 
-This chapter is the entry point to Part 3. No prior VS Code experience is required. If you already have VS Code installed and use it for Python, focus on sections 4 (uv interpreter), 5 (Ruff integration), and 7 (git extensions): these are the settings that differ from a generic Python setup.
+This chapter is the entry point to the dev-tools section. No prior VS Code experience is required. If you already have VS Code installed and use it for Python, focus on sections 4 (uv interpreter), 5 (Ruff integration), and 7 (git extensions): these are the settings that differ from a generic Python setup.
 
 ::: {.callout-note collapse="true" icon=false}
 :::
@@ -35,9 +35,9 @@ This chapter is the entry point to Part 3. No prior VS Code experience is requir
 > Callout markers used throughout this chapter are explained on the [book cover page](../../index.qmd#callout-guide).
 
 ::: {.callout-note collapse="true" icon=false}
-## Learning Objectives
+## Learning objectives
 
-By the end of Part 12 you will be able to:
+By the end of this chapter you will be able to:
 
 | # | Skill | Covered in |
 |---|---|---|
@@ -50,7 +50,11 @@ By the end of Part 12 you will be able to:
 | 7 | Use the integrated terminal to run `uv` and `git` commands without leaving the editor | Sec. 7 |
 :::
 
-Every file in this book is written, run, and debugged in an editor. The configuration here -- the right Python interpreter, format-on-save, and git integration -- eliminates the friction that slows people down before they've written a single line of real code. Set it up once and it carries through every chapter that follows.
+Every file in this book is written, run, and debugged in an editor. The configuration here: the right Python interpreter, format-on-save, and git integration: eliminates the friction that slows people down before they've written a single line of real code. Set it up once and it carries through every chapter that follows.
+
+Chapters 1 through 16 gave you Python as a language. The next ten chapters give you the engineering layer that turns a working script into a reproducible, testable, observable pipeline. VS Code is the workbench where that engineering happens.
+
+**Next:** [Chapter 18: Project setup with uv](18-uv-project-setup.qmd) automates dependency management inside the workspace you configure here.
 
 ## 1. Installing VS Code
 
@@ -96,7 +100,7 @@ The five areas you use most:
 | Integrated Terminal | `` Ctrl+` `` | Shell inside the editor: run `uv`, `git`, `pytest` |
 | Status Bar (bottom) | (none) | Active Python interpreter, git branch, errors/warnings count |
 
-## 2. Essential Extensions
+## 2. Essential extensions
 
 The nine extensions below cover every layer of a DS/MLOps project:
 
@@ -188,18 +192,18 @@ What each setting does:
 - `editor.rulers: [100]`: vertical guide at column 100 (matches `line-length = 100` in `pyproject.toml`)
 
 <div class='ark-concept'>
-<span class='ark-concept-title'><i class="bi bi-info-circle-fill"></i> Key Concept: Workspace settings override user settings</span><br><br>
-A teammate's personal <code>settings.json</code> might use Black. They open your project, and the workspace <code>.vscode/settings.json</code> quietly overrides that for Python files only -- their other projects aren't touched. That's how you enforce a consistent formatter across a team without overwriting anyone's personal preferences.
+<span class='ark-concept-title'><i class="bi bi-key-fill"></i> Key Concept: Workspace settings override user settings</span><br><br>
+A teammate's personal <code>settings.json</code> might use Black. They open your project, and the workspace <code>.vscode/settings.json</code> quietly overrides that for Python files only: their other projects aren't touched. That's how you enforce a consistent formatter across a team without overwriting anyone's personal preferences.
 </div>
 
 <div class='ark-activity'>
-<span class='ark-activity-title'><i class="bi bi-puzzle-fill"></i> Activity 1 - Format on Save</span><br><br>
+<span class='ark-activity-title'><i class="bi bi-puzzle-fill"></i> Activity 1: format on Save</span><br><br>
 <b>Goal:</b> Create <code>.vscode/settings.json</code> with the configuration above. Open <code>core.py</code>, add an intentionally badly-formatted function, and save the file. Confirm that ruff reformats it automatically on save. The status bar at the bottom should show no ruff errors.
 </div>
 
-## 4. Pointing VS Code at the uv `.venv` Interpreter
+## 4. Pointing VS Code at the uv `.venv` interpreter
 
-After running `uv sync`, a `.venv/` directory exists in the project root. VS Code needs to know about it -- without this, autocomplete is guessing and code won't run correctly.
+After running `uv sync`, a `.venv/` directory exists in the project root. VS Code needs to know about it: without this, autocomplete is guessing and code won't run correctly.
 
 **Option A: Auto-detect (VS Code usually picks this up automatically):**
 
@@ -226,7 +230,7 @@ Once it's set, IntelliSense for all packages installed by `uv sync` becomes avai
 If the Status Bar shows <code>Python 3.x.x 64-bit</code> without a path, you're on the system Python. Packages installed by <code>uv sync</code> won't be visible, autocomplete will be incomplete, and notebooks will fail to import project dependencies. Always confirm the interpreter path ends with <code>.venv/bin/python</code>.
 </div>
 
-## 5. Jupyter Notebooks in VS Code
+## 5. Jupyter notebooks in VS Code
 
 With the Jupyter and Python extensions installed, VS Code opens `.ipynb` files as interactive notebooks. The experience is close to JupyterLab with some advantages: IntelliSense works inside cells, you can set breakpoints in notebook code, and the Variable Inspector shows live DataFrame previews.
 
@@ -245,14 +249,14 @@ Key shortcuts for notebooks in VS Code:
 | Restart kernel | `Cmd/Ctrl+Shift+P` → "Restart Kernel" |
 | Open Variable Inspector | `Cmd/Ctrl+Shift+P` → "Jupyter: Variables" |
 
-**Select the kernel:** when you first open a notebook, VS Code asks which kernel to use. Choose the `.venv` Python interpreter -- that's what ensures every `import` in the notebook finds the packages installed by `uv sync`.
+**Select the kernel:** when you first open a notebook, VS Code asks which kernel to use. Choose the `.venv` Python interpreter: that's what ensures every `import` in the notebook finds the packages installed by `uv sync`.
 
 <div class='ark-activity'>
-<span class='ark-activity-title'><i class="bi bi-puzzle-fill"></i> Activity 2 - Run a Notebook in VS Code</span><br><br>
+<span class='ark-activity-title'><i class="bi bi-puzzle-fill"></i> Activity 2: run a Notebook in VS Code</span><br><br>
 <b>Goal:</b> Open <code>tutorials/01-python-basics/11-pandas-core.ipynb</code> in VS Code. Select the <code>.venv</code> kernel. Run the first three cells with <code>Shift+Enter</code>. Open the Variable Inspector and confirm the DataFrame is visible. Change one cell to produce a different output and save.
 </div>
 
-## 6. Git and GitLens in VS Code
+## 6. Git and gitlens in VS Code
 
 VS Code's built-in Source Control panel (`Cmd/Ctrl+Shift+G`) shows every modified file as a coloured indicator in the Explorer. From there you can stage, commit, and push without ever touching the terminal.
 
@@ -264,7 +268,7 @@ VS Code's built-in Source Control panel (`Cmd/Ctrl+Shift+G`) shows every modifie
 
 GitLens enhances the built-in git support. Three features you'll reach for most in DS work:
 
-**Inline blame:** hover over any line to see who wrote it and when -- indispensable when you're debugging a pipeline step someone else wrote.
+**Inline blame:** hover over any line to see who wrote it and when: indispensable when you're debugging a pipeline step someone else wrote.
 
 **File History:** right-click a file → "Open File History" to see every commit that touched it as a timeline.
 
@@ -285,12 +289,12 @@ With the GitHub Pull Requests extension, you can:
 
 <div class='ark-tip'>
 <span class='ark-tip-title'><i class="bi bi-lightbulb-fill"></i> Pro Tip: Use the editor's diff view to review your changes before committing</span><br><br>
-Click any modified file in the Source Control panel to open a side-by-side diff. It's the fastest way to catch accidental changes -- a stray debug print, a hardcoded path, a dropped import -- before they're in git history permanently.
+Click any modified file in the Source Control panel to open a side-by-side diff. It's the fastest way to catch accidental changes: a stray debug print, a hardcoded path, a dropped import: before they're in git history permanently.
 </div>
 
-## 7. Integrated Terminal
+## 7. Integrated terminal
 
-The integrated terminal (`` Ctrl+` ``) opens a shell inside VS Code with the current project directory already set. Split it into multiple panes to run a test suite in one and a Quarto preview in another -- no window switching needed.
+The integrated terminal (`` Ctrl+` ``) opens a shell inside VS Code with the current project directory already set. Split it into multiple panes to run a test suite in one and a Quarto preview in another: no window switching needed.
 
 ```bash
 # Run in the integrated terminal exactly as you would in a standalone shell
@@ -307,7 +311,7 @@ which python
 ```
 
 <div class='ark-activity'>
-<span class='ark-activity-title'><i class="bi bi-puzzle-fill"></i> Activity 3 - Full Workflow in VS Code</span><br><br>
+<span class='ark-activity-title'><i class="bi bi-puzzle-fill"></i> Activity 3: full Workflow in VS Code</span><br><br>
 <b>Goal:</b> Without leaving VS Code, complete this sequence:
 <ol>
 <li>Open the integrated terminal. Run <code>uv run ruff check src/</code> and fix any findings.</li>
@@ -334,7 +338,7 @@ Set up your `grade-predictor` project so the full Dev Tools stack runs seamlessl
 </div>
 
 ::: {.callout-note collapse="true" icon=false}
-## Further Reading
+## Further reading
 
 | Resource | Why it matters |
 |---|---|
@@ -358,4 +362,4 @@ Set up your `grade-predictor` project so the full Dev Tools stack runs seamlessl
 | Source Control panel | Stage, commit, push without the terminal. Use the diff view to review before committing. |
 :::
 
-**Next:** [Part 13: Project Setup with uv](01-uv-project-setup.qmd) -- where you'll build the `grade-predictor` project that the rest of Part 3 operates on.
+**Next:** [Chapter 18: Project setup with uv](18-uv-project-setup.qmd): where you'll build the `grade-predictor` project that the rest of the dev-tools section operates on.

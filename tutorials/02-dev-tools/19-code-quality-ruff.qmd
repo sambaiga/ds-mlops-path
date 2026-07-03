@@ -1,22 +1,22 @@
 ---
-title: "Part 14: Code Quality with ruff"
+title: "Code quality with Ruff"
 ---
 
-[![View Source on GitHub](https://img.shields.io/badge/Source-GitHub-181717.svg?logo=github)](https://github.com/sambaiga/ds-mlops-path/blob/main/tutorials/02-dev-tools/02-code-quality-ruff.qmd)
+[![View Source on GitHub](https://img.shields.io/badge/Source-GitHub-181717.svg?logo=github)](https://github.com/sambaiga/ds-mlops-path/blob/main/tutorials/02-dev-tools/19-code-quality-ruff.qmd)
 
 
 **DS-MLOps Dev Tools**
 
 **Python 3.12+ | Author: Anthony Faustine**
 
-Your code works on your machine. A colleague checks it out and immediately hits an import error -- your editor sorts imports one way, theirs another, and the difference breaks the pipeline. `ruff` enforces one standard automatically: consistent formatting with `ruff format` and 700+ correctness rules with `ruff check`, both running in milliseconds before any code ships.
+Your code works on your machine. A colleague checks it out and immediately hits an import error: your editor sorts imports one way, theirs another, and the difference breaks the pipeline. `ruff` enforces one standard automatically: consistent formatting with `ruff format` and 700+ correctness rules with `ruff check`, both running in milliseconds before any code ships.
 
-The `grade-predictor` project from [Part 13](01-uv-project-setup.qmd) is the codebase you'll run ruff on here. Pre-commit in [Part 18](06-pre-commit-automation.qmd) will automate it on every commit.
+The `grade-predictor` project from [Chapter 18](18-uv-project-setup.qmd) is the codebase you'll run ruff on here. Pre-commit in [Chapter 23](23-pre-commit-automation.qmd) will automate it on every commit.
 
 ::: {.callout-note collapse="true" icon=false}
 ## Before you begin
 
-This chapter assumes you have completed [Part 13: Project Setup with uv](01-uv-project-setup.qmd). The `grade-predictor` project you built there is the codebase ruff will run on. If you are starting here, create the project with `uv init grade-predictor --package` and add `pandas>=2.1` as a dependency before continuing.
+This chapter assumes you have completed [Chapter 18: Project setup with uv](18-uv-project-setup.qmd). The `grade-predictor` project you built there is the codebase ruff will run on. If you are starting here, create the project with `uv init grade-predictor --package` and add `pandas>=2.1` as a dependency before continuing.
 
 ::: {.callout-note collapse="true" icon=false}
 :::
@@ -36,9 +36,9 @@ This chapter assumes you have completed [Part 13: Project Setup with uv](01-uv-p
 > Callout markers used throughout this chapter are explained on the [book cover page](../../index.qmd#callout-guide).
 
 ::: {.callout-note collapse="true" icon=false}
-## Learning Objectives
+## Learning objectives
 
-By the end of Part 14 you will be able to:
+By the end of this chapter you will be able to:
 
 | # | Skill | Covered in |
 |---|---|---|
@@ -51,7 +51,7 @@ By the end of Part 14 you will be able to:
 | 7 | Use `# noqa` and per-file ignores correctly | Sec. 7 |
 :::
 
-## 1. Two Different Jobs
+## 1. Two different jobs
 
 Ruff does two separate things, and it's worth being clear about which one you're running.
 
@@ -64,8 +64,8 @@ Ruff handles both. They're separate commands with separate jobs: `ruff format` f
 ![ruff pipeline: source code passes through ruff format for style, then ruff check for correctness. If findings exist, ruff applies auto-fixes and re-checks. When no findings remain, the code is ready to commit.](figs/ruff-pipeline.svg){fig-alt="Linear flow: source code (gray) to ruff format (purple) to formatted code to ruff check (blue) to a diamond decision. Yes path (amber): ruff applies fix and loops back. No path (green): ready to commit."}
 
 <div class='ark-concept'>
-<span class='ark-concept-title'><i class="bi bi-info-circle-fill"></i> Key Concept: Formatting is about style. Linting is about correctness.</span><br><br>
-<code>df.drop("column")</code> without <code>inplace=True</code> silently does nothing. A formatter won't catch that -- a linter will. Use both: format automatically on every save, run the linter before every commit.
+<span class='ark-concept-title'><i class="bi bi-key-fill"></i> Key Concept: Formatting is about style. Linting is about correctness.</span><br><br>
+<code>df.drop("column")</code> without <code>inplace=True</code> silently does nothing. A formatter won't catch that: a linter will. Use both: format automatically on every save, run the linter before every commit.
 </div>
 
 ## 2. Running `ruff check`
@@ -138,7 +138,7 @@ def flag_at_risk(df, threshold: float = 50.0):
 ```
 
 <div class='ark-activity'>
-<span class='ark-activity-title'><i class="bi bi-puzzle-fill"></i> Activity 1 - Read and Fix ruff Output</span><br><br>
+<span class='ark-activity-title'><i class="bi bi-puzzle-fill"></i> Activity 1: read and Fix ruff Output</span><br><br>
 <b>Goal:</b> Add an unused import, a bare <code>except:</code>, and a variable assigned but never used to your <code>core.py</code>. Run <code>ruff check src/</code> and read every line of output. Fix each one manually (do not use <code>--fix</code> for this exercise). Confirm <code>ruff check src/</code> returns zero findings.
 <pre>uv run ruff check src/
 # Fix each finding, then re-run
@@ -210,16 +210,16 @@ ignore = [
 The `per-file-ignores` section handles legitimate exceptions. Notebooks need `E501` suppressed because output lines can be long. Tests need `S101` suppressed because `assert` is the whole point.
 
 <div class='ark-activity'>
-<span class='ark-activity-title'><i class="bi bi-puzzle-fill"></i> Activity 2 - Configure and Run</span><br><br>
+<span class='ark-activity-title'><i class="bi bi-puzzle-fill"></i> Activity 2: configure and Run</span><br><br>
 <b>Goal:</b> Add the configuration above to your <code>grade-predictor/pyproject.toml</code>. Run <code>ruff check src/</code> and fix every finding without using <code># noqa</code>. Then run <code>ruff format src/</code> and commit the clean state.
 <pre>uv run ruff check src/ --fix
 uv run ruff check src/          # should be zero findings
 uv run ruff format src/</pre>
 </div>
 
-## 5. The Rules That Catch Real DS Bugs
+## 5. The rules that catch real DS bugs
 
-The `E` and `F` rules catch syntax and unused-import issues. The rules that catch silent data bugs -- the ones that don't raise exceptions, they just return wrong answers -- come from bugbear (`B`) and simplify (`SIM`).
+The `E` and `F` rules catch syntax and unused-import issues. The rules that catch silent data bugs: the ones that don't raise exceptions, they just return wrong answers: come from bugbear (`B`) and simplify (`SIM`).
 
 **B006: Mutable default argument**
 
@@ -275,12 +275,12 @@ label = "Pass" if score >= 50 else "Fail"
 
 <div class='ark-mistake'>
 <span class='ark-mistake-title'><i class="bi bi-bug-fill"></i> Common Mistake: Mutable default argument</span><br><br>
-<code>def split(df, cols=[])</code> looks like a harmless convenience -- and that's exactly why it shows up in DS code so often. The list is shared across every call, so the second call gets whatever the first call left in it. Use an empty tuple <code>()</code> or <code>None</code> with a guard inside the function.
+<code>def split(df, cols=[])</code> looks like a harmless convenience: and that's exactly why it shows up in DS code so often. The list is shared across every call, so the second call gets whatever the first call left in it. Use an empty tuple <code>()</code> or <code>None</code> with a guard inside the function.
 </div>
 
-## 6. Docstrings: Style, Content, and Enforcement
+## 6. Docstrings: style, content, and enforcement
 
-A docstring is the first string literal inside a function, class, or module. It's not a comment -- it's data that Python exposes through `help()`, IDEs, and documentation generators. The rule for when to write one: if a function is called from outside the file it lives in, it needs a docstring.
+A docstring is the first string literal inside a function, class, or module. It's not a comment: it's data that Python exposes through `help()`, IDEs, and documentation generators. The rule for when to write one: if a function is called from outside the file it lives in, it needs a docstring.
 
 **The Google style** is the de facto standard for DS projects:
 
@@ -317,8 +317,8 @@ def compute_grade(
 The structure is one-line summary, blank line, then named sections. Which sections you need depends on the function: `Args` and `Returns` for anything non-trivial, `Raises` when exceptions are part of the contract, `Example` for functions that need a concrete demo to be understood.
 
 <div class='ark-concept'>
-<span class='ark-concept-title'><i class="bi bi-info-circle-fill"></i> Key Concept: Write for the caller, not the implementer</span><br><br>
-A docstring answers: "what does this function do from the outside?" <code>"""Multiply midterm by weights[0] and add to final times weights[1]"""</code> isn't a docstring -- it's a description of the implementation, which the caller can already read. Write what a caller needs to know to use the function correctly: inputs, outputs, edge cases.
+<span class='ark-concept-title'><i class="bi bi-key-fill"></i> Key Concept: Write for the caller, not the implementer</span><br><br>
+A docstring answers: "what does this function do from the outside?" <code>"""Multiply midterm by weights[0] and add to final times weights[1]"""</code> isn't a docstring: it's a description of the implementation, which the caller can already read. Write what a caller needs to know to use the function correctly: inputs, outputs, edge cases.
 </div>
 
 **What counts as a module-level docstring?**
@@ -361,12 +361,12 @@ The key rules:
 
 <div class='ark-tip'>
 <span class='ark-tip-title'><i class="bi bi-lightbulb-fill"></i> Pro Tip: Enforce docstrings only on public functions</span><br><br>
-Functions prefixed with <code>_</code> are internal by convention, and ruff's D rules skip them by default when <code>convention = "google"</code> is set. You only have to document the API surface -- the functions a caller is expected to use. Internal helpers stay undocumented until they grow complex enough to warrant it.
+Functions prefixed with <code>_</code> are internal by convention, and ruff's D rules skip them by default when <code>convention = "google"</code> is set. You only have to document the API surface: the functions a caller is expected to use. Internal helpers stay undocumented until they grow complex enough to warrant it.
 </div>
 
 **Enforcing spell-checking with codespell**
 
-Docstrings and comments accumulate typos. `codespell` catches them before they reach the repository -- add it to `.pre-commit-config.yaml`:
+Docstrings and comments accumulate typos. `codespell` catches them before they reach the repository: add it to `.pre-commit-config.yaml`:
 
 ```yaml
 - repo: https://github.com/codespell-project/codespell
@@ -386,16 +386,16 @@ ignore-words-list = "caste,midterms"
 ```
 
 <div class='ark-activity'>
-<span class='ark-activity-title'><i class="bi bi-puzzle-fill"></i> Activity 3 - Write and Enforce Docstrings</span><br><br>
+<span class='ark-activity-title'><i class="bi bi-puzzle-fill"></i> Activity 3: write and Enforce Docstrings</span><br><br>
 <b>Goal:</b> Write Google-style docstrings for all three public functions in <code>grade-predictor/src/grade_predictor/core.py</code>: <code>compute_grade</code>, <code>grade_to_letter</code>, and <code>flag_at_risk</code>. Add the <code>D</code> rule group to <code>pyproject.toml</code> with <code>convention = "google"</code>. Run <code>ruff check src/</code> and fix every D-rule finding. Confirm zero findings.
 <pre>uv run ruff check src/ --select D
 # fix each finding, then re-run
 uv run ruff check src/ --select D</pre>
 </div>
 
-## 7. `# noqa` and When to Use It
+## 7. `# noqa` and when to use it
 
-`# noqa: E501` suppresses one rule on one line. Use it when suppression is genuinely the right answer -- not when you just want to avoid fixing the real problem.
+`# noqa: E501` suppresses one rule on one line. Use it when suppression is genuinely the right answer: not when you just want to avoid fixing the real problem.
 
 Legitimate uses:
 
@@ -417,10 +417,10 @@ result = df.groupby("program").agg({"score": "mean", "grade": "first", "cohort":
 # Fix: break the line instead of suppressing
 ```
 
-`per-file-ignores` is better than per-line `# noqa` for patterns that apply to all files of a type. `E501` in all notebooks is the clearest example -- suppress it once in config, not on every long line.
+`per-file-ignores` is better than per-line `# noqa` for patterns that apply to all files of a type. `E501` in all notebooks is the clearest example: suppress it once in config, not on every long line.
 
 <div class='ark-activity'>
-<span class='ark-activity-title'><i class="bi bi-puzzle-fill"></i> Activity 3 - Legitimate Suppression</span><br><br>
+<span class='ark-activity-title'><i class="bi bi-puzzle-fill"></i> Activity 3: legitimate Suppression</span><br><br>
 <b>Goal:</b> Find one place in your <code>core.py</code> where a <code># noqa</code> comment is the right choice (a long docstring URL, a regex, or a ruff false positive). Add the comment with the specific rule code. Then find one place where you were tempted to use <code># noqa</code> but fixed the code instead. Explain in a comment why you chose each path.
 </div>
 
@@ -441,7 +441,7 @@ Apply the full ruff workflow to the `grade-predictor` project you have built so 
 </div>
 
 ::: {.callout-note collapse="true" icon=false}
-## Further Reading
+## Further reading
 
 | Resource | Why it matters |
 |---|---|
@@ -468,4 +468,4 @@ Apply the full ruff workflow to the `grade-predictor` project you have built so 
 | `# noqa` | A deliberate decision, not a shortcut. Include the specific rule code. |
 :::
 
-**Next:** [Part 15: Type Annotations](03-type-annotations.ipynb) -- static type checking on top of the clean codebase you've built here.
+**Next:** [Chapter 20: Type Annotations](20-type-annotations.ipynb): static type checking on top of the clean codebase you've built here.
