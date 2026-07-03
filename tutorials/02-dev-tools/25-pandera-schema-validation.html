@@ -464,27 +464,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 <p><a href="https://colab.research.google.com/github/sambaiga/ds-mlops-path/blob/main/tutorials/02-dev-tools/25-pandera-schema-validation.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open In Colab"></a> <a href="https://raw.githubusercontent.com/sambaiga/ds-mlops-path/main/tutorials/02-dev-tools/25-pandera-schema-validation.ipynb"><img src="https://img.shields.io/badge/Download-Notebook-blue.svg?logo=jupyter&amp;logoColor=white" class="img-fluid" alt="Download Notebook"></a></p>
-<p>Pydantic (Chapter 24) validates individual records the moment they enter your system. DS pipelines work on DataFrames: tables of hundreds of thousands of rows. A single invalid row buried in row 40,000 is harder to catch, and the failure mode is different: the schema itself can be wrong, not just one value.</p>
-<p>Pandera extends the same ‘validate at the boundary’ principle to DataFrames. The <code>grade-predictor</code> project from Chapter 24 is the codebase we build on: a <code>StudentScoreSchema</code> validates the raw score table before any computation runs.</p>
-<p>Chapter 26 (<code>26-logging.ipynb</code>) adds the final observability layer: structured logs that record validation errors alongside computation events.</p>
+<p>Pydantic (Chapter 24) validated <code>StudentRecord</code> at the boundary: one record, one set of fields, one pass or fail. DS pipelines work on DataFrames: 2,400 rows loaded in one call. The problems in a DataFrame are different. Not “this record has the wrong type” but “this column contains mixed types across 40 rows.” Not “this field is missing” but “this column’s value range implies a data entry error at the source.”</p>
+<p>You could check these things manually after loading: assert dtypes, loop through columns, print summary statistics. That is validation by inspection: it runs once, in a notebook cell, and it is never run again. The next batch of data arrives and nobody runs the check.</p>
+<p>The alternative is a data contract: a formal, executable statement of what the DataFrame must look like before any transformation runs. Write the contract once and it runs on every batch, fails loudly on the first violation, and names the column, the row, and the rule that was broken.</p>
+<p>Pandera is that contract, expressed as a Python class. The <code>grade-predictor</code> project gains a schema for the university analytics DataFrame in this chapter. Chapter 26 adds the logging that records what the schema catches.</p>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Before you begin
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-1" class="callout-1-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<p>Install Pandera: <code>uv add pandera</code></p>
-</div>
-</div>
-</div>
-<div class="callout callout-style-default callout-note no-icon callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon no-icon"></i>
 </div>
@@ -493,7 +478,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>By the end of this chapter you will be able to:</p>
 <table class="caption-top table">
@@ -544,6 +529,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </table>
 </div>
 </div>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="figs/pandera-contract.svg" class="img-fluid figure-img" alt="Three columns: raw DataFrame with highlighted bad rows (None, 102, empty string); Pandera schema in the centre listing column rules; validated frame on the right containing only conforming rows. A red SchemaError arrow exits downward from the schema when data fails."></p>
+<figcaption>Pandera as a schema contract for DataFrames: a raw DataFrame with mixed types and out-of-range values passes through the Pandera schema, which either returns a validated frame with only conforming rows or raises a SchemaError naming the column, row, and violated rule.</figcaption>
+</figure>
 </div>
 <section id="pydantic-validated-the-row.-who-validates-the-table" class="level2">
 <h2 class="anchored" data-anchor-id="pydantic-validated-the-row.-who-validates-the-table">0. Pydantic validated the row. Who validates the table?</h2>
@@ -626,7 +617,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="defining-a-dataframeschema" class="level2">
 <h2 class="anchored" data-anchor-id="defining-a-dataframeschema">2. Defining a <code>DataFrameSchema</code></h2>
 <p>The functional API creates a schema by describing each column with <code>pa.Column</code>:</p>
-<div id="8" class="cell" data-execution_count="1">
+<div id="9" class="cell" data-execution_count="1">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandera <span class="im">as</span> pa</span>
@@ -657,7 +648,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <p><code>coerce=True</code> tells Pandera to attempt type coercion before validation: <code>"78.5"</code> becomes <code>78.5</code> for a <code>float</code> column, mirroring Pydantic’s behaviour at the row level.</p>
 <p>Validate a DataFrame:</p>
-<div id="10" class="cell" data-execution_count="2">
+<div id="11" class="cell" data-execution_count="2">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Build a small valid sample</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>sample_df <span class="op">=</span> pd.DataFrame(</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    {</span>
@@ -681,7 +672,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 <p>Now introduce a row with an out-of-range value and confirm Pandera raises a <code>SchemaError</code>:</p>
-<div id="12" class="cell" data-execution_count="3">
+<div id="13" class="cell" data-execution_count="3">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Introduce an invalid row (midterm_score &gt; 100)</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>bad_df <span class="op">=</span> sample_df.copy()</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>bad_df.loc[<span class="dv">0</span>, <span class="st">"midterm_score"</span>] <span class="op">=</span> <span class="fl">150.0</span></span>
@@ -706,7 +697,7 @@ schema.validate(dup_df)  # should raise</pre>
 <section id="dataframemodel-the-class-based-api" class="level2">
 <h2 class="anchored" data-anchor-id="dataframemodel-the-class-based-api">3. <code>DataFrameModel</code>: the class-based API</h2>
 <p>The functional <code>DataFrameSchema</code> API is explicit but verbose. Pandera’s class-based API, <code>pa.DataFrameModel</code>, mirrors Pydantic’s <code>BaseModel</code>: define columns as class-level fields with type annotations, and use <code>pa.Field</code> for constraints:</p>
-<div id="15" class="cell" data-execution_count="4">
+<div id="16" class="cell" data-execution_count="4">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> typing <span class="im">import</span> Optional</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandera <span class="im">as</span> pa</span>
@@ -751,7 +742,7 @@ schema.validate(dup_df)  # should raise</pre>
 <section id="custom-checks" class="level2">
 <h2 class="anchored" data-anchor-id="custom-checks">4. Custom checks</h2>
 <p>Built-in checks cover ranges, null counts, string patterns, and allowed values. Custom checks handle business rules that require more logic:</p>
-<div id="18" class="cell" data-execution_count="5">
+<div id="19" class="cell" data-execution_count="5">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandera <span class="im">as</span> pa</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pandera.typing <span class="im">import</span> Series</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -790,7 +781,7 @@ def not_both_zero(cls, df: pd.DataFrame) -&gt; pd.Series:
 <section id="validation-in-a-pipeline" class="level2">
 <h2 class="anchored" data-anchor-id="validation-in-a-pipeline">5. Validation in a pipeline</h2>
 <p>In a pipeline, you want to validate without crashing on the first error, collecting all failures and decide what to do with them:</p>
-<div id="22" class="cell" data-execution_count="6">
+<div id="23" class="cell" data-execution_count="6">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandera <span class="im">as</span> pa</span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -842,7 +833,7 @@ def not_both_zero(cls, df: pd.DataFrame) -&gt; pd.Series:
 <section id="schemas-as-data-contracts-in-tests" class="level2">
 <h2 class="anchored" data-anchor-id="schemas-as-data-contracts-in-tests">6. Schemas as data contracts in tests</h2>
 <p>A Pandera schema is documentation that runs. Put it in a pytest fixture and every test that touches a DataFrame automatically validates the contract:</p>
-<div id="25" class="cell" data-execution_count="7">
+<div id="26" class="cell" data-execution_count="7">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># tests/test_data_contracts.py  (save and run: uv run pytest tests/)</span></span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ── paste into a test file and run with pytest ──</span></span>

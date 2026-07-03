@@ -459,30 +459,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 <p><a href="https://colab.research.google.com/github/sambaiga/ds-mlops-path/blob/main/tutorials/02-dev-tools/20-type-annotations.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open In Colab"></a> <a href="https://raw.githubusercontent.com/sambaiga/ds-mlops-path/main/tutorials/02-dev-tools/20-type-annotations.ipynb"><img src="https://img.shields.io/badge/Download-Notebook-blue.svg?logo=jupyter&amp;logoColor=white" class="img-fluid" alt="Download Notebook"></a></p>
-<p>Ruff (Chapter 19) enforces style. Type annotations encode intent: they tell Python and your IDE what a variable is allowed to hold, turning silent runtime failures into errors caught before the code runs.</p>
-<p>The <code>grade-predictor</code> project gains explicit types throughout this chapter. Every function signature you annotate here becomes the contract that Pydantic (Chapter 24) will enforce at runtime.</p>
-<blockquote class="blockquote">
-<p>Callout markers used throughout this notebook are explained on the <a href="../../index.html#callout-guide">book cover page</a>.</p>
-</blockquote>
+<p>Your <code>grade-predictor</code> pipeline has been linted with Ruff and its style is consistent. But there is a failure Ruff cannot catch: you call <code>compute_grade("incomplete", 85, 90)</code> and the function accepts it. Python does not complain. The string multiplies by 0.30, produces a concatenation, and the computation crashes three function calls later with a message that does not point back to the original mistake.</p>
+<p>The problem is intent: the function expects a float, the caller passed a string, and nothing in the code communicates that mismatch until runtime.</p>
+<p>Type annotations are that communication. Annotate <code>compute_grade(midterm: float, final: float, project: float) -&gt; float:</code> and the IDE flags the wrong call the moment you type it. The error moves from a 2 am production crash to a red underline at edit time.</p>
+<p>Pydantic in Chapter 24 enforces these contracts at runtime when external data arrives. Type annotations are their static-time complement.</p>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Before you begin
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-1" class="callout-1-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<p>This notebook requires Python 3.10 or later. Complete Chapter 18 (<code>18-uv-project-setup.qmd</code>) and Chapter 19 (<code>19-code-quality-ruff.qmd</code>) first.</p>
-</div>
-</div>
-</div>
-<p><strong>Next:</strong> <a href="../../tutorials/02-dev-tools/21-git-github.html">Chapter 21: Git and GitHub</a> versions the typed, clean codebase you have here.</p>
-<div class="callout callout-style-default callout-note no-icon callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon no-icon"></i>
 </div>
@@ -491,7 +473,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>By the end of this chapter you will be able to:</p>
 <table class="caption-top table">
@@ -543,6 +525,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="figs/type-annotations-flow.svg" class="img-fluid figure-img" alt="Two-column comparison. Left: compute_grade called with a string, Python accepts it, TypeError at runtime. Right: same call, IDE underlines the wrong argument type immediately."></p>
+<figcaption>Type annotations move error detection from runtime to edit time: without them, wrong types are accepted silently and crash later; with them, the IDE flags the mismatch the moment you type it.</figcaption>
+</figure>
+</div>
 <section id="why-type-annotations-matter" class="level2">
 <h2 class="anchored" data-anchor-id="why-type-annotations-matter">1. Why Type Annotations Matter</h2>
 <p>Two versions of the same function:</p>
@@ -566,7 +554,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="basic-annotations" class="level2">
 <h2 class="anchored" data-anchor-id="basic-annotations">2. Basic Annotations</h2>
-<div id="8" class="cell" data-execution_count="1">
+<div id="9" class="cell" data-execution_count="1">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># The basic scalar types used in grade-predictor</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> __future__ <span class="im">import</span> annotations  <span class="co"># enables newer type syntax on Python 3.10+</span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -588,7 +576,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 <p>Python runs <code>compute_grade("82", 85.0, 90.0)</code> without raising an error. The annotation is a contract, not a runtime check:</p>
-<div id="10" class="cell" data-execution_count="2">
+<div id="11" class="cell" data-execution_count="2">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Python does NOT enforce annotations at runtime</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co"># The annotation says midterm: float, but we pass str: Python does not catch this</span></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span>:</span>
@@ -647,7 +635,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </tr>
 </tbody>
 </table>
-<div id="12" class="cell" data-execution_count="3">
+<div id="13" class="cell" data-execution_count="3">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> grade_to_letter(average: <span class="bu">float</span>) <span class="op">-&gt;</span> <span class="bu">str</span>:</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> average <span class="op">&gt;=</span> <span class="dv">85</span>:</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="st">"A"</span></span>
@@ -682,7 +670,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 def compute_cohort_summary(scores): ...          # returns dict
 def select_columns(df, columns): ...             # columns is list[str]</pre>
 </div>
-<div id="14" class="cell" data-execution_count="4">
+<div id="15" class="cell" data-execution_count="4">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: annotate the three functions</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
@@ -691,7 +679,7 @@ def select_columns(df, columns): ...             # columns is list[str]</pre>
 <h2 class="anchored" data-anchor-id="annotating-numpy-arrays-and-pandas-dataframes">3. Annotating numpy Arrays and pandas DataFrames</h2>
 <p>This is the gap in most Python type annotation tutorials. DS code is full of numpy arrays and pandas DataFrames, and the annotations for them are not obvious.</p>
 <p>For numpy, use <code>NDArray</code> from <code>numpy.typing</code>:</p>
-<div id="17" class="cell" data-execution_count="5">
+<div id="18" class="cell" data-execution_count="5">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> numpy.typing <span class="im">import</span> NDArray</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
@@ -712,7 +700,7 @@ def select_columns(df, columns): ...             # columns is list[str]</pre>
 </div>
 </div>
 <p>For pandas, <code>pd.DataFrame</code> is the practical annotation, even though it carries no column-level information:</p>
-<div id="19" class="cell" data-execution_count="6">
+<div id="20" class="cell" data-execution_count="6">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> add_average_marks(df: pd.DataFrame) <span class="op">-&gt;</span> pd.DataFrame:</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> df.copy()</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    df[<span class="st">"average_marks"</span>] <span class="op">=</span> (df[<span class="st">"midterm_score"</span>] <span class="op">+</span> df[<span class="st">"final_score"</span>] <span class="op">+</span> df[<span class="st">"project_score"</span>]) <span class="op">/</span> <span class="dv">3</span></span>
@@ -780,7 +768,7 @@ def select_columns(df, columns): ...             # columns is list[str]</pre>
 <pre>def normalize_features(X: NDArray[np.float64]) -&gt; NDArray[np.float64]: ...
 def filter_passing(df: pd.DataFrame, threshold: float = 50.0) -&gt; pd.DataFrame: ...</pre>
 </div>
-<div id="22" class="cell" data-execution_count="7">
+<div id="23" class="cell" data-execution_count="7">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: write and annotate the two functions</span></span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
@@ -788,7 +776,7 @@ def filter_passing(df: pd.DataFrame, threshold: float = 50.0) -&gt; pd.DataFrame
 <section id="typealias-and-protocol" class="level2">
 <h2 class="anchored" data-anchor-id="typealias-and-protocol">4. TypeAlias and Protocol</h2>
 <p>When the same complex type appears in many function signatures, give it a name. In Python 3.12, the <code>type</code> keyword creates a type alias clearly and without imports:</p>
-<div id="25" class="cell" data-execution_count="8">
+<div id="26" class="cell" data-execution_count="8">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="bu">type</span> ScoreVector <span class="op">=</span> <span class="bu">list</span>[<span class="bu">float</span>]</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="bu">type</span> GradeMap <span class="op">=</span> <span class="bu">dict</span>[<span class="bu">str</span>, <span class="bu">str</span>]  <span class="co"># student_id -&gt; letter grade</span></span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="bu">type</span> WeightTuple <span class="op">=</span> <span class="bu">tuple</span>[<span class="bu">float</span>, <span class="bu">float</span>, <span class="bu">float</span>]</span>
@@ -811,7 +799,7 @@ def filter_passing(df: pd.DataFrame, threshold: float = 50.0) -&gt; pd.DataFrame
 </div>
 </div>
 <p><code>Protocol</code> is for duck-typed objects. Instead of importing a specific class, you describe the interface you need:</p>
-<div id="27" class="cell" data-execution_count="9">
+<div id="28" class="cell" data-execution_count="9">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> typing <span class="im">import</span> Protocol</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -842,7 +830,7 @@ def filter_passing(df: pd.DataFrame, threshold: float = 50.0) -&gt; pd.DataFrame
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run ty check src/</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Reading the output: each line is <code>file:line:col: error[code] message</code>. Errors must be fixed. Warnings are suggestions.</p>
 <p>Common errors in DS code:</p>
-<div id="31" class="cell" data-execution_count="10">
+<div id="32" class="cell" data-execution_count="10">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulate what ty would flag:</span></span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Return type mismatch</span></span>
@@ -885,7 +873,7 @@ def filter_passing(df: pd.DataFrame, threshold: float = 50.0) -&gt; pd.DataFrame
 # Fix each error line by line
 uv run ty check src/  # should report 0 errors</pre>
 </div>
-<div id="34" class="cell" data-execution_count="11">
+<div id="35" class="cell" data-execution_count="11">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: annotate core.py fully and run ty check</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
@@ -894,7 +882,7 @@ uv run ty check src/  # should report 0 errors</pre>
 <p>You do not need to annotate everything at once. Gradual typing means adding annotations incrementally, in the order that buys the most value.</p>
 <p>Priorities for a DS codebase: 1. Public function signatures first: what callers see 2. Return types before argument types: return type mismatches catch more bugs 3. Skip internal helpers and one-off notebook cells initially 4. Use <code>Any</code> as a placeholder when you need to annotate something complex you will refine later</p>
 <p><code>Any</code> is not giving up. It is a marker that says: this is unannotated, I know it, I will return to it.</p>
-<div id="37" class="cell" data-execution_count="12">
+<div id="38" class="cell" data-execution_count="12">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> typing <span class="im">import</span> Any</span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -965,7 +953,7 @@ Commit: <code>git commit -m “feat(types): fully annotate core.py”</code>
 # Fix all errors
 uv run ty check src/  # zero errors</pre>
 </div>
-<div id="41" class="cell" data-execution_count="13">
+<div id="42" class="cell" data-execution_count="13">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: annotate core.py and confirm zero ty errors</span></span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>

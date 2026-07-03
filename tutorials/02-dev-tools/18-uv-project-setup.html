@@ -459,97 +459,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<p>Chapter 17 configured the workbench. This chapter automates what happens inside it: dependency resolution, virtual environments, and project layout. Every project you build from Chapter 19 onward starts with the commands introduced here.</p>
-<p><strong>Next:</strong> <a href="../../tutorials/02-dev-tools/19-code-quality-ruff.html">Chapter 19: Code quality with Ruff</a> enforces the style rules that keep the codebase you set up here readable.</p>
+<p>You share a Jupyter notebook with a colleague. They clone the repo and run it. The first import fails. Same code, different machine, different packages. You spend 45 minutes on versions before they ever see what the notebook does.</p>
+<p>The problem is not the code. The problem is that the environment is implicit: it exists in your head, not in the repository. Without a tool that captures and reproduces the exact set of packages that worked, the only guarantee you can offer is “it works on my machine.”</p>
+<p>Virtual environments solve isolation. Lockfiles solve reproducibility. Until recently, you needed separate tools for each: pip and venv for isolation, pip-tools or Poetry for locking. uv does both in one binary, 10 to 100 times faster than pip.</p>
+<p>The <code>grade-predictor</code> project you build here runs through every remaining dev-tools chapter: Ruff lints it, git versions it, pytest tests it.</p>
+<p><strong>Next:</strong> <a href="../../tutorials/02-dev-tools/19-code-quality-ruff.html">Chapter 19: Code quality with Ruff</a> lints the codebase you build here.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><a href="https://github.com/sambaiga/ds-mlops-path/blob/main/tutorials/02-dev-tools/18-uv-project-setup.qmd"><img src="https://img.shields.io/badge/Source-GitHub-181717.svg?logo=github" class="img-fluid figure-img"></a></p>
 <figcaption>View Source on GitHub</figcaption>
 </figure>
 </div>
-<p><strong>DS-MLOps Dev Tools</strong></p>
-<p><strong>Python 3.12+ | Author: Anthony Faustine</strong></p>
-<p>You install <code>scikit-learn</code> for one project. Three weeks later a second project breaks because a shared dependency updated. You didn’t change anything. The fix is per-project isolation: and <code>uv</code> delivers it in one tool: project init, dependency tracking, reproducible lockfiles, and script running, all faster than <code>pip</code> alone.</p>
-<p>The project you build here carries through every remaining Dev Tools chapter: ruff will lint it, git will version it, and pytest will test it.</p>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Before you begin
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-2" class="callout-2-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<p>This chapter assumes you have completed Parts 1 and 2. No prior experience with virtual environments is required. If you have used <code>pip</code> and <code>venv</code> before, every concept here maps directly onto what you already know.</p>
-<p>You will build a project called <code>grade-predictor</code>, a small Python package that computes and analyses student grades from <code>university_analytics.csv</code>. This project thread continues through all six Dev Tools chapters, giving every tool a real codebase to act on.</p>
-<div class="callout callout-style-default callout-note no-icon callout-empty-content callout-titled">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Note
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-1" class="callout-1-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-
-</div>
-</div>
-</div>
-<section id="topics-covered" class="level2">
-<h2 class="anchored" data-anchor-id="topics-covered">Topics covered</h2>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 50%">
-<col style="width: 50%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Topic</th>
-<th>Why it matters</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><strong>uv vs pip/venv/Poetry</strong></td>
-<td>Faster installs, built-in lockfiles, one tool for everything</td>
-</tr>
-<tr class="even">
-<td><strong><code>pyproject.toml</code></strong></td>
-<td>The single source of truth for dependencies and project metadata</td>
-</tr>
-<tr class="odd">
-<td><strong><code>uv init</code> and <code>uv add</code></strong></td>
-<td>Create and extend projects without manually editing TOML</td>
-</tr>
-<tr class="even">
-<td><strong>Lockfile (<code>uv.lock</code>)</strong></td>
-<td>Pins every transitive dependency for reproducible environments</td>
-</tr>
-<tr class="odd">
-<td><strong>Extras and dev dependencies</strong></td>
-<td>Separate production, test, and development dependencies cleanly</td>
-</tr>
-<tr class="even">
-<td><strong><code>uv run</code></strong></td>
-<td>Execute scripts in the project environment without activating it</td>
-</tr>
-</tbody>
-</table>
-</section>
-</div>
-</div>
-</div>
-<blockquote class="blockquote">
-<p>Callout markers used throughout this notebook are explained on the <a href="../../index.html#callout-guide">book cover page</a>.</p>
-</blockquote>
-<div class="callout callout-style-default callout-note no-icon callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon no-icon"></i>
 </div>
@@ -558,7 +480,7 @@ Note
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>By the end of this chapter you will be able to:</p>
 <table class="caption-top table">
@@ -953,7 +875,7 @@ Create <code>.env</code> with <code>REPORT_TITLE=Grade Predictor</code> and add 
 </ol>
 </div>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon no-icon"></i>
 </div>
@@ -962,7 +884,7 @@ Create <code>.env</code> with <code>REPORT_TITLE=Grade Predictor</code> and add 
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <table class="caption-top table">
 <thead>
@@ -998,7 +920,7 @@ Create <code>.env</code> with <code>REPORT_TITLE=Grade Predictor</code> and add 
 </div>
 </div>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon no-icon"></i>
 </div>
@@ -1007,7 +929,7 @@ Create <code>.env</code> with <code>REPORT_TITLE=Grade Predictor</code> and add 
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-5" class="callout-5-contents callout-collapse collapse">
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <table class="caption-top table">
 <colgroup>

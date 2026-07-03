@@ -469,26 +469,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 <p><a href="https://colab.research.google.com/github/sambaiga/ds-mlops-path/blob/main/tutorials/02-dev-tools/24-pydantic-validation.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open In Colab"></a> <a href="https://raw.githubusercontent.com/sambaiga/ds-mlops-path/main/tutorials/02-dev-tools/24-pydantic-validation.ipynb"><img src="https://img.shields.io/badge/Download-Notebook-blue.svg?logo=jupyter&amp;logoColor=white" class="img-fluid" alt="Download Notebook"></a></p>
-<p>Type annotations (Chapter 20) name the types in your function signatures. Pydantic enforces them at runtime: if a string arrives where a float was expected, it raises a <code>ValidationError</code> immediately, not a silent wrong result 50 lines later.</p>
-<p>The <code>grade-predictor</code> project gains a <code>StudentRecord</code> model in this chapter. Chapter 25 (<code>25-pandera-schema-validation.ipynb</code>) extends this idea to DataFrames: whole tables, not just individual records.</p>
+<p>Type annotations (Chapter 20) told the IDE that <code>midterm_score</code> should be a float. The IDE warned you when you passed a string in your own code. That protection disappears the moment external data arrives: a CSV row, a JSON payload from an API, a record from a database.</p>
+<p>External data has no type annotations. A CSV cell containing “N/A” is a string whether you expected a float or not. An API response with a missing field does not raise a <code>TypeError</code>: it silently returns <code>None</code> or nothing at all. Your annotated function receives data from the outside world, and all your type hints are powerless to stop the wrong thing getting in.</p>
+<p>This is the boundary problem. Every data system has a line between the outside world (unpredictable) and your code (structured). Pydantic sits at that line and enforces the contract: it validates that incoming data matches the types and constraints you declared, raises a <code>ValidationError</code> with the exact field and reason if it does not, and only lets clean, structured data through.</p>
+<p>The <code>grade-predictor</code> project gains a <code>StudentRecord</code> model in this chapter. Chapter 25 extends the same principle from individual records to entire DataFrames.</p>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Before you begin
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-1" class="callout-1-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<p>Install Pydantic: <code>uv add pydantic</code></p>
-</div>
-</div>
-</div>
-<div class="callout callout-style-default callout-note no-icon callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon no-icon"></i>
 </div>
@@ -497,7 +483,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>By the end of this chapter you will be able to:</p>
 <table class="caption-top table">
@@ -554,12 +540,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="figs/pydantic-boundary.svg" class="img-fluid figure-img" alt="Three columns: external world with JSON, CSV, and form inputs; Pydantic model in the centre with typed field rules; your code on the right receiving only clean, validated objects. A red ValidationError arrow exits downward from the model when data fails."></p>
+<figcaption>Pydantic as the validation boundary: external data (JSON, CSV, web forms) enters the Pydantic model, which enforces types and constraints and either passes clean Python objects to your code or raises a ValidationError with the exact problem.</figcaption>
+</figure>
+</div>
 <section id="the-bug-that-type-annotations-cannot-catch" class="level2">
 <h2 class="anchored" data-anchor-id="the-bug-that-type-annotations-cannot-catch">0. The Bug That Type Annotations Cannot Catch</h2>
 <p>You have just finished building the <code>grade-predictor</code> pipeline. It reads a CSV, computes weighted scores, applies a pass threshold, and writes results to a file. You add type annotations everywhere. Your type checker passes clean. You deploy.</p>
-<p>Two weeks later, a bug report arrives: the pipeline produced a passing grade for a student whose <code>midterm_score</code> was logged as <code>150.0</code> — which is impossible on a 100-point scale. The pipeline did not crash. The math ran correctly on the wrong number. A downstream report was wrong, and nobody noticed until a student appealed their grade.</p>
+<p>Two weeks later, a bug report arrives: the pipeline produced a passing grade for a student whose <code>midterm_score</code> was logged as <code>150.0</code> , which is impossible on a 100-point scale. The pipeline did not crash. The math ran correctly on the wrong number. A downstream report was wrong, and nobody noticed until a student appealed their grade.</p>
 <p>The problem was not the computation. It was that nothing stopped the invalid value from entering the pipeline in the first place. Type annotations say <em>what type a value should be</em>. They do not say <em>whether a value of that type makes sense at runtime</em>. <code>midterm_score: float</code> accepts any float: <code>150.0</code>, <code>-20.0</code>, <code>float("inf")</code>. The annotation is a hint to the reader and the type checker. It is not a gate.</p>
-<p><strong>Pydantic</strong> (<a href="https://docs.pydantic.dev/latest/">pydantic.dev</a>) turns annotations into gates. Define a model, describe the constraints, and Pydantic enforces them on every construction — before the value reaches any computation. One validation point at entry; everything downstream trusts the types.</p>
+<p><strong>Pydantic</strong> (<a href="https://docs.pydantic.dev/latest/">pydantic.dev</a>) turns annotations into gates. Define a model, describe the constraints, and Pydantic enforces them on every construction, before the value reaches any computation. One validation point at entry; everything downstream trusts the types.</p>
 <section id="install" class="level3">
 <h3 class="anchored" data-anchor-id="install">Install</h3>
 <p>Pydantic is in <code>pyproject.toml</code>. For a standalone project:</p>
@@ -591,7 +583,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 <p>A Python dataclass accepts any value for any field, regardless of what the annotation says. A Pydantic model validates on construction. Pass the wrong type and it raises an error immediately, before the value reaches any computation:</p>
-<div id="7" class="cell" data-execution_count="1">
+<div id="8" class="cell" data-execution_count="1">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> dataclasses <span class="im">import</span> dataclass</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pydantic <span class="im">import</span> BaseModel</span>
@@ -633,7 +625,7 @@ midterm_score
 <section id="studentrecord-validating-incoming-data" class="level2">
 <h2 class="anchored" data-anchor-id="studentrecord-validating-incoming-data">2. <code>StudentRecord</code>: Validating Incoming Data</h2>
 <p>Define a model for a student record coming in from a CSV or API. The <code>model_config</code> attribute controls Pydantic v2’s behaviour:</p>
-<div id="10" class="cell" data-execution_count="2">
+<div id="11" class="cell" data-execution_count="2">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> re</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> typing <span class="im">import</span> Annotated</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -659,7 +651,7 @@ midterm_score
 </div>
 <p><code>Field(ge=0.0, le=100.0)</code> means “greater than or equal to 0, less than or equal to 100”. Pydantic v2 uses <code>Annotated</code> with <code>Field</code> for constraints; the old <code>validator</code> decorator is replaced by <code>field_validator</code>.</p>
 <p>Try it:</p>
-<div id="12" class="cell" data-execution_count="3">
+<div id="13" class="cell" data-execution_count="3">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Valid record: succeeds</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>record <span class="op">=</span> StudentRecord(</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    student_id<span class="op">=</span><span class="st">"S0042"</span>,</span>
@@ -703,8 +695,8 @@ StudentRecord(..., semester="Winter")  # should raise ValidationError</pre>
 <section id="field-validators-and-cross-field-validators" class="level2">
 <h2 class="anchored" data-anchor-id="field-validators-and-cross-field-validators">3. Field Validators and Cross-Field Validators</h2>
 <p>A <code>@field_validator</code> runs on a single field after type coercion. Use it for business rules that go beyond a simple range check.</p>
-<p>A <code>@model_validator</code> runs after all fields are set and has access to the complete model. Use it for cross-field constraints — “weights must sum to 1.0”:</p>
-<div id="15" class="cell" data-execution_count="4">
+<p>A <code>@model_validator</code> runs after all fields are set and has access to the complete model. Use it for cross-field constraints: “weights must sum to 1.0”:</p>
+<div id="16" class="cell" data-execution_count="4">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> typing <span class="im">import</span> Annotated</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pydantic <span class="im">import</span> BaseModel, Field, ValidationError, field_validator, model_validator</span>
@@ -728,7 +720,7 @@ StudentRecord(..., semester="Winter")  # should raise ValidationError</pre>
 <span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">self</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>The <code>mode="after"</code> argument means the validator runs after Pydantic has already validated and coerced every individual field. Use <code>mode="before"</code> when you need to transform raw input before type coercion.</p>
-<div id="17" class="cell" data-execution_count="5">
+<div id="18" class="cell" data-execution_count="5">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Valid: weights sum to 1.0</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>cfg <span class="op">=</span> GradeConfig(midterm_weight<span class="op">=</span><span class="fl">0.3</span>, final_weight<span class="op">=</span><span class="fl">0.5</span>, project_weight<span class="op">=</span><span class="fl">0.2</span>)</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(cfg)</span>
@@ -761,7 +753,7 @@ assert cfg.model_dump() == {**raw, "pass_threshold": 60.0}</pre>
 <section id="argparse-the-baseline" class="level3">
 <h3 class="anchored" data-anchor-id="argparse-the-baseline">argparse: the baseline</h3>
 <p><code>argparse</code> requires you to declare each argument manually, convert strings to types yourself, and write help text by hand:</p>
-<div id="20" class="cell" data-execution_count="6">
+<div id="21" class="cell" data-execution_count="6">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> argparse</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co"># argparse: explicit, verbose, manual type conversion</span></span>
@@ -782,7 +774,7 @@ assert cfg.model_dump() == {**raw, "pass_threshold": 60.0}</pre>
 <section id="typer-annotations-as-the-cli-spec" class="level3">
 <h3 class="anchored" data-anchor-id="typer-annotations-as-the-cli-spec">typer: annotations as the CLI spec</h3>
 <p><code>typer</code> reads your function’s type annotations and builds the parser for you. The same type hints that describe the function’s signature generate <code>--help</code>, automatic type coercion, and validation:</p>
-<div id="22" class="cell" data-execution_count="7">
+<div id="23" class="cell" data-execution_count="7">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># pip install typer  /  uv add typer</span></span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="co"># This is a module-level demo: run as: python script.py --data-path ... from terminal</span></span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -810,7 +802,7 @@ assert cfg.model_dump() == {**raw, "pass_threshold": 60.0}</pre>
 <h3 class="anchored" data-anchor-id="typer-pydantic-settings-the-dsmlops-pattern">typer + pydantic-settings: the DS/MLOps pattern</h3>
 <p>In production, you typically want <em>two</em> sources of configuration: environment variables (for secrets, deployment targets) and CLI arguments (for per-run overrides). The pattern is:</p>
 <ul>
-<li><code>pydantic-settings</code> reads from <code>.env</code> and environment — covered in Sec 5</li>
+<li><code>pydantic-settings</code> reads from <code>.env</code> and environment; covered in Sec 5</li>
 <li><code>typer</code> provides the CLI surface</li>
 <li>The typer command constructs a <code>PipelineConfig</code> from both sources</li>
 </ul>
@@ -833,7 +825,7 @@ def validate_data(
 <h2 class="anchored" data-anchor-id="basesettings-config-from-environment-variables">5. <code>BaseSettings</code>: Config from Environment Variables</h2>
 <p><code>pydantic-settings</code> extends Pydantic with a <code>BaseSettings</code> class that reads values from environment variables and <code>.env</code> files. This replaces the manual <code>os.getenv</code> pattern with a typed, validated config object.</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> add pydantic-settings</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div id="25" class="cell" data-execution_count="8">
+<div id="26" class="cell" data-execution_count="8">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># grade_predictor/config.py</span></span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> typing <span class="im">import</span> Annotated</span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -885,7 +877,7 @@ GradeSettings(api_key="test-key", pass_threshold=95.0)  # should raise</pre>
 <section id="typing-a-ds-pipeline-config" class="level2">
 <h2 class="anchored" data-anchor-id="typing-a-ds-pipeline-config">6. Typing a DS Pipeline Config</h2>
 <p>A real DS pipeline has more than one config object. The pattern is to compose small focused models into a root config that is loaded once:</p>
-<div id="28" class="cell" data-execution_count="9">
+<div id="29" class="cell" data-execution_count="9">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> typing <span class="im">import</span> Annotated</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pydantic <span class="im">import</span> BaseModel, Field, model_validator</span>
@@ -915,7 +907,7 @@ GradeSettings(api_key="test-key", pass_threshold=95.0)  # should raise</pre>
 <span id="cb17-27"><a href="#cb17-27" aria-hidden="true" tabindex="-1"></a>    debug: <span class="bu">bool</span> <span class="op">=</span> <span class="va">False</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Define a <code>PipelineConfig</code> model that bundles training parameters:</p>
-<div id="30" class="cell" data-execution_count="10">
+<div id="31" class="cell" data-execution_count="10">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>config <span class="op">=</span> PipelineConfig()</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -936,7 +928,7 @@ GradeSettings(api_key="test-key", pass_threshold=95.0)  # should raise</pre>
 <section id="validating-a-batch-of-records" class="level2">
 <h2 class="anchored" data-anchor-id="validating-a-batch-of-records">7. Validating a Batch of Records</h2>
 <p>In DS, data comes in batches. Pydantic validates each record independently; the question is how to handle errors without stopping on the first failure:</p>
-<div id="33" class="cell" data-execution_count="11">
+<div id="34" class="cell" data-execution_count="11">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pydantic <span class="im">import</span> ValidationError</span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a></span>

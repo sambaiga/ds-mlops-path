@@ -465,89 +465,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <figcaption>View Source on GitHub</figcaption>
 </figure>
 </div>
-<p><strong>DS-MLOps Dev Tools</strong></p>
-<p><strong>Python 3.12+ | Author: Anthony Faustine</strong></p>
-<p>You rename a function and the rest of the pipeline breaks. You want to undo it: but you saved over the original. Git is your time machine: every commit is a checkpoint you can return to, and every branch is an isolated experiment that only merges when it succeeds. On a team, it’s also what keeps two people from overwriting each other’s work.</p>
-<p>The <code>grade-predictor</code> project is now typed and linted. This chapter puts it under version control and connects it to GitHub: after which <a href="../../tutorials/02-dev-tools/22-pytest-testing.html">Chapter 22</a> adds a test suite.</p>
+<p>Three weeks ago an experiment produced 91% accuracy on the validation set. Today you cannot reproduce it. The preprocessing changed. The random seed was in a comment but never set. The feature list evolved without any record. You have a screenshot of the number but not the code that produced it.</p>
+<p>This is not a problem about undo. It is a problem about trust. A model result you cannot reproduce is a result you cannot explain, defend, or build on. Every ML project is a sequence of decisions: what features to include, which data to exclude, what threshold to use. Version control is how those decisions become traceable.</p>
+<p>Git also solves a practical problem: two people editing the same file. Conventional commits solve a second one: a git log full of ‘Update’ and ‘Fix stuff’ messages that tells you nothing about what changed or why. The habits you build here carry through every chapter that follows.</p>
+<p><strong>Next:</strong> <a href="../../tutorials/02-dev-tools/22-pytest-testing.html">Chapter 22: Testing with pytest</a> adds a test suite to the versioned codebase you set up here.</p>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Before you begin
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-2" class="callout-2-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<p>This chapter assumes you have completed <a href="../../tutorials/02-dev-tools/18-uv-project-setup.html">Chapter 18</a> through <a href="../../tutorials/02-dev-tools/20-type-annotations.html">Chapter 20</a>. The <code>grade-predictor</code> project should have typed, ruff-clean code. This chapter versions that project with git and connects it to GitHub.</p>
-<p>If you have used git before, this chapter fills in the DS-specific gaps: what to keep out of git, how to name commits so they serve as a searchable log, and how to structure branches for ML experiments.</p>
-<div class="callout callout-style-default callout-note no-icon callout-empty-content callout-titled">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Note
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-1" class="callout-1-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-
-</div>
-</div>
-</div>
-<section id="topics-covered" class="level2">
-<h2 class="anchored" data-anchor-id="topics-covered">Topics covered</h2>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 50%">
-<col style="width: 50%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Topic</th>
-<th>Why it matters</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><strong>Three-state model</strong></td>
-<td>Working tree, staging area, commit history as one mental model</td>
-</tr>
-<tr class="even">
-<td><strong>Commits and history</strong></td>
-<td>A good commit log is a searchable record of every decision</td>
-</tr>
-<tr class="odd">
-<td><strong>Branching for ML experiments</strong></td>
-<td>Isolate experiments from stable code without copying files</td>
-</tr>
-<tr class="even">
-<td><strong><code>.gitignore</code> for DS</strong></td>
-<td>Keep data files, model weights, and secrets out of the repo</td>
-</tr>
-<tr class="odd">
-<td><strong>GitHub remote workflow</strong></td>
-<td>Push, pull, and collaborate via pull requests</td>
-</tr>
-<tr class="even">
-<td><strong>Conventional Commits</strong></td>
-<td>Standardised messages that generate changelogs automatically</td>
-</tr>
-</tbody>
-</table>
-</section>
-</div>
-</div>
-</div>
-<blockquote class="blockquote">
-<p>Callout markers used throughout this chapter are explained on the <a href="../../index.html#callout-guide">book cover page</a>.</p>
-</blockquote>
-<div class="callout callout-style-default callout-note no-icon callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon no-icon"></i>
 </div>
@@ -556,7 +479,7 @@ Note
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>By the end of this chapter you will be able to:</p>
 <table class="caption-top table">
@@ -613,7 +536,6 @@ Note
 </div>
 </div>
 </div>
-<p>Every data science project eventually breaks in the same three ways: the code changed and nobody knows when, an experiment worked but can’t be reproduced, and two people edited the same file. Git prevents all three. The habits you set up here carry forward through every chapter that follows.</p>
 <section id="installing-and-configuring-git" class="level2">
 <h2 class="anchored" data-anchor-id="installing-and-configuring-git">0. Installing and configuring Git</h2>
 <section id="install-git" class="level3">
@@ -1009,7 +931,7 @@ Add the test workflow. Push and confirm CI runs green
 </ol>
 </div>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon no-icon"></i>
 </div>
@@ -1018,7 +940,7 @@ Add the test workflow. Push and confirm CI runs green
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <table class="caption-top table">
 <thead>
@@ -1054,7 +976,7 @@ Add the test workflow. Push and confirm CI runs green
 </div>
 </div>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon no-icon"></i>
 </div>
@@ -1063,7 +985,7 @@ Add the test workflow. Push and confirm CI runs green
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-5" class="callout-5-contents callout-collapse collapse">
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <table class="caption-top table">
 <colgroup>

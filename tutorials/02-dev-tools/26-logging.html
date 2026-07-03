@@ -467,68 +467,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 <p><a href="https://colab.research.google.com/github/sambaiga/ds-mlops-path/blob/main/tutorials/02-dev-tools/26-logging.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open In Colab"></a> <a href="https://raw.githubusercontent.com/sambaiga/ds-mlops-path/main/tutorials/02-dev-tools/26-logging.ipynb"><img src="https://img.shields.io/badge/Download-Notebook-blue.svg?logo=jupyter&amp;logoColor=white" class="img-fluid" alt="Download Notebook"></a></p>
-<p>Pydantic (Chapter 24) and Pandera (Chapter 25) stop bad data at the boundary. Logging tells you what happened after it was let in. A pipeline that validates inputs and logs its decisions leaves a traceable audit trail: every transformation, every validation error, every unexpected value is recorded before it can compound into a silent failure days downstream.</p>
-<p>The <code>grade-predictor</code> project appears throughout as a concrete reference. You will see how a library, an experiment script, a production API, and a notebook each use a different tool from the same logging ecosystem.</p>
-<p>Chapter 27 (<code>../04-ml-intro/27-ml-introduction.qmd</code>) opens the ML landscape section. The dev-tools skills you have built across Chapters 17-26 are the engineering foundation on which every model in that section runs.</p>
+<p>Pydantic (Chapter 24) and Pandera (Chapter 25) stop bad data at the boundary. The failures you cannot stop are the ones that do not raise: values that pass validation but sit at the edge of the expected range, preprocessing steps that silently skip rows, warnings that fire but go nowhere.</p>
+<p>Three months after deployment, a stakeholder asks: “Why did the model score drop by 4 points last Tuesday?” You have the inputs and the outputs. You do not have a record of what happened in between: which records the pipeline skipped, whether the validation threshold triggered a fallback, whether the data drift detector crossed its threshold.</p>
+<p><code>print()</code> would have told you some of it, if you had printed the right things, if the output had not scrolled away, if you had redirected stdout to a file. Logging is <code>print()</code> with memory. Every log message carries a timestamp, a severity level, the module that produced it, and a configurable destination. You route warnings to a file, errors to a monitoring system, and debug messages to nothing in production, all without changing the code that writes them.</p>
+<p>By the end of this chapter, the <code>grade-predictor</code> pipeline produces a traceable audit trail for every run.</p>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Topics covered
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-1" class="callout-1-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<table class="caption-top table">
-<colgroup>
-<col style="width: 50%">
-<col style="width: 50%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Topic</th>
-<th>Why it matters</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td></td>
-<td>Understand loggers, handlers, formatters as one system</td>
-</tr>
-<tr class="even">
-<td><strong>NullHandler pattern</strong></td>
-<td>Write library code that never hijacks the caller</td>
-</tr>
-<tr class="odd">
-<td><strong>Handlers and formatters</strong></td>
-<td>Route logs to console and file with different detail levels</td>
-</tr>
-<tr class="even">
-<td><strong>LogContext and log_section</strong></td>
-<td>Attach context to a block of calls without string formatting</td>
-</tr>
-<tr class="odd">
-<td><strong>Loguru</strong></td>
-<td>Experiment scripts with half the boilerplate</td>
-</tr>
-<tr class="even">
-<td><strong>structlog</strong></td>
-<td>Structured JSON logs for production services</td>
-</tr>
-<tr class="odd">
-<td><strong>Rich handler</strong></td>
-<td>Beautiful notebook and CLI output</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-</div>
-<div class="callout callout-style-default callout-note no-icon callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon no-icon"></i>
 </div>
@@ -537,7 +481,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>By the end of this chapter you will be able to:</p>
 <table class="caption-top table">
@@ -599,6 +543,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="figs/logging-hierarchy.svg" class="img-fluid figure-img" alt="Left panel: logger hierarchy tree from root to grade_predictor to sub-loggers, with five log level boxes labelled DEBUG through CRITICAL. Right panel: three handler types (StreamHandler, FileHandler, RotatingFileHandler) and a dashed box showing what print() cannot do."></p>
+<figcaption>Python logging hierarchy: root logger at the top, module loggers below it, sub-loggers for each component, with handlers routing output to the console, a rotating log file, or a monitoring system. Log levels from DEBUG to CRITICAL determine which messages each handler receives.</figcaption>
+</figure>
+</div>
 <section id="the-print-that-vanished" class="level2">
 <h2 class="anchored" data-anchor-id="the-print-that-vanished">0. The print that vanished</h2>
 <p>It is 11 PM. A 12-hour cross-validation run finishes. You open the terminal to check results. There is nothing there, because the window scrolled past the output hours ago. You did not redirect stdout to a file. Fold 3 crashed with a shape mismatch, silently recovered to a default, and corrupted the metric average. You have no record of when it happened, which model it was, or what the stack trace said.</p>
@@ -655,7 +605,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li>A library can opt out of all output by default, leaving every routing decision to the caller</li>
 </ul>
 <p>Here is the minimal configuration most tutorials show first:</p>
-<div id="8" class="cell" data-execution_count="1">
+<div id="9" class="cell" data-execution_count="1">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> logging</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># basicConfig attaches a StreamHandler to the root logger</span></span>
@@ -707,7 +657,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </ol>
 <p>An <strong>application</strong> is code you run: a training script, a notebook, a FastAPI service. It owns the process and decides where logs go. It calls <code>configure()</code> once at startup to attach real handlers.</p>
 <p>Here is how <code>grade_predictor</code> would be structured:</p>
-<div id="13" class="cell" data-execution_count="2">
+<div id="14" class="cell" data-execution_count="2">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> logging</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># grade_predictor/__init__.py: the only NullHandler call in the entire library</span></span>
@@ -737,7 +687,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Now we are on the application side. The application calls <code>configure()</code> once. <code>configure()</code> attaches real handlers to the root logger (or to a named logger like <code>grade_predictor</code>) so that all log records from the library flow through.</p>
 <p>A useful pattern is two handlers: a <code>StreamHandler</code> for the console with colour and brevity, and a <code>FileHandler</code> for the log file with full detail including timestamps and module names.</p>
 <p>The <code>_ColourFormatter</code> below uses ANSI escape codes. It checks whether stdout is a real TTY before applying colour, so that redirected output to a file or CI log stays clean:</p>
-<div id="16" class="cell" data-execution_count="3">
+<div id="17" class="cell" data-execution_count="3">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> logging</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sys</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -799,7 +749,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb4-59"><a href="#cb4-59" aria-hidden="true" tabindex="-1"></a>        root.addHandler(fh)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Use <code>configure()</code> to set up the application-level root logger with both console and file handlers:</p>
-<div id="18" class="cell" data-execution_count="4">
+<div id="19" class="cell" data-execution_count="4">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Reset any existing handlers from the basicConfig call in Sec 1</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>logging.getLogger().handlers.clear()</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -825,7 +775,7 @@ ERROR    grade_predictor.core: Fold 3 failed: shape mismatch (32, 10) vs (32, 8)
 <p>Imagine a cross-validation loop. Each fold runs the same <code>fit()</code> function. When something goes wrong, you want every log line inside fold 2 to say <code>fold=2</code>. The naive approach: add <code>fold=2</code> to every <code>log.info()</code> call inside the loop. This is repetitive and error-prone.</p>
 <p>A better approach is a context manager that patches the logger’s filter for the duration of a block. Python’s <code>logging.LogRecord</code> supports an <code>extra</code> dict for exactly this purpose.</p>
 <p><code>LogContext</code> below uses <code>logging.Filter</code> to inject key-value pairs into every record emitted during the <code>with</code> block, without changing a single call site:</p>
-<div id="21" class="cell" data-execution_count="5">
+<div id="22" class="cell" data-execution_count="5">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> collections.abc <span class="im">import</span> Generator</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> contextlib <span class="im">import</span> contextmanager</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> logging</span>
@@ -868,7 +818,7 @@ ERROR    grade_predictor.core: Fold 3 failed: shape mismatch (32, 10) vs (32, 8)
 <span id="cb7-40"><a href="#cb7-40" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
 <span id="cb7-41"><a href="#cb7-41" aria-hidden="true" tabindex="-1"></a>        logger.info(<span class="st">"[END]   </span><span class="sc">%s</span><span class="st">"</span>, name)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="22" class="cell" data-execution_count="6">
+<div id="23" class="cell" data-execution_count="6">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Demonstrate LogContext: every log line inside the with-block carries fold and model</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>logging.getLogger().handlers.clear()</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -896,7 +846,7 @@ def train_fold(fold: int, epochs: int, model_name: str) -&gt; None:
         for epoch in range(1, epochs + 1):
             log.info("epoch %d complete", epoch)</pre>
 </div>
-<div id="24" class="cell" data-execution_count="7">
+<div id="25" class="cell" data-execution_count="7">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: implement train_fold and call it for fold=1 and fold=2</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
@@ -933,7 +883,7 @@ def train_fold(fold: int, epochs: int, model_name: str) -&gt; None:
 <p>The stdlib approach works, but it is verbose. For experiment scripts that you run yourself, <code>loguru</code> (<a href="https://loguru.readthedocs.io/">loguru.readthedocs.io</a>) replaces all of it with a single import and a one-liner sink configuration.</p>
 <p>Loguru’s <code>logger</code> is a pre-configured singleton. You call <code>logger.add()</code> to attach sinks (files, functions, external services). You call <code>logger.bind()</code> to attach context. You use <code>@logger.catch</code> to automatically log and suppress exceptions from a function.</p>
 <p>Here is the same experiment loop from Section 4, rewritten with loguru:</p>
-<div id="28" class="cell" data-execution_count="8">
+<div id="29" class="cell" data-execution_count="8">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> loguru <span class="im">import</span> logger</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Remove loguru's default stderr sink, add a file sink and a stdout sink</span></span>
@@ -962,11 +912,11 @@ def train_fold(fold: int, epochs: int, model_name: str) -&gt; None:
 <span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> fold_id <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1</span>, <span class="dv">4</span>):</span>
 <span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a>    train_fold_loguru(fold<span class="op">=</span>fold_id)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>06:41:20 INFO     fold=1 model=MLP: Starting fold
-06:41:20 INFO     fold=1 model=MLP: Fold complete
-06:41:20 INFO     fold=2 model=MLP: Starting fold
-06:41:20 INFO     fold=3 model=MLP: Starting fold
-06:41:20 INFO     fold=3 model=MLP: Fold complete</code></pre>
+<pre><code>07:15:08 INFO     fold=1 model=MLP: Starting fold
+07:15:08 INFO     fold=1 model=MLP: Fold complete
+07:15:08 INFO     fold=2 model=MLP: Starting fold
+07:15:08 INFO     fold=3 model=MLP: Starting fold
+07:15:08 INFO     fold=3 model=MLP: Fold complete</code></pre>
 </div>
 </div>
 <div class="ark-mistake">
@@ -983,7 +933,7 @@ def train_fold(fold: int, epochs: int, model_name: str) -&gt; None:
 <li><strong>Renderer</strong>: the final processor that turns the dict into a string (JSON for production, pretty-printed for development)</li>
 <li><strong>Bound loggers</strong>: carry context across calls without re-stating it</li>
 </ul>
-<div id="31" class="cell" data-execution_count="9">
+<div id="32" class="cell" data-execution_count="9">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> logging</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> time</span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1037,7 +987,7 @@ def train_fold(fold: int, epochs: int, model_name: str) -&gt; None:
 <p>Everything above assumes a terminal or a file. In Jupyter, <code>logging.StreamHandler</code> writes plain text to the notebook’s output cell. There are no colours, no traceback formatting, no syntax highlighting.</p>
 <p><code>RichHandler</code> from the <code>rich</code> library drops into stdlib logging in one line. It renders log records with colour, aligns level names, pretty-prints tracebacks with source context, and respects the notebook’s display environment.</p>
 <p>Here is a before/after comparison:</p>
-<div id="34" class="cell" data-execution_count="10">
+<div id="35" class="cell" data-execution_count="10">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> logging</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Before: plain StreamHandler output in a notebook</span></span>
@@ -1062,7 +1012,7 @@ def train_fold(fold: int, epochs: int, model_name: str) -&gt; None:
 <span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a>    log.exception(<span class="st">"plain handler: fold 3 failed"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Replace <code>StreamHandler</code> with <code>RichHandler</code> for colour output in notebooks:</p>
-<div id="36" class="cell" data-execution_count="11">
+<div id="37" class="cell" data-execution_count="11">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> logging</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> rich.logging <span class="im">import</span> RichHandler</span>
@@ -1090,15 +1040,15 @@ def train_fold(fold: int, epochs: int, model_name: str) -&gt; None:
 <span id="cb15-25"><a href="#cb15-25" aria-hidden="true" tabindex="-1"></a><span class="cf">except</span> <span class="pp">ValueError</span>:</span>
 <span id="cb15-26"><a href="#cb15-26" aria-hidden="true" tabindex="-1"></a>    log.exception(<span class="st">"rich handler: fold 3 failed"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
-<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #7fbfbf; text-decoration-color: #7fbfbf">[06:41:21] </span><span style="color: #000080; text-decoration-color: #000080">INFO    </span> rich handler: training started                                                 <a href="file:///tmp/ipykernel_3393/4057371647.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">4057371647.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///tmp/ipykernel_3393/4057371647.py#15" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">15</span></a>
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #7fbfbf; text-decoration-color: #7fbfbf">[07:15:08] </span><span style="color: #000080; text-decoration-color: #000080">INFO    </span> rich handler: training started                                                 <a href="file:///tmp/ipykernel_3335/4057371647.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">4057371647.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///tmp/ipykernel_3335/4057371647.py#15" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">15</span></a>
 </pre>
 </div>
 <div class="cell-output cell-output-display">
-<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #7fbfbf; text-decoration-color: #7fbfbf">           </span><span style="color: #808000; text-decoration-color: #808000">WARNING </span> rich handler: fold <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">3</span> has <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">12</span> samples                                            <a href="file:///tmp/ipykernel_3393/4057371647.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">4057371647.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///tmp/ipykernel_3393/4057371647.py#16" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">16</span></a>
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #7fbfbf; text-decoration-color: #7fbfbf">           </span><span style="color: #808000; text-decoration-color: #808000">WARNING </span> rich handler: fold <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">3</span> has <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">12</span> samples                                            <a href="file:///tmp/ipykernel_3335/4057371647.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">4057371647.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///tmp/ipykernel_3335/4057371647.py#16" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">16</span></a>
 </pre>
 </div>
 <div class="cell-output cell-output-display">
-<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #7fbfbf; text-decoration-color: #7fbfbf">           </span><span style="color: #800000; text-decoration-color: #800000; font-weight: bold">ERROR   </span> rich handler: fold <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">3</span> failed                                                    <a href="file:///tmp/ipykernel_3393/4057371647.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">4057371647.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///tmp/ipykernel_3393/4057371647.py#26" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">26</span></a>
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #7fbfbf; text-decoration-color: #7fbfbf">           </span><span style="color: #800000; text-decoration-color: #800000; font-weight: bold">ERROR   </span> rich handler: fold <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">3</span> failed                                                    <a href="file:///tmp/ipykernel_3335/4057371647.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">4057371647.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///tmp/ipykernel_3335/4057371647.py#26" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">26</span></a>
 <span style="color: #7fbfbf; text-decoration-color: #7fbfbf">           </span>         <span style="color: #800000; text-decoration-color: #800000">╭──────────────────── </span><span style="color: #800000; text-decoration-color: #800000; font-weight: bold">Traceback </span><span style="color: #bf7f7f; text-decoration-color: #bf7f7f; font-weight: bold">(most recent call last)</span><span style="color: #800000; text-decoration-color: #800000"> ─────────────────────╮</span> <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">                </span>
 <span style="color: #7fbfbf; text-decoration-color: #7fbfbf">           </span>         <span style="color: #800000; text-decoration-color: #800000">│</span> in &lt;module&gt;:24                                                             <span style="color: #800000; text-decoration-color: #800000">│</span> <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">                </span>
 <span style="color: #7fbfbf; text-decoration-color: #7fbfbf">           </span>         <span style="color: #800000; text-decoration-color: #800000">│</span>                                                                            <span style="color: #800000; text-decoration-color: #800000">│</span> <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">                </span>
@@ -1205,7 +1155,7 @@ def train_fold(fold: int, epochs: int, model_name: str) -&gt; None:
 <div class="ark-activity">
 <p><span class="ark-activity-title"><i class="bi bi-puzzle-fill"></i> Activity 2: four layers in one notebook</span><br><br> In a fresh notebook cell, set up all four layers for a single import of a mock <code>grade_predictor</code> library. The mock library should use <code>NullHandler</code> and <code>getLogger(<strong>name</strong>)</code>. The notebook cell should use <code>RichHandler</code>. Write a separate script string (as a Python string literal) showing how an experiment script would use loguru to import and call the library. Write a second script string showing how a FastAPI endpoint would use structlog. You do not need to run the scripts, just define them clearly as code strings.</p>
 </div>
-<div id="41" class="cell" data-execution_count="12">
+<div id="42" class="cell" data-execution_count="12">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: implement the four-layer demonstration</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
