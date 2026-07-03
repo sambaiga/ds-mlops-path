@@ -74,17 +74,57 @@ tests/case_studies/
                                  # formula correctness
 
 tutorials/05-classical-ml-projects/
-├── 33-spend-regression.ipynb  # the book chapter: imports ark.case_studies.spend_regression,
-│                                narrates each Ch30 workflow stage, shows the two feedback loops
+├── 33-spend-regression.ipynb  # the book chapter: builds each module function inline first,
+│                                then promotes it, narrates each Ch30 workflow stage
 └── data/                       # gitignored; populated by data.py at run time
 ```
 
+## Section 1 is reasoning, not code: problem formulation before config.py
+
+Corrected again after the same "imagine the learner as a data scientist"
+test applied one stage earlier. The chapter's opening section is not
+"write `config.py`", it's the thing Ch30 itself says comes first: **a
+data scientist who has just been handed this dataset and a business ask,
+with no code written yet.**
+
+The section runs in this order:
+
+1. **The hook**: a concrete, specific moment from the real data (per the
+   Writing approach section below), not a recap of Ch18-32.
+2. **The business framing**: who is asking for this and why, stated in
+   plain terms, no target variable named yet. (E.g., a retention or
+   marketing team wants to know which households are worth investing
+   more attention in, stated the way a stakeholder would actually ask
+   it, not the way a data scientist would restate it.)
+3. **Work the five-component spec card as a discussion**, in the exact
+   order Ch30 Section 1 defines it, out loud, on the page: what could the
+   target variable even be (and why the obvious first guess might be
+   wrong), which task type and paradigm this is and why, what success
+   metric a business person would actually recognise, what threshold
+   would make this worth deploying, what data is actually available at
+   what grain. This is prose and reasoning, there is nothing to run yet.
+4. **Activity, mirroring Ch30's own "write the Spec Card" activity**:
+   before the resolved spec card is shown, the reader is asked to draft
+   their own five-component answer first, the same fill-in-before-you-
+   see-the-answer mechanism Ch30 already used for three *different*
+   problems, now applied to this one.
+5. **Only now, codify it.** "We've reasoned through this, now let's make
+   it a real, importable object so the rest of the pipeline can't drift
+   from what we just decided", and `config.py` is written as the
+   codification of a decision already made, not the starting point of
+   the chapter.
+
+`config.py` existing is still correct, and it's still early, but it's
+the *output* of Section 1's reasoning, not Section 1 itself. Everything
+below (the five-beat build pattern) starts at Data Collection, once
+there's an actual spec to build against.
+
 ## How construction actually happens: the notebook builds the module, not the reverse
 
-Per section (roughly, one per Ch30 workflow stage), the notebook follows
-the same five-beat pattern, which is also the real workflow a
-practitioner follows when a prototype earns its way into a shared
-library:
+From Data Collection onward (Problem Framing above is reasoning, nothing
+to build yet), each section follows the same five-beat pattern, which is
+also the real workflow a practitioner follows when a prototype earns its
+way into a shared library:
 
 1. **Motivate and build inline.** Write the function directly in a
    notebook cell against the real, already-loaded data, exactly like
@@ -123,7 +163,7 @@ notebook, not just a reference image:
 
 | Workflow stage | What happens in this project |
 |---|---|
-| Problem framing | The five-component spec card (Ch30 Section 1), rendered as a pydantic model in `config.py` so the acceptable threshold is a real, importable value, not just a table in markdown |
+| Problem framing | Reasoned through in prose first, as the data scientist facing the business ask, per "Section 1 is reasoning, not code" above. `config.py` codifies the resolved spec card afterward, it isn't the starting point |
 | Data collection | `data.py` downloads and caches the Nature dataset; logged with loguru (row counts, date range, cache hit/miss) |
 | EDA | Notebook-only (exploratory, not something to freeze into a tested function): spend distributions, the COVID-era shift, missingness, all charted with `lets_plot` + `ark.plot` theming, per the visualization section below |
 | Feature engineering | `features.py`: household-level aggregation, demographic join, validated on the way out by a pandera schema |
