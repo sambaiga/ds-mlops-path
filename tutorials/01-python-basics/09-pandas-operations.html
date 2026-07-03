@@ -1,0 +1,2216 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.38">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Chapter 9: Pandas operations – From Data to Impact</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js" integrity="sha384-ZvpUoO/+PpLXR1lu4jmpXWu80pZlYUAfxl5NsBMWOEPSjUn/6Z/hRTt8+pR6L4N2" crossorigin="anonymous"></script><script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<link href="../../tutorials/01-python-basics/10-combining-reshaping.html" rel="next">
+<link href="../../tutorials/01-python-basics/08-pandas-core.html" rel="prev">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-de63f62b328812d8e578a4d74e282472.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-beae7f006aa19e5949bb4641e0a5dd6e.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<style>html{ scroll-behavior: smooth; }</style>
+<script src="https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.min.js" integrity="sha384-c9c+LnTbwQ3aujuU7ULEPVvgLs+Fn6fJUvIGTsuu1ZcCf11fiEubah0ttpca4ntM sha384-6V1/AdqZRWk1KAlWbKBlGhN7VG4iE/yAZcO6NZPMF8od0vukrvr0tg4qY6NSrItx" crossorigin="anonymous"></script>
+
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
+
+</head>
+
+<body class="nav-sidebar floating nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">From Data to Impact</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="mailto:sambaiga@gmail.com"> <i class="bi bi-envelope-at" role="img" aria-label="Email Anthony Faustine">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://www.linkedin.com/in/sambaiga"> <i class="bi bi-linkedin" role="img" aria-label="LinkedIn">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/sambaiga/ds-mlops-path"> <i class="bi bi-github" role="img" aria-label="View source on GitHub">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+    <a href="https://github.com/sambaiga/ds-mlops-path" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <a class="flex-grow-1 no-decor" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+          <h1 class="quarto-secondary-nav-title"><span class="chapter-title">Chapter 9: Pandas operations</span></h1>
+        </a>     
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../index.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Welcome</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../preface.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Why Another ML Book?</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../about.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">About the Author</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/00-landscape.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">The ML and data science landscape</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false">
+ <span class="menu-text">Python foundations</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/01-python-core.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Chapter 1: Python core</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/02-control-flow.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Chapter 2: Control flow and comprehensions</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/03-functions.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Chapter 3: Functions</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/04-classes.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Chapter 4: Classes and patterns</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/05-math-statistics.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Chapter 5: Python math and statistics</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/06-numpy.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Chapter 6: NumPy basics</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/07-numpy-advanced.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Chapter 7: NumPy advanced</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Data analysis</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/08-pandas-core.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Chapter 8: Pandas core</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/09-pandas-operations.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">Chapter 9: Pandas operations</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/10-combining-reshaping.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Chapter 10: Combining and reshaping</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/11-time-series.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Chapter 11: Time series</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/12-polars.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Chapter 12: Polars and the expression API</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/13-great-tables.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Chapter 13: Presenting data with Great Tables</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false">
+ <span class="menu-text">Data visualization</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/14-matplotlib.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Chapter 14: Matplotlib and Seaborn</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/15-lets-plot.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Chapter 15: Grammar of graphics with lets-plot</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/16-data-storytelling.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Chapter 16: Data storytelling and house style</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/17-storytelling-capstone.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Chapter 17: The storytelling capstone</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false">
+ <span class="menu-text">Dev tools</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/02-dev-tools/18-vscode-setup.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">VS Code setup</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/02-dev-tools/19-uv-project-setup.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Project setup with uv</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/02-dev-tools/20-code-quality-ruff.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Code quality with Ruff</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/02-dev-tools/21-type-annotations.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Type annotations</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/02-dev-tools/22-git-github.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Git and GitHub</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/02-dev-tools/23-pytest-testing.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Testing with pytest</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/02-dev-tools/24-pre-commit-automation.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Pre-commit automation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/02-dev-tools/25-pydantic-validation.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Data validation with Pydantic</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/02-dev-tools/26-pandera-schema-validation.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Data schema validation with Pandera</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/02-dev-tools/27-logging.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Logging for ML projects</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="false">
+ <span class="menu-text">ML landscape</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/04-ml-intro/28-ml-introduction.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">The AI and ML landscape</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/04-ml-intro/29-ml-what-is-ml.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">What is machine learning?</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/04-ml-intro/30-ml-workflow.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">The ML workflow</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/04-ml-intro/31-sklearn-core.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Classical ML with scikit-learn</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/04-ml-intro/32-sklearn-pipeline.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Sklearn pipelines and hyperparameter search</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <span class="sidebar-item-text sidebar-link text-start">
+ <span class="menu-text">Deep learning</span></span>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <span class="sidebar-item-text sidebar-link text-start">
+ <span class="menu-text">LLMs</span></span>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <span class="sidebar-item-text sidebar-link text-start">
+ <span class="menu-text">MLOps</span></span>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <span class="sidebar-item-text sidebar-link text-start">
+ <span class="menu-text">Production monitoring</span></span>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <span class="sidebar-item-text sidebar-link text-start">
+ <span class="menu-text">ML system design</span></span>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <span class="sidebar-item-text sidebar-link text-start">
+ <span class="menu-text">Value-driven AI</span></span>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">In this chapter</h2>
+   
+  <ul>
+  <li><a href="#whats-new-in-pandas-3" id="toc-whats-new-in-pandas-3" class="nav-link active" data-scroll-target="#whats-new-in-pandas-3">What’s new in Pandas 3</a></li>
+  <li><a href="#function-application-with-map-and-apply" id="toc-function-application-with-map-and-apply" class="nav-link" data-scroll-target="#function-application-with-map-and-apply">1. Function Application with <code>map</code> and <code>apply</code></a></li>
+  <li><a href="#unique-values-value-counts-and-membership" id="toc-unique-values-value-counts-and-membership" class="nav-link" data-scroll-target="#unique-values-value-counts-and-membership">2. Unique Values, Value Counts, and Membership</a></li>
+  <li><a href="#working-with-text-columns-the-.str-accessor" id="toc-working-with-text-columns-the-.str-accessor" class="nav-link" data-scroll-target="#working-with-text-columns-the-.str-accessor">3. Working with Text Columns: the <code>.str</code> Accessor</a></li>
+  <li><a href="#descriptive-statistics-and-summarization" id="toc-descriptive-statistics-and-summarization" class="nav-link" data-scroll-target="#descriptive-statistics-and-summarization">4. Descriptive Statistics and Summarization</a></li>
+  <li><a href="#window-operations-and-expressive-queries" id="toc-window-operations-and-expressive-queries" class="nav-link" data-scroll-target="#window-operations-and-expressive-queries">5. Window Operations and Expressive Queries</a>
+  <ul class="collapse">
+  <li><a href="#a.-rolling-and-expanding-windows" id="toc-a.-rolling-and-expanding-windows" class="nav-link" data-scroll-target="#a.-rolling-and-expanding-windows">5a. Rolling and Expanding Windows</a></li>
+  <li><a href="#b.-expressive-filtering-with-df.query" id="toc-b.-expressive-filtering-with-df.query" class="nav-link" data-scroll-target="#b.-expressive-filtering-with-df.query">5b. Expressive Filtering with <code>df.query()</code></a></li>
+  </ul></li>
+  <li><a href="#capstone-risk-and-performance-report" id="toc-capstone-risk-and-performance-report" class="nav-link" data-scroll-target="#capstone-risk-and-performance-report">Capstone: Risk and Performance Report</a></li>
+  <li><a href="#further-reading" id="toc-further-reading" class="nav-link" data-scroll-target="#further-reading">Further reading</a></li>
+  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary">Summary</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.dev/sambaiga/ds-mlops-path/blob/main/tutorials/01-python-basics/09-pandas-operations.ipynb" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/sambaiga/ds-mlops-path/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li><li><a href="https://github.com/sambaiga/ds-mlops-path/blob/main/tutorials/01-python-basics/09-pandas-operations.ipynb" class="toc-action"><i class="bi empty"></i>View source</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block"><span class="chapter-title">Chapter 9: Pandas operations</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p><a href="https://colab.research.google.com/github/sambaiga/ds-mlops-path/blob/main/tutorials/01-python-basics/09-pandas-operations.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open In Colab"></a> <a href="https://raw.githubusercontent.com/sambaiga/ds-mlops-path/main/tutorials/01-python-basics/09-pandas-operations.ipynb"><img src="https://img.shields.io/badge/Download-Notebook-blue.svg?logo=jupyter&amp;logoColor=white" class="img-fluid" alt="Download Notebook"></a></p>
+<p>The CSV is loaded and clean. Now the questions get specific: which students went from failing to passing between semesters? Which course names have a trailing space or a typo? What is the 10-student rolling average for each program? None of these answers live in a raw column: you have to derive them.</p>
+<p>Chapter 8 covered loading, selecting, filtering, and fixing missing values: the shape and structure of a DataFrame. The operations that turn raw columns into derived ones are covered here: apply your own functions row-by-row, count categories, clean text, summarise groups, and compute window statistics. Chapter 10 (<code>10-combining-reshaping.ipynb</code>) builds on this with <code>groupby</code>, merge, pivot, and time-series reshaping.</p>
+<blockquote class="blockquote">
+<p>Callout markers: <a href="../../index.html#callout-guide">book cover page</a>.</p>
+</blockquote>
+<div id="3" class="cell" data-execution_count="1">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.read_csv(<span class="st">"data/university_analytics.csv"</span>)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"average_marks"</span>] <span class="op">=</span> (df[<span class="st">"midterm_score"</span>] <span class="op">+</span> df[<span class="st">"final_score"</span>] <span class="op">+</span> df[<span class="st">"project_score"</span>]) <span class="op">/</span> <span class="dv">3</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>df.head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">student_id</th>
+<th data-quarto-table-cell-role="th">cohort</th>
+<th data-quarto-table-cell-role="th">program</th>
+<th data-quarto-table-cell-role="th">gender</th>
+<th data-quarto-table-cell-role="th">region</th>
+<th data-quarto-table-cell-role="th">guardian</th>
+<th data-quarto-table-cell-role="th">has_internet</th>
+<th data-quarto-table-cell-role="th">course_id</th>
+<th data-quarto-table-cell-role="th">course</th>
+<th data-quarto-table-cell-role="th">semester</th>
+<th data-quarto-table-cell-role="th">enrollment_date</th>
+<th data-quarto-table-cell-role="th">study_hours</th>
+<th data-quarto-table-cell-role="th">attendance_pct</th>
+<th data-quarto-table-cell-role="th">midterm_score</th>
+<th data-quarto-table-cell-role="th">final_score</th>
+<th data-quarto-table-cell-role="th">project_score</th>
+<th data-quarto-table-cell-role="th">final_grade</th>
+<th data-quarto-table-cell-role="th">passed</th>
+<th data-quarto-table-cell-role="th">average_marks</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>S0001</td>
+<td>2023</td>
+<td>Information Technology</td>
+<td>F</td>
+<td>South</td>
+<td>Father</td>
+<td>True</td>
+<td>C01</td>
+<td>Python Programming</td>
+<td>Fall 2023</td>
+<td>2023-09-04</td>
+<td>10.8</td>
+<td>88.6</td>
+<td>49.9</td>
+<td>58.2</td>
+<td>61.6</td>
+<td>C</td>
+<td>True</td>
+<td>56.566667</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1</th>
+<td>S0001</td>
+<td>2023</td>
+<td>Information Technology</td>
+<td>F</td>
+<td>South</td>
+<td>Father</td>
+<td>True</td>
+<td>C02</td>
+<td>Statistics</td>
+<td>Spring 2024</td>
+<td>2024-01-15</td>
+<td>16.1</td>
+<td>71.5</td>
+<td>48.7</td>
+<td>63.7</td>
+<td>65.8</td>
+<td>C</td>
+<td>True</td>
+<td>59.400000</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2</th>
+<td>S0001</td>
+<td>2023</td>
+<td>Information Technology</td>
+<td>F</td>
+<td>South</td>
+<td>Father</td>
+<td>True</td>
+<td>C03</td>
+<td>Data Structures</td>
+<td>Fall 2023</td>
+<td>2023-09-04</td>
+<td>23.6</td>
+<td>71.5</td>
+<td>54.1</td>
+<td>60.9</td>
+<td>79.8</td>
+<td>C</td>
+<td>True</td>
+<td>64.933333</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">3</th>
+<td>S0001</td>
+<td>2023</td>
+<td>Information Technology</td>
+<td>F</td>
+<td>South</td>
+<td>Father</td>
+<td>True</td>
+<td>C04</td>
+<td>Linear Algebra</td>
+<td>Spring 2024</td>
+<td>2024-01-15</td>
+<td>4.7</td>
+<td>78.3</td>
+<td>71.4</td>
+<td>55.3</td>
+<td>60.1</td>
+<td>C</td>
+<td>True</td>
+<td>62.266667</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">4</th>
+<td>S0001</td>
+<td>2023</td>
+<td>Information Technology</td>
+<td>F</td>
+<td>South</td>
+<td>Father</td>
+<td>True</td>
+<td>C05</td>
+<td>Machine Learning</td>
+<td>Fall 2023</td>
+<td>2023-09-04</td>
+<td>16.2</td>
+<td>63.2</td>
+<td>48.4</td>
+<td>54.2</td>
+<td>51.8</td>
+<td>D</td>
+<td>True</td>
+<td>51.466667</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<section id="whats-new-in-pandas-3" class="level2">
+<h2 class="anchored" data-anchor-id="whats-new-in-pandas-3">What’s new in Pandas 3</h2>
+<p>This series is written against pandas 3, released in 2025, and two of its changes are worth understanding before going further, because they change what you see in everyday output.</p>
+<p>Run <code>df.dtypes</code> and look at the text columns. In pandas 2 they showed up as <code>object</code>, the catch-all dtype for anything that isn’t a fixed-width number. Pandas 3 gives strings a dedicated <code>str</code> dtype instead, backed by PyArrow when it’s installed:</p>
+<div id="6" class="cell" data-execution_count="2">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>df.dtypes</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="2">
+<pre><code>student_id             str
+cohort               int64
+program                str
+gender                 str
+region                 str
+guardian               str
+has_internet          bool
+course_id              str
+course                 str
+semester               str
+enrollment_date        str
+study_hours        float64
+attendance_pct     float64
+midterm_score      float64
+final_score        float64
+project_score      float64
+final_grade            str
+passed                bool
+average_marks      float64
+dtype: object</code></pre>
+</div>
+</div>
+<div class="ark-concept">
+<p><span class="ark-concept-title"><i class="bi bi-key-fill"></i> Key Concept: A dedicated <code>str</code> dtype, not <code>object</code></span><br><br> <code>object</code> dtype could hold strings, but it could just as easily hold a mix of strings, numbers, and Python objects, with no guarantee which. The new <code>str</code> dtype can only hold strings or missing values, so a column typed <code>str</code> is a stronger guarantee than <code>object</code> ever was, and the PyArrow backing makes string operations faster. This is the same dtype the <code>.str</code> accessor in Sec. 3 operates on.</p>
+</div>
+<p>The second change doesn’t show up in any output, it changes how assignment behaves. Pandas 3 makes Copy-on-Write the only behaviour: selecting a subset of a DataFrame never lets you accidentally modify the original through it.</p>
+<div id="9" class="cell" data-execution_count="3">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>subset <span class="op">=</span> df[[<span class="st">"student_id"</span>, <span class="st">"average_marks"</span>]]</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>subset.loc[<span class="dv">0</span>, <span class="st">"average_marks"</span>] <span class="op">=</span> <span class="fl">0.0</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"original unaffected: </span><span class="sc">{</span>df<span class="sc">.</span>loc[<span class="dv">0</span>, <span class="st">'average_marks'</span>]<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"subset changed     : </span><span class="sc">{</span>subset<span class="sc">.</span>loc[<span class="dv">0</span>, <span class="st">'average_marks'</span>]<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>original unaffected: 56.56666666666666
+subset changed     : 0.0</code></pre>
+</div>
+</div>
+<div class="ark-concept">
+<p><span class="ark-concept-title"><i class="bi bi-key-fill"></i> Key Concept: Copy-on-Write removes the <code>SettingWithCopyWarning</code> guessing game</span><br><br> Before pandas 3, whether <code>subset</code> above was a view into <code>df</code> or an independent copy depended on details of how <code>subset</code> was created, the source of the infamous <code>SettingWithCopyWarning</code>. Pandas 3 makes every such selection behave as an independent copy: modifying <code>subset</code> never touches <code>df</code>. The warning is gone because the ambiguity it warned about is gone.</p>
+</div>
+<div class="ark-tip">
+<p><span class="ark-tip-title"><i class="bi bi-lightbulb-fill"></i> Pro Tip: <code>pd.col()</code> previews the expression style Polars uses</span><br><br> Pandas 3 adds <code>pd.col(“name”)</code> as an alternative to a <code>lambda</code> inside <code>.assign()</code>: <code>df.assign(c=pd.col(“a”) + pd.col(“b”))</code> instead of <code>df.assign(c=lambda d: d[“a”] + d[“b”])</code>. It reads closer to the column-expression style used throughout Polars, covered in Chapter 8 of this series, and is worth recognising even though this notebook keeps using <code>apply</code> and <code>lambda</code>, the more widely used style today.</p>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Learning objectives
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>By the end of Chapter 15 you will be able to:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>#</th>
+<th>Skill</th>
+<th>Covered in</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td>Recognise pandas 3’s <code>str</code> dtype and Copy-on-Write behaviour</td>
+<td>Sec. 0</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td>Apply your own function to a Series or DataFrame with <code>map</code> and <code>apply</code></td>
+<td>Sec. 1</td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td>Count, filter, and encode categorical columns</td>
+<td>Sec. 2</td>
+</tr>
+<tr class="even">
+<td>4</td>
+<td>Clean and query text columns with the <code>.str</code> accessor</td>
+<td>Sec. 3</td>
+</tr>
+<tr class="odd">
+<td>5</td>
+<td>Summarize a dataset with descriptive statistics in one call</td>
+<td>Sec. 4</td>
+</tr>
+<tr class="even">
+<td>6</td>
+<td>Compute rolling and expanding window statistics</td>
+<td>Sec. 5a</td>
+</tr>
+<tr class="odd">
+<td>7</td>
+<td>Write readable multi-condition filters with <code>df.query()</code></td>
+<td>Sec. 5b</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</section>
+<section id="function-application-with-map-and-apply" class="level2">
+<h2 class="anchored" data-anchor-id="function-application-with-map-and-apply">1. Function Application with <code>map</code> and <code>apply</code></h2>
+<p>NumPy’s vectorized operations cover arithmetic and comparisons, but sometimes the transformation you need is your own logic: a lookup, a multi-branch rule, a calculation that combines several columns per row. <code>map</code> and <code>apply</code> are how pandas runs that logic.</p>
+<p><code>Series.map()</code> is for simple one-to-one substitution: pass it a dict (or a function) and it replaces every value with its mapped equivalent. Recoding the <code>gender</code> column’s short codes into full labels is a <code>map</code> problem, not an <code>apply</code> one:</p>
+<div id="15" class="cell" data-execution_count="4">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>gender_labels <span class="op">=</span> {<span class="st">"M"</span>: <span class="st">"Male"</span>, <span class="st">"F"</span>: <span class="st">"Female"</span>}</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"gender_label"</span>] <span class="op">=</span> df[<span class="st">"gender"</span>].<span class="bu">map</span>(gender_labels)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>df[[<span class="st">"gender"</span>, <span class="st">"gender_label"</span>]].head(<span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="4">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">gender</th>
+<th data-quarto-table-cell-role="th">gender_label</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>F</td>
+<td>Female</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1</th>
+<td>F</td>
+<td>Female</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2</th>
+<td>F</td>
+<td>Female</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<p><code>Series.map()</code> transforms one column. For element-wise operations across ALL columns simultaneously, pandas 3.0 introduced <code>DataFrame.map()</code>: the replacement for the deprecated <code>applymap()</code>. Same signature, same semantics, new name.</p>
+<div id="17" class="cell" data-execution_count="5">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Round every numeric cell to 1 decimal place</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>numeric_cols <span class="op">=</span> df.select_dtypes(<span class="st">"number"</span>).columns.tolist()</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>rounded <span class="op">=</span> df[numeric_cols].<span class="bu">map</span>(<span class="kw">lambda</span> x: <span class="bu">round</span>(x, <span class="dv">1</span>) <span class="cf">if</span> pd.notna(x) <span class="cf">else</span> x)</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>rounded.head(<span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="5">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">cohort</th>
+<th data-quarto-table-cell-role="th">study_hours</th>
+<th data-quarto-table-cell-role="th">attendance_pct</th>
+<th data-quarto-table-cell-role="th">midterm_score</th>
+<th data-quarto-table-cell-role="th">final_score</th>
+<th data-quarto-table-cell-role="th">project_score</th>
+<th data-quarto-table-cell-role="th">average_marks</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>2023</td>
+<td>10.8</td>
+<td>88.6</td>
+<td>49.9</td>
+<td>58.2</td>
+<td>61.6</td>
+<td>56.6</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1</th>
+<td>2023</td>
+<td>16.1</td>
+<td>71.5</td>
+<td>48.7</td>
+<td>63.7</td>
+<td>65.8</td>
+<td>59.4</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2</th>
+<td>2023</td>
+<td>23.6</td>
+<td>71.5</td>
+<td>54.1</td>
+<td>60.9</td>
+<td>79.8</td>
+<td>64.9</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<div class="ark-mistake">
+<p><span class="ark-mistake-title"><i class="bi bi-bug-fill"></i> Common Mistake: Using <code>applymap()</code> from an older tutorial</span><br><br> <code>df.applymap()</code> was removed in pandas 3.0. Any code or tutorial older than 2024 that uses <code>applymap</code> will raise <code>AttributeError</code>. The fix is a one-word rename: <code>df.applymap(fn)</code> becomes <code>df.map(fn)</code>.</p>
+</div>
+<div class="ark-concept">
+<p><span class="ark-concept-title"><i class="bi bi-key-fill"></i> Key Concept: <code>map</code> is for substitution, <code>apply</code> is for logic</span><br><br> <code>map</code> expects a dict or a simple function and only ever looks at one value at a time. <code>apply</code> accepts any function, including one with branching logic, and can run over a Series (one value at a time) or a DataFrame (one row or one column at a time, depending on <code>axis</code>). Reach for <code>map</code> first; reach for <code>apply</code> when the rule doesn’t fit in a lookup table.</p>
+</div>
+<p>Converting a normalized mark (0 to 1) into a letter grade needs a multi-branch rule, a job for <code>apply</code> with a plain Python function:</p>
+<div id="21" class="cell" data-execution_count="6">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> letter_grade(mark: <span class="bu">float</span>) <span class="op">-&gt;</span> <span class="bu">str</span>:</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> mark <span class="op">&gt;=</span> <span class="dv">80</span>:</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="st">"A"</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">elif</span> mark <span class="op">&gt;=</span> <span class="dv">60</span>:</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="st">"B"</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">elif</span> mark <span class="op">&gt;=</span> <span class="dv">40</span>:</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="st">"C"</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="st">"D"</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"grade"</span>] <span class="op">=</span> df[<span class="st">"average_marks"</span>].<span class="bu">apply</span>(letter_grade)</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>df[[<span class="st">"student_id"</span>, <span class="st">"average_marks"</span>, <span class="st">"grade"</span>]].head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="6">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">student_id</th>
+<th data-quarto-table-cell-role="th">average_marks</th>
+<th data-quarto-table-cell-role="th">grade</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>S0001</td>
+<td>56.566667</td>
+<td>C</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1</th>
+<td>S0001</td>
+<td>59.400000</td>
+<td>C</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2</th>
+<td>S0001</td>
+<td>64.933333</td>
+<td>B</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">3</th>
+<td>S0001</td>
+<td>62.266667</td>
+<td>B</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">4</th>
+<td>S0001</td>
+<td>51.466667</td>
+<td>C</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<p><code>np.where</code> handles one condition. For multiple ordered conditions with different outcomes, <code>Series.case_when()</code> (pandas 2.2+) reads like a SQL CASE statement: check cases top-to-bottom, return the value for the first match, and fall back to a default.</p>
+<div id="23" class="cell" data-execution_count="7">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"performance"</span>] <span class="op">=</span> df[<span class="st">"midterm_score"</span>].case_when(</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    caselist<span class="op">=</span>[</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>        (df[<span class="st">"midterm_score"</span>] <span class="op">&gt;=</span> <span class="dv">85</span>, <span class="st">"High"</span>),</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>        (df[<span class="st">"midterm_score"</span>] <span class="op">&gt;=</span> <span class="dv">70</span>, <span class="st">"Medium"</span>),</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>        (df[<span class="st">"midterm_score"</span>] <span class="op">&gt;=</span> <span class="dv">55</span>, <span class="st">"Low"</span>),</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>        (df[<span class="st">"midterm_score"</span>] <span class="op">&gt;=</span> <span class="dv">0</span>, <span class="st">"At Risk"</span>),  <span class="co"># catch-all default</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    ],</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>df[[<span class="st">"midterm_score"</span>, <span class="st">"performance"</span>]].head(<span class="dv">8</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="7">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">midterm_score</th>
+<th data-quarto-table-cell-role="th">performance</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>49.9</td>
+<td>At Risk</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1</th>
+<td>48.7</td>
+<td>At Risk</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2</th>
+<td>54.1</td>
+<td>At Risk</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">3</th>
+<td>71.4</td>
+<td>Medium</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">4</th>
+<td>48.4</td>
+<td>At Risk</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">5</th>
+<td>67.0</td>
+<td>Low</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">6</th>
+<td>93.6</td>
+<td>High</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">7</th>
+<td>63.1</td>
+<td>Low</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<div class="ark-tip">
+<p><span class="ark-tip-title"><i class="bi bi-lightbulb-fill"></i> Pro Tip: <code>case_when()</code> for three or more branches instead of chained <code>np.where()</code></span><br><br> <code>case_when()</code> evaluates conditions in order and stops at the first match, like <code>if/elif/else</code>. The <code>default</code> argument fills any row where no condition matched. Use it instead of chained <code>np.where()</code> calls whenever you have three or more branches.</p>
+</div>
+<p><code>DataFrame.apply(..., axis=1)</code> runs a function once per row, with the whole row available as a Series. Use it when the rule needs more than one column at a time, for example flagging students who are both low-scoring and without internet access:</p>
+<div id="26" class="cell" data-execution_count="8">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> at_risk(row: pd.Series) <span class="op">-&gt;</span> <span class="bu">bool</span>:</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> row[<span class="st">"average_marks"</span>] <span class="op">&lt;</span> <span class="dv">40</span> <span class="kw">and</span> <span class="kw">not</span> row[<span class="st">"has_internet"</span>]</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"at_risk"</span>] <span class="op">=</span> df.<span class="bu">apply</span>(at_risk, axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"at_risk"</span>].<span class="bu">sum</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="8">
+<pre><code>np.int64(22)</code></pre>
+</div>
+</div>
+<div class="ark-mistake">
+<p><span class="ark-mistake-title"><i class="bi bi-bug-fill"></i> Common Mistake: Reaching for <code>apply(axis=1)</code> when a vectorized operation already does the job</span><br><br> <code>df.apply(at_risk, axis=1)</code> calls a Python function once per row, 17,190 times here, which is far slower than an equivalent boolean mask: <code>(df[“average_marks”] &lt; 0.4) &amp; (df[“has_internet”] == 0)</code> computes the same result with NumPy operating on whole columns at once. Use <code>apply</code> when the rule can’t be written with column-wise operations and comparisons; reach for masking first.</p>
+</div>
+<div class="ark-activity">
+<p><span class="ark-activity-title"><i class="bi bi-puzzle-fill"></i> Activity 1 - Grade Distribution</span><br><br></p>
+Write a function that returns <code>True</code> for marks of 0.6 or higher and <code>False</code> otherwise, apply it to <code>average_marks</code> to create a new column <code>passed</code>, then print how many students passed.
+<pre>def passed_threshold(mark: float) -&gt; bool:
+    ...
+
+
+df["passed"] = df["average_marks"].apply(passed_threshold)
+df["passed"].sum()
+# -&gt; 6011</pre>
+</div>
+<div id="29" class="cell" data-execution_count="9">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: write passed_threshold, apply it, and print the count of students who passed</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="unique-values-value-counts-and-membership" class="level2">
+<h2 class="anchored" data-anchor-id="unique-values-value-counts-and-membership">2. Unique Values, Value Counts, and Membership</h2>
+<p><code>.unique()</code>, <code>.value_counts()</code>, and <code>.isin()</code> are usually the first three calls worth making on any categorical column, before any filtering or grouping.</p>
+<div id="31" class="cell" data-execution_count="10">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"program"</span>].unique()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="10">
+<pre><code>&lt;ArrowStringArray&gt;
+['Information Technology', 'Data Science', 'Engineering', 'Computer Science']
+Length: 4, dtype: str</code></pre>
+</div>
+</div>
+<p><code>.value_counts()</code> counts how many rows fall into each category, sorted from most to least common. Passing <code>normalize=True</code> turns the counts into proportions, which is what you want for a question like “what fraction of students dropped out?”:</p>
+<div class="ark-activity">
+<p><span style="color:#059669;font-weight:bold"><i class="bi bi-journal-code"></i> Example: Pass rate from <code>value_counts</code></span><br><br> <code>df[“passed”].value_counts(normalize=True)</code> answers the pass-rate question in a single line, no manual division required.</p>
+</div>
+<div id="34" class="cell" data-execution_count="11">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"passed"</span>].value_counts(normalize<span class="op">=</span><span class="va">True</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="11">
+<pre><code>passed
+True     0.951667
+False    0.048333
+Name: proportion, dtype: float64</code></pre>
+</div>
+</div>
+<p><code>.isin()</code> filters rows whose value is in a given list, the categorical equivalent of a boolean comparison. Filtering to the two largest programs combines <code>.value_counts()</code> and <code>.isin()</code> directly:</p>
+<div id="36" class="cell" data-execution_count="12">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>top_programs <span class="op">=</span> df[<span class="st">"program"</span>].value_counts().head(<span class="dv">2</span>).index</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>df_top_programs <span class="op">=</span> df[df[<span class="st">"program"</span>].isin(top_programs)]</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>df_top_programs[<span class="st">"program"</span>].value_counts()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="12">
+<pre><code>program
+Data Science        828
+Computer Science    726
+Name: count, dtype: int64</code></pre>
+</div>
+</div>
+<div class="ark-tip">
+<p><span class="ark-tip-title"><i class="bi bi-lightbulb-fill"></i> Pro Tip: <code>.nunique()</code> before <code>.unique()</code> on a column you have not seen yet</span><br><br> <code>.nunique()</code> returns just the count of distinct values. Running it before <code>.unique()</code> tells you whether printing every unique value is even a reasonable idea, useful for a column that turns out to have 4 categories versus one that turns out to have 4,000.</p>
+</div>
+<p>A column with a small, fixed set of values is a candidate for the <code>category</code> dtype: pandas stores each value once and keeps a compact integer code per row instead of repeating the full string, which is most of <code>gender</code>, <code>program</code>, and <code>guardian</code> here:</p>
+<div id="39" class="cell" data-execution_count="13">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"program"</span>] <span class="op">=</span> df[<span class="st">"program"</span>].astype(<span class="st">"category"</span>)</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"program"</span>].dtype</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="13">
+<pre><code>CategoricalDtype(categories=['Computer Science', 'Data Science', 'Engineering',
+                  'Information Technology'],
+, ordered=False, categories_dtype=str)</code></pre>
+</div>
+</div>
+<p>Most ML models need numbers, not category labels. <code>pd.get_dummies()</code> one-hot encodes a categorical column into one binary column per category, the standard first step before fitting a model on top of this data:</p>
+<div id="41" class="cell" data-execution_count="14">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>program_dummies <span class="op">=</span> pd.get_dummies(df[<span class="st">"program"</span>], prefix<span class="op">=</span><span class="st">"program"</span>)</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>program_dummies.head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="14">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">program_Computer Science</th>
+<th data-quarto-table-cell-role="th">program_Data Science</th>
+<th data-quarto-table-cell-role="th">program_Engineering</th>
+<th data-quarto-table-cell-role="th">program_Information Technology</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>False</td>
+<td>False</td>
+<td>False</td>
+<td>True</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1</th>
+<td>False</td>
+<td>False</td>
+<td>False</td>
+<td>True</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2</th>
+<td>False</td>
+<td>False</td>
+<td>False</td>
+<td>True</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">3</th>
+<td>False</td>
+<td>False</td>
+<td>False</td>
+<td>True</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">4</th>
+<td>False</td>
+<td>False</td>
+<td>False</td>
+<td>True</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<div class="ark-concept">
+<p><span class="ark-concept-title"><i class="bi bi-key-fill"></i> Key Concept: <code>category</code> dtype for memory, one-hot encoding for models</span><br><br> <code>.astype(“category”)</code> is about storage and speed: it doesn’t change what a column means, only how compactly pandas stores it. <code>pd.get_dummies()</code> is about preparing data for a model that expects numeric input: it turns one categorical column into several binary columns. The two are often used together, category dtype while exploring, dummy columns right before training.</p>
+</div>
+<div class="ark-activity">
+<p><span class="ark-activity-title"><i class="bi bi-puzzle-fill"></i> Activity 2 - Guardian Breakdown</span><br><br></p>
+Print the value counts for the <code>guardian</code> column, then filter the DataFrame to students whose guardian is <code>“mother”</code> or <code>“father”</code> using <code>.isin()</code>, and print how many rows remain.
+<pre>df["guardian"].value_counts()
+
+parents = df[df["guardian"].isin(["mother", "father"])]
+len(parents)</pre>
+</div>
+<div id="44" class="cell" data-execution_count="15">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: print value counts for guardian, then filter to mother/father and print row count</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="working-with-text-columns-the-.str-accessor" class="level2">
+<h2 class="anchored" data-anchor-id="working-with-text-columns-the-.str-accessor">3. Working with Text Columns: the <code>.str</code> Accessor</h2>
+<p><code>student_id</code> is a string column, and pandas keeps every string method behind a <code>.str</code> accessor rather than directly on the Series. The accessor exists because a Series can hold any dtype, <code>.str</code> is what tells pandas you specifically want the string-handling behaviour.</p>
+<div class="ark-concept">
+<p><span class="ark-concept-title"><i class="bi bi-key-fill"></i> Key Concept: .str is a namespace: call string methods on the whole column at once</span><br><br> <code>df[‘col’].str.upper()</code> applies <code>upper()</code> to every element without a Python loop. The <code>.str</code> prefix is required: <code>df[‘col’].upper()</code> raises an <code>AttributeError</code> because <code>upper</code> isn’t a Series method. Common methods: <code>.str.strip()</code> for whitespace, <code>.str.contains(pattern)</code> for search, <code>.str.extract(r’(pattern)’)</code> for regex capture groups.</p>
+</div>
+<div class="ark-mistake">
+<p><span class="ark-mistake-title"><i class="bi bi-bug-fill"></i> Common Mistake: Calling a string method directly on a Series</span><br><br> <code>df[“student_id”].upper()</code> raises an <code>AttributeError</code>: <code>Series</code> has no <code>upper</code> method. The string methods live on <code>df[“student_id”].str</code>, not on the Series itself, because the Series itself is a general-purpose container that happens to hold strings here.</p>
+</div>
+<div id="48" class="cell" data-execution_count="16">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"student_id"</span>].<span class="bu">str</span>.upper().head(<span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="16">
+<pre><code>0    S0001
+1    S0001
+2    S0001
+Name: student_id, dtype: str</code></pre>
+</div>
+</div>
+<p><code>.str.len()</code> gives the length of every string at once, useful for spotting malformed values before they cause problems downstream:</p>
+<div id="50" class="cell" data-execution_count="17">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>id_lengths <span class="op">=</span> df[<span class="st">"student_id"</span>].<span class="bu">str</span>.<span class="bu">len</span>()</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>id_lengths.value_counts()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="17">
+<pre><code>student_id
+5    2400
+Name: count, dtype: int64</code></pre>
+</div>
+</div>
+<p><code>.str.extract()</code> pulls a regex capture group out of every value, the cleanest way to turn a structured string column into a usable numeric one. Every <code>student_id</code> here is the letter <code>S</code> followed by four digits (<code>S0001</code>–<code>S0400</code>), so extracting just the digits gives a numeric ID:</p>
+<div id="52" class="cell" data-execution_count="18">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"student_id"</span>].<span class="bu">str</span>.match(<span class="vs">r"</span><span class="dv">^</span><span class="vs">S</span><span class="dv">\d</span><span class="op">{4}</span><span class="dv">$</span><span class="vs">"</span>).<span class="bu">all</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="18">
+<pre><code>np.True_</code></pre>
+</div>
+</div>
+<p>Verify the transformation on a sample of rows:</p>
+<div id="54" class="cell" data-execution_count="19">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>numeric_id <span class="op">=</span> df[<span class="st">"student_id"</span>].<span class="bu">str</span>.extract(<span class="vs">r"S</span><span class="kw">(</span><span class="dv">\d</span><span class="op">+</span><span class="kw">)</span><span class="vs">"</span>)[<span class="dv">0</span>].astype(<span class="st">"Int64"</span>)</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"numeric_id"</span>] <span class="op">=</span> numeric_id</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>df[[<span class="st">"student_id"</span>, <span class="st">"numeric_id"</span>]].head(<span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="19">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">student_id</th>
+<th data-quarto-table-cell-role="th">numeric_id</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>S0001</td>
+<td>1</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1</th>
+<td>S0001</td>
+<td>1</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2</th>
+<td>S0001</td>
+<td>1</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<div class="ark-activity">
+<p><span class="ark-activity-title"><i class="bi bi-puzzle-fill"></i> Activity 3 - Validate and Filter by ID</span><br><br></p>
+Use <code>.str.startswith(“S”)</code> to confirm every <code>student_id</code> starts with the letter <code>“S”</code>, then use <code>.str.contains()</code> to count how many contain the digit <code>“0”</code> anywhere in the ID.
+<pre>df["student_id"].str.startswith("S").all()
+df["student_id"].str.contains("0").sum()</pre>
+</div>
+<div id="56" class="cell" data-execution_count="20">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: confirm every student_id starts with "s", then count IDs containing "0"</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="descriptive-statistics-and-summarization" class="level2">
+<h2 class="anchored" data-anchor-id="descriptive-statistics-and-summarization">4. Descriptive Statistics and Summarization</h2>
+<p><code>.describe()</code> from Chapter 1 summarizes every numeric column with one call. <code>.agg()</code> goes a step further: it computes a chosen list of statistics for a chosen set of columns, in whatever combination you ask for.</p>
+<div class="ark-concept">
+<p><span class="ark-concept-title"><i class="bi bi-key-fill"></i> Key Concept: .describe() is a first look, not a conclusion</span><br><br> <code>.describe()</code> shows count, mean, std, min, 25th/50th/75th percentile, and max. It skips non-numeric columns by default. <code>.agg([‘mean’,‘std’,‘min’,‘max’])</code> gives you the same numbers for only the columns and statistics you care about, in a table you can compare at a glance. <code>.corr()</code> is Pearson correlation by default: it measures linear relationship, not causation.</p>
+</div>
+<div id="59" class="cell" data-execution_count="21">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>df[[<span class="st">"midterm_score"</span>, <span class="st">"final_score"</span>, <span class="st">"project_score"</span>]].describe()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="21">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">midterm_score</th>
+<th data-quarto-table-cell-role="th">final_score</th>
+<th data-quarto-table-cell-role="th">project_score</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">count</th>
+<td>2330.000000</td>
+<td>2400.000000</td>
+<td>2400.000000</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">mean</th>
+<td>60.518541</td>
+<td>59.496958</td>
+<td>64.963833</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">std</th>
+<td>13.455787</td>
+<td>15.348690</td>
+<td>11.096192</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">min</th>
+<td>15.900000</td>
+<td>10.000000</td>
+<td>18.600000</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">25%</th>
+<td>51.200000</td>
+<td>48.900000</td>
+<td>57.650000</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">50%</th>
+<td>60.500000</td>
+<td>60.000000</td>
+<td>65.050000</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">75%</th>
+<td>70.000000</td>
+<td>70.000000</td>
+<td>72.600000</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">max</th>
+<td>100.000000</td>
+<td>100.000000</td>
+<td>100.000000</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<p><code>.agg()</code> accepts a list of function names and applies every one of them to every selected column, returning a single small table instead of one Series per statistic:</p>
+<div id="61" class="cell" data-execution_count="22">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>df[[<span class="st">"midterm_score"</span>, <span class="st">"final_score"</span>, <span class="st">"project_score"</span>]].agg([<span class="st">"mean"</span>, <span class="st">"std"</span>, <span class="st">"min"</span>, <span class="st">"max"</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="22">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">midterm_score</th>
+<th data-quarto-table-cell-role="th">final_score</th>
+<th data-quarto-table-cell-role="th">project_score</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">mean</th>
+<td>60.518541</td>
+<td>59.496958</td>
+<td>64.963833</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">std</th>
+<td>13.455787</td>
+<td>15.348690</td>
+<td>11.096192</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">min</th>
+<td>15.900000</td>
+<td>10.000000</td>
+<td>18.600000</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">max</th>
+<td>100.000000</td>
+<td>100.000000</td>
+<td>100.000000</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<p><code>.corr()</code> computes the pairwise correlation between numeric columns, a quick way to see whether strong performance in one subject tends to come with strong performance in another:</p>
+<div id="63" class="cell" data-execution_count="23">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>df[[<span class="st">"midterm_score"</span>, <span class="st">"final_score"</span>, <span class="st">"project_score"</span>]].corr()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="23">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">midterm_score</th>
+<th data-quarto-table-cell-role="th">final_score</th>
+<th data-quarto-table-cell-role="th">project_score</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">midterm_score</th>
+<td>1.000000</td>
+<td>0.205291</td>
+<td>0.132373</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">final_score</th>
+<td>0.205291</td>
+<td>1.000000</td>
+<td>0.196623</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">project_score</th>
+<td>0.132373</td>
+<td>0.196623</td>
+<td>1.000000</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<p>Prefer one <code>.agg([...])</code> call over five separate <code>.mean()</code>, <code>.std()</code>, <code>.min()</code> calls. The aggregation table is easier to scan and keeps related numbers in one output.</p>
+<div class="ark-tip">
+<p><span class="ark-tip-title"><i class="bi bi-lightbulb-fill"></i> Pro Tip: Use <code>groupby().transform()</code> to add a group statistic back to the original rows</span><br><br> <code>groupby().agg()</code> reduces a DataFrame to one row per group. <code>groupby().transform()</code> does the opposite: it computes the same group statistic but returns a Series the exact same length as the original DataFrame, aligned to the original index, so you can assign it as a new column without a merge:</p>
+<pre># agg → one row per program
+df.groupby("program")["average_marks"].agg("mean")  # shape (4,)
+
+# transform → one row per student, aligned to original index
+df["caste_mean_marks"] = df.groupby("program")["average_marks"].transform("mean")
+# every student's row now has their caste's mean, ready for feature engineering</pre>
+<p>Common use: <b>normalising within groups</b>. <code>(df[“average_marks”] - df[“caste_mean_marks”]) / df.groupby(“program”)[“average_marks”].transform(“std”)</code> z-scores each student <em>relative to their caste group</em>, not across the whole dataset, in two lines without any merge.</p>
+</div>
+<div class="ark-activity">
+<p><span class="ark-activity-title"><i class="bi bi-puzzle-fill"></i> Activity 4 - Subject Spread</span><br><br></p>
+Use <code>.agg()</code> to compute the mean and standard deviation of <code>midterm_score</code>, <code>final_score</code>, and <code>project_score</code> for students with <code>has_internet == True</code> only.
+<pre>with_internet = df[df["has_internet"]]
+with_internet[["midterm_score", "final_score", "project_score"]].agg(["mean", "std"])</pre>
+</div>
+<div id="67" class="cell" data-execution_count="24">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: agg mean and std for the three mark columns, restricted to internet == 1</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="window-operations-and-expressive-queries" class="level2">
+<h2 class="anchored" data-anchor-id="window-operations-and-expressive-queries">5. Window Operations and Expressive Queries</h2>
+<p>Two operations that come up constantly in DS pipelines but don’t fit neatly under “string methods” or “statistics”: rolling windows for time-aware aggregation, and <code>df.query()</code> for readable multi-condition filters.</p>
+<section id="a.-rolling-and-expanding-windows" class="level3">
+<h3 class="anchored" data-anchor-id="a.-rolling-and-expanding-windows">5a. Rolling and Expanding Windows</h3>
+<p><code>rolling(n)</code> groups each row with the <code>n-1</code> rows before it and applies an aggregation. It is the standard tool for smoothing noisy signals, computing moving averages, or creating features that capture recent trend for a time-ordered dataset.</p>
+<p><code>expanding()</code> is the cumulative version: each row aggregates everything from the start of the series up to that point. The first row is its own mean; the second is the mean of rows 1-2; and so on.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="figs/rolling-window.svg" class="img-fluid figure-img" alt="Five day score boxes at top. Three colored brackets slide across: green (days 1-3, mean 80), blue (days 2-4, mean 76.7), purple (days 3-5, mean 75). Amber bar at bottom notes first two results are NaN."></p>
+<figcaption>Rolling window of size 3 sliding over five days of scores. Window 1 covers days 1-3, window 2 days 2-4, window 3 days 3-5, each producing a mean. The first two results are NaN.</figcaption>
+</figure>
+</div>
+<div id="71" class="cell" data-execution_count="25">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Sort by average_marks to give the rolling window a meaningful order here</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>df_sorted <span class="op">=</span> df.sort_values(<span class="st">"average_marks"</span>).reset_index(drop<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 5-row rolling mean: smooth out noise</span></span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>df_sorted[<span class="st">"marks_rolling5"</span>] <span class="op">=</span> df_sorted[<span class="st">"average_marks"</span>].rolling(window<span class="op">=</span><span class="dv">5</span>).mean()</span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a><span class="co"># expanding mean: cumulative average as we move through sorted students</span></span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>df_sorted[<span class="st">"marks_cumulative"</span>] <span class="op">=</span> df_sorted[<span class="st">"average_marks"</span>].expanding().mean()</span>
+<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a>df_sorted[[<span class="st">"student_id"</span>, <span class="st">"average_marks"</span>, <span class="st">"marks_rolling5"</span>, <span class="st">"marks_cumulative"</span>]].head(<span class="dv">8</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="25">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">student_id</th>
+<th data-quarto-table-cell-role="th">average_marks</th>
+<th data-quarto-table-cell-role="th">marks_rolling5</th>
+<th data-quarto-table-cell-role="th">marks_cumulative</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>S0047</td>
+<td>31.100000</td>
+<td>NaN</td>
+<td>31.100000</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1</th>
+<td>S0293</td>
+<td>32.300000</td>
+<td>NaN</td>
+<td>31.700000</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2</th>
+<td>S0291</td>
+<td>33.033333</td>
+<td>NaN</td>
+<td>32.144444</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">3</th>
+<td>S0248</td>
+<td>34.800000</td>
+<td>NaN</td>
+<td>32.808333</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">4</th>
+<td>S0161</td>
+<td>36.233333</td>
+<td>33.493333</td>
+<td>33.493333</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">5</th>
+<td>S0332</td>
+<td>36.533333</td>
+<td>34.580000</td>
+<td>34.000000</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">6</th>
+<td>S0314</td>
+<td>36.733333</td>
+<td>35.466667</td>
+<td>34.390476</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">7</th>
+<td>S0089</td>
+<td>36.800000</td>
+<td>36.220000</td>
+<td>34.691667</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<div class="ark-concept">
+<p><span class="ark-concept-title"><i class="bi bi-key-fill"></i> Key Concept: Rolling windows require ordered data to be meaningful</span><br><br> <code>rolling(5)</code> looks at the 5 rows immediately before each row in whatever order they sit in the DataFrame. On unsorted data the window picks up random rows and produces meaningless averages. Always sort by the relevant axis (time, score, sequence number) before calling <code>rolling()</code>. The NaN values in the first <code>n-1</code> rows are correct: there isn’t enough history to fill those windows yet.</p>
+</div>
+<p>In time-series work, the pattern is almost always: sort by date, group by entity, then compute a rolling stat per group. The <code>groupby().transform()</code> tip from Section 4 applies here too:</p>
+<div id="74" class="cell" data-execution_count="26">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Per-program 10-student rolling mean of average_marks</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a><span class="co"># transform keeps the result aligned to the original index</span></span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"marks_prog_rolling10"</span>] <span class="op">=</span> (</span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>    df.sort_values(<span class="st">"average_marks"</span>)</span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>    .groupby(<span class="st">"program"</span>)[<span class="st">"average_marks"</span>]</span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>    .transform(<span class="kw">lambda</span> s: s.rolling(<span class="dv">10</span>, min_periods<span class="op">=</span><span class="dv">3</span>).mean())</span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a>df[[<span class="st">"program"</span>, <span class="st">"average_marks"</span>, <span class="st">"marks_prog_rolling10"</span>]].dropna().head(<span class="dv">6</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="26">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">program</th>
+<th data-quarto-table-cell-role="th">average_marks</th>
+<th data-quarto-table-cell-role="th">marks_prog_rolling10</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>Information Technology</td>
+<td>56.566667</td>
+<td>56.320000</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1</th>
+<td>Information Technology</td>
+<td>59.400000</td>
+<td>59.156667</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2</th>
+<td>Information Technology</td>
+<td>64.933333</td>
+<td>64.813333</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">3</th>
+<td>Information Technology</td>
+<td>62.266667</td>
+<td>61.966667</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">4</th>
+<td>Information Technology</td>
+<td>51.466667</td>
+<td>51.230000</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">5</th>
+<td>Information Technology</td>
+<td>71.266667</td>
+<td>70.826667</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</section>
+<section id="b.-expressive-filtering-with-df.query" class="level3">
+<h3 class="anchored" data-anchor-id="b.-expressive-filtering-with-df.query">5b. Expressive Filtering with <code>df.query()</code></h3>
+<p>Boolean masks work well for one or two conditions. For complex multi-condition filters, <code>df.query()</code> expresses the same logic as a readable string, closer to how you would say it out loud.</p>
+<p>Reference an external variable inside a query string with the <code>@</code> prefix:</p>
+<div id="76" class="cell" data-execution_count="27">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Boolean mask version: correct but harder to read</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>mask <span class="op">=</span> (df[<span class="st">"midterm_score"</span>] <span class="op">&gt;</span> <span class="dv">70</span>) <span class="op">&amp;</span> (df[<span class="st">"final_score"</span>] <span class="op">&gt;</span> <span class="dv">70</span>) <span class="op">&amp;</span> (df[<span class="st">"program"</span>].isin([<span class="st">"Engineering"</span>, <span class="st">"Sciences"</span>]))</span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"mask result  : </span><span class="sc">{</span>mask<span class="sc">.</span><span class="bu">sum</span>()<span class="sc">}</span><span class="ss"> rows"</span>)</span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Same filter as a query string: reads like a sentence</span></span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>threshold <span class="op">=</span> <span class="dv">70</span></span>
+<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a>result <span class="op">=</span> df.query(<span class="st">"midterm_score &gt; @threshold and final_score &gt; @threshold and program in ['Engineering', 'Sciences']"</span>)</span>
+<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"query result : </span><span class="sc">{</span><span class="bu">len</span>(result)<span class="sc">}</span><span class="ss"> rows"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>mask result  : 10 rows
+query result : 10 rows</code></pre>
+</div>
+</div>
+<div class="ark-tip">
+<p><span class="ark-tip-title"><i class="bi bi-lightbulb-fill"></i> Pro Tip: Use <code>query()</code> for readability, masks for dynamic conditions</span><br><br> <code>df.query()</code> is evaluated with <code>numexpr</code> when the library is installed, which makes it faster than the equivalent boolean mask on large DataFrames. The downside: the query string is harder to build programmatically. Use <code>query()</code> when you’re writing a fixed filter that a reader should understand at a glance; use a mask when the conditions are assembled at runtime from user input or a config.</p>
+</div>
+<div class="ark-activity">
+<p><span class="ark-activity-title"><i class="bi bi-puzzle-fill"></i> Activity 5 - Smoothed Grade Distribution</span><br><br></p>
+Sort the full DataFrame by <code>average_marks</code> ascending. Compute a 20-student rolling mean of <code>average_marks</code>. Then use <code>df.query()</code> to find students with a rolling mean above 75 who are in the <code>“Sciences”</code> program. Print how many rows match.
+<pre>df_q = df.sort_values("average_marks").reset_index(drop=True)
+df_q["rolling_mean"] = df_q["average_marks"].rolling(20).mean()
+result = df_q.query("rolling_mean &gt; 75 and program == 'Sciences'")
+print(len(result))</pre>
+</div>
+<div id="79" class="cell" data-execution_count="28">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: rolling mean, then query-filter to Sciences students above rolling threshold</span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+</section>
+<section id="capstone-risk-and-performance-report" class="level2">
+<h2 class="anchored" data-anchor-id="capstone-risk-and-performance-report">Capstone: Risk and Performance Report</h2>
+<p>Combine everything from this notebook into one short report: a derived grade column, a categorical breakdown, a text-column check, and a summary statistic, the same operations used in any first pass over a new dataset.</p>
+<div class="ark-activity">
+<p><span class="ark-activity-title"><i class="bi bi-puzzle-fill"></i> Capstone Exercise - Risk and Performance Report</span><br><br></p>
+<ol>
+<li>
+Confirm every <code>student_id</code> matches the pattern <code>S</code> followed by 4 digits, using <code>.str.match()</code> (Sec. 3)
+</li>
+<li>
+Print the <code>final_grade</code> distribution as proportions with <code>.value_counts(normalize=True)</code> (Sec. 1, Sec. 2)
+</li>
+<li>
+Use <code>.agg()</code> to compute the mean <code>average_marks</code> for passed vs failed students separately (Sec. 4)
+</li>
+</ol>
+<pre>valid_ids = df["student_id"].str.match(r"^S\d{4}$").all()
+
+grade_distribution = df["final_grade"].value_counts(normalize=True)
+
+passing = df[df["passed"] == True]["average_marks"].agg(["mean"])  # noqa: E712
+failing = df[df["passed"] == False]["average_marks"].agg(["mean"])  # noqa: E712</pre>
+</div>
+<div id="82" class="cell" data-execution_count="29">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: build the risk and performance report described above</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="further-reading" class="level2">
+<h2 class="anchored" data-anchor-id="further-reading">Further reading</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Resource</th>
+<th>Why it matters</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>McKinney, W. (2022). <em>Python for Data Analysis</em>, 3rd ed.&nbsp;O’Reilly.</td>
+<td>Chapter 7 (data cleaning) and Chapter 16 (aggregation) are the canonical references for the operations in this notebook</td>
+</tr>
+<tr class="even">
+<td><a href="https://pandas.pydata.org/docs/user_guide/indexing.html">pandas documentation: Indexing and selecting data</a></td>
+<td>Covers <code>.loc</code>, <code>.iloc</code>, boolean indexing, and <code>MultiIndex</code> in exhaustive detail</td>
+</tr>
+<tr class="odd">
+<td><a href="https://pandas.pydata.org/docs/user_guide/groupby.html">pandas documentation: Group by: split-apply-combine</a></td>
+<td>Official guide to <code>groupby</code>, <code>transform</code>, and <code>apply</code>; the examples use the same column types as this notebook</td>
+</tr>
+<tr class="even">
+<td>Wickham, H. (2014). <a href="https://doi.org/10.18637/jss.v059.i10">Tidy data</a>. <em>Journal of Statistical Software</em> 59(10).</td>
+<td>The conceptual framework behind <code>.melt()</code> and <code>.pivot_table()</code> introduced later in Chapter 10</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="summary" class="level2">
+<h2 class="anchored" data-anchor-id="summary">Summary</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Concept</th>
+<th>Key rule</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>str</code> dtype</td>
+<td>Pandas 3’s default for text columns, backed by PyArrow, replacing <code>object</code></td>
+</tr>
+<tr class="even">
+<td>Copy-on-Write</td>
+<td>Selecting a subset always behaves as an independent copy; the original is never modified through it</td>
+</tr>
+<tr class="odd">
+<td><code>Series.map()</code></td>
+<td>One-to-one substitution with a dict or simple function</td>
+</tr>
+<tr class="even">
+<td><code>Series.apply()</code></td>
+<td>Run any function, including multi-branch logic, one value at a time</td>
+</tr>
+<tr class="odd">
+<td><code>DataFrame.apply(axis=1)</code></td>
+<td>Run a function once per row, with the whole row available</td>
+</tr>
+<tr class="even">
+<td>Vectorized ops vs <code>apply</code></td>
+<td>Prefer a boolean mask or arithmetic when one exists; <code>apply</code> is the fallback, not the default</td>
+</tr>
+<tr class="odd">
+<td><code>.value_counts(normalize=True)</code></td>
+<td>Category proportions in one call</td>
+</tr>
+<tr class="even">
+<td><code>.isin()</code></td>
+<td>Filter rows whose value is in a given list</td>
+</tr>
+<tr class="odd">
+<td><code>.astype("category")</code></td>
+<td>Compact storage for a column with a small, fixed set of values</td>
+</tr>
+<tr class="even">
+<td><code>pd.get_dummies()</code></td>
+<td>One-hot encode a categorical column before fitting a model</td>
+</tr>
+<tr class="odd">
+<td><code>.str</code> accessor</td>
+<td>Required for any string method on a Series; calling the method directly raises <code>AttributeError</code></td>
+</tr>
+<tr class="even">
+<td><code>.str.extract()</code></td>
+<td>Pull a regex capture group into a new column</td>
+</tr>
+<tr class="odd">
+<td><code>.agg([...])</code></td>
+<td>Compute several statistics for several columns in one call, instead of chaining single-statistic calls</td>
+</tr>
+<tr class="even">
+<td><code>rolling(n)</code></td>
+<td>Compute a statistic over a sliding window of n rows; sort first so the window is meaningful</td>
+</tr>
+<tr class="odd">
+<td><code>expanding()</code></td>
+<td>Cumulative statistic from the start of the series to the current row</td>
+</tr>
+<tr class="even">
+<td><code>groupby().transform(lambda s: s.rolling(...))</code></td>
+<td>Per-group rolling stat, result aligned to original index</td>
+</tr>
+<tr class="odd">
+<td><code>df.query("expr")</code></td>
+<td>Readable multi-condition filter; use <code>@var</code> to reference external variables</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Next:</strong> <code>10-combining-reshaping.ipynb</code>, covering concatenation, merging, <code>groupby</code>, pivot tables, and time series.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/sambaiga\.github\.io\/ds-mlops-path\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../../tutorials/01-python-basics/08-pandas-core.html" class="pagination-link" aria-label="Chapter 8: Pandas core">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">Chapter 8: Pandas core</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../../tutorials/01-python-basics/10-combining-reshaping.html" class="pagination-link" aria-label="Chapter 10: Combining and reshaping">
+        <span class="nav-page-text"><span class="chapter-title">Chapter 10: Combining and reshaping</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p><span class="faux-block">© 2025–2026 <a href="https://sambaiga.github.io/">Anthony Faustine</a></span> <span class="faux-block">Code licensed under <a href="https://www.apache.org/licenses/LICENSE-2.0">Apache 2.0</a></span></p>
+</div>   
+    <div class="nav-footer-center">
+<div class="footer-social">
+<p><a href="mailto:sambaiga@gmail.com" title="Email"><i class="bi bi-envelope-at-fill"></i></a> <a href="https://github.com/sambaiga" title="GitHub"><i class="bi bi-github"></i></a> <a href="https://www.linkedin.com/in/sambaiga" title="LinkedIn"><i class="bi bi-linkedin"></i></a></p>
+</div>
+<div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.dev/sambaiga/ds-mlops-path/blob/main/tutorials/01-python-basics/09-pandas-operations.ipynb" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/sambaiga/ds-mlops-path/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li><li><a href="https://github.com/sambaiga/ds-mlops-path/blob/main/tutorials/01-python-basics/09-pandas-operations.ipynb" class="toc-action"><i class="bi empty"></i>View source</a></li></ul></div></div>
+    <div class="nav-footer-right">
+<p><span class="faux-block">Made with <a href="https://quarto.org">Quarto</a></span> <span class="faux-block"><a href="https://github.com/sambaiga/ds-mlops-path"><i class="bi bi-github"></i> View source</a></span></p>
+</div>
+  </div>
+</footer>
+
+
+
+
+<script src="../../site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>

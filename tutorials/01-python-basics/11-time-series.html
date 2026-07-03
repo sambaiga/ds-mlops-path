@@ -1,0 +1,1703 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.38">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Chapter 11: Time series – From Data to Impact</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js" integrity="sha384-ZvpUoO/+PpLXR1lu4jmpXWu80pZlYUAfxl5NsBMWOEPSjUn/6Z/hRTt8+pR6L4N2" crossorigin="anonymous"></script><script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<link href="../../tutorials/01-python-basics/12-polars.html" rel="next">
+<link href="../../tutorials/01-python-basics/10-combining-reshaping.html" rel="prev">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-de63f62b328812d8e578a4d74e282472.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-beae7f006aa19e5949bb4641e0a5dd6e.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<style>html{ scroll-behavior: smooth; }</style>
+<script src="https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.min.js" integrity="sha384-c9c+LnTbwQ3aujuU7ULEPVvgLs+Fn6fJUvIGTsuu1ZcCf11fiEubah0ttpca4ntM sha384-6V1/AdqZRWk1KAlWbKBlGhN7VG4iE/yAZcO6NZPMF8od0vukrvr0tg4qY6NSrItx" crossorigin="anonymous"></script>
+
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
+
+</head>
+
+<body class="nav-sidebar floating nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">From Data to Impact</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="mailto:sambaiga@gmail.com"> <i class="bi bi-envelope-at" role="img" aria-label="Email Anthony Faustine">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://www.linkedin.com/in/sambaiga"> <i class="bi bi-linkedin" role="img" aria-label="LinkedIn">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/sambaiga/ds-mlops-path"> <i class="bi bi-github" role="img" aria-label="View source on GitHub">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+    <a href="https://github.com/sambaiga/ds-mlops-path" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <a class="flex-grow-1 no-decor" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+          <h1 class="quarto-secondary-nav-title"><span class="chapter-title">Chapter 11: Time series</span></h1>
+        </a>     
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../index.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Welcome</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../preface.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Why Another ML Book?</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../about.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">About the Author</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/00-landscape.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">The ML and data science landscape</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false">
+ <span class="menu-text">Python foundations</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/01-python-core.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Chapter 1: Python core</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/02-control-flow.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Chapter 2: Control flow and comprehensions</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/03-functions.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Chapter 3: Functions</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/04-classes.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Chapter 4: Classes and patterns</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/05-math-statistics.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Chapter 5: Python math and statistics</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/06-numpy.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Chapter 6: NumPy basics</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/07-numpy-advanced.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Chapter 7: NumPy advanced</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Data analysis</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/08-pandas-core.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Chapter 8: Pandas core</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/09-pandas-operations.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Chapter 9: Pandas operations</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/10-combining-reshaping.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Chapter 10: Combining and reshaping</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/11-time-series.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">Chapter 11: Time series</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/12-polars.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Chapter 12: Polars and the expression API</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/13-great-tables.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Chapter 13: Presenting data with Great Tables</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false">
+ <span class="menu-text">Data visualization</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/14-matplotlib.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Chapter 14: Matplotlib and Seaborn</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/15-lets-plot.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Chapter 15: Grammar of graphics with lets-plot</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/16-data-storytelling.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Chapter 16: Data storytelling and house style</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/01-python-basics/17-storytelling-capstone.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Chapter 17: The storytelling capstone</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false">
+ <span class="menu-text">Dev tools</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/02-dev-tools/18-vscode-setup.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">VS Code setup</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/02-dev-tools/19-uv-project-setup.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Project setup with uv</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/02-dev-tools/20-code-quality-ruff.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Code quality with Ruff</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/02-dev-tools/21-type-annotations.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Type annotations</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/02-dev-tools/22-git-github.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Git and GitHub</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/02-dev-tools/23-pytest-testing.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Testing with pytest</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/02-dev-tools/24-pre-commit-automation.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Pre-commit automation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/02-dev-tools/25-pydantic-validation.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Data validation with Pydantic</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/02-dev-tools/26-pandera-schema-validation.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Data schema validation with Pandera</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/02-dev-tools/27-logging.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Logging for ML projects</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="false">
+ <span class="menu-text">ML landscape</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/04-ml-intro/28-ml-introduction.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">The AI and ML landscape</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/04-ml-intro/29-ml-what-is-ml.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">What is machine learning?</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/04-ml-intro/30-ml-workflow.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">The ML workflow</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/04-ml-intro/31-sklearn-core.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Classical ML with scikit-learn</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/04-ml-intro/32-sklearn-pipeline.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Sklearn pipelines and hyperparameter search</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <span class="sidebar-item-text sidebar-link text-start">
+ <span class="menu-text">Deep learning</span></span>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <span class="sidebar-item-text sidebar-link text-start">
+ <span class="menu-text">LLMs</span></span>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <span class="sidebar-item-text sidebar-link text-start">
+ <span class="menu-text">MLOps</span></span>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <span class="sidebar-item-text sidebar-link text-start">
+ <span class="menu-text">Production monitoring</span></span>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <span class="sidebar-item-text sidebar-link text-start">
+ <span class="menu-text">ML system design</span></span>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <span class="sidebar-item-text sidebar-link text-start">
+ <span class="menu-text">Value-driven AI</span></span>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">In this chapter</h2>
+   
+  <ul>
+  <li><a href="#date-and-time-data-types" id="toc-date-and-time-data-types" class="nav-link active" data-scroll-target="#date-and-time-data-types">1. Date and time data types</a></li>
+  <li><a href="#the-datetimeindex" id="toc-the-datetimeindex" class="nav-link" data-scroll-target="#the-datetimeindex">2. The <code>DatetimeIndex</code></a></li>
+  <li><a href="#selecting-data-from-a-time-series" id="toc-selecting-data-from-a-time-series" class="nav-link" data-scroll-target="#selecting-data-from-a-time-series">3. Selecting data from a time series</a></li>
+  <li><a href="#the-power-of-pandas-resample" id="toc-the-power-of-pandas-resample" class="nav-link" data-scroll-target="#the-power-of-pandas-resample">4. The power of pandas: <code>resample</code></a></li>
+  <li><a href="#timezones" id="toc-timezones" class="nav-link" data-scroll-target="#timezones">5. Timezones</a></li>
+  <li><a href="#lag-lead-and-autocorrelation" id="toc-lag-lead-and-autocorrelation" class="nav-link" data-scroll-target="#lag-lead-and-autocorrelation">6. Lag, lead, and autocorrelation</a></li>
+  <li><a href="#rolling-windows-with-numpy-and-deque" id="toc-rolling-windows-with-numpy-and-deque" class="nav-link" data-scroll-target="#rolling-windows-with-numpy-and-deque">7. Rolling windows with NumPy and deque</a></li>
+  <li><a href="#capstone-term-end-attendance-report" id="toc-capstone-term-end-attendance-report" class="nav-link" data-scroll-target="#capstone-term-end-attendance-report">Capstone: term-end attendance report</a></li>
+  <li><a href="#further-reading" id="toc-further-reading" class="nav-link" data-scroll-target="#further-reading">Further reading</a></li>
+  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary">Summary</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.dev/sambaiga/ds-mlops-path/blob/main/tutorials/01-python-basics/11-time-series.ipynb" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/sambaiga/ds-mlops-path/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li><li><a href="https://github.com/sambaiga/ds-mlops-path/blob/main/tutorials/01-python-basics/11-time-series.ipynb" class="toc-action"><i class="bi empty"></i>View source</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block"><span class="chapter-title">Chapter 11: Time series</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p><a href="https://colab.research.google.com/github/sambaiga/ds-mlops-path/blob/main/tutorials/01-python-basics/11-time-series.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open In Colab"></a> <a href="https://raw.githubusercontent.com/sambaiga/ds-mlops-path/main/tutorials/01-python-basics/11-time-series.ipynb"><img src="https://img.shields.io/badge/Download-Notebook-blue.svg?logo=jupyter&amp;logoColor=white" class="img-fluid" alt="Download Notebook"></a></p>
+<p>The attendance report says 87% for Monday. Is that better or worse than last month? You have the numbers but the date column is plain text: pandas can’t slice by month, compute week-over-week changes, or resample to monthly totals until the column is a proper datetime type with a DatetimeIndex. This notebook adds that infrastructure, using daily attendance records across five schools over a full term.</p>
+<p>Chapter 10 (<code>10-combining-reshaping.ipynb</code>) introduced time series data and basic date parsing. This notebook goes deeper: DatetimeIndex slicing, <code>resample</code>, timezones, and lag features: the same building blocks used in Chapter 12 (<code>12-polars.ipynb</code>) and, later, in forecasting.</p>
+<blockquote class="blockquote">
+<p>Callout markers used throughout this notebook are explained on the <a href="../../index.html#callout-guide">book cover page</a>.</p>
+</blockquote>
+<div id="3" class="cell" data-execution_count="1">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>attendance <span class="op">=</span> pd.read_csv(<span class="st">"data/daily_attendance.csv"</span>)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>attendance.dtypes</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>date                   str
+school_id            int64
+attendance_rate    float64
+dtype: object</code></pre>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Learning objectives
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>By the end of Chapter 11 you will be able to:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>#</th>
+<th>Skill</th>
+<th>Covered in</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td>Create and inspect <code>Timestamp</code> values, and parse dates out of text with <code>to_datetime</code></td>
+<td>Sec. 1</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td>Build a <code>DatetimeIndex</code> and use it to slice a time series by date</td>
+<td>Sec. 2</td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td>Select rows with a partial date string or a date range</td>
+<td>Sec. 3</td>
+</tr>
+<tr class="even">
+<td>4</td>
+<td>Change the time granularity of a series with <code>resample</code></td>
+<td>Sec. 4</td>
+</tr>
+<tr class="odd">
+<td>5</td>
+<td>Localize naive timestamps, convert between timezones, and store in UTC</td>
+<td>Sec. 5</td>
+</tr>
+<tr class="even">
+<td>6</td>
+<td>Create lag and lead features with <code>shift</code>, measure autocorrelation</td>
+<td>Sec. 6</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<section id="date-and-time-data-types" class="level2">
+<h2 class="anchored" data-anchor-id="date-and-time-data-types">1. Date and time data types</h2>
+<p>The <code>date</code> column above read in as plain text, <code>str</code> dtype, not a date pandas can do arithmetic on. <code>pd.to_datetime</code> converts it to pandas’ dedicated datetime dtype, <code>datetime64</code>:</p>
+<div id="6" class="cell" data-execution_count="2">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>attendance[<span class="st">"date"</span>] <span class="op">=</span> pd.to_datetime(attendance[<span class="st">"date"</span>])</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>attendance.dtypes</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="2">
+<pre><code>date               datetime64[us]
+school_id                   int64
+attendance_rate           float64
+dtype: object</code></pre>
+</div>
+</div>
+<div class="ark-concept">
+<p><span class="ark-concept-title"><i class="bi bi-key-fill"></i> Key Concept: Pandas 3 infers the resolution it needs, not always nanoseconds</span><br><br> Earlier pandas versions always stored datetimes as <code>datetime64[ns]</code>, nanosecond precision, whether the data needed it or not. Pandas 3’s <code>to_datetime</code> infers a resolution from what is actually in the data: day-level strings like the ones here become <code>datetime64[s]</code> or coarser, not nanoseconds. <code>attendance[“date”].dtype</code> shows whichever resolution was inferred for this column.</p>
+</div>
+<p>A single value out of a datetime column is a <code>Timestamp</code>, pandas’ equivalent of Python’s <code>datetime.datetime</code>, with the same year, month, day, and weekday attributes:</p>
+<div id="9" class="cell" data-execution_count="3">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>first_day <span class="op">=</span> attendance[<span class="st">"date"</span>].iloc[<span class="dv">0</span>]</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="bu">type</span>(first_day))</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"year=</span><span class="sc">{</span>first_day<span class="sc">.</span>year<span class="sc">}</span><span class="ss">, month=</span><span class="sc">{</span>first_day<span class="sc">.</span>month<span class="sc">}</span><span class="ss">, day_name=</span><span class="sc">{</span>first_day<span class="sc">.</span>day_name()<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>&lt;class 'pandas.Timestamp'&gt;
+year=2025, month=1, day_name=Monday</code></pre>
+</div>
+</div>
+<div class="ark-activity">
+<p><span class="ark-activity-title"><i class="bi bi-puzzle-fill"></i> Activity 1: parse and inspect</span><br><br></p>
+Convert a list of three date strings, <code>[“2025-01-06”, “2025-02-14”, “2025-03-28”]</code>, to <code>Timestamp</code> values with <code>pd.to_datetime</code>, then print the day name of each one.
+<pre>dates = pd.to_datetime(["2025-01-06", "2025-02-14", "2025-03-28"])
+for d in dates:
+    print(d.day_name())</pre>
+</div>
+<div id="11" class="cell" data-execution_count="4">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: convert the three date strings and print each day name</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="the-datetimeindex" class="level2">
+<h2 class="anchored" data-anchor-id="the-datetimeindex">2. The <code>DatetimeIndex</code></h2>
+<p>Setting a datetime column as the index turns it into a <code>DatetimeIndex</code>, which unlocks date-based slicing instead of only position-based or exact-label lookups. Each school’s rows are pulled out first, since a <code>DatetimeIndex</code> only makes sense for one time series at a time:</p>
+<div class="ark-concept">
+<p><span class="ark-concept-title"><i class="bi bi-key-fill"></i> Key Concept: Setting a datetime column as the index creates a <code>DatetimeIndex</code> that unlocks date-based slicing</span><br><br> Once you call <code>.set_index('date')</code> on a datetime column, the result has a <code>DatetimeIndex</code>. You can then use partial date strings in <code>.loc</code>: <code>school.loc['2025-02']</code> selects every row in February without spelling out start and end times. Without a <code>DatetimeIndex</code>, <code>.loc</code> requires an exact label match; with one, it understands periods.</p>
+</div>
+<div id="14" class="cell" data-execution_count="5">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>school_300 <span class="op">=</span> attendance[attendance[<span class="st">"school_id"</span>] <span class="op">==</span> <span class="dv">300</span>].set_index(<span class="st">"date"</span>)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>school_300.index</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="5">
+<pre><code>DatetimeIndex(['2025-01-06', '2025-01-07', '2025-01-08', '2025-01-09',
+               '2025-01-10', '2025-01-13', '2025-01-14', '2025-01-15',
+               '2025-01-16', '2025-01-17', '2025-01-20', '2025-01-21',
+               '2025-01-22', '2025-01-23', '2025-01-24', '2025-01-27',
+               '2025-01-28', '2025-01-29', '2025-01-30', '2025-01-31',
+               '2025-02-03', '2025-02-04', '2025-02-05', '2025-02-06',
+               '2025-02-07', '2025-02-10', '2025-02-11', '2025-02-12',
+               '2025-02-13', '2025-02-14', '2025-02-17', '2025-02-18',
+               '2025-02-19', '2025-02-20', '2025-02-21', '2025-02-24',
+               '2025-02-25', '2025-02-26', '2025-02-27', '2025-02-28',
+               '2025-03-03', '2025-03-04', '2025-03-05', '2025-03-06',
+               '2025-03-07', '2025-03-10', '2025-03-11', '2025-03-12',
+               '2025-03-13', '2025-03-14', '2025-03-17', '2025-03-18',
+               '2025-03-19', '2025-03-20', '2025-03-21', '2025-03-24',
+               '2025-03-25', '2025-03-26', '2025-03-27', '2025-03-28'],
+              dtype='datetime64[us]', name='date', freq=None)</code></pre>
+</div>
+</div>
+<div class="ark-mistake">
+<p><span class="ark-mistake-title"><i class="bi bi-bug-fill"></i> Common Mistake: Setting the index before filtering to one entity</span><br><br> <code>attendance.set_index(“date”)</code> on the full table produces a <code>DatetimeIndex</code> with the same date repeated once per school, since every school has a row for every day. Slicing that index by date then returns rows from every school mixed together for that date, not a clean single time series. Filter to one entity first, exactly as <code>school_300</code> does above, then set the index.</p>
+</div>
+<div class="ark-activity">
+<p><span class="ark-activity-title"><i class="bi bi-puzzle-fill"></i> Activity 2: build another school’s series</span><br><br></p>
+Filter <code>attendance</code> to <code>school_id == 302</code>, set <code>date</code> as the index, and confirm the result’s index is a <code>DatetimeIndex</code> with <code>isinstance(result.index, pd.DatetimeIndex)</code>.
+<pre>school_302 = attendance[attendance["school_id"] == 302].set_index("date")
+isinstance(school_302.index, pd.DatetimeIndex)</pre>
+</div>
+<div id="17" class="cell" data-execution_count="6">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: filter to school_id 302, set date as index, confirm DatetimeIndex</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="selecting-data-from-a-time-series" class="level2">
+<h2 class="anchored" data-anchor-id="selecting-data-from-a-time-series">3. Selecting data from a time series</h2>
+<p>A <code>DatetimeIndex</code> accepts a partial date string in <code>.loc</code>, matching every row that falls inside it. <code>"2025-02"</code> selects the whole month without spelling out the first and last day:</p>
+<div id="19" class="cell" data-execution_count="7">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>school_300.loc[<span class="st">"2025-02"</span>].head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="7">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">school_id</th>
+<th data-quarto-table-cell-role="th">attendance_rate</th>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">date</th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2025-02-03</th>
+<td>300</td>
+<td>0.885</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">2025-02-04</th>
+<td>300</td>
+<td>0.942</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2025-02-05</th>
+<td>300</td>
+<td>0.900</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">2025-02-06</th>
+<td>300</td>
+<td>0.892</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2025-02-07</th>
+<td>300</td>
+<td>0.895</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<p>A slice with two partial dates selects everything between them, inclusive of both ends:</p>
+<div id="21" class="cell" data-execution_count="8">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>school_300.loc[<span class="st">"2025-02-01"</span>:<span class="st">"2025-02-07"</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="8">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">school_id</th>
+<th data-quarto-table-cell-role="th">attendance_rate</th>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">date</th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2025-02-03</th>
+<td>300</td>
+<td>0.885</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">2025-02-04</th>
+<td>300</td>
+<td>0.942</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2025-02-05</th>
+<td>300</td>
+<td>0.900</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">2025-02-06</th>
+<td>300</td>
+<td>0.892</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2025-02-07</th>
+<td>300</td>
+<td>0.895</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<div class="ark-activity">
+<p><span class="ark-activity-title"><i class="bi bi-journal-code"></i> Example: Comparing the size of two date ranges</span><br><br> <code>len(school_300.loc[“2025-01”])</code> against <code>len(school_300.loc[“2025-02”])</code> confirms the row count for each month matches its number of business days, the same <code>bdate_range</code> weekday-only pattern used to build this dataset in the first place.</p>
+</div>
+<div id="23" class="cell" data-execution_count="9">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"January business days  : </span><span class="sc">{</span><span class="bu">len</span>(school_300.loc[<span class="st">'2025-01'</span>])<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"February business days : </span><span class="sc">{</span><span class="bu">len</span>(school_300.loc[<span class="st">'2025-02'</span>])<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>January business days  : 20
+February business days : 20</code></pre>
+</div>
+</div>
+<div class="ark-activity">
+<p><span class="ark-activity-title"><i class="bi bi-puzzle-fill"></i> Activity 3: filter the last two weeks of term</span><br><br></p>
+Select every row in <code>school_300</code> from <code>“2025-03-15”</code> to <code>“2025-03-28”</code> inclusive, and print the mean <code>attendance_rate</code> over that range.
+<pre>last_two_weeks = school_300.loc["2025-03-15":"2025-03-28"]
+last_two_weeks["attendance_rate"].mean()</pre>
+</div>
+<div id="25" class="cell" data-execution_count="10">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: select 2025-03-15 through 2025-03-28 and print the mean attendance_rate</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="the-power-of-pandas-resample" class="level2">
+<h2 class="anchored" data-anchor-id="the-power-of-pandas-resample">4. The power of pandas: <code>resample</code></h2>
+<p><code>resample</code> changes the time granularity of a series: daily data summarized into weekly or monthly figures, the same split-apply-combine idea from Chapter 9’s <code>groupby</code>, except the groups are time intervals instead of category values:</p>
+<div id="27" class="cell" data-execution_count="11">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>weekly_attendance <span class="op">=</span> school_300[<span class="st">"attendance_rate"</span>].resample(<span class="st">"W"</span>).mean()</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>weekly_attendance.head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="11">
+<pre><code>date
+2025-01-12    0.8896
+2025-01-19    0.9044
+2025-01-26    0.9144
+2025-02-02    0.9054
+2025-02-09    0.9028
+Freq: W-SUN, Name: attendance_rate, dtype: float64</code></pre>
+</div>
+</div>
+<div class="ark-concept">
+<p><span class="ark-concept-title"><i class="bi bi-key-fill"></i> Key Concept: <code>resample</code> groups by time interval, <code>groupby</code> groups by value</span><br><br> <code>df.groupby(“caste”)</code> (Chapter 9) splits rows by whatever value is already in the <code>caste</code> column. <code>series.resample(“W”)</code> splits rows by which week their <code>DatetimeIndex</code> label falls into, intervals that did not exist as a column at all until <code>resample</code> created them. Both still end with an aggregation like <code>.mean()</code> to combine each group into one number.</p>
+</div>
+<p>Monthly resampling on the same series needs only a different frequency string. In pandas 3 the old <code>"M"</code> alias was removed; the replacement is <code>"ME"</code> (month-end), which anchors each bucket to the last calendar day of the month:</p>
+<div id="30" class="cell" data-execution_count="12">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>monthly_attendance <span class="op">=</span> school_300[<span class="st">"attendance_rate"</span>].resample(<span class="st">"ME"</span>).mean()</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>monthly_attendance</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="12">
+<pre><code>date
+2025-01-31    0.90345
+2025-02-28    0.90985
+2025-03-31    0.86510
+Freq: ME, Name: attendance_rate, dtype: float64</code></pre>
+</div>
+</div>
+<div class="ark-tip">
+<p><span class="ark-tip-title"><i class="bi bi-lightbulb-fill"></i> Pro Tip: Resampling the whole DataFrame keeps every entity separate, with care</span><br><br> <code>attendance.set_index(“date”).groupby(“school_id”)[“attendance_rate”].resample(“W”).mean()</code> resamples each school’s series independently in one call, instead of looping over schools and resampling each one by hand. <code>groupby</code> before <code>resample</code> is what keeps the schools from being averaged together.</p>
+</div>
+<div class="ark-activity">
+<p><span class="ark-activity-title"><i class="bi bi-puzzle-fill"></i> Activity 4: monthly comparison across schools</span><br><br></p>
+Set <code>date</code> as the index on the full <code>attendance</code> table, group by <code>school_id</code>, and resample to monthly means in one chained call. Use <code>“ME”</code> (month-end): the pandas 3 replacement for the removed <code>“M”</code> alias.
+<pre>attendance.set_index("date").groupby("school_id")["attendance_rate"].resample("ME").mean()</pre>
+</div>
+<div id="33" class="cell" data-execution_count="13">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: set date as index, group by school_id, resample monthly, take the mean</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="timezones" class="level2">
+<h2 class="anchored" data-anchor-id="timezones">5. Timezones</h2>
+<p>The timestamps in this dataset are naive: they carry no timezone information. That is fine for a single-country attendance dataset. It is not fine for anything that crosses system boundaries: API responses, cloud server logs, or sensor readings from devices in different cities. Naive timestamps from different sources silently offset against each other when you join them, with no error to warn you.</p>
+<p>Two operations handle timezones in pandas:</p>
+<ul>
+<li><code>tz_localize(tz)</code>: stamps a naive series with a timezone. The values don’t change, only their meaning.</li>
+<li><code>tz_convert(tz)</code>: shifts a timezone-aware series to a different timezone. The values change to represent the same instant in the target zone.</li>
+</ul>
+<p>The standard practice for storage: localize to UTC, convert to local time only for display.</p>
+<div id="35" class="cell" data-execution_count="14">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Localize the naive DatetimeIndex to East Africa Time (UTC+3, Tanzania/Kenya)</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>school_300_eat <span class="op">=</span> school_300.copy()</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>school_300_eat.index <span class="op">=</span> school_300_eat.index.tz_localize(<span class="st">"Africa/Nairobi"</span>)</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Localized (EAT):"</span>, school_300_eat.index[:<span class="dv">2</span>])</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert to UTC for storage</span></span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>school_300_utc <span class="op">=</span> school_300_eat.copy()</span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>school_300_utc.index <span class="op">=</span> school_300_utc.index.tz_convert(<span class="st">"UTC"</span>)</span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"UTC:            "</span>, school_300_utc.index[:<span class="dv">2</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Localized (EAT): DatetimeIndex(['2025-01-06 00:00:00+03:00', '2025-01-07 00:00:00+03:00'], dtype='datetime64[us, Africa/Nairobi]', name='date', freq=None)
+UTC:             DatetimeIndex(['2025-01-05 21:00:00+00:00', '2025-01-06 21:00:00+00:00'], dtype='datetime64[us, UTC]', name='date', freq=None)</code></pre>
+</div>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="figs/timezone-flow.svg" class="img-fluid figure-img" alt="Four boxes connected by arrows: tz-naive (dashed, gray), tz-aware (blue), UTC stored (green), local display (purple). A red warning box below warns against mixing naive and aware timestamps. A green tip box recommends storing in UTC."></p>
+<figcaption>Timezone handling flow: a tz-naive timestamp from a CSV is localized to its source timezone, converted to UTC for storage, then converted to a local timezone only when displaying output. Mixing naive and aware timestamps in the same column raises a TypeError.</figcaption>
+</figure>
+</div>
+<div class="ark-concept">
+<p><span class="ark-concept-title"><i class="bi bi-key-fill"></i> Key Concept: Store in UTC, display in local time</span><br><br> UTC has no daylight saving transitions and no ambiguous hours, so it’s the only safe format for storing timestamps that will be compared, sorted, or joined across sources. Localize to UTC at ingestion; convert to the user’s timezone only when formatting for display. Timestamps stored as naive local time break silently when DST shifts: two records that look 60 minutes apart may actually be 120 minutes apart, or the same instant twice.</p>
+</div>
+<p>Mixing naive and aware timestamps raises a <code>TypeError</code>, which is actually helpful: it prevents silent wrong answers.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>school_300_utc.index[<span class="dv">0</span>] <span class="op">&gt;</span> school_300.index[<span class="dv">0</span>]</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="co"># TypeError: Cannot compare tz-naive and tz-aware datetime-like objects</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>The fix is always to localize the naive series before comparing:</p>
+<div id="39" class="cell" data-execution_count="15">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Compare two timezone-aware timestamps safely</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>school_300_eat_end <span class="op">=</span> school_300_eat.index[<span class="op">-</span><span class="dv">1</span>]</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>school_300_utc_end <span class="op">=</span> school_300_utc.index[<span class="op">-</span><span class="dv">1</span>]</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Same instant, different representation</span></span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"EAT end:"</span>, school_300_eat_end)</span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"UTC end:"</span>, school_300_utc_end)</span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Same instant:"</span>, school_300_eat_end <span class="op">==</span> school_300_utc_end)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>EAT end: 2025-03-28 00:00:00+03:00
+UTC end: 2025-03-27 21:00:00+00:00
+Same instant: True</code></pre>
+</div>
+</div>
+<div class="ark-mistake">
+<p><span class="ark-mistake-title"><i class="bi bi-bug-fill"></i> Common Mistake: Localizing when you should be converting</span><br><br> <code>tz_localize</code> stamps the existing values with a timezone label: <code>2025-01-06 00:00</code> becomes <code>2025-01-06 00:00+03:00</code>. The number did not change. <code>tz_convert</code> shifts the values to represent the same instant elsewhere: <code>2025-01-06 00:00+03:00</code> becomes <code>2025-01-05 21:00+00:00</code>. If you call <code>tz_localize(“UTC”)</code> on data that is actually in EAT, you have mislabelled it. The timestamps will compare as if they are 3 hours earlier than they really are.</p>
+</div>
+<div class="ark-activity">
+<p><span class="ark-activity-title"><i class="bi bi-puzzle-fill"></i> Activity 5: localize and convert</span><br><br></p>
+Starting from <code>school_302</code> (built in Activity 2), localize its naive index to <code>“Africa/Nairobi”</code>, then convert to <code>“Europe/London”</code>. Print the first timestamp in both representations and confirm they are the same instant.
+<pre>school_302 = attendance[attendance["school_id"] == 302].set_index("date")
+s302_eat = school_302.copy()
+s302_eat.index = s302_eat.index.tz_localize("Africa/Nairobi")
+s302_london = s302_eat.copy()
+s302_london.index = s302_london.index.tz_convert("Europe/London")
+print(s302_eat.index[0])
+print(s302_london.index[0])</pre>
+</div>
+<div id="42" class="cell" data-execution_count="16">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: localize school_302 to Africa/Nairobi then convert to Europe/London</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="lag-lead-and-autocorrelation" class="level2">
+<h2 class="anchored" data-anchor-id="lag-lead-and-autocorrelation">6. Lag, lead, and autocorrelation</h2>
+<p>A lag feature answers the question: “what was the value yesterday?” It is the most common feature engineering step for time series in ML. If Monday’s attendance rate predicts Tuesday’s, a lag-1 feature captures that relationship in a column a model can consume.</p>
+<p><code>shift(n)</code> moves values forward by <code>n</code> periods (positive = lag, negative = lead). The first <code>n</code> rows get <code>NaN</code> because there is no previous value to fill them.</p>
+<div id="44" class="cell" data-execution_count="17">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>rate <span class="op">=</span> school_300[<span class="st">"attendance_rate"</span>].copy()</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="co"># lag-1: yesterday's attendance rate</span></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>lag1 <span class="op">=</span> rate.shift(<span class="dv">1</span>)</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>lag1.name <span class="op">=</span> <span class="st">"rate_lag1"</span></span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a><span class="co"># lag-5: one school week ago</span></span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>lag5 <span class="op">=</span> rate.shift(<span class="dv">5</span>)</span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>lag5.name <span class="op">=</span> <span class="st">"rate_lag5"</span></span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>features <span class="op">=</span> pd.concat([rate, lag1, lag5], axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>features.head(<span class="dv">8</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="17">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">attendance_rate</th>
+<th data-quarto-table-cell-role="th">rate_lag1</th>
+<th data-quarto-table-cell-role="th">rate_lag5</th>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">date</th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2025-01-06</th>
+<td>0.874</td>
+<td>NaN</td>
+<td>NaN</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">2025-01-07</th>
+<td>0.928</td>
+<td>0.874</td>
+<td>NaN</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2025-01-08</th>
+<td>0.933</td>
+<td>0.928</td>
+<td>NaN</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">2025-01-09</th>
+<td>0.847</td>
+<td>0.933</td>
+<td>NaN</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2025-01-10</th>
+<td>0.866</td>
+<td>0.847</td>
+<td>NaN</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">2025-01-13</th>
+<td>0.909</td>
+<td>0.866</td>
+<td>0.874</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2025-01-14</th>
+<td>0.896</td>
+<td>0.909</td>
+<td>0.928</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">2025-01-15</th>
+<td>0.905</td>
+<td>0.896</td>
+<td>0.933</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<div class="ark-concept">
+<p><span class="ark-concept-title"><i class="bi bi-key-fill"></i> Key Concept: Lag features turn time series forecasting into supervised learning</span><br><br> A gradient boosting model doesn’t know what “time” means. It knows column values. Giving it a <code>rate_lag1</code> column is how you communicate “yesterday’s value” in a language the model understands. A model trained on <code>[rate_lag1, rate_lag5, day_of_week]</code> predicting <code>attendance_rate</code> is a supervised regression problem built from a single time series. The NaN rows produced by <code>shift</code> must be dropped or filled before training.</p>
+</div>
+<div id="46" class="cell" data-execution_count="18">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Rolling 5-day average: smooth out day-of-week noise</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>rolling_mean <span class="op">=</span> rate.rolling(window<span class="op">=</span><span class="dv">5</span>).mean()</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>rolling_mean.name <span class="op">=</span> <span class="st">"rate_rolling5"</span></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Rolling 5-day std: flags volatile weeks</span></span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>rolling_std <span class="op">=</span> rate.rolling(window<span class="op">=</span><span class="dv">5</span>).std()</span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>rolling_std.name <span class="op">=</span> <span class="st">"rate_rolling5_std"</span></span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>feature_matrix <span class="op">=</span> pd.concat([rate, lag1, lag5, rolling_mean, rolling_std], axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a>feature_matrix.dropna().head()  <span class="co"># drop NaN rows before modelling</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="18">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">attendance_rate</th>
+<th data-quarto-table-cell-role="th">rate_lag1</th>
+<th data-quarto-table-cell-role="th">rate_lag5</th>
+<th data-quarto-table-cell-role="th">rate_rolling5</th>
+<th data-quarto-table-cell-role="th">rate_rolling5_std</th>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">date</th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2025-01-13</th>
+<td>0.909</td>
+<td>0.866</td>
+<td>0.874</td>
+<td>0.8966</td>
+<td>0.038279</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">2025-01-14</th>
+<td>0.896</td>
+<td>0.909</td>
+<td>0.928</td>
+<td>0.8902</td>
+<td>0.034172</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2025-01-15</th>
+<td>0.905</td>
+<td>0.896</td>
+<td>0.933</td>
+<td>0.8846</td>
+<td>0.026931</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">2025-01-16</th>
+<td>0.880</td>
+<td>0.905</td>
+<td>0.847</td>
+<td>0.8912</td>
+<td>0.017964</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2025-01-17</th>
+<td>0.932</td>
+<td>0.880</td>
+<td>0.866</td>
+<td>0.9044</td>
+<td>0.019034</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<p><code>autocorr(lag)</code> measures how strongly a series correlates with a delayed copy of itself. An autocorrelation close to 1 means yesterday’s value is a strong predictor of today’s: a useful sanity check before building a lag-based model.</p>
+<div id="48" class="cell" data-execution_count="19">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> lag <span class="kw">in</span> [<span class="dv">1</span>, <span class="dv">5</span>, <span class="dv">10</span>]:</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>    ac <span class="op">=</span> rate.autocorr(lag<span class="op">=</span>lag)</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"autocorr(lag=</span><span class="sc">{</span>lag<span class="sc">:&gt;2}</span><span class="ss">): </span><span class="sc">{</span>ac<span class="sc">:.3f}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>autocorr(lag= 1): 0.321
+autocorr(lag= 5): 0.396
+autocorr(lag=10): 0.313</code></pre>
+</div>
+</div>
+<div class="ark-activity">
+<p><span class="ark-activity-title"><i class="bi bi-journal-code"></i> Example: Reading autocorrelation results</span><br><br> A lag-1 autocorrelation of ~0.4 to 0.7 is typical for daily attendance data: yesterday’s rate is a moderate predictor of today’s but not a perfect one. A value near 0 means the series is essentially random from day to day. A value near 1 means it barely changes at all. The lag-5 value reflects the weekly pattern: a Monday is most similar to the previous Monday, not to last Friday.</p>
+</div>
+<div class="ark-activity">
+<p><span class="ark-activity-title"><i class="bi bi-puzzle-fill"></i> Activity 6: build a lag feature matrix</span><br><br></p>
+For <code>school_302</code>, create a feature matrix with columns: the original <code>attendance_rate</code>, a lag-1 column, a lag-5 column, and a 3-day rolling mean. Drop NaN rows, then print the autocorrelation at lag 1 and lag 5. What do the values tell you about how predictable attendance is at school 302?
+<pre>rate_302 = attendance[attendance["school_id"]==302].set_index("date")["attendance_rate"]
+fm_302 = pd.concat([
+    rate_302,
+    rate_302.shift(1).rename("lag1"),
+    rate_302.shift(5).rename("lag5"),
+    rate_302.rolling(3).mean().rename("rolling3"),
+], axis=1).dropna()
+print(fm_302.head())
+print("autocorr lag1:", rate_302.autocorr(lag=1).round(3))
+print("autocorr lag5:", rate_302.autocorr(lag=5).round(3))</pre>
+</div>
+<div id="51" class="cell" data-execution_count="20">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: build lag feature matrix for school_302 and check autocorrelations</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="rolling-windows-with-numpy-and-deque" class="level2">
+<h2 class="anchored" data-anchor-id="rolling-windows-with-numpy-and-deque">7. Rolling windows with NumPy and deque</h2>
+<p>pandas <code>.rolling()</code> is the right tool when you have a complete dataset loaded into a DataFrame. Two lower-level tools let you build rolling windows in different situations: one for batch computation, one for streaming.</p>
+<p><code>np.lib.stride_tricks.sliding_window_view(arr, window_shape=n)</code> produces a 2D view of <code>arr</code> where each row is one window of length <code>n</code>. Compute statistics across all windows in a single vectorised call. Use this when the full dataset fits in memory and you want batch speed:</p>
+<div id="54" class="cell" data-execution_count="21">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>rate_arr <span class="op">=</span> school_300[<span class="st">"attendance_rate"</span>].to_numpy()</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a><span class="co"># sliding_window_view: safe NumPy 1.20+ API (never use as_strided directly)</span></span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>windows <span class="op">=</span> np.lib.stride_tricks.sliding_window_view(rate_arr, window_shape<span class="op">=</span><span class="dv">7</span>)</span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>rolling7_mean <span class="op">=</span> windows.mean(axis<span class="op">=</span><span class="dv">1</span>)  <span class="co"># one mean per window</span></span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"windows shape : </span><span class="sc">{</span>windows<span class="sc">.</span>shape<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"rolling means : </span><span class="sc">{</span>rolling7_mean[:<span class="dv">5</span>]<span class="sc">.</span><span class="bu">round</span>(<span class="dv">3</span>)<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>windows shape : (54, 7)
+rolling means : [0.893 0.898 0.891 0.891 0.902]</code></pre>
+</div>
+</div>
+<p><code>collections.deque(maxlen=n)</code> processes one value at a time: the oldest value drops off automatically as each new value arrives. Use this when data arrives as a stream and you cannot load it all at once:</p>
+<div id="56" class="cell" data-execution_count="22">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> collections <span class="im">import</span> deque</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>window <span class="op">=</span> deque(maxlen<span class="op">=</span><span class="dv">7</span>)  <span class="co"># fixed-size window; oldest value drops off automatically</span></span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>stream_means <span class="op">=</span> []</span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> rate <span class="kw">in</span> school_300[<span class="st">"attendance_rate"</span>]:</span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>    window.append(rate)</span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="bu">len</span>(window) <span class="op">==</span> <span class="dv">7</span>:</span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a>        stream_means.append(<span class="bu">sum</span>(window) <span class="op">/</span> <span class="bu">len</span>(window))</span>
+<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-11"><a href="#cb34-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"streaming rolling means (first 5): </span><span class="sc">{</span>[<span class="bu">round</span>(m, <span class="dv">3</span>) <span class="cf">for</span> m <span class="kw">in</span> stream_means[:<span class="dv">5</span>]]<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>streaming rolling means (first 5): [0.893, 0.898, 0.891, 0.891, 0.902]</code></pre>
+</div>
+</div>
+<div class="ark-concept">
+<p><span class="ark-concept-title"><i class="bi bi-key-fill"></i> Key concept: batch window vs.&nbsp;streaming window</span><br><br> <code>sliding_window_view</code>: load all data first, then compute all windows at once in compiled NumPy code. Fast for complete datasets.<br> <code>deque(maxlen=n)</code>: one value at a time, constant memory, works on a live stream. Use when data arrives incrementally.</p>
+</div>
+</section>
+<section id="capstone-term-end-attendance-report" class="level2">
+<h2 class="anchored" data-anchor-id="capstone-term-end-attendance-report">Capstone: term-end attendance report</h2>
+<p>Combine every operation from this notebook: parsing dates, building a per-school time series, slicing by date, and resampling, into one short report comparing the start and end of term.</p>
+<div class="ark-activity">
+<p><span class="ark-activity-title"><i class="bi bi-puzzle-fill"></i> Capstone Exercise - Term-End Attendance Report</span><br><br></p>
+<ol>
+<li>
+Set <code>date</code> as the index on the full <code>attendance</code> table (Sec. 2)
+</li>
+<li>
+Group by <code>school_id</code> and resample to weekly means (Sec. 4)
+</li>
+<li>
+From the result, select the first week of January and the last week of March for every school, using a partial date string (Sec. 3)
+</li>
+<li>
+Report which school had the largest drop in attendance between those two weeks
+</li>
+</ol>
+<pre>weekly = attendance.set_index("date").groupby("school_id")["attendance_rate"].resample("W").mean()
+
+first_week = weekly.loc[:, "2025-01-06":"2025-01-12"]
+last_week = weekly.loc[:, "2025-03-24":"2025-03-28"]
+drop_per_school = first_week.groupby("school_id").mean() - last_week.groupby("school_id").mean()
+drop_per_school.sort_values(ascending=False)</pre>
+</div>
+<div id="60" class="cell" data-execution_count="23">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: build the term-end attendance report described above</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="further-reading" class="level2">
+<h2 class="anchored" data-anchor-id="further-reading">Further reading</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Resource</th>
+<th>Why it matters</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>McKinney, W. (2022). <em>Python for Data Analysis</em>, 3rd ed.&nbsp;O’Reilly.</td>
+<td>Chapter 8 (time series) is the most complete treatment of <code>DatetimeIndex</code>, <code>resample</code>, and <code>rolling</code> with pandas</td>
+</tr>
+<tr class="even">
+<td><a href="https://pandas.pydata.org/docs/user_guide/timeseries.html">pandas documentation: Time series / date functionality</a></td>
+<td>The authoritative reference for <code>pd.date_range</code>, offset aliases, time zones, and <code>Period</code></td>
+</tr>
+<tr class="odd">
+<td><a href="https://pandas.pydata.org/docs/user_guide/timeseries.html#time-zone-handling">pandas documentation: Time zone handling</a></td>
+<td><code>tz_localize</code>, <code>tz_convert</code>, and the ambiguous-times edge cases</td>
+</tr>
+<tr class="even">
+<td>McKinney, W. (2011). <a href="https://conference.scipy.org/proceedings/scipy2011/pdfs/wes_mckinney.pdf">Time series analysis in Python with pandas</a>. <em>SciPy 2011</em>.</td>
+<td>The original paper describing pandas’ time series design; short and still accurate</td>
+</tr>
+<tr class="odd">
+<td>Hyndman, R.J. &amp; Athanasopoulos, G. (2021). <em>Forecasting: Principles and Practice</em>, 3rd ed.</td>
+<td>Free at <a href="https://otexts.com/fpp3">otexts.com/fpp3</a>: the next step after understanding how to <em>store</em> time series data is learning how to <em>model</em> it</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="summary" class="level2">
+<h2 class="anchored" data-anchor-id="summary">Summary</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Concept</th>
+<th>Key rule</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>pd.to_datetime</code></td>
+<td>Parses text into pandas’ <code>datetime64</code> dtype; pandas 3 infers the resolution instead of always using nanoseconds</td>
+</tr>
+<tr class="even">
+<td><code>Timestamp</code></td>
+<td>A single datetime value, with <code>.year</code>, <code>.month</code>, <code>.day_name()</code>, and similar attributes</td>
+</tr>
+<tr class="odd">
+<td><code>DatetimeIndex</code></td>
+<td>Set a datetime column as the index to unlock date-based slicing</td>
+</tr>
+<tr class="even">
+<td>Filter before indexing</td>
+<td>Set a <code>DatetimeIndex</code> on one entity’s rows, not a table mixing several entities at the same dates</td>
+</tr>
+<tr class="odd">
+<td><code>.loc["2025-02"]</code></td>
+<td>A partial date string selects every row inside that period</td>
+</tr>
+<tr class="even">
+<td><code>.loc[start:end]</code></td>
+<td>A date range slice is inclusive of both ends</td>
+</tr>
+<tr class="odd">
+<td><code>.resample("ME")</code></td>
+<td>Groups rows by month-end interval; <code>"ME"</code> is the pandas 3 replacement for the removed <code>"M"</code> alias</td>
+</tr>
+<tr class="even">
+<td><code>groupby(...).resample(...)</code></td>
+<td>Resample each entity’s series independently in one chained call</td>
+</tr>
+<tr class="odd">
+<td><code>tz_localize(tz)</code></td>
+<td>Stamps a naive timestamp with a timezone; values don’t shift</td>
+</tr>
+<tr class="even">
+<td><code>tz_convert(tz)</code></td>
+<td>Shifts a timezone-aware timestamp to a different zone; values change</td>
+</tr>
+<tr class="odd">
+<td>Store UTC</td>
+<td>Localize to UTC at ingestion, convert to local time only for display</td>
+</tr>
+<tr class="even">
+<td><code>shift(n)</code></td>
+<td>Creates lag (positive n) or lead (negative n) features; first n rows become NaN</td>
+</tr>
+<tr class="odd">
+<td><code>rolling(n).mean()</code></td>
+<td>Rolling window average; smooths noise and is a useful feature in its own right</td>
+</tr>
+<tr class="even">
+<td><code>autocorr(lag=n)</code></td>
+<td>Measures how strongly a series predicts itself n steps ahead; guides lag feature selection</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Next:</strong> <code>12-polars.ipynb</code>, covering Polars’ DataFrame, expression API, lazy evaluation, and streaming.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/sambaiga\.github\.io\/ds-mlops-path\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../../tutorials/01-python-basics/10-combining-reshaping.html" class="pagination-link" aria-label="Chapter 10: Combining and reshaping">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">Chapter 10: Combining and reshaping</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../../tutorials/01-python-basics/12-polars.html" class="pagination-link" aria-label="Chapter 12: Polars and the expression API">
+        <span class="nav-page-text"><span class="chapter-title">Chapter 12: Polars and the expression API</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p><span class="faux-block">© 2025–2026 <a href="https://sambaiga.github.io/">Anthony Faustine</a></span> <span class="faux-block">Code licensed under <a href="https://www.apache.org/licenses/LICENSE-2.0">Apache 2.0</a></span></p>
+</div>   
+    <div class="nav-footer-center">
+<div class="footer-social">
+<p><a href="mailto:sambaiga@gmail.com" title="Email"><i class="bi bi-envelope-at-fill"></i></a> <a href="https://github.com/sambaiga" title="GitHub"><i class="bi bi-github"></i></a> <a href="https://www.linkedin.com/in/sambaiga" title="LinkedIn"><i class="bi bi-linkedin"></i></a></p>
+</div>
+<div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.dev/sambaiga/ds-mlops-path/blob/main/tutorials/01-python-basics/11-time-series.ipynb" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/sambaiga/ds-mlops-path/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li><li><a href="https://github.com/sambaiga/ds-mlops-path/blob/main/tutorials/01-python-basics/11-time-series.ipynb" class="toc-action"><i class="bi empty"></i>View source</a></li></ul></div></div>
+    <div class="nav-footer-right">
+<p><span class="faux-block">Made with <a href="https://quarto.org">Quarto</a></span> <span class="faux-block"><a href="https://github.com/sambaiga/ds-mlops-path"><i class="bi bi-github"></i> View source</a></span></p>
+</div>
+  </div>
+</footer>
+
+
+
+
+<script src="../../site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>
