@@ -108,9 +108,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   }
 }</script>
 <style>html{ scroll-behavior: smooth; }</style>
-<script src="../../site_libs/quarto-diagram/mermaid.min.js"></script>
-<script src="../../site_libs/quarto-diagram/mermaid-init.js"></script>
-<link href="../../site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.min.js" integrity="sha384-c9c+LnTbwQ3aujuU7ULEPVvgLs+Fn6fJUvIGTsuu1ZcCf11fiEubah0ttpca4ntM sha384-6V1/AdqZRWk1KAlWbKBlGhN7VG4iE/yAZcO6NZPMF8od0vukrvr0tg4qY6NSrItx" crossorigin="anonymous"></script>
 
 <script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
@@ -427,11 +424,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">In this chapter</h2>
    
   <ul>
-  <li><a href="#the-print-that-vanished" id="toc-the-print-that-vanished" class="nav-link active" data-scroll-target="#the-print-that-vanished">0. The print that vanished</a>
-  <ul class="collapse">
-  <li><a href="#install" id="toc-install" class="nav-link" data-scroll-target="#install">Install</a></li>
-  </ul></li>
-  <li><a href="#pythons-logging-hierarchy" id="toc-pythons-logging-hierarchy" class="nav-link" data-scroll-target="#pythons-logging-hierarchy">1. Python’s logging hierarchy</a></li>
+  <li><a href="#pythons-logging-hierarchy" id="toc-pythons-logging-hierarchy" class="nav-link active" data-scroll-target="#pythons-logging-hierarchy">1. Python’s logging hierarchy</a></li>
   <li><a href="#the-libraryapplication-boundary" id="toc-the-libraryapplication-boundary" class="nav-link" data-scroll-target="#the-libraryapplication-boundary">2. The library/application boundary</a></li>
   <li><a href="#handlers-and-formatters" id="toc-handlers-and-formatters" class="nav-link" data-scroll-target="#handlers-and-formatters">3. Handlers and formatters</a></li>
   <li><a href="#attaching-context-without-touching-every-log-call" id="toc-attaching-context-without-touching-every-log-call" class="nav-link" data-scroll-target="#attaching-context-without-touching-every-log-call">4. Attaching context without touching every log call</a></li>
@@ -467,10 +460,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 <p><a href="https://colab.research.google.com/github/sambaiga/ds-mlops-path/blob/main/tutorials/02-dev-tools/26-logging.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open In Colab"></a> <a href="https://raw.githubusercontent.com/sambaiga/ds-mlops-path/main/tutorials/02-dev-tools/26-logging.ipynb"><img src="https://img.shields.io/badge/Download-Notebook-blue.svg?logo=jupyter&amp;logoColor=white" class="img-fluid" alt="Download Notebook"></a></p>
-<p>Pydantic (Chapter 24) and Pandera (Chapter 25) stop bad data at the boundary. The failures you cannot stop are the ones that do not raise: values that pass validation but sit at the edge of the expected range, preprocessing steps that silently skip rows, warnings that fire but go nowhere.</p>
-<p>Three months after deployment, a stakeholder asks: “Why did the model score drop by 4 points last Tuesday?” You have the inputs and the outputs. You do not have a record of what happened in between: which records the pipeline skipped, whether the validation threshold triggered a fallback, whether the data drift detector crossed its threshold.</p>
-<p><code>print()</code> would have told you some of it, if you had printed the right things, if the output had not scrolled away, if you had redirected stdout to a file. Logging is <code>print()</code> with memory. Every log message carries a timestamp, a severity level, the module that produced it, and a configurable destination. You route warnings to a file, errors to a monitoring system, and debug messages to nothing in production, all without changing the code that writes them.</p>
-<p>By the end of this chapter, the <code>grade-predictor</code> pipeline produces a traceable audit trail for every run.</p>
+<p>It is 11 PM. A 12-hour cross-validation run finishes. You open the terminal to check results. There is nothing there, because the window scrolled past the output hours ago. You did not redirect stdout to a file. Fold 3 crashed with a shape mismatch, silently recovered to a default, and corrupted the metric average. You have no record of when it happened, which model it was, or what the stack trace said.</p>
+<p>This is the <code>print()</code> problem. It is not that <code>print()</code> is slow or ugly. It is that <code>print()</code> has no:</p>
+<ul>
+<li><strong>Severity</strong>: you cannot ask “show me only errors” after the fact</li>
+<li><strong>Routing</strong>: you cannot send errors to a file while keeping the console quiet</li>
+<li><strong>Timestamps</strong>: you cannot tell which fold took 40 minutes</li>
+<li><strong>Persistence</strong>: if the terminal closes, the output is gone</li>
+<li><strong>Silencing</strong>: you cannot turn off a dependency’s output without patching its source</li>
+</ul>
+<p>Python’s logging module solves all five. You do not need to replace every <code>print()</code> with a log call. You need to understand when you are debugging versus when you are operating, and log accordingly.</p>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
@@ -543,54 +542,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
+<p>The diagram below shows how Python’s logging system is structured: a hierarchy of loggers feeding handlers, each with its own severity threshold, with formatters controlling the output format.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="figs/logging-hierarchy.svg" class="img-fluid figure-img" alt="Left panel: logger hierarchy tree from root to grade_predictor to sub-loggers, with five log level boxes labelled DEBUG through CRITICAL. Right panel: three handler types (StreamHandler, FileHandler, RotatingFileHandler) and a dashed box showing what print() cannot do."></p>
 <figcaption>Python logging hierarchy: root logger at the top, module loggers below it, sub-loggers for each component, with handlers routing output to the console, a rotating log file, or a monitoring system. Log levels from DEBUG to CRITICAL determine which messages each handler receives.</figcaption>
 </figure>
 </div>
-<section id="the-print-that-vanished" class="level2">
-<h2 class="anchored" data-anchor-id="the-print-that-vanished">0. The print that vanished</h2>
-<p>It is 11 PM. A 12-hour cross-validation run finishes. You open the terminal to check results. There is nothing there, because the window scrolled past the output hours ago. You did not redirect stdout to a file. Fold 3 crashed with a shape mismatch, silently recovered to a default, and corrupted the metric average. You have no record of when it happened, which model it was, or what the stack trace said.</p>
-<p>This is the <code>print()</code> problem. It is not that <code>print()</code> is slow or ugly. It is that <code>print()</code> has no:</p>
-<ul>
-<li><strong>Severity</strong>: you cannot ask “show me only errors” after the fact</li>
-<li><strong>Routing</strong>: you cannot send errors to a file while keeping the console quiet</li>
-<li><strong>Timestamps</strong>: you cannot tell which fold took 40 minutes</li>
-<li><strong>Persistence</strong>: if the terminal closes, the output is gone</li>
-<li><strong>Silencing</strong>: you cannot turn off a dependency’s output without patching its source</li>
-</ul>
-<p>Python’s logging module solves all five. You do not need to replace every <code>print()</code> with a log call. You need to understand when you are debugging versus when you are operating, and log accordingly.</p>
-<section id="install" class="level3">
-<h3 class="anchored" data-anchor-id="install">Install</h3>
-<p>Python’s <code>logging</code> module is stdlib. The other tools used in this notebook:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> add loguru structlog rich</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</section>
-</section>
 <section id="pythons-logging-hierarchy" class="level2">
 <h2 class="anchored" data-anchor-id="pythons-logging-hierarchy">1. Python’s logging hierarchy</h2>
-<div class="cell" data-layout-align="default">
-<div class="cell-output-display">
-<div>
-<p></p><figure class="figure"><p></p>
-<div>
-<pre class="mermaid mermaid-js">flowchart LR
-    A["your code\nlog.info('Computing grades')"] --&gt; B["Logger\n'grade_predictor.core'"]
-    B --&gt;|"propagate=True"| C["Logger\n'grade_predictor'"]
-    C --&gt;|"propagate=True"| D["Logger\n'' (root)"]
-    D --&gt; E["Handler\nStreamHandler / FileHandler"]
-    E --&gt; F["Formatter\n'%(asctime)s %(levelname)s %(message)s'"]
-    F --&gt; G["output\nconsole / file"]
-
-    style A fill:#EAF3FA,stroke:#0369A1,color:#0C4A6E
-    style B fill:#F5F3FF,stroke:#7C3AED,color:#3B0764
-    style G fill:#EBF5F0,stroke:#059669,color:#065F46
-</pre>
-</div>
-<p></p></figure><p></p>
-</div>
-</div>
-</div>
 <p>Python’s logging system has four objects that work together as one pipeline:</p>
 <ul>
 <li><strong>Logger</strong>: the object your code calls (<code>log.info(...)</code>, <code>log.warning(...)</code>). Every logger has a name, typically <code>__name__</code>, which creates a dotted hierarchy: <code>grade_predictor.core</code> is a child of <code>grade_predictor</code>, which is a child of the root logger.</li>
@@ -605,49 +565,21 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li>A library can opt out of all output by default, leaving every routing decision to the caller</li>
 </ul>
 <p>Here is the minimal configuration most tutorials show first:</p>
-<div id="9" class="cell" data-execution_count="1">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> logging</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># basicConfig attaches a StreamHandler to the root logger</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>logging.basicConfig(level<span class="op">=</span>logging.INFO, <span class="bu">format</span><span class="op">=</span><span class="st">"</span><span class="sc">%(asctime)s</span><span class="st"> </span><span class="sc">%(levelname)s</span><span class="st"> </span><span class="sc">%(message)s</span><span class="st">"</span>)</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>log <span class="op">=</span> logging.getLogger(<span class="va">__name__</span>)</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>log.info(<span class="st">"Training started"</span>)</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>log.warning(<span class="st">"Fold 3 has only 12 samples"</span>)</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>log.debug(<span class="st">"This is below INFO threshold: not shown"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="8" class="cell" data-execution_count="1">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> logging</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># basicConfig attaches a StreamHandler to the root logger</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>logging.basicConfig(level<span class="op">=</span>logging.INFO, <span class="bu">format</span><span class="op">=</span><span class="st">"</span><span class="sc">%(asctime)s</span><span class="st"> </span><span class="sc">%(levelname)s</span><span class="st"> </span><span class="sc">%(message)s</span><span class="st">"</span>)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>log <span class="op">=</span> logging.getLogger(<span class="va">__name__</span>)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>log.info(<span class="st">"Training started"</span>)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>log.warning(<span class="st">"Fold 3 has only 12 samples"</span>)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>log.debug(<span class="st">"This is below INFO threshold: not shown"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>This works for a script you run yourself. The problem is <code>basicConfig()</code>. It configures the <strong>root logger</strong> at import time, which means every library in your Python process that uses <code>logging</code> will suddenly emit output through your format. Section 2 explains why library code must never call it.</p>
 </section>
 <section id="the-libraryapplication-boundary" class="level2">
 <h2 class="anchored" data-anchor-id="the-libraryapplication-boundary">2. The library/application boundary</h2>
-<div class="cell" data-layout-align="default">
-<div class="cell-output-display">
-<div>
-<p></p><figure class="figure"><p></p>
-<div>
-<pre class="mermaid mermaid-js">flowchart LR
-    subgraph lib ["Library side (grade_predictor, any pip package)"]
-        L1["logging.getLogger(__name__)"]
-        L2["NullHandler\n(silent by default)"]
-        L1 --&gt; L2
-    end
-    subgraph app ["Application side (script, notebook, service)"]
-        A1["configure()\ncalled once at startup"]
-        A2["StreamHandler\n+ ColourFormatter"]
-        A3["FileHandler\n+ PlainFormatter"]
-        A1 --&gt; A2
-        A1 --&gt; A3
-    end
-    lib --&gt;|"log records propagate"| app
-
-    style lib fill:#FEF2F2,stroke:#DC2626,color:#991B1B
-    style app fill:#EBF5F0,stroke:#059669,color:#065F46
-</pre>
-</div>
-<p></p></figure><p></p>
-</div>
-</div>
-</div>
 <p>The single most important rule in Python logging is the <strong>library/application boundary</strong>.</p>
 <p>A <strong>library</strong> is any code you publish as a package: <code>grade_predictor</code>, or any pip-installable project. Its job is to be imported and used. It should never decide where its log output goes, because its caller’s environment is unknown. The correct pattern at the library level:</p>
 <ol type="1">
@@ -657,26 +589,30 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </ol>
 <p>An <strong>application</strong> is code you run: a training script, a notebook, a FastAPI service. It owns the process and decides where logs go. It calls <code>configure()</code> once at startup to attach real handlers.</p>
 <p>Here is how <code>grade_predictor</code> would be structured:</p>
-<div id="14" class="cell" data-execution_count="2">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> logging</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># grade_predictor/__init__.py: the only NullHandler call in the entire library</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>logging.getLogger(<span class="st">"grade_predictor"</span>).addHandler(logging.NullHandler())</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co"># grade_predictor/core.py: every module gets its own logger</span></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>log <span class="op">=</span> logging.getLogger(<span class="st">"grade_predictor.core"</span>)</span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> fit(X, y):</span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    log.info(<span class="st">"Fitting model on </span><span class="sc">%d</span><span class="st"> samples"</span>, <span class="bu">len</span>(X))</span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    <span class="co"># ... training logic ...</span></span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    log.debug(<span class="st">"Gradient norm: </span><span class="sc">%.4f</span><span class="st">"</span>, <span class="fl">0.0023</span>)  <span class="co"># detail only visible at DEBUG level</span></span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>    log.info(<span class="st">"Fit complete"</span>)</span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Without configure(), this produces no output: the NullHandler swallows everything</span></span>
-<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>fit([<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>], [<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="12" class="cell" data-execution_count="2">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> logging</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>A library registers a <code>NullHandler</code> once at the top-level <code>__init__.py</code>. This silences all output by default. The application decides later whether to show anything:</p>
+<div id="14" class="cell" data-execution_count="3">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># grade_predictor/__init__.py  (only NullHandler call in the library)</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>logging.getLogger(<span class="st">"grade_predictor"</span>).addHandler(logging.NullHandler())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Each module creates its own named logger. The name forms a hierarchy (<code>grade_predictor.core</code> is a child of <code>grade_predictor</code>):</p>
+<div id="16" class="cell" data-execution_count="4">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># grade_predictor/core.py  (every module gets its own named logger)</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>log <span class="op">=</span> logging.getLogger(<span class="st">"grade_predictor.core"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>The module function logs at different severity levels. Until an application attaches a handler, nothing appears:</p>
+<div id="18" class="cell" data-execution_count="5">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> fit(X, y):</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    log.info(<span class="st">"Fitting model on </span><span class="sc">%d</span><span class="st"> samples"</span>, <span class="bu">len</span>(X))</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># ... training logic ...</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    log.debug(<span class="st">"Gradient norm: </span><span class="sc">%.4f</span><span class="st">"</span>, <span class="fl">0.0023</span>)  <span class="co"># detail only visible at DEBUG level</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    log.info(<span class="st">"Fit complete"</span>)</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Without configure(), NullHandler swallows everything: no output</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>fit([<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>], [<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="ark-mistake">
 <p><span class="ark-mistake-title"><i class="bi bi-bug-fill"></i> Common Mistake: Calling basicConfig() inside a library module</span><br><br> Calling <code>logging.basicConfig()</code> inside a library module silently configures the root logger the moment the library is imported. Every other library and application in the same process suddenly emits output through your format, at your level, with no way for the caller to undo it without reaching into your code. This is one of the most common complaints about Python logging in third-party packages. The fix is one line: <code>logging.getLogger(“yourlib”).addHandler(logging.NullHandler())</code> in <code><strong>init</strong>.py</code>, and nothing else.</p>
@@ -687,79 +623,79 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Now we are on the application side. The application calls <code>configure()</code> once. <code>configure()</code> attaches real handlers to the root logger (or to a named logger like <code>grade_predictor</code>) so that all log records from the library flow through.</p>
 <p>A useful pattern is two handlers: a <code>StreamHandler</code> for the console with colour and brevity, and a <code>FileHandler</code> for the log file with full detail including timestamps and module names.</p>
 <p>The <code>_ColourFormatter</code> below uses ANSI escape codes. It checks whether stdout is a real TTY before applying colour, so that redirected output to a file or CI log stays clean:</p>
-<div id="17" class="cell" data-execution_count="3">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> logging</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sys</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>LEVEL_COLOURS <span class="op">=</span> {</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">"DEBUG"</span>: <span class="st">"</span><span class="ch">\033</span><span class="st">[36m"</span>,  <span class="co"># cyan</span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">"INFO"</span>: <span class="st">"</span><span class="ch">\033</span><span class="st">[32m"</span>,  <span class="co"># green</span></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">"WARNING"</span>: <span class="st">"</span><span class="ch">\033</span><span class="st">[33m"</span>,  <span class="co"># yellow</span></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">"ERROR"</span>: <span class="st">"</span><span class="ch">\033</span><span class="st">[31m"</span>,  <span class="co"># red</span></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">"CRITICAL"</span>: <span class="st">"</span><span class="ch">\033</span><span class="st">[35m"</span>,  <span class="co"># magenta</span></span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>RESET <span class="op">=</span> <span class="st">"</span><span class="ch">\033</span><span class="st">[0m"</span></span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> _ColourFormatter(logging.Formatter):</span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Console formatter: colour level name when stdout is a TTY."""</span></span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>    _is_tty: <span class="bu">bool</span> <span class="op">=</span> sys.stdout.isatty()</span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="bu">format</span>(<span class="va">self</span>, record: logging.LogRecord) <span class="op">-&gt;</span> <span class="bu">str</span>:</span>
-<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="va">self</span>._is_tty:</span>
-<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>            colour <span class="op">=</span> LEVEL_COLOURS.get(record.levelname, <span class="st">""</span>)</span>
-<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>            record.levelname <span class="op">=</span> <span class="ss">f"</span><span class="sc">{</span>colour<span class="sc">}{</span>record<span class="sc">.</span>levelname<span class="sc">:&lt;8}{</span>RESET<span class="sc">}</span><span class="ss">"</span></span>
-<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>        <span class="cf">else</span>:</span>
-<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>            record.levelname <span class="op">=</span> <span class="ss">f"</span><span class="sc">{</span>record<span class="sc">.</span>levelname<span class="sc">:&lt;8}</span><span class="ss">"</span></span>
-<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="bu">super</span>().<span class="bu">format</span>(record)</span>
-<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> _PlainFormatter(logging.Formatter):</span>
-<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""File formatter: full detail, no colour codes."""</span></span>
-<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a>    <span class="cf">pass</span></span>
-<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> configure(</span>
-<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a>    level: <span class="bu">int</span> <span class="op">=</span> logging.INFO,</span>
-<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a>    log_file: <span class="bu">str</span> <span class="op">|</span> <span class="va">None</span> <span class="op">=</span> <span class="va">None</span>,</span>
-<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a>    file_level: <span class="bu">int</span> <span class="op">=</span> logging.DEBUG,</span>
-<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a>) <span class="op">-&gt;</span> <span class="va">None</span>:</span>
-<span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Attach handlers to the root logger. Call once at application startup."""</span></span>
-<span id="cb4-40"><a href="#cb4-40" aria-hidden="true" tabindex="-1"></a>    root <span class="op">=</span> logging.getLogger()</span>
-<span id="cb4-41"><a href="#cb4-41" aria-hidden="true" tabindex="-1"></a>    root.setLevel(logging.DEBUG)  <span class="co"># let handlers decide their own threshold</span></span>
-<span id="cb4-42"><a href="#cb4-42" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-43"><a href="#cb4-43" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Console handler</span></span>
-<span id="cb4-44"><a href="#cb4-44" aria-hidden="true" tabindex="-1"></a>    console <span class="op">=</span> logging.StreamHandler(sys.stdout)</span>
-<span id="cb4-45"><a href="#cb4-45" aria-hidden="true" tabindex="-1"></a>    console.setLevel(level)</span>
-<span id="cb4-46"><a href="#cb4-46" aria-hidden="true" tabindex="-1"></a>    console.setFormatter(_ColourFormatter(fmt<span class="op">=</span><span class="st">"</span><span class="sc">%(levelname)s</span><span class="st"> </span><span class="sc">%(name)s</span><span class="st">: </span><span class="sc">%(message)s</span><span class="st">"</span>))</span>
-<span id="cb4-47"><a href="#cb4-47" aria-hidden="true" tabindex="-1"></a>    root.addHandler(console)</span>
-<span id="cb4-48"><a href="#cb4-48" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-49"><a href="#cb4-49" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Optional file handler</span></span>
-<span id="cb4-50"><a href="#cb4-50" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> log_file:</span>
-<span id="cb4-51"><a href="#cb4-51" aria-hidden="true" tabindex="-1"></a>        fh <span class="op">=</span> logging.FileHandler(log_file)</span>
-<span id="cb4-52"><a href="#cb4-52" aria-hidden="true" tabindex="-1"></a>        fh.setLevel(file_level)</span>
-<span id="cb4-53"><a href="#cb4-53" aria-hidden="true" tabindex="-1"></a>        fh.setFormatter(</span>
-<span id="cb4-54"><a href="#cb4-54" aria-hidden="true" tabindex="-1"></a>            _PlainFormatter(</span>
-<span id="cb4-55"><a href="#cb4-55" aria-hidden="true" tabindex="-1"></a>                fmt<span class="op">=</span><span class="st">"</span><span class="sc">%(asctime)s</span><span class="st"> </span><span class="sc">%(levelname)-8s</span><span class="st"> </span><span class="sc">%(name)s</span><span class="st"> </span><span class="sc">%(funcName)s</span><span class="st">: </span><span class="sc">%(message)s</span><span class="st">"</span>,</span>
-<span id="cb4-56"><a href="#cb4-56" aria-hidden="true" tabindex="-1"></a>                datefmt<span class="op">=</span><span class="st">"%Y-%m-</span><span class="sc">%d</span><span class="st">T%H:%M:%S"</span>,</span>
-<span id="cb4-57"><a href="#cb4-57" aria-hidden="true" tabindex="-1"></a>            )</span>
-<span id="cb4-58"><a href="#cb4-58" aria-hidden="true" tabindex="-1"></a>        )</span>
-<span id="cb4-59"><a href="#cb4-59" aria-hidden="true" tabindex="-1"></a>        root.addHandler(fh)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="21" class="cell" data-execution_count="6">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> logging</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sys</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>LEVEL_COLOURS <span class="op">=</span> {</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">"DEBUG"</span>: <span class="st">"</span><span class="ch">\033</span><span class="st">[36m"</span>,  <span class="co"># cyan</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">"INFO"</span>: <span class="st">"</span><span class="ch">\033</span><span class="st">[32m"</span>,  <span class="co"># green</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">"WARNING"</span>: <span class="st">"</span><span class="ch">\033</span><span class="st">[33m"</span>,  <span class="co"># yellow</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">"ERROR"</span>: <span class="st">"</span><span class="ch">\033</span><span class="st">[31m"</span>,  <span class="co"># red</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">"CRITICAL"</span>: <span class="st">"</span><span class="ch">\033</span><span class="st">[35m"</span>,  <span class="co"># magenta</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>RESET <span class="op">=</span> <span class="st">"</span><span class="ch">\033</span><span class="st">[0m"</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> _ColourFormatter(logging.Formatter):</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Console formatter: colour level name when stdout is a TTY."""</span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>    _is_tty: <span class="bu">bool</span> <span class="op">=</span> sys.stdout.isatty()</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="bu">format</span>(<span class="va">self</span>, record: logging.LogRecord) <span class="op">-&gt;</span> <span class="bu">str</span>:</span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="va">self</span>._is_tty:</span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>            colour <span class="op">=</span> LEVEL_COLOURS.get(record.levelname, <span class="st">""</span>)</span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>            record.levelname <span class="op">=</span> <span class="ss">f"</span><span class="sc">{</span>colour<span class="sc">}{</span>record<span class="sc">.</span>levelname<span class="sc">:&lt;8}{</span>RESET<span class="sc">}</span><span class="ss">"</span></span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>        <span class="cf">else</span>:</span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>            record.levelname <span class="op">=</span> <span class="ss">f"</span><span class="sc">{</span>record<span class="sc">.</span>levelname<span class="sc">:&lt;8}</span><span class="ss">"</span></span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="bu">super</span>().<span class="bu">format</span>(record)</span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> _PlainFormatter(logging.Formatter):</span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""File formatter: full detail, no colour codes."""</span></span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>    <span class="cf">pass</span></span>
+<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> configure(</span>
+<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a>    level: <span class="bu">int</span> <span class="op">=</span> logging.INFO,</span>
+<span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a>    log_file: <span class="bu">str</span> <span class="op">|</span> <span class="va">None</span> <span class="op">=</span> <span class="va">None</span>,</span>
+<span id="cb6-37"><a href="#cb6-37" aria-hidden="true" tabindex="-1"></a>    file_level: <span class="bu">int</span> <span class="op">=</span> logging.DEBUG,</span>
+<span id="cb6-38"><a href="#cb6-38" aria-hidden="true" tabindex="-1"></a>) <span class="op">-&gt;</span> <span class="va">None</span>:</span>
+<span id="cb6-39"><a href="#cb6-39" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Attach handlers to the root logger. Call once at application startup."""</span></span>
+<span id="cb6-40"><a href="#cb6-40" aria-hidden="true" tabindex="-1"></a>    root <span class="op">=</span> logging.getLogger()</span>
+<span id="cb6-41"><a href="#cb6-41" aria-hidden="true" tabindex="-1"></a>    root.setLevel(logging.DEBUG)  <span class="co"># let handlers decide their own threshold</span></span>
+<span id="cb6-42"><a href="#cb6-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-43"><a href="#cb6-43" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Console handler</span></span>
+<span id="cb6-44"><a href="#cb6-44" aria-hidden="true" tabindex="-1"></a>    console <span class="op">=</span> logging.StreamHandler(sys.stdout)</span>
+<span id="cb6-45"><a href="#cb6-45" aria-hidden="true" tabindex="-1"></a>    console.setLevel(level)</span>
+<span id="cb6-46"><a href="#cb6-46" aria-hidden="true" tabindex="-1"></a>    console.setFormatter(_ColourFormatter(fmt<span class="op">=</span><span class="st">"</span><span class="sc">%(levelname)s</span><span class="st"> </span><span class="sc">%(name)s</span><span class="st">: </span><span class="sc">%(message)s</span><span class="st">"</span>))</span>
+<span id="cb6-47"><a href="#cb6-47" aria-hidden="true" tabindex="-1"></a>    root.addHandler(console)</span>
+<span id="cb6-48"><a href="#cb6-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-49"><a href="#cb6-49" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Optional file handler</span></span>
+<span id="cb6-50"><a href="#cb6-50" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> log_file:</span>
+<span id="cb6-51"><a href="#cb6-51" aria-hidden="true" tabindex="-1"></a>        fh <span class="op">=</span> logging.FileHandler(log_file)</span>
+<span id="cb6-52"><a href="#cb6-52" aria-hidden="true" tabindex="-1"></a>        fh.setLevel(file_level)</span>
+<span id="cb6-53"><a href="#cb6-53" aria-hidden="true" tabindex="-1"></a>        fh.setFormatter(</span>
+<span id="cb6-54"><a href="#cb6-54" aria-hidden="true" tabindex="-1"></a>            _PlainFormatter(</span>
+<span id="cb6-55"><a href="#cb6-55" aria-hidden="true" tabindex="-1"></a>                fmt<span class="op">=</span><span class="st">"</span><span class="sc">%(asctime)s</span><span class="st"> </span><span class="sc">%(levelname)-8s</span><span class="st"> </span><span class="sc">%(name)s</span><span class="st"> </span><span class="sc">%(funcName)s</span><span class="st">: </span><span class="sc">%(message)s</span><span class="st">"</span>,</span>
+<span id="cb6-56"><a href="#cb6-56" aria-hidden="true" tabindex="-1"></a>                datefmt<span class="op">=</span><span class="st">"%Y-%m-</span><span class="sc">%d</span><span class="st">T%H:%M:%S"</span>,</span>
+<span id="cb6-57"><a href="#cb6-57" aria-hidden="true" tabindex="-1"></a>            )</span>
+<span id="cb6-58"><a href="#cb6-58" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb6-59"><a href="#cb6-59" aria-hidden="true" tabindex="-1"></a>        root.addHandler(fh)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Use <code>configure()</code> to set up the application-level root logger with both console and file handlers:</p>
-<div id="19" class="cell" data-execution_count="4">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Reset any existing handlers from the basicConfig call in Sec 1</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>logging.getLogger().handlers.clear()</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>configure(level<span class="op">=</span>logging.INFO, log_file<span class="op">=</span><span class="st">"training.log"</span>)</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>log <span class="op">=</span> logging.getLogger(<span class="st">"grade_predictor.core"</span>)</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>log.info(<span class="st">"Training started"</span>)</span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>log.warning(<span class="st">"Fold 3 has only 12 samples"</span>)</span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>log.debug(<span class="st">"Hidden from console (INFO threshold), captured in file"</span>)</span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>log.error(<span class="st">"Fold 3 failed: shape mismatch (32, 10) vs (32, 8)"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="23" class="cell" data-execution_count="7">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Reset any existing handlers from the basicConfig call in Sec 1</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>logging.getLogger().handlers.clear()</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>configure(level<span class="op">=</span>logging.INFO, log_file<span class="op">=</span><span class="st">"training.log"</span>)</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>log <span class="op">=</span> logging.getLogger(<span class="st">"grade_predictor.core"</span>)</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>log.info(<span class="st">"Training started"</span>)</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>log.warning(<span class="st">"Fold 3 has only 12 samples"</span>)</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>log.debug(<span class="st">"Hidden from console (INFO threshold), captured in file"</span>)</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>log.error(<span class="st">"Fold 3 failed: shape mismatch (32, 10) vs (32, 8)"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>INFO     grade_predictor.core: Training started
 WARNING  grade_predictor.core: Fold 3 has only 12 samples
@@ -775,67 +711,67 @@ ERROR    grade_predictor.core: Fold 3 failed: shape mismatch (32, 10) vs (32, 8)
 <p>Imagine a cross-validation loop. Each fold runs the same <code>fit()</code> function. When something goes wrong, you want every log line inside fold 2 to say <code>fold=2</code>. The naive approach: add <code>fold=2</code> to every <code>log.info()</code> call inside the loop. This is repetitive and error-prone.</p>
 <p>A better approach is a context manager that patches the logger’s filter for the duration of a block. Python’s <code>logging.LogRecord</code> supports an <code>extra</code> dict for exactly this purpose.</p>
 <p><code>LogContext</code> below uses <code>logging.Filter</code> to inject key-value pairs into every record emitted during the <code>with</code> block, without changing a single call site:</p>
-<div id="22" class="cell" data-execution_count="5">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> collections.abc <span class="im">import</span> Generator</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> contextlib <span class="im">import</span> contextmanager</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> logging</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> typing <span class="im">import</span> Any</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> _ContextFilter(logging.Filter):</span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Injects extra key-value pairs into every record that passes through."""</span></span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, <span class="op">**</span>kwargs: Any) <span class="op">-&gt;</span> <span class="va">None</span>:</span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>        <span class="bu">super</span>().<span class="fu">__init__</span>()</span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>._context <span class="op">=</span> kwargs</span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="bu">filter</span>(<span class="va">self</span>, record: logging.LogRecord) <span class="op">-&gt;</span> <span class="bu">bool</span>:</span>
-<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> key, value <span class="kw">in</span> <span class="va">self</span>._context.items():</span>
-<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>            <span class="bu">setattr</span>(record, key, value)</span>
-<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">True</span></span>
-<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a><span class="at">@contextmanager</span></span>
-<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> log_context(logger: logging.Logger, <span class="op">**</span>kwargs: Any) <span class="op">-&gt;</span> Generator[<span class="va">None</span>, <span class="va">None</span>, <span class="va">None</span>]:</span>
-<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Context manager: inject key-value pairs into every log record in the block."""</span></span>
-<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>    f <span class="op">=</span> _ContextFilter(<span class="op">**</span>kwargs)</span>
-<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>    logger.addFilter(f)</span>
-<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span>:</span>
-<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>        <span class="cf">yield</span></span>
-<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>    <span class="cf">finally</span>:</span>
-<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>        logger.removeFilter(f)</span>
-<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a><span class="at">@contextmanager</span></span>
-<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> log_section(logger: logging.Logger, name: <span class="bu">str</span>) <span class="op">-&gt;</span> Generator[<span class="va">None</span>, <span class="va">None</span>, <span class="va">None</span>]:</span>
-<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Mark the start and end of a named pipeline stage."""</span></span>
-<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a>    logger.info(<span class="st">"[START] </span><span class="sc">%s</span><span class="st">"</span>, name)</span>
-<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span>:</span>
-<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a>        <span class="cf">yield</span></span>
-<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a>    <span class="cf">except</span> <span class="pp">Exception</span>:</span>
-<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a>        logger.exception(<span class="st">"[FAIL]  </span><span class="sc">%s</span><span class="st">"</span>, name)</span>
-<span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a>        <span class="cf">raise</span></span>
-<span id="cb7-40"><a href="#cb7-40" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
-<span id="cb7-41"><a href="#cb7-41" aria-hidden="true" tabindex="-1"></a>        logger.info(<span class="st">"[END]   </span><span class="sc">%s</span><span class="st">"</span>, name)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="26" class="cell" data-execution_count="8">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> collections.abc <span class="im">import</span> Generator</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> contextlib <span class="im">import</span> contextmanager</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> logging</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> typing <span class="im">import</span> Any</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> _ContextFilter(logging.Filter):</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Injects extra key-value pairs into every record that passes through."""</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, <span class="op">**</span>kwargs: Any) <span class="op">-&gt;</span> <span class="va">None</span>:</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>        <span class="bu">super</span>().<span class="fu">__init__</span>()</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>._context <span class="op">=</span> kwargs</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="bu">filter</span>(<span class="va">self</span>, record: logging.LogRecord) <span class="op">-&gt;</span> <span class="bu">bool</span>:</span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> key, value <span class="kw">in</span> <span class="va">self</span>._context.items():</span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>            <span class="bu">setattr</span>(record, key, value)</span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">True</span></span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a><span class="at">@contextmanager</span></span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> log_context(logger: logging.Logger, <span class="op">**</span>kwargs: Any) <span class="op">-&gt;</span> Generator[<span class="va">None</span>, <span class="va">None</span>, <span class="va">None</span>]:</span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Context manager: inject key-value pairs into every log record in the block."""</span></span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>    f <span class="op">=</span> _ContextFilter(<span class="op">**</span>kwargs)</span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a>    logger.addFilter(f)</span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span>:</span>
+<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a>        <span class="cf">yield</span></span>
+<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a>    <span class="cf">finally</span>:</span>
+<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a>        logger.removeFilter(f)</span>
+<span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-31"><a href="#cb9-31" aria-hidden="true" tabindex="-1"></a><span class="at">@contextmanager</span></span>
+<span id="cb9-32"><a href="#cb9-32" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> log_section(logger: logging.Logger, name: <span class="bu">str</span>) <span class="op">-&gt;</span> Generator[<span class="va">None</span>, <span class="va">None</span>, <span class="va">None</span>]:</span>
+<span id="cb9-33"><a href="#cb9-33" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Mark the start and end of a named pipeline stage."""</span></span>
+<span id="cb9-34"><a href="#cb9-34" aria-hidden="true" tabindex="-1"></a>    logger.info(<span class="st">"[START] </span><span class="sc">%s</span><span class="st">"</span>, name)</span>
+<span id="cb9-35"><a href="#cb9-35" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span>:</span>
+<span id="cb9-36"><a href="#cb9-36" aria-hidden="true" tabindex="-1"></a>        <span class="cf">yield</span></span>
+<span id="cb9-37"><a href="#cb9-37" aria-hidden="true" tabindex="-1"></a>    <span class="cf">except</span> <span class="pp">Exception</span>:</span>
+<span id="cb9-38"><a href="#cb9-38" aria-hidden="true" tabindex="-1"></a>        logger.exception(<span class="st">"[FAIL]  </span><span class="sc">%s</span><span class="st">"</span>, name)</span>
+<span id="cb9-39"><a href="#cb9-39" aria-hidden="true" tabindex="-1"></a>        <span class="cf">raise</span></span>
+<span id="cb9-40"><a href="#cb9-40" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb9-41"><a href="#cb9-41" aria-hidden="true" tabindex="-1"></a>        logger.info(<span class="st">"[END]   </span><span class="sc">%s</span><span class="st">"</span>, name)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="23" class="cell" data-execution_count="6">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Demonstrate LogContext: every log line inside the with-block carries fold and model</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>logging.getLogger().handlers.clear()</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Use a formatter that shows the extra fields</span></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>root <span class="op">=</span> logging.getLogger()</span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>root.setLevel(logging.DEBUG)</span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>handler <span class="op">=</span> logging.StreamHandler()</span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>handler.setFormatter(logging.Formatter(<span class="st">"</span><span class="sc">%(levelname)-8s</span><span class="st"> </span><span class="sc">%(name)s</span><span class="st"> [fold=</span><span class="sc">%(fold)s</span><span class="st"> model=</span><span class="sc">%(model)s</span><span class="st">]: </span><span class="sc">%(message)s</span><span class="st">"</span>))</span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>root.addHandler(handler)</span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>log <span class="op">=</span> logging.getLogger(<span class="st">"grade_predictor.core"</span>)</span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> fold <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1</span>, <span class="dv">4</span>):</span>
-<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> log_context(log, fold<span class="op">=</span>fold, model<span class="op">=</span><span class="st">"MLP"</span>), log_section(log, <span class="ss">f"fold-</span><span class="sc">{</span>fold<span class="sc">}</span><span class="ss">"</span>):</span>
-<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>        log.info(<span class="st">"Loading data"</span>)</span>
-<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>        log.info(<span class="st">"Fitting model"</span>)</span>
-<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>        log.info(<span class="st">"Evaluating metrics"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="27" class="cell" data-execution_count="9">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Demonstrate LogContext: every log line inside the with-block carries fold and model</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>logging.getLogger().handlers.clear()</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Use a formatter that shows the extra fields</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>root <span class="op">=</span> logging.getLogger()</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>root.setLevel(logging.DEBUG)</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>handler <span class="op">=</span> logging.StreamHandler()</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>handler.setFormatter(logging.Formatter(<span class="st">"</span><span class="sc">%(levelname)-8s</span><span class="st"> </span><span class="sc">%(name)s</span><span class="st"> [fold=</span><span class="sc">%(fold)s</span><span class="st"> model=</span><span class="sc">%(model)s</span><span class="st">]: </span><span class="sc">%(message)s</span><span class="st">"</span>))</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>root.addHandler(handler)</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>log <span class="op">=</span> logging.getLogger(<span class="st">"grade_predictor.core"</span>)</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> fold <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1</span>, <span class="dv">4</span>):</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> log_context(log, fold<span class="op">=</span>fold, model<span class="op">=</span><span class="st">"MLP"</span>), log_section(log, <span class="ss">f"fold-</span><span class="sc">{</span>fold<span class="sc">}</span><span class="ss">"</span>):</span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>        log.info(<span class="st">"Loading data"</span>)</span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>        log.info(<span class="st">"Fitting model"</span>)</span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>        log.info(<span class="st">"Evaluating metrics"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="ark-activity">
 <span class="ark-activity-title"><i class="bi bi-puzzle-fill"></i> Activity 1: LogContext in a training loop</span><br><br> Write a function <code>train_fold(fold: int, epochs: int, model_name: str) -&gt; None</code> that simulates training by logging one line per epoch. Wrap the function body in a <code>LogContext</code> so that every log line automatically carries <code>fold</code>, <code>model</code>, and <code>epochs</code>. Call it for folds 1 and 2 with model <code>“LSTM”</code> and confirm the context fields appear in every line.
@@ -846,77 +782,49 @@ def train_fold(fold: int, epochs: int, model_name: str) -&gt; None:
         for epoch in range(1, epochs + 1):
             log.info("epoch %d complete", epoch)</pre>
 </div>
-<div id="25" class="cell" data-execution_count="7">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: implement train_fold and call it for fold=1 and fold=2</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="29" class="cell" data-execution_count="10">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: implement train_fold and call it for fold=1 and fold=2</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="loguru-less-ceremony-for-your-own-code" class="level2">
 <h2 class="anchored" data-anchor-id="loguru-less-ceremony-for-your-own-code">5. Loguru: less ceremony for your own code</h2>
-<div class="cell" data-layout-align="default">
-<div class="cell-output-display">
-<div>
-<p></p><figure class="figure"><p></p>
-<div>
-<pre class="mermaid mermaid-js">flowchart LR
-    subgraph stdlib ["stdlib approach"]
-        S1["getLogger(__name__)"]
-        S2["addHandler(NullHandler)"]
-        S3["configure()\n(20 lines)"]
-        S4["LogContext(log, fold=2)"]
-        S1 --&gt; S2 --&gt; S3 --&gt; S4
-    end
-    subgraph loguru ["loguru approach"]
-        L1["from loguru import logger"]
-        L2["logger.add('run.log',\nenqueue=True)"]
-        L3["logger.bind(fold=2, model='MLP')"]
-        L1 --&gt; L2 --&gt; L3
-    end
-
-    style stdlib fill:#FEF2F2,stroke:#DC2626,color:#991B1B
-    style loguru fill:#EBF5F0,stroke:#059669,color:#065F46
-</pre>
-</div>
-<p></p></figure><p></p>
-</div>
-</div>
-</div>
 <p>The stdlib approach works, but it is verbose. For experiment scripts that you run yourself, <code>loguru</code> (<a href="https://loguru.readthedocs.io/">loguru.readthedocs.io</a>) replaces all of it with a single import and a one-liner sink configuration.</p>
 <p>Loguru’s <code>logger</code> is a pre-configured singleton. You call <code>logger.add()</code> to attach sinks (files, functions, external services). You call <code>logger.bind()</code> to attach context. You use <code>@logger.catch</code> to automatically log and suppress exceptions from a function.</p>
 <p>Here is the same experiment loop from Section 4, rewritten with loguru:</p>
-<div id="29" class="cell" data-execution_count="8">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> loguru <span class="im">import</span> logger</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Remove loguru's default stderr sink, add a file sink and a stdout sink</span></span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>logger.remove()</span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>logger.add(<span class="st">"experiment.log"</span>, level<span class="op">=</span><span class="st">"DEBUG"</span>, rotation<span class="op">=</span><span class="st">"10 MB"</span>)</span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>logger.add(</span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">lambda</span> msg: <span class="bu">print</span>(msg, end<span class="op">=</span><span class="st">""</span>),  <span class="co"># custom sink: print to stdout</span></span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>    level<span class="op">=</span><span class="st">"INFO"</span>,</span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>    <span class="bu">format</span><span class="op">=</span><span class="st">"{time:HH:mm:ss} </span><span class="sc">{level:&lt;8}</span><span class="st"> fold=</span><span class="sc">{extra[fold]}</span><span class="st"> model=</span><span class="sc">{extra[model]}</span><span class="st">: </span><span class="sc">{message}</span><span class="st">"</span>,</span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a><span class="at">@logger.catch</span>(reraise<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> train_fold_loguru(fold: <span class="bu">int</span>, model: <span class="bu">str</span> <span class="op">=</span> <span class="st">"MLP"</span>) <span class="op">-&gt;</span> <span class="bu">float</span>:</span>
-<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Simulate one fold. @logger.catch logs any exception automatically."""</span></span>
-<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>    bound <span class="op">=</span> logger.bind(fold<span class="op">=</span>fold, model<span class="op">=</span>model)</span>
-<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>    bound.info(<span class="st">"Starting fold"</span>)</span>
-<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> epoch <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1</span>, <span class="dv">4</span>):</span>
-<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>        bound.debug(<span class="st">"Epoch </span><span class="sc">{}</span><span class="st"> complete"</span>, epoch)</span>
-<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> fold <span class="op">==</span> <span class="dv">2</span>:</span>
-<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>        <span class="cf">raise</span> <span class="pp">ValueError</span>(<span class="st">"Shape mismatch in fold 2"</span>)</span>
-<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a>    bound.info(<span class="st">"Fold complete"</span>)</span>
-<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="fl">0.92</span></span>
-<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> fold_id <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1</span>, <span class="dv">4</span>):</span>
-<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a>    train_fold_loguru(fold<span class="op">=</span>fold_id)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="32" class="cell" data-execution_count="11">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> loguru <span class="im">import</span> logger</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Remove loguru's default stderr sink, add a file sink and a stdout sink</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>logger.remove()</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>logger.add(<span class="st">"experiment.log"</span>, level<span class="op">=</span><span class="st">"DEBUG"</span>, rotation<span class="op">=</span><span class="st">"10 MB"</span>)</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>logger.add(</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">lambda</span> msg: <span class="bu">print</span>(msg, end<span class="op">=</span><span class="st">""</span>),  <span class="co"># custom sink: print to stdout</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>    level<span class="op">=</span><span class="st">"INFO"</span>,</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>    <span class="bu">format</span><span class="op">=</span><span class="st">"{time:HH:mm:ss} </span><span class="sc">{level:&lt;8}</span><span class="st"> fold=</span><span class="sc">{extra[fold]}</span><span class="st"> model=</span><span class="sc">{extra[model]}</span><span class="st">: </span><span class="sc">{message}</span><span class="st">"</span>,</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a><span class="at">@logger.catch</span>(reraise<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> train_fold_loguru(fold: <span class="bu">int</span>, model: <span class="bu">str</span> <span class="op">=</span> <span class="st">"MLP"</span>) <span class="op">-&gt;</span> <span class="bu">float</span>:</span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Simulate one fold. @logger.catch logs any exception automatically."""</span></span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>    bound <span class="op">=</span> logger.bind(fold<span class="op">=</span>fold, model<span class="op">=</span>model)</span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>    bound.info(<span class="st">"Starting fold"</span>)</span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> epoch <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1</span>, <span class="dv">4</span>):</span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a>        bound.debug(<span class="st">"Epoch </span><span class="sc">{}</span><span class="st"> complete"</span>, epoch)</span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> fold <span class="op">==</span> <span class="dv">2</span>:</span>
+<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a>        <span class="cf">raise</span> <span class="pp">ValueError</span>(<span class="st">"Shape mismatch in fold 2"</span>)</span>
+<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a>    bound.info(<span class="st">"Fold complete"</span>)</span>
+<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="fl">0.92</span></span>
+<span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-26"><a href="#cb12-26" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> fold_id <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1</span>, <span class="dv">4</span>):</span>
+<span id="cb12-27"><a href="#cb12-27" aria-hidden="true" tabindex="-1"></a>    train_fold_loguru(fold<span class="op">=</span>fold_id)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>07:15:08 INFO     fold=1 model=MLP: Starting fold
-07:15:08 INFO     fold=1 model=MLP: Fold complete
-07:15:08 INFO     fold=2 model=MLP: Starting fold
-07:15:08 INFO     fold=3 model=MLP: Starting fold
-07:15:08 INFO     fold=3 model=MLP: Fold complete</code></pre>
+<pre><code>08:17:20 INFO     fold=1 model=MLP: Starting fold
+08:17:20 INFO     fold=1 model=MLP: Fold complete
+08:17:20 INFO     fold=2 model=MLP: Starting fold
+08:17:20 INFO     fold=3 model=MLP: Starting fold
+08:17:20 INFO     fold=3 model=MLP: Fold complete</code></pre>
 </div>
 </div>
 <div class="ark-mistake">
@@ -933,48 +841,48 @@ def train_fold(fold: int, epochs: int, model_name: str) -&gt; None:
 <li><strong>Renderer</strong>: the final processor that turns the dict into a string (JSON for production, pretty-printed for development)</li>
 <li><strong>Bound loggers</strong>: carry context across calls without re-stating it</li>
 </ul>
-<div id="32" class="cell" data-execution_count="9">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> logging</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> time</span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> structlog</span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="co"># stdlib backend: PrintLoggerFactory has no .name attribute, so add_logger_name</span></span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="co"># requires LoggerFactory (wraps logging.Logger which does have .name)</span></span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>logging.getLogger().handlers.clear()</span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>logging.basicConfig(level<span class="op">=</span>logging.DEBUG, <span class="bu">format</span><span class="op">=</span><span class="st">"</span><span class="sc">%(message)s</span><span class="st">"</span>, force<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>structlog.configure(</span>
-<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>    processors<span class="op">=</span>[</span>
-<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>        structlog.stdlib.add_log_level,</span>
-<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>        structlog.stdlib.add_logger_name,</span>
-<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>        structlog.processors.TimeStamper(fmt<span class="op">=</span><span class="st">"iso"</span>),</span>
-<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>        structlog.processors.StackInfoRenderer(),</span>
-<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>        structlog.processors.JSONRenderer(),</span>
-<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>    ],</span>
-<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a>    wrapper_class<span class="op">=</span>structlog.stdlib.BoundLogger,</span>
-<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a>    context_class<span class="op">=</span><span class="bu">dict</span>,</span>
-<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a>    logger_factory<span class="op">=</span>structlog.stdlib.LoggerFactory(),</span>
-<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a>slog <span class="op">=</span> structlog.get_logger(<span class="st">"prediction_service"</span>)</span>
-<span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-26"><a href="#cb12-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-27"><a href="#cb12-27" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> compute_grade_api(request_id: <span class="bu">str</span>, model_version: <span class="bu">str</span>, student_id: <span class="bu">str</span>) <span class="op">-&gt;</span> <span class="bu">dict</span>:</span>
-<span id="cb12-28"><a href="#cb12-28" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Simulate a grading API endpoint. Every log line carries request context."""</span></span>
-<span id="cb12-29"><a href="#cb12-29" aria-hidden="true" tabindex="-1"></a>    bound <span class="op">=</span> slog.bind(request_id<span class="op">=</span>request_id, model_version<span class="op">=</span>model_version, student_id<span class="op">=</span>student_id)</span>
-<span id="cb12-30"><a href="#cb12-30" aria-hidden="true" tabindex="-1"></a>    bound.info(<span class="st">"grade_start"</span>)</span>
-<span id="cb12-31"><a href="#cb12-31" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-32"><a href="#cb12-32" aria-hidden="true" tabindex="-1"></a>    t0 <span class="op">=</span> time.perf_counter()</span>
-<span id="cb12-33"><a href="#cb12-33" aria-hidden="true" tabindex="-1"></a>    score <span class="op">=</span> <span class="fl">78.5</span>  <span class="co"># placeholder: real logic reads from DB</span></span>
-<span id="cb12-34"><a href="#cb12-34" aria-hidden="true" tabindex="-1"></a>    latency_ms <span class="op">=</span> <span class="bu">round</span>((time.perf_counter() <span class="op">-</span> t0) <span class="op">*</span> <span class="dv">1000</span>, <span class="dv">2</span>)</span>
-<span id="cb12-35"><a href="#cb12-35" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-36"><a href="#cb12-36" aria-hidden="true" tabindex="-1"></a>    bound.info(<span class="st">"grade_complete"</span>, score<span class="op">=</span><span class="bu">round</span>(score, <span class="dv">4</span>), latency_ms<span class="op">=</span>latency_ms)</span>
-<span id="cb12-37"><a href="#cb12-37" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> {<span class="st">"student_id"</span>: student_id, <span class="st">"score"</span>: score, <span class="st">"model_version"</span>: model_version}</span>
-<span id="cb12-38"><a href="#cb12-38" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-39"><a href="#cb12-39" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-40"><a href="#cb12-40" aria-hidden="true" tabindex="-1"></a>compute_grade_api(<span class="st">"req-abc123"</span>, <span class="st">"grade-predictor-v1"</span>, <span class="st">"S0042"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="9">
+<div id="35" class="cell" data-execution_count="12">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> logging</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> time</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> structlog</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="co"># stdlib backend: PrintLoggerFactory has no .name attribute, so add_logger_name</span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="co"># requires LoggerFactory (wraps logging.Logger which does have .name)</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>logging.getLogger().handlers.clear()</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>logging.basicConfig(level<span class="op">=</span>logging.DEBUG, <span class="bu">format</span><span class="op">=</span><span class="st">"</span><span class="sc">%(message)s</span><span class="st">"</span>, force<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>structlog.configure(</span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>    processors<span class="op">=</span>[</span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>        structlog.stdlib.add_log_level,</span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>        structlog.stdlib.add_logger_name,</span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>        structlog.processors.TimeStamper(fmt<span class="op">=</span><span class="st">"iso"</span>),</span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>        structlog.processors.StackInfoRenderer(),</span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>        structlog.processors.JSONRenderer(),</span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a>    ],</span>
+<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a>    wrapper_class<span class="op">=</span>structlog.stdlib.BoundLogger,</span>
+<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a>    context_class<span class="op">=</span><span class="bu">dict</span>,</span>
+<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a>    logger_factory<span class="op">=</span>structlog.stdlib.LoggerFactory(),</span>
+<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a>slog <span class="op">=</span> structlog.get_logger(<span class="st">"prediction_service"</span>)</span>
+<span id="cb14-25"><a href="#cb14-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-26"><a href="#cb14-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-27"><a href="#cb14-27" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> compute_grade_api(request_id: <span class="bu">str</span>, model_version: <span class="bu">str</span>, student_id: <span class="bu">str</span>) <span class="op">-&gt;</span> <span class="bu">dict</span>:</span>
+<span id="cb14-28"><a href="#cb14-28" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Simulate a grading API endpoint. Every log line carries request context."""</span></span>
+<span id="cb14-29"><a href="#cb14-29" aria-hidden="true" tabindex="-1"></a>    bound <span class="op">=</span> slog.bind(request_id<span class="op">=</span>request_id, model_version<span class="op">=</span>model_version, student_id<span class="op">=</span>student_id)</span>
+<span id="cb14-30"><a href="#cb14-30" aria-hidden="true" tabindex="-1"></a>    bound.info(<span class="st">"grade_start"</span>)</span>
+<span id="cb14-31"><a href="#cb14-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-32"><a href="#cb14-32" aria-hidden="true" tabindex="-1"></a>    t0 <span class="op">=</span> time.perf_counter()</span>
+<span id="cb14-33"><a href="#cb14-33" aria-hidden="true" tabindex="-1"></a>    score <span class="op">=</span> <span class="fl">78.5</span>  <span class="co"># placeholder: real logic reads from DB</span></span>
+<span id="cb14-34"><a href="#cb14-34" aria-hidden="true" tabindex="-1"></a>    latency_ms <span class="op">=</span> <span class="bu">round</span>((time.perf_counter() <span class="op">-</span> t0) <span class="op">*</span> <span class="dv">1000</span>, <span class="dv">2</span>)</span>
+<span id="cb14-35"><a href="#cb14-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-36"><a href="#cb14-36" aria-hidden="true" tabindex="-1"></a>    bound.info(<span class="st">"grade_complete"</span>, score<span class="op">=</span><span class="bu">round</span>(score, <span class="dv">4</span>), latency_ms<span class="op">=</span>latency_ms)</span>
+<span id="cb14-37"><a href="#cb14-37" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> {<span class="st">"student_id"</span>: student_id, <span class="st">"score"</span>: score, <span class="st">"model_version"</span>: model_version}</span>
+<span id="cb14-38"><a href="#cb14-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-39"><a href="#cb14-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-40"><a href="#cb14-40" aria-hidden="true" tabindex="-1"></a>compute_grade_api(<span class="st">"req-abc123"</span>, <span class="st">"grade-predictor-v1"</span>, <span class="st">"S0042"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="12">
 <pre><code>{'student_id': 'S0042', 'score': 78.5, 'model_version': 'grade-predictor-v1'}</code></pre>
 </div>
 </div>
@@ -987,68 +895,68 @@ def train_fold(fold: int, epochs: int, model_name: str) -&gt; None:
 <p>Everything above assumes a terminal or a file. In Jupyter, <code>logging.StreamHandler</code> writes plain text to the notebook’s output cell. There are no colours, no traceback formatting, no syntax highlighting.</p>
 <p><code>RichHandler</code> from the <code>rich</code> library drops into stdlib logging in one line. It renders log records with colour, aligns level names, pretty-prints tracebacks with source context, and respects the notebook’s display environment.</p>
 <p>Here is a before/after comparison:</p>
-<div id="35" class="cell" data-execution_count="10">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> logging</span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Before: plain StreamHandler output in a notebook</span></span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>logging.getLogger().handlers.clear()</span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>plain_handler <span class="op">=</span> logging.StreamHandler()</span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>plain_handler.setFormatter(logging.Formatter(<span class="st">"</span><span class="sc">%(levelname)s</span><span class="st"> </span><span class="sc">%(name)s</span><span class="st">: </span><span class="sc">%(message)s</span><span class="st">"</span>))</span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>logging.getLogger().addHandler(plain_handler)</span>
-<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>logging.getLogger().setLevel(logging.DEBUG)</span>
-<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>log <span class="op">=</span> logging.getLogger(<span class="st">"grade_predictor.core"</span>)</span>
-<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>log.info(<span class="st">"plain handler: training started"</span>)</span>
-<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>log.warning(<span class="st">"plain handler: fold 3 has 12 samples"</span>)</span>
-<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> _bad_op():</span>
-<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">raise</span> <span class="pp">ValueError</span>(<span class="st">"Shape mismatch (32, 10) vs (32, 8)"</span>)</span>
-<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span>:</span>
-<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a>    _bad_op()</span>
-<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a><span class="cf">except</span> <span class="pp">ValueError</span>:</span>
-<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a>    log.exception(<span class="st">"plain handler: fold 3 failed"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="38" class="cell" data-execution_count="13">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> logging</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Before: plain StreamHandler output in a notebook</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>logging.getLogger().handlers.clear()</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>plain_handler <span class="op">=</span> logging.StreamHandler()</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>plain_handler.setFormatter(logging.Formatter(<span class="st">"</span><span class="sc">%(levelname)s</span><span class="st"> </span><span class="sc">%(name)s</span><span class="st">: </span><span class="sc">%(message)s</span><span class="st">"</span>))</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>logging.getLogger().addHandler(plain_handler)</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>logging.getLogger().setLevel(logging.DEBUG)</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>log <span class="op">=</span> logging.getLogger(<span class="st">"grade_predictor.core"</span>)</span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>log.info(<span class="st">"plain handler: training started"</span>)</span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>log.warning(<span class="st">"plain handler: fold 3 has 12 samples"</span>)</span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> _bad_op():</span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">raise</span> <span class="pp">ValueError</span>(<span class="st">"Shape mismatch (32, 10) vs (32, 8)"</span>)</span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span>:</span>
+<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a>    _bad_op()</span>
+<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a><span class="cf">except</span> <span class="pp">ValueError</span>:</span>
+<span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a>    log.exception(<span class="st">"plain handler: fold 3 failed"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Replace <code>StreamHandler</code> with <code>RichHandler</code> for colour output in notebooks:</p>
-<div id="37" class="cell" data-execution_count="11">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> logging</span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> rich.logging <span class="im">import</span> RichHandler</span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="co"># After: RichHandler: drop-in replacement, one line change</span></span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>logging.getLogger().handlers.clear()</span>
-<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>logging.basicConfig(</span>
-<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>    level<span class="op">=</span>logging.DEBUG,</span>
-<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>    <span class="bu">format</span><span class="op">=</span><span class="st">"</span><span class="sc">%(message)s</span><span class="st">"</span>,</span>
-<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>    datefmt<span class="op">=</span><span class="st">"[</span><span class="sc">%X</span><span class="st">]"</span>,</span>
-<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>    handlers<span class="op">=</span>[RichHandler(rich_tracebacks<span class="op">=</span><span class="va">True</span>, markup<span class="op">=</span><span class="va">True</span>)],</span>
-<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>log <span class="op">=</span> logging.getLogger(<span class="st">"grade_predictor.core"</span>)</span>
-<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>log.info(<span class="st">"rich handler: training started"</span>)</span>
-<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>log.warning(<span class="st">"rich handler: fold 3 has 12 samples"</span>)</span>
-<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> _bad_op():</span>
-<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a>    <span class="cf">raise</span> <span class="pp">ValueError</span>(<span class="st">"Shape mismatch (32, 10) vs (32, 8)"</span>)</span>
-<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span>:</span>
-<span id="cb15-24"><a href="#cb15-24" aria-hidden="true" tabindex="-1"></a>    _bad_op()</span>
-<span id="cb15-25"><a href="#cb15-25" aria-hidden="true" tabindex="-1"></a><span class="cf">except</span> <span class="pp">ValueError</span>:</span>
-<span id="cb15-26"><a href="#cb15-26" aria-hidden="true" tabindex="-1"></a>    log.exception(<span class="st">"rich handler: fold 3 failed"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="40" class="cell" data-execution_count="14">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> logging</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> rich.logging <span class="im">import</span> RichHandler</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="co"># After: RichHandler: drop-in replacement, one line change</span></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>logging.getLogger().handlers.clear()</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>logging.basicConfig(</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>    level<span class="op">=</span>logging.DEBUG,</span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>    <span class="bu">format</span><span class="op">=</span><span class="st">"</span><span class="sc">%(message)s</span><span class="st">"</span>,</span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>    datefmt<span class="op">=</span><span class="st">"[</span><span class="sc">%X</span><span class="st">]"</span>,</span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>    handlers<span class="op">=</span>[RichHandler(rich_tracebacks<span class="op">=</span><span class="va">True</span>, markup<span class="op">=</span><span class="va">True</span>)],</span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>log <span class="op">=</span> logging.getLogger(<span class="st">"grade_predictor.core"</span>)</span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a>log.info(<span class="st">"rich handler: training started"</span>)</span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a>log.warning(<span class="st">"rich handler: fold 3 has 12 samples"</span>)</span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> _bad_op():</span>
+<span id="cb17-20"><a href="#cb17-20" aria-hidden="true" tabindex="-1"></a>    <span class="cf">raise</span> <span class="pp">ValueError</span>(<span class="st">"Shape mismatch (32, 10) vs (32, 8)"</span>)</span>
+<span id="cb17-21"><a href="#cb17-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-22"><a href="#cb17-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-23"><a href="#cb17-23" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span>:</span>
+<span id="cb17-24"><a href="#cb17-24" aria-hidden="true" tabindex="-1"></a>    _bad_op()</span>
+<span id="cb17-25"><a href="#cb17-25" aria-hidden="true" tabindex="-1"></a><span class="cf">except</span> <span class="pp">ValueError</span>:</span>
+<span id="cb17-26"><a href="#cb17-26" aria-hidden="true" tabindex="-1"></a>    log.exception(<span class="st">"rich handler: fold 3 failed"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
-<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #7fbfbf; text-decoration-color: #7fbfbf">[07:15:08] </span><span style="color: #000080; text-decoration-color: #000080">INFO    </span> rich handler: training started                                                 <a href="file:///tmp/ipykernel_3335/4057371647.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">4057371647.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///tmp/ipykernel_3335/4057371647.py#15" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">15</span></a>
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #7fbfbf; text-decoration-color: #7fbfbf">[08:17:20] </span><span style="color: #000080; text-decoration-color: #000080">INFO    </span> rich handler: training started                                                 <a href="file:///tmp/ipykernel_3443/4057371647.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">4057371647.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///tmp/ipykernel_3443/4057371647.py#15" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">15</span></a>
 </pre>
 </div>
 <div class="cell-output cell-output-display">
-<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #7fbfbf; text-decoration-color: #7fbfbf">           </span><span style="color: #808000; text-decoration-color: #808000">WARNING </span> rich handler: fold <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">3</span> has <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">12</span> samples                                            <a href="file:///tmp/ipykernel_3335/4057371647.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">4057371647.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///tmp/ipykernel_3335/4057371647.py#16" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">16</span></a>
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #7fbfbf; text-decoration-color: #7fbfbf">           </span><span style="color: #808000; text-decoration-color: #808000">WARNING </span> rich handler: fold <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">3</span> has <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">12</span> samples                                            <a href="file:///tmp/ipykernel_3443/4057371647.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">4057371647.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///tmp/ipykernel_3443/4057371647.py#16" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">16</span></a>
 </pre>
 </div>
 <div class="cell-output cell-output-display">
-<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #7fbfbf; text-decoration-color: #7fbfbf">           </span><span style="color: #800000; text-decoration-color: #800000; font-weight: bold">ERROR   </span> rich handler: fold <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">3</span> failed                                                    <a href="file:///tmp/ipykernel_3335/4057371647.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">4057371647.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///tmp/ipykernel_3335/4057371647.py#26" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">26</span></a>
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #7fbfbf; text-decoration-color: #7fbfbf">           </span><span style="color: #800000; text-decoration-color: #800000; font-weight: bold">ERROR   </span> rich handler: fold <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">3</span> failed                                                    <a href="file:///tmp/ipykernel_3443/4057371647.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">4057371647.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///tmp/ipykernel_3443/4057371647.py#26" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">26</span></a>
 <span style="color: #7fbfbf; text-decoration-color: #7fbfbf">           </span>         <span style="color: #800000; text-decoration-color: #800000">╭──────────────────── </span><span style="color: #800000; text-decoration-color: #800000; font-weight: bold">Traceback </span><span style="color: #bf7f7f; text-decoration-color: #bf7f7f; font-weight: bold">(most recent call last)</span><span style="color: #800000; text-decoration-color: #800000"> ─────────────────────╮</span> <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">                </span>
 <span style="color: #7fbfbf; text-decoration-color: #7fbfbf">           </span>         <span style="color: #800000; text-decoration-color: #800000">│</span> in &lt;module&gt;:24                                                             <span style="color: #800000; text-decoration-color: #800000">│</span> <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">                </span>
 <span style="color: #7fbfbf; text-decoration-color: #7fbfbf">           </span>         <span style="color: #800000; text-decoration-color: #800000">│</span>                                                                            <span style="color: #800000; text-decoration-color: #800000">│</span> <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">                </span>
@@ -1080,39 +988,6 @@ def train_fold(fold: int, epochs: int, model_name: str) -&gt; None:
 </section>
 <section id="one-project-four-layers" class="level2">
 <h2 class="anchored" data-anchor-id="one-project-four-layers">8. One project, four layers</h2>
-<div class="cell" data-layout-align="default">
-<div class="cell-output-display">
-<div>
-<p></p><figure class="figure"><p></p>
-<div>
-<pre class="mermaid mermaid-js">flowchart TD
-    subgraph lib ["Library code (grade_predictor)"]
-        L1["stdlib logging\n+ NullHandler\nSilent by default"]
-    end
-    subgraph exp ["Experiment scripts"]
-        E1["loguru\nLow ceremony\nRich context binding"]
-    end
-    subgraph prod ["Production API / MLOps pipeline"]
-        P1["structlog\nStructured JSON\nTraceable request IDs"]
-    end
-    subgraph nb ["Notebooks"]
-        N1["Rich handler\nPretty output\nZero config"]
-    end
-
-    lib --&gt;|"log records propagate to caller"| exp
-    lib --&gt;|"log records propagate to caller"| prod
-    lib --&gt;|"log records propagate to caller"| nb
-
-    style lib fill:#FEF2F2,stroke:#DC2626,color:#991B1B
-    style exp fill:#EBF5F0,stroke:#059669,color:#065F46
-    style prod fill:#EAF3FA,stroke:#0369A1,color:#0C4A6E
-    style nb fill:#F5F3FF,stroke:#7C3AED,color:#3B0764
-</pre>
-</div>
-<p></p></figure><p></p>
-</div>
-</div>
-</div>
 <p>The four tools you have learned are not alternatives. They are layers. A real ML project uses all four, each in its right place:</p>
 <table class="caption-top table">
 <colgroup>
@@ -1155,8 +1030,8 @@ def train_fold(fold: int, epochs: int, model_name: str) -&gt; None:
 <div class="ark-activity">
 <p><span class="ark-activity-title"><i class="bi bi-puzzle-fill"></i> Activity 2: four layers in one notebook</span><br><br> In a fresh notebook cell, set up all four layers for a single import of a mock <code>grade_predictor</code> library. The mock library should use <code>NullHandler</code> and <code>getLogger(<strong>name</strong>)</code>. The notebook cell should use <code>RichHandler</code>. Write a separate script string (as a Python string literal) showing how an experiment script would use loguru to import and call the library. Write a second script string showing how a FastAPI endpoint would use structlog. You do not need to run the scripts, just define them clearly as code strings.</p>
 </div>
-<div id="42" class="cell" data-execution_count="12">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: implement the four-layer demonstration</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="44" class="cell" data-execution_count="15">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: implement the four-layer demonstration</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="further-reading" class="level2">

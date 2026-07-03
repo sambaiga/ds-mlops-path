@@ -478,7 +478,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <p><a href="https://colab.research.google.com/github/sambaiga/ds-mlops-path/blob/main/tutorials/01-python-basics/04-classes.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open In Colab"></a> <a href="https://raw.githubusercontent.com/sambaiga/ds-mlops-path/main/tutorials/01-python-basics/04-classes.ipynb"><img src="https://img.shields.io/badge/Download-Notebook-blue.svg?logo=jupyter&amp;logoColor=white" class="img-fluid" alt="Download Notebook"></a></p>
 <p>A student record is not three separate variables; it is one thing. A class lets you treat it that way: one <code>__repr__()</code>, one place where the rules about valid scores live, one factory method that builds it from a raw CSV row.</p>
-<p>Chapter 3 gave you functions: the logic. A function only holds logic; the data it operates on lives somewhere else, as loose variables the function accepts and returns. A class bundles data and the functions that operate on it under one name.</p>
+<p>Chapter 3 built functions: the logic. A function only holds logic; the data it operates on lives somewhere else, as loose variables the function accepts and returns. A class bundles data and the functions that operate on it under one name.</p>
 <p>This chapter adds the tools that Chapter 3 could not carry: classes, dataclasses, NamedTuples, TypedDicts, exceptions, and file I/O. Chapter 5 (<code>05-math-statistics.ipynb</code>) uses these patterns throughout as it introduces the standard library math and statistics modules.</p>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
@@ -556,12 +556,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 class="anchored" data-anchor-id="classes">1. Classes</h2>
 <p>A <strong>class</strong> is a blueprint for creating objects. Each object (instance) bundles its own data (attributes) with the functions (methods) that operate on it. You create the blueprint once with <code>class</code>, then stamp out as many instances as you need.</p>
 <p>Three things make a class useful rather than just a namespace: - <code>__init__</code>: sets the initial state of each instance - <code>__repr__</code>: returns a readable string when you print or inspect the object - <strong>methods</strong>: functions that always have access to the instance’s data via <code>self</code></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="figs/class-anatomy.svg" class="img-fluid figure-img" alt="Left: class StudentRecord box showing __init__, @property, @classmethod, __repr__ methods with colored role indicators. Right: alice instance showing attribute values after construction. Arrow from class to instance labeled instantiate."></p>
+<figcaption>A Python class bundles data (stored in <code>__init__</code>) and the functions that operate on it (<code>@property</code>, <code>@classmethod</code>, <code>__repr__</code>). Each instance owns its own data; all instances share the methods.</figcaption>
+</figure>
+</div>
 <section id="init__-and-__repr__" class="level3">
 <h3 class="anchored" data-anchor-id="init__-and-__repr__"><code>__init__</code> and <code>__repr__</code></h3>
 <p>Every class needs two methods before it’s useful in interactive work. <code>__init__</code> runs the moment you create an instance: it receives the raw data and stores it on <code>self</code>. <code>__repr__</code> is what Python prints when you inspect the object in the REPL or call <code>print()</code> on it.</p>
 <p>Without <code>__repr__</code>, Python shows something like <code>&lt;__main__.StudentRecord object at 0x7f3a2c1d4e50&gt;</code>. That address tells you nothing. With a good <code>__repr__</code> you can see the name, program, and average in one glance, which makes debugging feel like reading, not guessing.</p>
 <p>The rule: <code>__repr__</code> should produce a string that is both human-readable and, where possible, copy-pasteable back into Python to re-create the object.</p>
-<div id="6" class="cell" data-execution_count="1">
+<div id="7" class="cell" data-execution_count="1">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> StudentRecord:</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""A single student's academic record.</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -585,7 +591,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>        avg <span class="op">=</span> <span class="bu">sum</span>(<span class="va">self</span>.scores) <span class="op">/</span> <span class="bu">len</span>(<span class="va">self</span>.scores) <span class="cf">if</span> <span class="va">self</span>.scores <span class="cf">else</span> <span class="fl">0.0</span></span>
 <span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="ss">f"StudentRecord(name=</span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>name<span class="sc">!r}</span><span class="ss">, program=</span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>program<span class="sc">!r}</span><span class="ss">, avg=</span><span class="sc">{</span>avg<span class="sc">:.1f}</span><span class="ss">)"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="7" class="cell" data-execution_count="2">
+<div id="8" class="cell" data-execution_count="2">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>alice <span class="op">=</span> StudentRecord(</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    name<span class="op">=</span><span class="st">"Alice Kamau"</span>,</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    scores<span class="op">=</span>[<span class="fl">88.0</span>, <span class="fl">92.0</span>, <span class="fl">85.0</span>, <span class="fl">90.0</span>],</span>
@@ -610,7 +616,7 @@ StudentRecord(name='Bob Mwangi', program='Mathematics', avg=66.0)</code></pre>
 <p>You could store the average as an attribute set in <code>__init__</code>: <code>self.average = sum(scores) / len(scores)</code>. The problem is stale state. If someone appends a score later, <code>student.scores.append(95.0)</code>, the stored average is now wrong, and nothing tells you.</p>
 <p>A <code>@property</code> computes the value fresh every time you access it. From the caller’s side it looks exactly like reading a plain attribute: <code>student.average</code>, no parentheses. Under the hood Python calls the method. You get the right answer regardless of when scores were added.</p>
 <p>Use <code>@property</code> for any value that is derived from other attributes. Store it explicitly only if the computation is genuinely expensive and you have a caching strategy.</p>
-<div id="9" class="cell" data-execution_count="3">
+<div id="10" class="cell" data-execution_count="3">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> StudentRecord:</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""A single student's academic record with computed grade properties.</span></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -652,7 +658,7 @@ StudentRecord(name='Bob Mwangi', program='Mathematics', avg=66.0)</code></pre>
 <span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="st">"D"</span></span>
 <span id="cb4-40"><a href="#cb4-40" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="st">"F"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="10" class="cell" data-execution_count="4">
+<div id="11" class="cell" data-execution_count="4">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>alice <span class="op">=</span> StudentRecord(<span class="st">"Alice Kamau"</span>, [<span class="fl">88.0</span>, <span class="fl">92.0</span>, <span class="fl">85.0</span>], <span class="st">"Computer Science"</span>)</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Before: avg=</span><span class="sc">{</span>alice<span class="sc">.</span>average<span class="sc">:.1f}</span><span class="ss">  grade=</span><span class="sc">{</span>alice<span class="sc">.</span>letter_grade<span class="sc">}</span><span class="ss">"</span>)</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -672,7 +678,7 @@ StudentRecord(name='Alice Kamau', program='Computer Science', avg=90.0)</code></
 <h3 class="anchored" data-anchor-id="classmethod-factory-methods"><code>@classmethod</code> factory methods</h3>
 <p>A <code>@classmethod</code> is an alternative constructor: it builds an instance from a different kind of input without requiring the caller to know what <code>__init__</code> expects.</p>
 <p>The pattern is useful whenever your data arrives in a format different from what <code>__init__</code> expects. A CSV row is a <code>dict[str, str]</code> where every value is a string. Putting the parsing logic inside a <code>@classmethod</code> keeps <code>__init__</code> clean and makes the intent explicit at the call site: <code>StudentRecord.from_dict(row)</code> reads like documentation.</p>
-<div id="12" class="cell" data-execution_count="5">
+<div id="13" class="cell" data-execution_count="5">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> StudentRecord:</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""A student record with factory method support.</span></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -736,7 +742,7 @@ StudentRecord(name='Alice Kamau', program='Computer Science', avg=90.0)</code></
 <span id="cb7-61"><a href="#cb7-61" aria-hidden="true" tabindex="-1"></a>            program<span class="op">=</span><span class="bu">str</span>(record.get(<span class="st">"program"</span>, <span class="st">"Undeclared"</span>)),</span>
 <span id="cb7-62"><a href="#cb7-62" aria-hidden="true" tabindex="-1"></a>        )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="13" class="cell" data-execution_count="6">
+<div id="14" class="cell" data-execution_count="6">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulated rows as they would arrive from csv.DictReader</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>raw_rows: <span class="bu">list</span>[<span class="bu">dict</span>[<span class="bu">str</span>, <span class="bu">object</span>]] <span class="op">=</span> [</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"name"</span>: <span class="st">"Carol Osei"</span>, <span class="st">"scores"</span>: <span class="st">"91.0, 95.0, 89.0"</span>, <span class="st">"program"</span>: <span class="st">"Data Science"</span>},</span>
@@ -764,7 +770,7 @@ StudentRecord(name='Dan Kimani', program='Mathematics', avg=74.0)</code></pre>
 <figcaption>Class hierarchy: BaseMetric(ABC) at the top with an abstract compute method, inherited by AccuracyMetric and F1Metric below, each implementing their own compute.</figcaption>
 </figure>
 </div>
-<div id="17" class="cell" data-execution_count="7">
+<div id="18" class="cell" data-execution_count="7">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> abc <span class="im">import</span> ABC, abstractmethod</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -811,7 +817,7 @@ StudentRecord(name='Dan Kimani', program='Mathematics', avg=74.0)</code></pre>
 <span id="cb10-44"><a href="#cb10-44" aria-hidden="true" tabindex="-1"></a>        recall <span class="op">=</span> tp <span class="op">/</span> (tp <span class="op">+</span> fn)</span>
 <span id="cb10-45"><a href="#cb10-45" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="dv">2</span> <span class="op">*</span> precision <span class="op">*</span> recall <span class="op">/</span> (precision <span class="op">+</span> recall)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="18" class="cell" data-execution_count="8">
+<div id="19" class="cell" data-execution_count="8">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>actual_labels <span class="op">=</span> [<span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>]</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>predicted_labels <span class="op">=</span> [<span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">0</span>]</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -889,7 +895,7 @@ Immutable, hashable record
 <div class="ark-activity">
 <p><span class="ark-activity-title"><i class="bi bi-puzzle-fill"></i> Activity 1: CourseRecord class</span><br><br> Define a <code>CourseRecord</code> class (not a dataclass) that stores <code>code: str</code>, <code>semester: str</code>, <code>instructor: str</code>, and <code>students: list[str]</code>. Add a <code><span class="citation" data-cites="property">@property</span> enrolment</code> that returns the student count, a <code><strong>repr</strong></code> that prints <code>CourseRecord(CS101 / 2024-S1)</code>, and a <code><span class="citation" data-cites="classmethod">@classmethod</span> from_dict(cls, row)</code> that builds a record from a raw dict. Instantiate two records and print their enrolment counts.</p>
 </div>
-<div id="21" class="cell" data-execution_count="9">
+<div id="22" class="cell" data-execution_count="9">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: define CourseRecord</span></span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>...</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -913,7 +919,7 @@ Immutable, hashable record
 <p><span class="ark-concept-title"><i class="bi bi-key-fill"></i> Key Concept: <span class="citation" data-cites="dataclass">@dataclass</span> vs a plain class</span><br><br> Use <code><span class="citation" data-cites="dataclass">@dataclass</span></code> when the class is primarily a data container: a fixed set of typed fields with no complex initialisation logic. Use a plain <code>class</code> when you need a non-trivial <code><strong>init</strong></code>, inheritance, or methods that go well beyond reading and writing fields.<br><br> <strong>Rule of thumb:</strong> if the <code><strong>init</strong></code> would be nothing but <code>self.x = x</code> assignments, reach for <code><span class="citation" data-cites="dataclass">@dataclass</span></code>.</p>
 </div>
 <p>A <code>CourseConfig</code> holds the settings for one course. Without <code>@dataclass</code> you would write twelve lines of boilerplate. With it, you write the fields:</p>
-<div id="25" class="cell" data-execution_count="10">
+<div id="26" class="cell" data-execution_count="10">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> dataclasses <span class="im">import</span> dataclass, field</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -928,7 +934,7 @@ Immutable, hashable record
 <span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>    tags: <span class="bu">list</span>[<span class="bu">str</span>] <span class="op">=</span> field(default_factory<span class="op">=</span><span class="bu">list</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p><code>@dataclass</code> generates <code>__init__</code>, <code>__repr__</code>, and <code>__eq__</code>. Fields with <code>field(default_factory=list)</code> get a fresh list per instance, which is the fix for the mutable default problem from Chapter 3:</p>
-<div id="27" class="cell" data-execution_count="11">
+<div id="28" class="cell" data-execution_count="11">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>cfg <span class="op">=</span> CourseConfig(code<span class="op">=</span><span class="st">"CS101"</span>, semester<span class="op">=</span><span class="st">"2024-S1"</span>, pass_mark<span class="op">=</span><span class="fl">55.0</span>)</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>cfg.tags.append(<span class="st">"core"</span>)</span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>cfg.tags.append(<span class="st">"required"</span>)</span>
@@ -945,7 +951,7 @@ tags      : ['core', 'required']</code></pre>
 <section id="frozentrue-immutable-and-hashable" class="level3">
 <h3 class="anchored" data-anchor-id="frozentrue-immutable-and-hashable">frozen=True: immutable and hashable</h3>
 <p><code>frozen=True</code> prevents field mutation after creation. A frozen dataclass is hashable, so it can be used as a dict key or put in a set:</p>
-<div id="29" class="cell" data-execution_count="12">
+<div id="30" class="cell" data-execution_count="12">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> dataclasses <span class="im">import</span> dataclass</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -962,7 +968,7 @@ tags      : ['core', 'required']</code></pre>
 <span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>            <span class="cf">raise</span> <span class="pp">ValueError</span>(<span class="ss">f"Invalid grade boundaries: </span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>pass_mark<span class="sc">}</span><span class="ss"> / </span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>distinction_mark<span class="sc">}</span><span class="ss"> / </span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>max_score<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p><code>__post_init__</code> runs automatically after <code>__init__</code> and is the right place for cross-field validation:</p>
-<div id="31" class="cell" data-execution_count="13">
+<div id="32" class="cell" data-execution_count="13">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>standard <span class="op">=</span> GradeScale(pass_mark<span class="op">=</span><span class="fl">50.0</span>, distinction_mark<span class="op">=</span><span class="fl">75.0</span>)</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>strict <span class="op">=</span> GradeScale(pass_mark<span class="op">=</span><span class="fl">60.0</span>, distinction_mark<span class="op">=</span><span class="fl">80.0</span>)</span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -982,7 +988,7 @@ Standard scale cohort: ['Alice', 'Carol']</code></pre>
 <div class="ark-activity">
 <p><span class="ark-activity-title"><i class="bi bi-puzzle-fill"></i> Activity 2: ExamResult dataclass</span><br><br> Define a frozen <code>ExamResult</code> dataclass with fields: <code>student_id: str</code>, <code>course: str</code>, <code>score: float</code>, <code>semester: str</code>. Add a <code><strong>post_init</strong></code> that raises <code>ValueError</code> if <code>score</code> is outside 0-100. Instantiate a valid result and one that should fail, catching the error.</p>
 </div>
-<div id="33" class="cell" data-execution_count="14">
+<div id="34" class="cell" data-execution_count="14">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> dataclasses <span class="im">import</span> dataclass</span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1026,7 +1032,7 @@ Use <strong><span class="citation" data-cites="dataclass">@dataclass</span></str
 </ul>
 </div>
 <p>Define a NamedTuple using the class syntax. Fields get names and type annotations:</p>
-<div id="37" class="cell" data-execution_count="15">
+<div id="38" class="cell" data-execution_count="15">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> typing <span class="im">import</span> NamedTuple</span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1039,7 +1045,7 @@ Use <strong><span class="citation" data-cites="dataclass">@dataclass</span></str
 <span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>    grade: <span class="bu">str</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>NamedTuples support both attribute access and positional unpacking. They also compare equal when all fields match:</p>
-<div id="39" class="cell" data-execution_count="16">
+<div id="40" class="cell" data-execution_count="16">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>g <span class="op">=</span> StudentGrade(student_id<span class="op">=</span><span class="st">"S1042"</span>, course<span class="op">=</span><span class="st">"CS101"</span>, score<span class="op">=</span><span class="fl">88.5</span>, grade<span class="op">=</span><span class="st">"B"</span>)</span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(g)</span>
@@ -1059,7 +1065,7 @@ S1042 scored 88.5 in CS101
 Equal: True</code></pre>
 </div>
 </div>
-<div id="40" class="cell" data-execution_count="17">
+<div id="41" class="cell" data-execution_count="17">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>grades: <span class="bu">list</span>[StudentGrade] <span class="op">=</span> [</span>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>    StudentGrade(<span class="st">"S1042"</span>, <span class="st">"CS101"</span>, <span class="fl">88.5</span>, <span class="st">"B"</span>),</span>
 <span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>    StudentGrade(<span class="st">"S1043"</span>, <span class="st">"CS101"</span>, <span class="fl">91.0</span>, <span class="st">"A"</span>),</span>
@@ -1086,7 +1092,7 @@ Equal: True</code></pre>
 <p><span class="ark-concept-title"><i class="bi bi-key-fill"></i> Key Concept: TypedDict</span><br><br> A <code>TypedDict</code> is purely a type-checker hint. At runtime, a <code>TypedDict</code> is still an ordinary dict: no <code><strong>init</strong></code>, no field validation, no overhead. Use it when you receive raw dicts from external sources and want your editor to catch missing or misspelled keys before the code runs.</p>
 </div>
 <p>Define a schema for the raw student rows that arrive from a CSV or API:</p>
-<div id="44" class="cell" data-execution_count="18">
+<div id="45" class="cell" data-execution_count="18">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> typing <span class="im">import</span> TypedDict</span>
 <span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1099,7 +1105,7 @@ Equal: True</code></pre>
 <span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>    major: <span class="bu">str</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>The TypedDict annotates the variable. The dict itself is still a plain dict at runtime:</p>
-<div id="46" class="cell" data-execution_count="19">
+<div id="47" class="cell" data-execution_count="19">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>row: StudentRow <span class="op">=</span> {</span>
 <span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"student_id"</span>: <span class="st">"S1042"</span>,</span>
 <span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"name"</span>: <span class="st">"Alice"</span>,</span>
@@ -1117,7 +1123,7 @@ Equal: True</code></pre>
 <section id="type-aliases" class="level3">
 <h3 class="anchored" data-anchor-id="type-aliases">Type aliases</h3>
 <p>A type alias gives a long type expression a short, meaningful name. Use <code>type</code> (Python 3.12+) for new code:</p>
-<div id="48" class="cell" data-execution_count="20">
+<div id="49" class="cell" data-execution_count="20">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="bu">type</span> ScoreList <span class="op">=</span> <span class="bu">list</span>[<span class="bu">float</span>]</span>
 <span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="bu">type</span> CohortData <span class="op">=</span> <span class="bu">dict</span>[<span class="bu">str</span>, ScoreList]</span>
 <span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1166,7 +1172,7 @@ MATH201: mean=78.2</code></pre>
 </ul>
 <p>Catch the most specific exception you can. Bare <code>except:</code> or <code>except Exception:</code> hides bugs and silences keyboard interrupts.</p>
 </div>
-<div id="50" class="cell" data-execution_count="21">
+<div id="51" class="cell" data-execution_count="21">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> parse_score(raw: <span class="bu">str</span>) <span class="op">-&gt;</span> <span class="bu">float</span>:</span>
 <span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Parse a score string and validate it is in [0, 100].</span></span>
 <span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1190,7 +1196,7 @@ MATH201: mean=78.2</code></pre>
 <span id="cb33-21"><a href="#cb33-21" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> value</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Test <code>parse_score()</code> against a range of inputs: valid numbers, out-of-range values, and non-numeric strings. The <code>else</code> clause runs only on the <strong>success</strong> path:</p>
-<div id="52" class="cell" data-execution_count="22">
+<div id="53" class="cell" data-execution_count="22">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Test parse_score against valid and invalid inputs</span></span>
 <span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>test_inputs: <span class="bu">list</span>[<span class="bu">str</span>] <span class="op">=</span> [<span class="st">"87.5"</span>, <span class="st">"105"</span>, <span class="st">"abc"</span>, <span class="st">"-3"</span>, <span class="st">"72"</span>]</span>
 <span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1210,7 +1216,7 @@ MATH201: mean=78.2</code></pre>
 </div>
 </div>
 <p><code>finally</code> runs regardless of whether an exception occurred or was handled. Use it for cleanup code (closing files, releasing connections) that must execute either way. This example illustrates the pattern using explicit <code>open</code>/<code>close</code>; in practice, always use <code>with open(...) as fh</code> instead (shown in Sec. 7):</p>
-<div id="54" class="cell" data-execution_count="23">
+<div id="55" class="cell" data-execution_count="23">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co"># else runs ONLY when try succeeds; finally ALWAYS runs (cleanup guarantee)</span></span>
 <span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> load_scores(filepath: <span class="bu">str</span>) <span class="op">-&gt;</span> <span class="bu">list</span>[<span class="bu">float</span>]:</span>
 <span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Load numeric scores from a text file, one per line."""</span></span>
@@ -1233,7 +1239,7 @@ MATH201: mean=78.2</code></pre>
 <span id="cb36-20"><a href="#cb36-20" aria-hidden="true" tabindex="-1"></a>            <span class="bu">print</span>(<span class="st">"File handle closed"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p><code>finally</code> guarantees the file handle is closed even when the file doesn’t exist: no resource leak is possible:</p>
-<div id="56" class="cell" data-execution_count="24">
+<div id="57" class="cell" data-execution_count="24">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">NOTE</span><span class="co">: prefer `with open(...) as fh` in practice (shown in Sec. 7).</span></span>
 <span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a><span class="co"># This example uses explicit open/close to make else/finally visible.</span></span>
 <span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>result <span class="op">=</span> load_scores(<span class="st">"nonexistent.txt"</span>)</span>
@@ -1246,7 +1252,7 @@ Result: []</code></pre>
 <section id="custom-exception-classes" class="level3">
 <h3 class="anchored" data-anchor-id="custom-exception-classes">Custom exception classes</h3>
 <p>Subclass a built-in exception to give callers a <strong>specific type</strong> to catch. Store the structured context as instance attributes for programmatic access:</p>
-<div id="58" class="cell" data-execution_count="25">
+<div id="59" class="cell" data-execution_count="25">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Custom exception classes give callers something specific to catch</span></span>
 <span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> DataValidationError(<span class="pp">ValueError</span>):</span>
 <span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Raised when a data record fails validation."""</span></span>
@@ -1258,7 +1264,7 @@ Result: []</code></pre>
 <span id="cb39-9"><a href="#cb39-9" aria-hidden="true" tabindex="-1"></a>        <span class="bu">super</span>().<span class="fu">__init__</span>(<span class="ss">f"Validation failed for </span><span class="sc">{</span>field<span class="sc">!r}</span><span class="ss">=</span><span class="sc">{</span>value<span class="sc">!r}</span><span class="ss">: </span><span class="sc">{</span>reason<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Define a validator that raises <code>DataValidationError</code> with field-level context, then test it. The <code>except DataValidationError</code> clause catches only your custom type, not any accidental <code>ValueError</code> from elsewhere in the code:</p>
-<div id="60" class="cell" data-execution_count="26">
+<div id="61" class="cell" data-execution_count="26">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> validate_student(record: <span class="bu">dict</span>[<span class="bu">str</span>, <span class="bu">object</span>]) <span class="op">-&gt;</span> <span class="va">None</span>:</span>
 <span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Validate a student record dict against required field constraints."""</span></span>
 <span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>    gpa <span class="op">=</span> record.get(<span class="st">"gpa"</span>)</span>
@@ -1272,7 +1278,7 @@ Result: []</code></pre>
 <span id="cb40-11"><a href="#cb40-11" aria-hidden="true" tabindex="-1"></a>        <span class="cf">raise</span> DataValidationError(<span class="st">"name"</span>, name, <span class="st">"must be a non-empty string"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Test against valid and invalid records. The custom exception prints exactly which field failed and why:</p>
-<div id="62" class="cell" data-execution_count="27">
+<div id="63" class="cell" data-execution_count="27">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>test_records: <span class="bu">list</span>[<span class="bu">dict</span>[<span class="bu">str</span>, <span class="bu">object</span>]] <span class="op">=</span> [</span>
 <span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"name"</span>: <span class="st">"Alice"</span>, <span class="st">"gpa"</span>: <span class="fl">3.95</span>},  <span class="co"># valid</span></span>
 <span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"name"</span>: <span class="st">"Bob"</span>, <span class="st">"gpa"</span>: <span class="fl">5.0</span>},  <span class="co"># GPA out of range</span></span>
@@ -1301,7 +1307,7 @@ valid, errors = parse_batch(rows)
 #           "'-5' out of range [0, 100]",
 #           "'110' out of range [0, 100]"]</pre>
 </div>
-<div id="64" class="cell" data-execution_count="28">
+<div id="65" class="cell" data-execution_count="28">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> parse_batch(rows: <span class="bu">list</span>[<span class="bu">str</span>]) <span class="op">-&gt;</span> <span class="bu">tuple</span>[<span class="bu">list</span>[<span class="bu">float</span>], <span class="bu">list</span>[<span class="bu">str</span>]]:</span>
 <span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Parse a batch of score strings, separating valid from invalid.</span></span>
 <span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1343,7 +1349,7 @@ errors = []</code></pre>
 <div class="ark-mistake">
 <p><span class="ark-mistake-title"><i class="bi bi-bug-fill"></i> Common Mistake: Bare string paths</span><br><br> <code>open(‘data/file.csv’)</code> works but gives you no path-manipulation methods and is fragile on Windows vs.&nbsp;macOS/Linux. Use <code>Path(‘data’) / ‘file.csv’</code> instead.</p>
 </div>
-<div id="66" class="cell" data-execution_count="29">
+<div id="67" class="cell" data-execution_count="29">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb46"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pathlib <span class="im">import</span> Path</span>
 <span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Path composition: / operator joins parts, cross-platform</span></span>
@@ -1359,7 +1365,7 @@ output_file : data/results/run_001.json</code></pre>
 </div>
 </div>
 <p>Every <code>Path</code> object knows its own parts: no string slicing to extract a filename or extension. <code>mkdir(exist_ok=True)</code> is the safest way to create a directory (no error if it already exists):</p>
-<div id="68" class="cell" data-execution_count="30">
+<div id="69" class="cell" data-execution_count="30">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb48"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Path properties: inspect parts of a path without string slicing</span></span>
 <span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>p <span class="op">=</span> Path(<span class="st">"tutorials/03-data-analysis/data/primary.csv"</span>)</span>
 <span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"p.name   : </span><span class="sc">{</span>p<span class="sc">.</span>name<span class="sc">}</span><span class="ss">"</span>)  <span class="co"># 'primary.csv'</span></span>
@@ -1385,7 +1391,7 @@ tmp_dir exists: True</code></pre>
 <section id="reading-and-writing-files" class="level3">
 <h3 class="anchored" data-anchor-id="reading-and-writing-files">Reading and writing files</h3>
 <p>Always use the <code>with</code> statement. It closes the file automatically, even if an exception occurs. <code>DictWriter</code> writes rows as dicts keyed by column name:</p>
-<div id="70" class="cell" data-execution_count="31">
+<div id="71" class="cell" data-execution_count="31">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb50"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> csv</span>
 <span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pathlib <span class="im">import</span> Path</span>
 <span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1410,7 +1416,7 @@ tmp_dir exists: True</code></pre>
 </div>
 </div>
 <p><code>DictReader</code> reads each row back as a <code>dict</code> keyed by header names, with no positional index access needed:</p>
-<div id="72" class="cell" data-execution_count="32">
+<div id="73" class="cell" data-execution_count="32">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb52"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> csv</span>
 <span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pathlib <span class="im">import</span> Path</span>
 <span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1429,7 +1435,7 @@ tmp_dir exists: True</code></pre>
 </div>
 </div>
 <p>For single-document JSON files, <code>Path.write_text()</code> + <code>json.dumps()</code> and <code>Path.read_text()</code> + <code>json.loads()</code> is the most concise round-trip:</p>
-<div id="74" class="cell" data-execution_count="33">
+<div id="75" class="cell" data-execution_count="33">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb54"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> json</span>
 <span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pathlib <span class="im">import</span> Path</span>
 <span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1452,7 +1458,7 @@ Read back: {'run_id': 'exp-001', 'accuracy': 0.923, 'tags': ['baseline']}</code>
 <div class="ark-activity">
 <span class="ark-activity-title"><i class="bi bi-puzzle-fill"></i> Activity 2: experiment log</span><br><br>Write a function <code>save_experiment(result: dict, log_dir: Path) -&gt; Path</code> that saves a result dict as a timestamped JSON file (<code>run_20240101_120000.json</code>) inside <code>log_dir</code>, creating the directory if it doesn’t exist. Return the path to the written file. Then read it back and verify the round-trip.<br><br><b>Hint:</b> Use <code>datetime.now(tz=UTC).strftime(‘%Y%m%d_%H%M%S’)</code> for the timestamp and <code>Path.mkdir(parents=True, exist_ok=True)</code> for the directory.
 </div>
-<div id="76" class="cell" data-execution_count="34">
+<div id="77" class="cell" data-execution_count="34">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb56"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pathlib <span class="im">import</span> Path</span>
 <span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: implement save_experiment</span></span>
@@ -1465,7 +1471,7 @@ Read back: {'run_id': 'exp-001', 'accuracy': 0.923, 'tags': ['baseline']}</code>
 <section id="finding-files" class="level3">
 <h3 class="anchored" data-anchor-id="finding-files">Finding files</h3>
 <p><code>Path.iterdir()</code> yields the immediate children of a directory. <code>Path.rglob(pattern)</code> searches the entire subtree recursively:</p>
-<div id="78" class="cell" data-execution_count="35">
+<div id="79" class="cell" data-execution_count="35">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb58"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a>tmp <span class="op">=</span> Path(<span class="st">"tmp_activity"</span>)</span>
 <span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Files in tmp_activity:"</span>)</span>
 <span id="cb58-3"><a href="#cb58-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> f <span class="kw">in</span> <span class="bu">sorted</span>(tmp.iterdir()):</span>
@@ -1478,7 +1484,7 @@ Read back: {'run_id': 'exp-001', 'accuracy': 0.923, 'tags': ['baseline']}</code>
 </div>
 </div>
 <p><code>rglob('*.ipynb')</code> finds all matching files at any depth. After exploring, clean up the temporary directory with <code>shutil.rmtree()</code>:</p>
-<div id="80" class="cell" data-execution_count="36">
+<div id="81" class="cell" data-execution_count="36">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb60"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> shutil</span>
 <span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb60-3"><a href="#cb60-3" aria-hidden="true" tabindex="-1"></a><span class="co"># rglob: recursive search by pattern</span></span>
@@ -1501,7 +1507,7 @@ Cleaned up: tmp_activity exists = False</code></pre>
 <section id="creating-and-checking-directories" class="level3">
 <h3 class="anchored" data-anchor-id="creating-and-checking-directories">Creating and checking directories</h3>
 <p><code>Path.mkdir()</code> creates directories; <code>Path.exists()</code> and <code>Path.is_dir()</code> check state without raising an error. Always prefer <code>mkdir(parents=True, exist_ok=True)</code> over conditionally calling <code>os.makedirs()</code>:</p>
-<div id="82" class="cell" data-execution_count="37">
+<div id="83" class="cell" data-execution_count="37">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb62"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a>results_dir <span class="op">=</span> Path(<span class="st">"results"</span>) <span class="op">/</span> <span class="st">"experiment_001"</span></span>
 <span id="cb62-2"><a href="#cb62-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Exists before : </span><span class="sc">{</span>results_dir<span class="sc">.</span>exists()<span class="sc">}</span><span class="ss">"</span>)</span>
 <span id="cb62-3"><a href="#cb62-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1539,7 +1545,7 @@ log_experiment(Path('runs.jsonl'), run_id='run-002', accuracy=0.923, loss=0.218)
 # {"run_id": "run-002", "accuracy": 0.923, "loss": 0.218}</pre>
 <p><b>Hint:</b> JSONL (JSON Lines), one JSON object per line, is the standard format for streaming experiment logs. Use <code>mode=‘a’</code> to append.</p>
 </div>
-<div id="84" class="cell" data-execution_count="38">
+<div id="85" class="cell" data-execution_count="38">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb64"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> json</span>
 <span id="cb64-2"><a href="#cb64-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pathlib <span class="im">import</span> Path</span>
 <span id="cb64-3"><a href="#cb64-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1586,7 +1592,7 @@ log_experiment(Path('runs.jsonl'), run_id='run-002', accuracy=0.923, loss=0.218)
 <div class="ark-mistake">
 <p><span class="ark-mistake-title"><i class="bi bi-bug-fill"></i> Common Mistake: late binding in closures</span><br><br> When a closure captures a loop variable, it captures the variable by reference, not by value. By the time the closure runs, the loop has finished and the variable holds its final value.<br><br> <strong>Fix:</strong> use a default argument to bind the current value at definition time: <code>lambda i=i: …</code></p>
 </div>
-<div id="88" class="cell" data-execution_count="39">
+<div id="89" class="cell" data-execution_count="39">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb66"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Late binding: i is looked up when called, not when defined</span></span>
 <span id="cb66-2"><a href="#cb66-2" aria-hidden="true" tabindex="-1"></a>closures_bad <span class="op">=</span> [<span class="kw">lambda</span>: i <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">4</span>)]  <span class="co"># noqa: B023</span></span>
 <span id="cb66-3"><a href="#cb66-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>([f() <span class="cf">for</span> f <span class="kw">in</span> closures_bad])  <span class="co"># [3, 3, 3, 3] not [0, 1, 2, 3]</span></span>
@@ -1602,7 +1608,7 @@ log_experiment(Path('runs.jsonl'), run_id='run-002', accuracy=0.923, loss=0.218)
 <div class="ark-mistake">
 <p><span class="ark-mistake-title"><i class="bi bi-bug-fill"></i> Common Mistake: class-level vs instance-level mutable attributes</span><br><br> A mutable attribute defined at class level (outside <code><strong>init</strong></code>) is shared across all instances. Appending to it from one instance affects every other.<br><br> <strong>Fix:</strong> always initialise mutable attributes inside <code><strong>init</strong></code>, or use <code>field(default_factory=list)</code> in a dataclass.</p>
 </div>
-<div id="90" class="cell" data-execution_count="40">
+<div id="91" class="cell" data-execution_count="40">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb68"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Cohort:</span>
 <span id="cb68-2"><a href="#cb68-2" aria-hidden="true" tabindex="-1"></a>    students: <span class="bu">list</span>[<span class="bu">str</span>] <span class="op">=</span> []  <span class="co"># shared across ALL instances</span></span>
 <span id="cb68-3"><a href="#cb68-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1628,7 +1634,7 @@ log_experiment(Path('runs.jsonl'), run_id='run-002', accuracy=0.923, loss=0.218)
 []</code></pre>
 </div>
 </div>
-<div id="91" class="cell" data-execution_count="41">
+<div id="92" class="cell" data-execution_count="41">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb70"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a><span class="co"># GOTCHA 1: Mutable default argument</span></span>
 <span id="cb70-2"><a href="#cb70-2" aria-hidden="true" tabindex="-1"></a><span class="co"># The default [] is created ONCE at function definition time - shared across all calls!</span></span>
 <span id="cb70-3"><a href="#cb70-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> append_score_bad(score: <span class="bu">float</span>, history: <span class="bu">list</span>[<span class="bu">float</span>] <span class="op">=</span> []) <span class="op">-&gt;</span> <span class="bu">list</span>[<span class="bu">float</span>]:  <span class="co"># noqa: B006</span></span>
@@ -1646,7 +1652,7 @@ log_experiment(Path('runs.jsonl'), run_id='run-002', accuracy=0.923, loss=0.218)
 </div>
 </div>
 <p>The fix: use <code>None</code> as the default sentinel and create a fresh list inside the function body on each call:</p>
-<div id="93" class="cell" data-execution_count="42">
+<div id="94" class="cell" data-execution_count="42">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb72"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> append_score(score: <span class="bu">float</span>, history: <span class="bu">list</span>[<span class="bu">float</span>] <span class="op">|</span> <span class="va">None</span> <span class="op">=</span> <span class="va">None</span>) <span class="op">-&gt;</span> <span class="bu">list</span>[<span class="bu">float</span>]:</span>
 <span id="cb72-2"><a href="#cb72-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> history <span class="kw">is</span> <span class="va">None</span>:</span>
 <span id="cb72-3"><a href="#cb72-3" aria-hidden="true" tabindex="-1"></a>        history <span class="op">=</span> []  <span class="co"># new list created on every call where history is not provided</span></span>
@@ -1667,7 +1673,7 @@ log_experiment(Path('runs.jsonl'), run_id='run-002', accuracy=0.923, loss=0.218)
 </div>
 </div>
 <p><strong>Gotcha 2: assignment isn’t a copy.</strong> <code>b = a</code> creates a second name for the <strong>same</strong> list. Shallow <code>.copy()</code> creates a new outer container but inner objects are still shared. Use <code>copy.deepcopy()</code> for fully independent nested structures:</p>
-<div id="95" class="cell" data-execution_count="43">
+<div id="96" class="cell" data-execution_count="43">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb74"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a><span class="co"># GOTCHA 2: Assignment is NOT a copy</span></span>
 <span id="cb74-2"><a href="#cb74-2" aria-hidden="true" tabindex="-1"></a><span class="co"># For nested structures, .copy() is a SHALLOW copy: inner objects are still shared.</span></span>
 <span id="cb74-3"><a href="#cb74-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1716,7 +1722,7 @@ Has a method <code>save_report(path: Path) -&gt; None</code> that writes a JSON 
 </ol>
 <b>Test it</b> by creating a CSV file from the university dataset, loading the registry, printing the top 3 students, and saving a report.
 </div>
-<div id="98" class="cell" data-execution_count="44">
+<div id="99" class="cell" data-execution_count="44">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb76"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb76-1"><a href="#cb76-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pathlib <span class="im">import</span> Path</span>
 <span id="cb76-2"><a href="#cb76-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb76-3"><a href="#cb76-3" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: define DataLoadError and StudentRegistry</span></span>

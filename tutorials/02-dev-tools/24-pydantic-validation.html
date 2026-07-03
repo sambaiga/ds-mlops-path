@@ -108,9 +108,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   }
 }</script>
 <style>html{ scroll-behavior: smooth; }</style>
-<script src="../../site_libs/quarto-diagram/mermaid.min.js"></script>
-<script src="../../site_libs/quarto-diagram/mermaid-init.js"></script>
-<link href="../../site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
 
 
 </head>
@@ -424,12 +421,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">In this chapter</h2>
    
   <ul>
-  <li><a href="#the-bug-that-type-annotations-cannot-catch" id="toc-the-bug-that-type-annotations-cannot-catch" class="nav-link active" data-scroll-target="#the-bug-that-type-annotations-cannot-catch">0. The Bug That Type Annotations Cannot Catch</a>
-  <ul class="collapse">
-  <li><a href="#install" id="toc-install" class="nav-link" data-scroll-target="#install">Install</a></li>
-  </ul></li>
-  <li><a href="#models-type-annotations-that-bite" id="toc-models-type-annotations-that-bite" class="nav-link" data-scroll-target="#models-type-annotations-that-bite">1. Models: Type Annotations That Bite</a></li>
-  <li><a href="#studentrecord-validating-incoming-data" id="toc-studentrecord-validating-incoming-data" class="nav-link" data-scroll-target="#studentrecord-validating-incoming-data">2. <code>StudentRecord</code>: Validating Incoming Data</a></li>
+  <li><a href="#studentrecord-validating-incoming-data" id="toc-studentrecord-validating-incoming-data" class="nav-link active" data-scroll-target="#studentrecord-validating-incoming-data">2. <code>StudentRecord</code>: Validating Incoming Data</a></li>
   <li><a href="#field-validators-and-cross-field-validators" id="toc-field-validators-and-cross-field-validators" class="nav-link" data-scroll-target="#field-validators-and-cross-field-validators">3. Field Validators and Cross-Field Validators</a></li>
   <li><a href="#cli-interfaces-argparse-and-typer" id="toc-cli-interfaces-argparse-and-typer" class="nav-link" data-scroll-target="#cli-interfaces-argparse-and-typer">4. CLI Interfaces: argparse and typer</a>
   <ul class="collapse">
@@ -469,10 +461,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 <p><a href="https://colab.research.google.com/github/sambaiga/ds-mlops-path/blob/main/tutorials/02-dev-tools/24-pydantic-validation.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open In Colab"></a> <a href="https://raw.githubusercontent.com/sambaiga/ds-mlops-path/main/tutorials/02-dev-tools/24-pydantic-validation.ipynb"><img src="https://img.shields.io/badge/Download-Notebook-blue.svg?logo=jupyter&amp;logoColor=white" class="img-fluid" alt="Download Notebook"></a></p>
-<p>Type annotations (Chapter 20) told the IDE that <code>midterm_score</code> should be a float. The IDE warned you when you passed a string in your own code. That protection disappears the moment external data arrives: a CSV row, a JSON payload from an API, a record from a database.</p>
-<p>External data has no type annotations. A CSV cell containing “N/A” is a string whether you expected a float or not. An API response with a missing field does not raise a <code>TypeError</code>: it silently returns <code>None</code> or nothing at all. Your annotated function receives data from the outside world, and all your type hints are powerless to stop the wrong thing getting in.</p>
-<p>This is the boundary problem. Every data system has a line between the outside world (unpredictable) and your code (structured). Pydantic sits at that line and enforces the contract: it validates that incoming data matches the types and constraints you declared, raises a <code>ValidationError</code> with the exact field and reason if it does not, and only lets clean, structured data through.</p>
-<p>The <code>grade-predictor</code> project gains a <code>StudentRecord</code> model in this chapter. Chapter 25 extends the same principle from individual records to entire DataFrames.</p>
+<p>You have just finished building the <code>grade-predictor</code> pipeline. It reads a CSV, computes weighted scores, applies a pass threshold, and writes results to a file. You add type annotations everywhere. Your type checker passes clean. You deploy.</p>
+<p>Two weeks later, a bug report arrives: the pipeline produced a passing grade for a student whose <code>midterm_score</code> was logged as <code>150.0</code> , which is impossible on a 100-point scale. The pipeline did not crash. The math ran correctly on the wrong number. A downstream report was wrong, and nobody noticed until a student appealed their grade.</p>
+<p>The problem was not the computation. It was that nothing stopped the invalid value from entering the pipeline in the first place. Type annotations say <em>what type a value should be</em>. They do not say <em>whether a value of that type makes sense at runtime</em>. <code>midterm_score: float</code> accepts any float: <code>150.0</code>, <code>-20.0</code>, <code>float("inf")</code>. The annotation is a hint to the reader and the type checker. It is not a gate.</p>
+<p><strong>Pydantic</strong> (<a href="https://docs.pydantic.dev/latest/">pydantic.dev</a>) turns annotations into gates. Define a model, describe the constraints, and Pydantic enforces them on every construction, before the value reaches any computation. One validation point at entry; everything downstream trusts the types.</p>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
@@ -540,75 +532,42 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
+<p>The diagram below shows where Pydantic sits in the pipeline: external data enters, Pydantic either validates and coerces it into a typed model or raises <code>ValidationError</code> at the boundary, and only clean, typed data reaches your code.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="figs/pydantic-boundary.svg" class="img-fluid figure-img" alt="Three columns: external world with JSON, CSV, and form inputs; Pydantic model in the centre with typed field rules; your code on the right receiving only clean, validated objects. A red ValidationError arrow exits downward from the model when data fails."></p>
 <figcaption>Pydantic as the validation boundary: external data (JSON, CSV, web forms) enters the Pydantic model, which enforces types and constraints and either passes clean Python objects to your code or raises a ValidationError with the exact problem.</figcaption>
 </figure>
 </div>
-<section id="the-bug-that-type-annotations-cannot-catch" class="level2">
-<h2 class="anchored" data-anchor-id="the-bug-that-type-annotations-cannot-catch">0. The Bug That Type Annotations Cannot Catch</h2>
-<p>You have just finished building the <code>grade-predictor</code> pipeline. It reads a CSV, computes weighted scores, applies a pass threshold, and writes results to a file. You add type annotations everywhere. Your type checker passes clean. You deploy.</p>
-<p>Two weeks later, a bug report arrives: the pipeline produced a passing grade for a student whose <code>midterm_score</code> was logged as <code>150.0</code> , which is impossible on a 100-point scale. The pipeline did not crash. The math ran correctly on the wrong number. A downstream report was wrong, and nobody noticed until a student appealed their grade.</p>
-<p>The problem was not the computation. It was that nothing stopped the invalid value from entering the pipeline in the first place. Type annotations say <em>what type a value should be</em>. They do not say <em>whether a value of that type makes sense at runtime</em>. <code>midterm_score: float</code> accepts any float: <code>150.0</code>, <code>-20.0</code>, <code>float("inf")</code>. The annotation is a hint to the reader and the type checker. It is not a gate.</p>
-<p><strong>Pydantic</strong> (<a href="https://docs.pydantic.dev/latest/">pydantic.dev</a>) turns annotations into gates. Define a model, describe the constraints, and Pydantic enforces them on every construction, before the value reaches any computation. One validation point at entry; everything downstream trusts the types.</p>
-<section id="install" class="level3">
-<h3 class="anchored" data-anchor-id="install">Install</h3>
-<p>Pydantic is in <code>pyproject.toml</code>. For a standalone project:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> add pydantic pydantic-settings    <span class="co"># or: pip install pydantic pydantic-settings</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</section>
-</section>
-<section id="models-type-annotations-that-bite" class="level2">
-<h2 class="anchored" data-anchor-id="models-type-annotations-that-bite">1. Models: Type Annotations That Bite</h2>
-<div class="cell" data-layout-align="default">
-<div class="cell-output-display">
-<div>
-<p></p><figure class="figure"><p></p>
-<div>
-<pre class="mermaid mermaid-js">flowchart LR
-    A["raw input\ndict / JSON / env vars"] --&gt; B["Pydantic model\nconstructor"]
-    B --&gt; C["field validators\ntype coercion + constraints"]
-    C --&gt;|"type error or\nconstraint violated"| E["ValidationError\nfield path + message"]
-    C --&gt;|"all fields valid"| D["model validators\ncross-field checks"]
-    D --&gt;|"invariant violated"| E
-    D --&gt;|"all pass"| F["model instance\ntype-safe, immutable"]
-
-    style F fill:#EBF5F0,stroke:#059669,color:#065F46
-    style E fill:#FEF2F2,stroke:#DC2626,color:#991B1B
-    style B fill:#EAF3FA,stroke:#0369A1,color:#0C4A6E
-</pre>
-</div>
-<p></p></figure><p></p>
-</div>
-</div>
-</div>
 <p>A Python dataclass accepts any value for any field, regardless of what the annotation says. A Pydantic model validates on construction. Pass the wrong type and it raises an error immediately, before the value reaches any computation:</p>
-<div id="8" class="cell" data-execution_count="1">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> dataclasses <span class="im">import</span> dataclass</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pydantic <span class="im">import</span> BaseModel</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<div id="7" class="cell" data-execution_count="1">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> dataclasses <span class="im">import</span> dataclass</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pydantic <span class="im">import</span> BaseModel</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Both classes use the same annotations but behave differently. The <code>@dataclass</code> stores whatever you pass; <code>BaseModel</code> validates it:</p>
+<div id="9" class="cell" data-execution_count="2">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="at">@dataclass</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> DataclassStudent:</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    student_id: <span class="bu">str</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    midterm_score: <span class="bu">float</span></span>
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="at">@dataclass</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> DataclassStudent:</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> PydanticStudent(BaseModel):</span>
 <span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    student_id: <span class="bu">str</span></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    midterm_score: <span class="bu">float</span></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> PydanticStudent(BaseModel):</span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    student_id: <span class="bu">str</span></span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    midterm_score: <span class="bu">float</span></span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Dataclass: accepts "eighty" silently</span></span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>dc <span class="op">=</span> DataclassStudent(student_id<span class="op">=</span><span class="st">"S0001"</span>, midterm_score<span class="op">=</span><span class="st">"eighty"</span>)</span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(dc.midterm_score)  <span class="co"># "eighty": no error</span></span>
-<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Pydantic: raises ValidationError immediately</span></span>
-<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span>:</span>
-<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>    ps <span class="op">=</span> PydanticStudent(student_id<span class="op">=</span><span class="st">"S0001"</span>, midterm_score<span class="op">=</span><span class="st">"eighty"</span>)</span>
-<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a><span class="cf">except</span> <span class="pp">Exception</span> <span class="im">as</span> e:</span>
-<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="bu">type</span>(e).<span class="va">__name__</span>, e)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    midterm_score: <span class="bu">float</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Construct both with <code>midterm_score="eighty"</code>. The dataclass stores the string silently; Pydantic rejects it before the object is created:</p>
+<div id="11" class="cell" data-execution_count="3">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Dataclass accepts "eighty" silently</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>dc <span class="op">=</span> DataclassStudent(student_id<span class="op">=</span><span class="st">"S0001"</span>, midterm_score<span class="op">=</span><span class="st">"eighty"</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(dc.midterm_score)  <span class="co"># "eighty": no error</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Pydantic raises ValidationError immediately</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span>:</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    ps <span class="op">=</span> PydanticStudent(student_id<span class="op">=</span><span class="st">"S0001"</span>, midterm_score<span class="op">=</span><span class="st">"eighty"</span>)</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="cf">except</span> <span class="pp">Exception</span> <span class="im">as</span> e:</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="bu">type</span>(e).<span class="va">__name__</span>, e)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>eighty
 ValidationError 1 validation error for PydanticStudent
@@ -621,58 +580,57 @@ midterm_score
 <div class="ark-concept">
 <p><span class="ark-concept-title"><i class="bi bi-key-fill"></i> Key Concept: Validate at the boundary, not inside the pipeline</span><br><br> A pipeline that validates its inputs at the entry point can trust every value it works with from that point on. A pipeline that validates inside individual functions repeats the same checks everywhere and still misses values that enter through unexpected paths. Pydantic at the boundary is the architectural principle; the model is the mechanism.</p>
 </div>
-</section>
 <section id="studentrecord-validating-incoming-data" class="level2">
 <h2 class="anchored" data-anchor-id="studentrecord-validating-incoming-data">2. <code>StudentRecord</code>: Validating Incoming Data</h2>
 <p>Define a model for a student record coming in from a CSV or API. The <code>model_config</code> attribute controls Pydantic v2’s behaviour:</p>
-<div id="11" class="cell" data-execution_count="2">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> re</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> typing <span class="im">import</span> Annotated</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pydantic <span class="im">import</span> BaseModel, Field, ValidationError, field_validator</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> StudentRecord(BaseModel):</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    model_config <span class="op">=</span> {<span class="st">"str_strip_whitespace"</span>: <span class="va">True</span>, <span class="st">"validate_assignment"</span>: <span class="va">True</span>}</span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    student_id: <span class="bu">str</span></span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    midterm_score: Annotated[<span class="bu">float</span>, Field(ge<span class="op">=</span><span class="fl">0.0</span>, le<span class="op">=</span><span class="fl">100.0</span>)]</span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    final_score: Annotated[<span class="bu">float</span>, Field(ge<span class="op">=</span><span class="fl">0.0</span>, le<span class="op">=</span><span class="fl">100.0</span>)]</span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>    project_score: Annotated[<span class="bu">float</span>, Field(ge<span class="op">=</span><span class="fl">0.0</span>, le<span class="op">=</span><span class="fl">100.0</span>)]</span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>    program: <span class="bu">str</span></span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>    has_internet: <span class="bu">bool</span> <span class="op">=</span> <span class="va">True</span></span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">@field_validator</span>(<span class="st">"student_id"</span>)</span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">@classmethod</span></span>
-<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> student_id_format(cls, v: <span class="bu">str</span>) <span class="op">-&gt;</span> <span class="bu">str</span>:</span>
-<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="kw">not</span> re.match(<span class="vs">r"</span><span class="dv">^</span><span class="vs">S</span><span class="dv">\d</span><span class="op">{4}</span><span class="dv">$</span><span class="vs">"</span>, v):</span>
-<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>            <span class="cf">raise</span> <span class="pp">ValueError</span>(<span class="ss">f"student_id must match S followed by 4 digits, got '</span><span class="sc">{</span>v<span class="sc">}</span><span class="ss">'"</span>)</span>
-<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> v</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="14" class="cell" data-execution_count="4">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> re</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> typing <span class="im">import</span> Annotated</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pydantic <span class="im">import</span> BaseModel, Field, ValidationError, field_validator</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> StudentRecord(BaseModel):</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    model_config <span class="op">=</span> {<span class="st">"str_strip_whitespace"</span>: <span class="va">True</span>, <span class="st">"validate_assignment"</span>: <span class="va">True</span>}</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    student_id: <span class="bu">str</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    midterm_score: Annotated[<span class="bu">float</span>, Field(ge<span class="op">=</span><span class="fl">0.0</span>, le<span class="op">=</span><span class="fl">100.0</span>)]</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    final_score: Annotated[<span class="bu">float</span>, Field(ge<span class="op">=</span><span class="fl">0.0</span>, le<span class="op">=</span><span class="fl">100.0</span>)]</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>    project_score: Annotated[<span class="bu">float</span>, Field(ge<span class="op">=</span><span class="fl">0.0</span>, le<span class="op">=</span><span class="fl">100.0</span>)]</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>    program: <span class="bu">str</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>    has_internet: <span class="bu">bool</span> <span class="op">=</span> <span class="va">True</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">@field_validator</span>(<span class="st">"student_id"</span>)</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">@classmethod</span></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> student_id_format(cls, v: <span class="bu">str</span>) <span class="op">-&gt;</span> <span class="bu">str</span>:</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="kw">not</span> re.match(<span class="vs">r"</span><span class="dv">^</span><span class="vs">S</span><span class="dv">\d</span><span class="op">{4}</span><span class="dv">$</span><span class="vs">"</span>, v):</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>            <span class="cf">raise</span> <span class="pp">ValueError</span>(<span class="ss">f"student_id must match S followed by 4 digits, got '</span><span class="sc">{</span>v<span class="sc">}</span><span class="ss">'"</span>)</span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> v</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p><code>Field(ge=0.0, le=100.0)</code> means “greater than or equal to 0, less than or equal to 100”. Pydantic v2 uses <code>Annotated</code> with <code>Field</code> for constraints; the old <code>validator</code> decorator is replaced by <code>field_validator</code>.</p>
 <p>Try it:</p>
-<div id="13" class="cell" data-execution_count="3">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Valid record: succeeds</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>record <span class="op">=</span> StudentRecord(</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    student_id<span class="op">=</span><span class="st">"S0042"</span>,</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    midterm_score<span class="op">=</span><span class="fl">78.5</span>,</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    final_score<span class="op">=</span><span class="fl">82.0</span>,</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    project_score<span class="op">=</span><span class="st">"91.0"</span>,  <span class="co"># string coerced to float</span></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    program<span class="op">=</span><span class="st">"CS"</span>,</span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(record.model_dump())</span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Invalid: midterm over 100</span></span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span>:</span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>    bad <span class="op">=</span> StudentRecord(</span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>        student_id<span class="op">=</span><span class="st">"S0042"</span>,</span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>        midterm_score<span class="op">=</span><span class="fl">150.0</span>,  <span class="co"># violates le=100.0</span></span>
-<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>        final_score<span class="op">=</span><span class="fl">80.0</span>,</span>
-<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>        project_score<span class="op">=</span><span class="fl">75.0</span>,</span>
-<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>        program<span class="op">=</span><span class="st">"CS"</span>,</span>
-<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a><span class="cf">except</span> ValidationError <span class="im">as</span> e:</span>
-<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(e)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="16" class="cell" data-execution_count="5">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Valid record: succeeds</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>record <span class="op">=</span> StudentRecord(</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    student_id<span class="op">=</span><span class="st">"S0042"</span>,</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    midterm_score<span class="op">=</span><span class="fl">78.5</span>,</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    final_score<span class="op">=</span><span class="fl">82.0</span>,</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    project_score<span class="op">=</span><span class="st">"91.0"</span>,  <span class="co"># string coerced to float</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    program<span class="op">=</span><span class="st">"CS"</span>,</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(record.model_dump())</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Invalid: midterm over 100</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span>:</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>    bad <span class="op">=</span> StudentRecord(</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>        student_id<span class="op">=</span><span class="st">"S0042"</span>,</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>        midterm_score<span class="op">=</span><span class="fl">150.0</span>,  <span class="co"># violates le=100.0</span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>        final_score<span class="op">=</span><span class="fl">80.0</span>,</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>        project_score<span class="op">=</span><span class="fl">75.0</span>,</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>        program<span class="op">=</span><span class="st">"CS"</span>,</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a><span class="cf">except</span> ValidationError <span class="im">as</span> e:</span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(e)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>{'student_id': 'S0042', 'midterm_score': 78.5, 'final_score': 82.0, 'project_score': 91.0, 'program': 'CS', 'has_internet': True}
 1 validation error for StudentRecord
@@ -696,40 +654,40 @@ StudentRecord(..., semester="Winter")  # should raise ValidationError</pre>
 <h2 class="anchored" data-anchor-id="field-validators-and-cross-field-validators">3. Field Validators and Cross-Field Validators</h2>
 <p>A <code>@field_validator</code> runs on a single field after type coercion. Use it for business rules that go beyond a simple range check.</p>
 <p>A <code>@model_validator</code> runs after all fields are set and has access to the complete model. Use it for cross-field constraints: “weights must sum to 1.0”:</p>
-<div id="16" class="cell" data-execution_count="4">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> typing <span class="im">import</span> Annotated</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pydantic <span class="im">import</span> BaseModel, Field, ValidationError, field_validator, model_validator</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> GradeConfig(BaseModel):</span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    midterm_weight: Annotated[<span class="bu">float</span>, Field(gt<span class="op">=</span><span class="fl">0.0</span>, lt<span class="op">=</span><span class="fl">1.0</span>)] <span class="op">=</span> <span class="fl">0.30</span></span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    final_weight: Annotated[<span class="bu">float</span>, Field(gt<span class="op">=</span><span class="fl">0.0</span>, lt<span class="op">=</span><span class="fl">1.0</span>)] <span class="op">=</span> <span class="fl">0.45</span></span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    project_weight: Annotated[<span class="bu">float</span>, Field(gt<span class="op">=</span><span class="fl">0.0</span>, lt<span class="op">=</span><span class="fl">1.0</span>)] <span class="op">=</span> <span class="fl">0.25</span></span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    pass_threshold: Annotated[<span class="bu">float</span>, Field(ge<span class="op">=</span><span class="fl">50.0</span>, le<span class="op">=</span><span class="fl">80.0</span>)] <span class="op">=</span> <span class="fl">60.0</span></span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">@model_validator</span>(mode<span class="op">=</span><span class="st">"after"</span>)</span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> weights_must_sum_to_one(<span class="va">self</span>) <span class="op">-&gt;</span> <span class="st">"GradeConfig"</span>:</span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>        total <span class="op">=</span> <span class="va">self</span>.midterm_weight <span class="op">+</span> <span class="va">self</span>.final_weight <span class="op">+</span> <span class="va">self</span>.project_weight</span>
-<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="bu">abs</span>(total <span class="op">-</span> <span class="fl">1.0</span>) <span class="op">&gt;</span> <span class="fl">1e-6</span>:</span>
-<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>            <span class="cf">raise</span> <span class="pp">ValueError</span>(</span>
-<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>                <span class="ss">f"Weights must sum to 1.0, got </span><span class="sc">{</span>total<span class="sc">:.6f}</span><span class="ss">. "</span></span>
-<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>                <span class="ss">f"Adjust midterm (</span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>midterm_weight<span class="sc">}</span><span class="ss">), "</span></span>
-<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>                <span class="ss">f"final (</span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>final_weight<span class="sc">}</span><span class="ss">), or project (</span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>project_weight<span class="sc">}</span><span class="ss">)."</span></span>
-<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>            )</span>
-<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">self</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="19" class="cell" data-execution_count="6">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> typing <span class="im">import</span> Annotated</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pydantic <span class="im">import</span> BaseModel, Field, ValidationError, field_validator, model_validator</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> GradeConfig(BaseModel):</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    midterm_weight: Annotated[<span class="bu">float</span>, Field(gt<span class="op">=</span><span class="fl">0.0</span>, lt<span class="op">=</span><span class="fl">1.0</span>)] <span class="op">=</span> <span class="fl">0.30</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    final_weight: Annotated[<span class="bu">float</span>, Field(gt<span class="op">=</span><span class="fl">0.0</span>, lt<span class="op">=</span><span class="fl">1.0</span>)] <span class="op">=</span> <span class="fl">0.45</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    project_weight: Annotated[<span class="bu">float</span>, Field(gt<span class="op">=</span><span class="fl">0.0</span>, lt<span class="op">=</span><span class="fl">1.0</span>)] <span class="op">=</span> <span class="fl">0.25</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>    pass_threshold: Annotated[<span class="bu">float</span>, Field(ge<span class="op">=</span><span class="fl">50.0</span>, le<span class="op">=</span><span class="fl">80.0</span>)] <span class="op">=</span> <span class="fl">60.0</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">@model_validator</span>(mode<span class="op">=</span><span class="st">"after"</span>)</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> weights_must_sum_to_one(<span class="va">self</span>) <span class="op">-&gt;</span> <span class="st">"GradeConfig"</span>:</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>        total <span class="op">=</span> <span class="va">self</span>.midterm_weight <span class="op">+</span> <span class="va">self</span>.final_weight <span class="op">+</span> <span class="va">self</span>.project_weight</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="bu">abs</span>(total <span class="op">-</span> <span class="fl">1.0</span>) <span class="op">&gt;</span> <span class="fl">1e-6</span>:</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>            <span class="cf">raise</span> <span class="pp">ValueError</span>(</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>                <span class="ss">f"Weights must sum to 1.0, got </span><span class="sc">{</span>total<span class="sc">:.6f}</span><span class="ss">. "</span></span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>                <span class="ss">f"Adjust midterm (</span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>midterm_weight<span class="sc">}</span><span class="ss">), "</span></span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>                <span class="ss">f"final (</span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>final_weight<span class="sc">}</span><span class="ss">), or project (</span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>project_weight<span class="sc">}</span><span class="ss">)."</span></span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>            )</span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">self</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>The <code>mode="after"</code> argument means the validator runs after Pydantic has already validated and coerced every individual field. Use <code>mode="before"</code> when you need to transform raw input before type coercion.</p>
-<div id="18" class="cell" data-execution_count="5">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Valid: weights sum to 1.0</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>cfg <span class="op">=</span> GradeConfig(midterm_weight<span class="op">=</span><span class="fl">0.3</span>, final_weight<span class="op">=</span><span class="fl">0.5</span>, project_weight<span class="op">=</span><span class="fl">0.2</span>)</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(cfg)</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Invalid: weights sum to 1.05</span></span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span>:</span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    bad_cfg <span class="op">=</span> GradeConfig(midterm_weight<span class="op">=</span><span class="fl">0.4</span>, final_weight<span class="op">=</span><span class="fl">0.45</span>, project_weight<span class="op">=</span><span class="fl">0.2</span>)</span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="cf">except</span> ValidationError <span class="im">as</span> e:</span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(e)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="21" class="cell" data-execution_count="7">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Valid: weights sum to 1.0</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>cfg <span class="op">=</span> GradeConfig(midterm_weight<span class="op">=</span><span class="fl">0.3</span>, final_weight<span class="op">=</span><span class="fl">0.5</span>, project_weight<span class="op">=</span><span class="fl">0.2</span>)</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(cfg)</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Invalid: weights sum to 1.05</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span>:</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    bad_cfg <span class="op">=</span> GradeConfig(midterm_weight<span class="op">=</span><span class="fl">0.4</span>, final_weight<span class="op">=</span><span class="fl">0.45</span>, project_weight<span class="op">=</span><span class="fl">0.2</span>)</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="cf">except</span> ValidationError <span class="im">as</span> e:</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(e)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>midterm_weight=0.3 final_weight=0.5 project_weight=0.2 pass_threshold=60.0
 1 validation error for GradeConfig
@@ -753,19 +711,19 @@ assert cfg.model_dump() == {**raw, "pass_threshold": 60.0}</pre>
 <section id="argparse-the-baseline" class="level3">
 <h3 class="anchored" data-anchor-id="argparse-the-baseline">argparse: the baseline</h3>
 <p><code>argparse</code> requires you to declare each argument manually, convert strings to types yourself, and write help text by hand:</p>
-<div id="21" class="cell" data-execution_count="6">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> argparse</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co"># argparse: explicit, verbose, manual type conversion</span></span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>parser <span class="op">=</span> argparse.ArgumentParser(description<span class="op">=</span><span class="st">"Grade predictor CLI"</span>)</span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>parser.add_argument(<span class="st">"--data-path"</span>, <span class="bu">type</span><span class="op">=</span><span class="bu">str</span>, default<span class="op">=</span><span class="st">"data/university_analytics.csv"</span>)</span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>parser.add_argument(<span class="st">"--pass-threshold"</span>, <span class="bu">type</span><span class="op">=</span><span class="bu">float</span>, default<span class="op">=</span><span class="fl">60.0</span>)</span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>parser.add_argument(<span class="st">"--debug"</span>, action<span class="op">=</span><span class="st">"store_true"</span>, default<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="co"># In a script: args = parser.parse_args()</span></span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="co"># In a notebook: simulate with a list</span></span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>args <span class="op">=</span> parser.parse_args([<span class="st">"--data-path"</span>, <span class="st">"data/train.csv"</span>, <span class="st">"--pass-threshold"</span>, <span class="st">"65.0"</span>])</span>
-<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(args.data_path, args.pass_threshold, args.debug)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="24" class="cell" data-execution_count="8">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> argparse</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="co"># argparse: explicit, verbose, manual type conversion</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>parser <span class="op">=</span> argparse.ArgumentParser(description<span class="op">=</span><span class="st">"Grade predictor CLI"</span>)</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>parser.add_argument(<span class="st">"--data-path"</span>, <span class="bu">type</span><span class="op">=</span><span class="bu">str</span>, default<span class="op">=</span><span class="st">"data/university_analytics.csv"</span>)</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>parser.add_argument(<span class="st">"--pass-threshold"</span>, <span class="bu">type</span><span class="op">=</span><span class="bu">float</span>, default<span class="op">=</span><span class="fl">60.0</span>)</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>parser.add_argument(<span class="st">"--debug"</span>, action<span class="op">=</span><span class="st">"store_true"</span>, default<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="co"># In a script: args = parser.parse_args()</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="co"># In a notebook: simulate with a list</span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>args <span class="op">=</span> parser.parse_args([<span class="st">"--data-path"</span>, <span class="st">"data/train.csv"</span>, <span class="st">"--pass-threshold"</span>, <span class="st">"65.0"</span>])</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(args.data_path, args.pass_threshold, args.debug)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>data/train.csv 65.0 False</code></pre>
 </div>
@@ -774,28 +732,28 @@ assert cfg.model_dump() == {**raw, "pass_threshold": 60.0}</pre>
 <section id="typer-annotations-as-the-cli-spec" class="level3">
 <h3 class="anchored" data-anchor-id="typer-annotations-as-the-cli-spec">typer: annotations as the CLI spec</h3>
 <p><code>typer</code> reads your function’s type annotations and builds the parser for you. The same type hints that describe the function’s signature generate <code>--help</code>, automatic type coercion, and validation:</p>
-<div id="23" class="cell" data-execution_count="7">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># pip install typer  /  uv add typer</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="co"># This is a module-level demo: run as: python script.py --data-path ... from terminal</span></span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> typer</span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>app <span class="op">=</span> typer.Typer()</span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="at">@app.command</span>()</span>
-<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> train(</span>
-<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>    data_path: <span class="bu">str</span> <span class="op">=</span> typer.Option(<span class="st">"data/university_analytics.csv"</span>, <span class="bu">help</span><span class="op">=</span><span class="st">"Path to CSV"</span>),</span>
-<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>    pass_threshold: <span class="bu">float</span> <span class="op">=</span> typer.Option(<span class="fl">60.0</span>, <span class="bu">min</span><span class="op">=</span><span class="fl">50.0</span>, <span class="bu">max</span><span class="op">=</span><span class="fl">80.0</span>, <span class="bu">help</span><span class="op">=</span><span class="st">"Pass threshold"</span>),</span>
-<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>    debug: <span class="bu">bool</span> <span class="op">=</span> typer.Option(<span class="va">False</span>, <span class="bu">help</span><span class="op">=</span><span class="st">"Enable debug logging"</span>),</span>
-<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>) <span class="op">-&gt;</span> <span class="va">None</span>:</span>
-<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>    typer.echo(<span class="ss">f"Loading data from: </span><span class="sc">{</span>data_path<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>    typer.echo(<span class="ss">f"Pass threshold: </span><span class="sc">{</span>pass_threshold<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>    typer.echo(<span class="ss">f"Debug: </span><span class="sc">{</span>debug<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a><span class="co"># In a real script: if __name__ == "__main__": app()</span></span>
-<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Running `python train.py --help` auto-generates full usage docs.</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="26" class="cell" data-execution_count="9">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># pip install typer  /  uv add typer</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="co"># This is a module-level demo: run as: python script.py --data-path ... from terminal</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> typer</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>app <span class="op">=</span> typer.Typer()</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a><span class="at">@app.command</span>()</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> train(</span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>    data_path: <span class="bu">str</span> <span class="op">=</span> typer.Option(<span class="st">"data/university_analytics.csv"</span>, <span class="bu">help</span><span class="op">=</span><span class="st">"Path to CSV"</span>),</span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>    pass_threshold: <span class="bu">float</span> <span class="op">=</span> typer.Option(<span class="fl">60.0</span>, <span class="bu">min</span><span class="op">=</span><span class="fl">50.0</span>, <span class="bu">max</span><span class="op">=</span><span class="fl">80.0</span>, <span class="bu">help</span><span class="op">=</span><span class="st">"Pass threshold"</span>),</span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>    debug: <span class="bu">bool</span> <span class="op">=</span> typer.Option(<span class="va">False</span>, <span class="bu">help</span><span class="op">=</span><span class="st">"Enable debug logging"</span>),</span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>) <span class="op">-&gt;</span> <span class="va">None</span>:</span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>    typer.echo(<span class="ss">f"Loading data from: </span><span class="sc">{</span>data_path<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>    typer.echo(<span class="ss">f"Pass threshold: </span><span class="sc">{</span>pass_threshold<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>    typer.echo(<span class="ss">f"Debug: </span><span class="sc">{</span>debug<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a><span class="co"># In a real script: if __name__ == "__main__": app()</span></span>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Running `python train.py --help` auto-generates full usage docs.</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="typer-pydantic-settings-the-dsmlops-pattern" class="level3">
@@ -824,41 +782,41 @@ def validate_data(
 <section id="basesettings-config-from-environment-variables" class="level2">
 <h2 class="anchored" data-anchor-id="basesettings-config-from-environment-variables">5. <code>BaseSettings</code>: Config from Environment Variables</h2>
 <p><code>pydantic-settings</code> extends Pydantic with a <code>BaseSettings</code> class that reads values from environment variables and <code>.env</code> files. This replaces the manual <code>os.getenv</code> pattern with a typed, validated config object.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> add pydantic-settings</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div id="26" class="cell" data-execution_count="8">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># grade_predictor/config.py</span></span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> typing <span class="im">import</span> Annotated</span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pydantic <span class="im">import</span> Field</span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pydantic_settings <span class="im">import</span> BaseSettings, SettingsConfigDict</span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> GradeSettings(BaseSettings):</span>
-<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>    model_config <span class="op">=</span> SettingsConfigDict(</span>
-<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>        env_file<span class="op">=</span><span class="st">".env"</span>,</span>
-<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>        env_prefix<span class="op">=</span><span class="st">"GRADE_"</span>,  <span class="co"># GRADE_API_KEY maps to api_key</span></span>
-<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>        case_sensitive<span class="op">=</span><span class="va">False</span>,</span>
-<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>    api_key: <span class="bu">str</span> <span class="op">=</span> Field(default<span class="op">=</span><span class="st">"dev-key"</span>, description<span class="op">=</span><span class="st">"API key for the university data service"</span>)</span>
-<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>    data_path: <span class="bu">str</span> <span class="op">=</span> Field(default<span class="op">=</span><span class="st">"data/university_analytics.csv"</span>)</span>
-<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>    pass_threshold: Annotated[<span class="bu">float</span>, Field(ge<span class="op">=</span><span class="fl">50.0</span>, le<span class="op">=</span><span class="fl">80.0</span>)] <span class="op">=</span> <span class="fl">60.0</span></span>
-<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a>    debug: <span class="bu">bool</span> <span class="op">=</span> <span class="va">False</span></span>
-<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Load (reads .env if it exists, otherwise uses defaults)</span></span>
-<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a>settings <span class="op">=</span> GradeSettings()</span>
-<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(settings.data_path)</span>
-<span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(settings.pass_threshold)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> add pydantic-settings</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="29" class="cell" data-execution_count="10">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># grade_predictor/config.py</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> typing <span class="im">import</span> Annotated</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pydantic <span class="im">import</span> Field</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pydantic_settings <span class="im">import</span> BaseSettings, SettingsConfigDict</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> GradeSettings(BaseSettings):</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>    model_config <span class="op">=</span> SettingsConfigDict(</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>        env_file<span class="op">=</span><span class="st">".env"</span>,</span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>        env_prefix<span class="op">=</span><span class="st">"GRADE_"</span>,  <span class="co"># GRADE_API_KEY maps to api_key</span></span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>        case_sensitive<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>    api_key: <span class="bu">str</span> <span class="op">=</span> Field(default<span class="op">=</span><span class="st">"dev-key"</span>, description<span class="op">=</span><span class="st">"API key for the university data service"</span>)</span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>    data_path: <span class="bu">str</span> <span class="op">=</span> Field(default<span class="op">=</span><span class="st">"data/university_analytics.csv"</span>)</span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>    pass_threshold: Annotated[<span class="bu">float</span>, Field(ge<span class="op">=</span><span class="fl">50.0</span>, le<span class="op">=</span><span class="fl">80.0</span>)] <span class="op">=</span> <span class="fl">60.0</span></span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a>    debug: <span class="bu">bool</span> <span class="op">=</span> <span class="va">False</span></span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Load (reads .env if it exists, otherwise uses defaults)</span></span>
+<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a>settings <span class="op">=</span> GradeSettings()</span>
+<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(settings.data_path)</span>
+<span id="cb15-24"><a href="#cb15-24" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(settings.pass_threshold)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>data/university_analytics.csv
 60.0</code></pre>
 </div>
 </div>
 <p>With a <code>.env</code> file:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="va">GRADE_API_KEY</span><span class="op">=</span>secret-key-here</span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="va">GRADE_DATA_PATH</span><span class="op">=</span>data/production.csv</span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="va">GRADE_PASS_THRESHOLD</span><span class="op">=</span>65.0</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="va">GRADE_API_KEY</span><span class="op">=</span>secret-key-here</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="va">GRADE_DATA_PATH</span><span class="op">=</span>data/production.csv</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="va">GRADE_PASS_THRESHOLD</span><span class="op">=</span>65.0</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Values from the <code>.env</code> file override defaults; environment variables override both.</p>
 <div class="ark-concept">
 <p><span class="ark-concept-title"><i class="bi bi-key-fill"></i> Key Concept: Settings validation catches misconfiguration at startup, not mid-run</span><br><br> Without validation, a missing or malformed environment variable is discovered when the code first uses it: halfway through a pipeline run, after 20 minutes of processing. <code>BaseSettings</code> validates all settings at construction time, failing fast at startup with a clear error that lists every missing or invalid variable.</p>
@@ -877,46 +835,46 @@ GradeSettings(api_key="test-key", pass_threshold=95.0)  # should raise</pre>
 <section id="typing-a-ds-pipeline-config" class="level2">
 <h2 class="anchored" data-anchor-id="typing-a-ds-pipeline-config">6. Typing a DS Pipeline Config</h2>
 <p>A real DS pipeline has more than one config object. The pattern is to compose small focused models into a root config that is loaded once:</p>
-<div id="29" class="cell" data-execution_count="9">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> typing <span class="im">import</span> Annotated</span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pydantic <span class="im">import</span> BaseModel, Field, model_validator</span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pydantic_settings <span class="im">import</span> BaseSettings, SettingsConfigDict</span>
-<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> WeightConfig(BaseModel):</span>
-<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>    midterm: Annotated[<span class="bu">float</span>, Field(gt<span class="op">=</span><span class="fl">0.0</span>, lt<span class="op">=</span><span class="fl">1.0</span>)] <span class="op">=</span> <span class="fl">0.30</span></span>
-<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>    final: Annotated[<span class="bu">float</span>, Field(gt<span class="op">=</span><span class="fl">0.0</span>, lt<span class="op">=</span><span class="fl">1.0</span>)] <span class="op">=</span> <span class="fl">0.45</span></span>
-<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>    project: Annotated[<span class="bu">float</span>, Field(gt<span class="op">=</span><span class="fl">0.0</span>, lt<span class="op">=</span><span class="fl">1.0</span>)] <span class="op">=</span> <span class="fl">0.25</span></span>
-<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">@model_validator</span>(mode<span class="op">=</span><span class="st">"after"</span>)</span>
-<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> weights_sum_to_one(<span class="va">self</span>) <span class="op">-&gt;</span> <span class="st">"WeightConfig"</span>:</span>
-<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>        total <span class="op">=</span> <span class="va">self</span>.midterm <span class="op">+</span> <span class="va">self</span>.final <span class="op">+</span> <span class="va">self</span>.project</span>
-<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="bu">abs</span>(total <span class="op">-</span> <span class="fl">1.0</span>) <span class="op">&gt;</span> <span class="fl">1e-6</span>:</span>
-<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a>            <span class="cf">raise</span> <span class="pp">ValueError</span>(<span class="ss">f"Weights must sum to 1.0, got </span><span class="sc">{</span>total<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
-<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">self</span></span>
-<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-20"><a href="#cb17-20" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> PipelineConfig(BaseSettings):</span>
-<span id="cb17-21"><a href="#cb17-21" aria-hidden="true" tabindex="-1"></a>    model_config <span class="op">=</span> SettingsConfigDict(env_file<span class="op">=</span><span class="st">".env"</span>, env_prefix<span class="op">=</span><span class="st">"GRADE_"</span>)</span>
-<span id="cb17-22"><a href="#cb17-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-23"><a href="#cb17-23" aria-hidden="true" tabindex="-1"></a>    weights: WeightConfig <span class="op">=</span> WeightConfig()</span>
-<span id="cb17-24"><a href="#cb17-24" aria-hidden="true" tabindex="-1"></a>    pass_threshold: Annotated[<span class="bu">float</span>, Field(ge<span class="op">=</span><span class="fl">50.0</span>, le<span class="op">=</span><span class="fl">80.0</span>)] <span class="op">=</span> <span class="fl">60.0</span></span>
-<span id="cb17-25"><a href="#cb17-25" aria-hidden="true" tabindex="-1"></a>    data_path: <span class="bu">str</span> <span class="op">=</span> <span class="st">"data/university_analytics.csv"</span></span>
-<span id="cb17-26"><a href="#cb17-26" aria-hidden="true" tabindex="-1"></a>    output_path: <span class="bu">str</span> <span class="op">=</span> <span class="st">"data/results.parquet"</span></span>
-<span id="cb17-27"><a href="#cb17-27" aria-hidden="true" tabindex="-1"></a>    debug: <span class="bu">bool</span> <span class="op">=</span> <span class="va">False</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="32" class="cell" data-execution_count="11">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> typing <span class="im">import</span> Annotated</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pydantic <span class="im">import</span> BaseModel, Field, model_validator</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pydantic_settings <span class="im">import</span> BaseSettings, SettingsConfigDict</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> WeightConfig(BaseModel):</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>    midterm: Annotated[<span class="bu">float</span>, Field(gt<span class="op">=</span><span class="fl">0.0</span>, lt<span class="op">=</span><span class="fl">1.0</span>)] <span class="op">=</span> <span class="fl">0.30</span></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>    final: Annotated[<span class="bu">float</span>, Field(gt<span class="op">=</span><span class="fl">0.0</span>, lt<span class="op">=</span><span class="fl">1.0</span>)] <span class="op">=</span> <span class="fl">0.45</span></span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>    project: Annotated[<span class="bu">float</span>, Field(gt<span class="op">=</span><span class="fl">0.0</span>, lt<span class="op">=</span><span class="fl">1.0</span>)] <span class="op">=</span> <span class="fl">0.25</span></span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">@model_validator</span>(mode<span class="op">=</span><span class="st">"after"</span>)</span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> weights_sum_to_one(<span class="va">self</span>) <span class="op">-&gt;</span> <span class="st">"WeightConfig"</span>:</span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>        total <span class="op">=</span> <span class="va">self</span>.midterm <span class="op">+</span> <span class="va">self</span>.final <span class="op">+</span> <span class="va">self</span>.project</span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="bu">abs</span>(total <span class="op">-</span> <span class="fl">1.0</span>) <span class="op">&gt;</span> <span class="fl">1e-6</span>:</span>
+<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a>            <span class="cf">raise</span> <span class="pp">ValueError</span>(<span class="ss">f"Weights must sum to 1.0, got </span><span class="sc">{</span>total<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
+<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">self</span></span>
+<span id="cb18-18"><a href="#cb18-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-19"><a href="#cb18-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-20"><a href="#cb18-20" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> PipelineConfig(BaseSettings):</span>
+<span id="cb18-21"><a href="#cb18-21" aria-hidden="true" tabindex="-1"></a>    model_config <span class="op">=</span> SettingsConfigDict(env_file<span class="op">=</span><span class="st">".env"</span>, env_prefix<span class="op">=</span><span class="st">"GRADE_"</span>)</span>
+<span id="cb18-22"><a href="#cb18-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-23"><a href="#cb18-23" aria-hidden="true" tabindex="-1"></a>    weights: WeightConfig <span class="op">=</span> WeightConfig()</span>
+<span id="cb18-24"><a href="#cb18-24" aria-hidden="true" tabindex="-1"></a>    pass_threshold: Annotated[<span class="bu">float</span>, Field(ge<span class="op">=</span><span class="fl">50.0</span>, le<span class="op">=</span><span class="fl">80.0</span>)] <span class="op">=</span> <span class="fl">60.0</span></span>
+<span id="cb18-25"><a href="#cb18-25" aria-hidden="true" tabindex="-1"></a>    data_path: <span class="bu">str</span> <span class="op">=</span> <span class="st">"data/university_analytics.csv"</span></span>
+<span id="cb18-26"><a href="#cb18-26" aria-hidden="true" tabindex="-1"></a>    output_path: <span class="bu">str</span> <span class="op">=</span> <span class="st">"data/results.parquet"</span></span>
+<span id="cb18-27"><a href="#cb18-27" aria-hidden="true" tabindex="-1"></a>    debug: <span class="bu">bool</span> <span class="op">=</span> <span class="va">False</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Define a <code>PipelineConfig</code> model that bundles training parameters:</p>
-<div id="31" class="cell" data-execution_count="10">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>config <span class="op">=</span> PipelineConfig()</span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> compute_grade(midterm: <span class="bu">float</span>, final: <span class="bu">float</span>, project: <span class="bu">float</span>, cfg: PipelineConfig) <span class="op">-&gt;</span> <span class="bu">float</span>:</span>
-<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>    w <span class="op">=</span> cfg.weights</span>
-<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> midterm <span class="op">*</span> w.midterm <span class="op">+</span> final <span class="op">*</span> w.final <span class="op">+</span> project <span class="op">*</span> w.project</span>
-<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(compute_grade(<span class="fl">78.0</span>, <span class="fl">82.0</span>, <span class="fl">91.0</span>, config))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="34" class="cell" data-execution_count="12">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>config <span class="op">=</span> PipelineConfig()</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> compute_grade(midterm: <span class="bu">float</span>, final: <span class="bu">float</span>, project: <span class="bu">float</span>, cfg: PipelineConfig) <span class="op">-&gt;</span> <span class="bu">float</span>:</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>    w <span class="op">=</span> cfg.weights</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> midterm <span class="op">*</span> w.midterm <span class="op">+</span> final <span class="op">*</span> w.final <span class="op">+</span> project <span class="op">*</span> w.project</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(compute_grade(<span class="fl">78.0</span>, <span class="fl">82.0</span>, <span class="fl">91.0</span>, config))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>83.05</code></pre>
 </div>
@@ -928,49 +886,49 @@ GradeSettings(api_key="test-key", pass_threshold=95.0)  # should raise</pre>
 <section id="validating-a-batch-of-records" class="level2">
 <h2 class="anchored" data-anchor-id="validating-a-batch-of-records">7. Validating a Batch of Records</h2>
 <p>In DS, data comes in batches. Pydantic validates each record independently; the question is how to handle errors without stopping on the first failure:</p>
-<div id="34" class="cell" data-execution_count="11">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pydantic <span class="im">import</span> ValidationError</span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> validate_batch(</span>
-<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>    records: <span class="bu">list</span>[<span class="bu">dict</span>],</span>
-<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>) <span class="op">-&gt;</span> <span class="bu">tuple</span>[<span class="bu">list</span>[StudentRecord], <span class="bu">list</span>[<span class="bu">dict</span>]]:</span>
-<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>    valid: <span class="bu">list</span>[StudentRecord] <span class="op">=</span> []</span>
-<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>    errors: <span class="bu">list</span>[<span class="bu">dict</span>] <span class="op">=</span> []</span>
-<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> raw <span class="kw">in</span> records:</span>
-<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a>        <span class="cf">try</span>:</span>
-<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a>            valid.append(StudentRecord.model_validate(raw))</span>
-<span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a>        <span class="cf">except</span> ValidationError <span class="im">as</span> e:</span>
-<span id="cb20-15"><a href="#cb20-15" aria-hidden="true" tabindex="-1"></a>            errors.append({<span class="op">**</span>raw, <span class="st">"errors"</span>: e.errors()})</span>
-<span id="cb20-16"><a href="#cb20-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-17"><a href="#cb20-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> valid, errors</span>
-<span id="cb20-18"><a href="#cb20-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-19"><a href="#cb20-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-20"><a href="#cb20-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulate a small batch</span></span>
-<span id="cb20-21"><a href="#cb20-21" aria-hidden="true" tabindex="-1"></a>sample <span class="op">=</span> [</span>
-<span id="cb20-22"><a href="#cb20-22" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"student_id"</span>: <span class="st">"S0001"</span>, <span class="st">"midterm_score"</span>: <span class="fl">78.5</span>, <span class="st">"final_score"</span>: <span class="fl">82.0</span>, <span class="st">"project_score"</span>: <span class="fl">90.0</span>, <span class="st">"program"</span>: <span class="st">"CS"</span>},</span>
-<span id="cb20-23"><a href="#cb20-23" aria-hidden="true" tabindex="-1"></a>    {</span>
-<span id="cb20-24"><a href="#cb20-24" aria-hidden="true" tabindex="-1"></a>        <span class="st">"student_id"</span>: <span class="st">"S0002"</span>,</span>
-<span id="cb20-25"><a href="#cb20-25" aria-hidden="true" tabindex="-1"></a>        <span class="st">"midterm_score"</span>: <span class="fl">150.0</span>,</span>
-<span id="cb20-26"><a href="#cb20-26" aria-hidden="true" tabindex="-1"></a>        <span class="st">"final_score"</span>: <span class="fl">80.0</span>,</span>
-<span id="cb20-27"><a href="#cb20-27" aria-hidden="true" tabindex="-1"></a>        <span class="st">"project_score"</span>: <span class="fl">75.0</span>,</span>
-<span id="cb20-28"><a href="#cb20-28" aria-hidden="true" tabindex="-1"></a>        <span class="st">"program"</span>: <span class="st">"EE"</span>,</span>
-<span id="cb20-29"><a href="#cb20-29" aria-hidden="true" tabindex="-1"></a>    },  <span class="co"># invalid</span></span>
-<span id="cb20-30"><a href="#cb20-30" aria-hidden="true" tabindex="-1"></a>    {</span>
-<span id="cb20-31"><a href="#cb20-31" aria-hidden="true" tabindex="-1"></a>        <span class="st">"student_id"</span>: <span class="st">"INVALID"</span>,</span>
-<span id="cb20-32"><a href="#cb20-32" aria-hidden="true" tabindex="-1"></a>        <span class="st">"midterm_score"</span>: <span class="fl">70.0</span>,</span>
-<span id="cb20-33"><a href="#cb20-33" aria-hidden="true" tabindex="-1"></a>        <span class="st">"final_score"</span>: <span class="fl">68.0</span>,</span>
-<span id="cb20-34"><a href="#cb20-34" aria-hidden="true" tabindex="-1"></a>        <span class="st">"project_score"</span>: <span class="fl">72.0</span>,</span>
-<span id="cb20-35"><a href="#cb20-35" aria-hidden="true" tabindex="-1"></a>        <span class="st">"program"</span>: <span class="st">"CS"</span>,</span>
-<span id="cb20-36"><a href="#cb20-36" aria-hidden="true" tabindex="-1"></a>    },  <span class="co"># invalid</span></span>
-<span id="cb20-37"><a href="#cb20-37" aria-hidden="true" tabindex="-1"></a>]</span>
-<span id="cb20-38"><a href="#cb20-38" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-39"><a href="#cb20-39" aria-hidden="true" tabindex="-1"></a>valid_records, error_records <span class="op">=</span> validate_batch(sample)</span>
-<span id="cb20-40"><a href="#cb20-40" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Valid: </span><span class="sc">{</span><span class="bu">len</span>(valid_records)<span class="sc">}</span><span class="ss">, Errors: </span><span class="sc">{</span><span class="bu">len</span>(error_records)<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb20-41"><a href="#cb20-41" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> rec <span class="kw">in</span> error_records:</span>
-<span id="cb20-42"><a href="#cb20-42" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(rec[<span class="st">"student_id"</span>], <span class="st">"-&gt;"</span>, rec[<span class="st">"errors"</span>][<span class="dv">0</span>][<span class="st">"msg"</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="37" class="cell" data-execution_count="13">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pydantic <span class="im">import</span> ValidationError</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> validate_batch(</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>    records: <span class="bu">list</span>[<span class="bu">dict</span>],</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>) <span class="op">-&gt;</span> <span class="bu">tuple</span>[<span class="bu">list</span>[StudentRecord], <span class="bu">list</span>[<span class="bu">dict</span>]]:</span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>    valid: <span class="bu">list</span>[StudentRecord] <span class="op">=</span> []</span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>    errors: <span class="bu">list</span>[<span class="bu">dict</span>] <span class="op">=</span> []</span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> raw <span class="kw">in</span> records:</span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a>        <span class="cf">try</span>:</span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>            valid.append(StudentRecord.model_validate(raw))</span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>        <span class="cf">except</span> ValidationError <span class="im">as</span> e:</span>
+<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a>            errors.append({<span class="op">**</span>raw, <span class="st">"errors"</span>: e.errors()})</span>
+<span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> valid, errors</span>
+<span id="cb21-18"><a href="#cb21-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-19"><a href="#cb21-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-20"><a href="#cb21-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulate a small batch</span></span>
+<span id="cb21-21"><a href="#cb21-21" aria-hidden="true" tabindex="-1"></a>sample <span class="op">=</span> [</span>
+<span id="cb21-22"><a href="#cb21-22" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"student_id"</span>: <span class="st">"S0001"</span>, <span class="st">"midterm_score"</span>: <span class="fl">78.5</span>, <span class="st">"final_score"</span>: <span class="fl">82.0</span>, <span class="st">"project_score"</span>: <span class="fl">90.0</span>, <span class="st">"program"</span>: <span class="st">"CS"</span>},</span>
+<span id="cb21-23"><a href="#cb21-23" aria-hidden="true" tabindex="-1"></a>    {</span>
+<span id="cb21-24"><a href="#cb21-24" aria-hidden="true" tabindex="-1"></a>        <span class="st">"student_id"</span>: <span class="st">"S0002"</span>,</span>
+<span id="cb21-25"><a href="#cb21-25" aria-hidden="true" tabindex="-1"></a>        <span class="st">"midterm_score"</span>: <span class="fl">150.0</span>,</span>
+<span id="cb21-26"><a href="#cb21-26" aria-hidden="true" tabindex="-1"></a>        <span class="st">"final_score"</span>: <span class="fl">80.0</span>,</span>
+<span id="cb21-27"><a href="#cb21-27" aria-hidden="true" tabindex="-1"></a>        <span class="st">"project_score"</span>: <span class="fl">75.0</span>,</span>
+<span id="cb21-28"><a href="#cb21-28" aria-hidden="true" tabindex="-1"></a>        <span class="st">"program"</span>: <span class="st">"EE"</span>,</span>
+<span id="cb21-29"><a href="#cb21-29" aria-hidden="true" tabindex="-1"></a>    },  <span class="co"># invalid</span></span>
+<span id="cb21-30"><a href="#cb21-30" aria-hidden="true" tabindex="-1"></a>    {</span>
+<span id="cb21-31"><a href="#cb21-31" aria-hidden="true" tabindex="-1"></a>        <span class="st">"student_id"</span>: <span class="st">"INVALID"</span>,</span>
+<span id="cb21-32"><a href="#cb21-32" aria-hidden="true" tabindex="-1"></a>        <span class="st">"midterm_score"</span>: <span class="fl">70.0</span>,</span>
+<span id="cb21-33"><a href="#cb21-33" aria-hidden="true" tabindex="-1"></a>        <span class="st">"final_score"</span>: <span class="fl">68.0</span>,</span>
+<span id="cb21-34"><a href="#cb21-34" aria-hidden="true" tabindex="-1"></a>        <span class="st">"project_score"</span>: <span class="fl">72.0</span>,</span>
+<span id="cb21-35"><a href="#cb21-35" aria-hidden="true" tabindex="-1"></a>        <span class="st">"program"</span>: <span class="st">"CS"</span>,</span>
+<span id="cb21-36"><a href="#cb21-36" aria-hidden="true" tabindex="-1"></a>    },  <span class="co"># invalid</span></span>
+<span id="cb21-37"><a href="#cb21-37" aria-hidden="true" tabindex="-1"></a>]</span>
+<span id="cb21-38"><a href="#cb21-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-39"><a href="#cb21-39" aria-hidden="true" tabindex="-1"></a>valid_records, error_records <span class="op">=</span> validate_batch(sample)</span>
+<span id="cb21-40"><a href="#cb21-40" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Valid: </span><span class="sc">{</span><span class="bu">len</span>(valid_records)<span class="sc">}</span><span class="ss">, Errors: </span><span class="sc">{</span><span class="bu">len</span>(error_records)<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb21-41"><a href="#cb21-41" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> rec <span class="kw">in</span> error_records:</span>
+<span id="cb21-42"><a href="#cb21-42" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(rec[<span class="st">"student_id"</span>], <span class="st">"-&gt;"</span>, rec[<span class="st">"errors"</span>][<span class="dv">0</span>][<span class="st">"msg"</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Valid: 1, Errors: 2
 S0002 -&gt; Input should be less than or equal to 100

@@ -431,6 +431,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </ul></li>
   <li><a href="#declarative-vs.-imperative" id="toc-declarative-vs.-imperative" class="nav-link" data-scroll-target="#declarative-vs.-imperative">1. Declarative vs.&nbsp;imperative</a></li>
   <li><a href="#the-grammar-ggplot-aes-geom" id="toc-the-grammar-ggplot-aes-geom" class="nav-link" data-scroll-target="#the-grammar-ggplot-aes-geom">2. The Grammar: <code>ggplot</code>, <code>aes</code>, <code>geom</code></a></li>
+  <li><a href="#preserve-sort-order-as-a-categorical-so-lets-plot-respects-it-on-the-axis" id="toc-preserve-sort-order-as-a-categorical-so-lets-plot-respects-it-on-the-axis" class="nav-link" data-scroll-target="#preserve-sort-order-as-a-categorical-so-lets-plot-respects-it-on-the-axis">Preserve sort order as a categorical so lets-plot respects it on the axis</a></li>
+  <li><a href="#pandas-3-uses-stringdtype-by-default-which-lets-plot-cannot-introspect" id="toc-pandas-3-uses-stringdtype-by-default-which-lets-plot-cannot-introspect" class="nav-link" data-scroll-target="#pandas-3-uses-stringdtype-by-default-which-lets-plot-cannot-introspect">pandas 3 uses StringDtype by default, which lets-plot cannot introspect;</a></li>
+  <li><a href="#pd.index-dtypeobject-keeps-categories-as-plain-numpy-object-dtype" id="toc-pd.index-dtypeobject-keeps-categories-as-plain-numpy-object-dtype" class="nav-link" data-scroll-target="#pd.index-dtypeobject-keeps-categories-as-plain-numpy-object-dtype">pd.Index(…, dtype=object) keeps categories as plain numpy object dtype</a>
+  <ul class="collapse">
   <li><a href="#mapping-vs.-setting" id="toc-mapping-vs.-setting" class="nav-link" data-scroll-target="#mapping-vs.-setting">3. Mapping vs.&nbsp;setting</a></li>
   <li><a href="#layering-raw-data-and-a-statistical-summary-together" id="toc-layering-raw-data-and-a-statistical-summary-together" class="nav-link" data-scroll-target="#layering-raw-data-and-a-statistical-summary-together">4. Layering: raw data and a statistical summary together</a></li>
   <li><a href="#faceting-one-plot-many-panels" id="toc-faceting-one-plot-many-panels" class="nav-link" data-scroll-target="#faceting-one-plot-many-panels">5. Faceting: one plot, many panels</a></li>
@@ -438,6 +442,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#capstone-the-three-panel-report-declaratively" id="toc-capstone-the-three-panel-report-declaratively" class="nav-link" data-scroll-target="#capstone-the-three-panel-report-declaratively">Capstone: the three-panel report, declaratively</a></li>
   <li><a href="#further-reading" id="toc-further-reading" class="nav-link" data-scroll-target="#further-reading">Further reading</a></li>
   <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary">Summary</a></li>
+  </ul></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.dev/sambaiga/ds-mlops-path/blob/main/tutorials/01-python-basics/09-lets-plot.ipynb" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/sambaiga/ds-mlops-path/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li><li><a href="https://github.com/sambaiga/ds-mlops-path/blob/main/tutorials/01-python-basics/09-lets-plot.ipynb" class="toc-action"><i class="bi empty"></i>View source</a></li></ul></div></nav>
     </div>
@@ -464,28 +469,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 <p><a href="https://colab.research.google.com/github/sambaiga/ds-mlops-path/blob/main/tutorials/01-python-basics/09-lets-plot.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open In Colab"></a> <a href="https://raw.githubusercontent.com/sambaiga/ds-mlops-path/main/tutorials/01-python-basics/09-lets-plot.ipynb"><img src="https://img.shields.io/badge/Download-Notebook-blue.svg?logo=jupyter&amp;logoColor=white" class="img-fluid" alt="Download Notebook"></a></p>
-<p>Chapter 8 built charts by calling functions: <code>ax.scatter()</code>, <code>ax.bar()</code>, <code>ax.set_title()</code>. Each call added one thing and you kept track of the order. It worked. But ask yourself: if you want to colour the points by course, where does that information go? Into <code>scatter()</code> as <code>c=</code>. If you want a trend line too? That’s a separate <code>ax.plot()</code> call with manually smoothed data.</p>
-<p>The grammar of graphics flips this. You describe <em>what the data means</em> and let the library decide how to draw it. <code>aes(color='course')</code> says ‘colour represents course’: the library picks the palette, maps it, and adds the legend automatically. The trend line is just <code>+ geom_smooth()</code>: one more layer, no manual computation.</p>
-<p>This notebook covers lets-plot, a Python port of R’s ggplot2. By the end you will be able to build any chart by composing three parts: data, aesthetics, and geometry. Chapter 10 (<code>10-data-storytelling.ipynb</code>) then applies a house style to both libraries.</p>
+<p>You want to colour the scatter points by course. In matplotlib that means adding <code>c=results['course']</code> to <code>ax.scatter()</code>, but scatter expects a numeric array, not strings, so you need a colour map. The legend does not appear automatically, so you add <code>ax.legend()</code>. Now you manage the colour assignment yourself. Adding one data dimension turned a three-line chart into fifteen lines of housekeeping.</p>
+<p>The grammar of graphics solves this differently. You describe <em>what the data means</em> and let the library handle the rendering. <code>aes(color='course')</code> says ‘colour represents course’: the library picks the palette, maps it, and adds the legend automatically. The trend line is just <code>+ geom_smooth()</code>: one more layer, no manual computation.</p>
+<p>The tool is lets-plot, a Python port of R’s ggplot2. By the end you will build any chart by composing three parts: data, aesthetics, and geometry. Chapter 10 (<code>10-data-storytelling.ipynb</code>) then applies a house style to both libraries.</p>
 <blockquote class="blockquote">
 <p>Callout markers: <a href="../../index.html#callout-guide">book cover page</a>.</p>
 </blockquote>
-<div class="callout callout-style-default callout-note no-icon callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Before you begin
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-1" class="callout-1-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<p>This notebook follows Chapter 8 (<code>08-matplotlib.ipynb</code>). It intentionally rebuilds several of those charts so the contrast between imperative and declarative plotting is concrete. Install lets-plot with <code>uv add lets-plot</code>.</p>
-</div>
-</div>
-</div>
 <section id="why-the-grammar-of-graphics" class="level2">
 <h2 class="anchored" data-anchor-id="why-the-grammar-of-graphics">Why the grammar of graphics?</h2>
 <p>There is another way to think about it. A chart isn’t a list of drawing commands: it’s a <strong>mapping</strong> from data columns to visual channels (position, colour, shape, size). State that mapping once, and the library figures out how to draw it. Add a layer (a trend line, a rug, a label) and you extend the mapping rather than calling a new drawing function. This is the Grammar of Graphics, introduced by Leland Wilkinson in 1999 and popularised by Hadley Wickham’s <strong>ggplot2</strong> for R.</p>
@@ -528,7 +517,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h3 class="anchored" data-anchor-id="already-in-your-environment">Already in your environment</h3>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> add lets-plot          <span class="co"># for a standalone project</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon no-icon"></i>
 </div>
@@ -537,7 +526,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>By the end of Chapter 9 you will be able to:</p>
 <table class="caption-top table">
@@ -600,7 +589,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>LetsPlot.setup_html()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 
-            <div id="dW6VuD"></div>
+            <div id="vUdm2p"></div>
             <script type="text/javascript" data-lets-plot-script="library">
                 if(!window.letsPlotCallQueue) {
                     window.letsPlotCallQueue = [];
@@ -624,9 +613,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
                         var div = document.createElement("div");
                         div.style.color = 'darkred';
                         div.textContent = 'Error loading Lets-Plot JS';
-                        document.getElementById("dW6VuD").appendChild(div);
+                        document.getElementById("vUdm2p").appendChild(div);
                     };
-                    var e = document.getElementById("dW6VuD");
+                    var e = document.getElementById("vUdm2p");
                     e.appendChild(script);
                 })()
             </script>
@@ -726,7 +715,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>ggplot(results, aes(x<span class="op">=</span><span class="st">"study_hours"</span>, y<span class="op">=</span><span class="st">"exam_score"</span>)) <span class="op">+</span> geom_point(alpha<span class="op">=</span><span class="fl">0.4</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="3">
-   <div id="e1l0Ck"></div>
+   <div id="CdxMVF"></div>
    <script type="text/javascript" data-lets-plot-script="plot">
    
    (function() {
@@ -751,7 +740,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
        };
    }
    
-   const containerDiv = document.getElementById("e1l0Ck");
+   const containerDiv = document.getElementById("CdxMVF");
    let fig = null;
    
    function renderPlot() {
@@ -858,7 +847,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>ggplot(course_means, aes(x<span class="op">=</span><span class="st">"course"</span>, y<span class="op">=</span><span class="st">"exam_score"</span>)) <span class="op">+</span> geom_bar(stat<span class="op">=</span><span class="st">"identity"</span>, fill<span class="op">=</span><span class="st">"#4477AA"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="4">
-   <div id="uyaxof"></div>
+   <div id="toHR2q"></div>
    <script type="text/javascript" data-lets-plot-script="plot">
    
    (function() {
@@ -883,7 +872,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
        };
    }
    
-   const containerDiv = document.getElementById("uyaxof");
+   const containerDiv = document.getElementById("toHR2q");
    let fig = null;
    
    function renderPlot() {
@@ -975,7 +964,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> geom_bar(stat<span class="op">=</span><span class="st">"identity"</span>, position<span class="op">=</span><span class="st">"dodge"</span>)</span>
 <span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="5">
-   <div id="m2lkpD"></div>
+   <div id="0SqmwY"></div>
    <script type="text/javascript" data-lets-plot-script="plot">
    
    (function() {
@@ -1000,7 +989,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
        };
    }
    
-   const containerDiv = document.getElementById("m2lkpD");
+   const containerDiv = document.getElementById("0SqmwY");
    let fig = null;
    
    function renderPlot() {
@@ -1113,16 +1102,28 @@ Rebuild the Chapter 8 histogram of <code>exam_score</code> using <code>geom_hist
 <span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>    .sort_values(<span class="st">"pass_rate"</span>)</span>
 <span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>(</span>
-<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>    ggplot(pass_rate_by_course, aes(x<span class="op">=</span><span class="st">"reorder(course, pass_rate)"</span>, y<span class="op">=</span><span class="st">"pass_rate"</span>))</span>
-<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> geom_lollipop(size<span class="op">=</span><span class="dv">4</span>, color<span class="op">=</span>PRIMARY)</span>
-<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> coord_flip()</span>
-<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> scale_y_continuous(labels<span class="op">=</span><span class="kw">lambda</span> x: [<span class="ss">f"</span><span class="sc">{</span>v<span class="sc">:.0%}</span><span class="ss">"</span> <span class="cf">for</span> v <span class="kw">in</span> x])</span>
-<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> labs(title<span class="op">=</span><span class="st">"Pass Rate by Course"</span>, x<span class="op">=</span><span class="st">""</span>, y<span class="op">=</span><span class="st">"Pass Rate"</span>)</span>
-<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> modern_theme()</span>
-<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Preserve sort order as a categorical so lets-plot respects it on the axis</span></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a><span class="co"># pandas 3 uses StringDtype by default, which lets-plot cannot introspect;</span></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a><span class="co"># pd.Index(..., dtype=object) keeps categories as plain numpy object dtype</span></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>_courses <span class="op">=</span> pass_rate_by_course[<span class="st">"course"</span>].tolist()</span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>pass_rate_by_course <span class="op">=</span> pass_rate_by_course.assign(</span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>    course<span class="op">=</span>pd.Categorical(</span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>        _courses,</span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>        categories<span class="op">=</span>pd.Index(_courses, dtype<span class="op">=</span><span class="bu">object</span>),</span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>        ordered<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>(</span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>    ggplot(pass_rate_by_course, aes(x<span class="op">=</span><span class="st">"course"</span>, y<span class="op">=</span><span class="st">"pass_rate"</span>))</span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> geom_lollipop(size<span class="op">=</span><span class="dv">4</span>, color<span class="op">=</span>PRIMARY)</span>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> coord_flip()</span>
+<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> scale_y_continuous(labels<span class="op">=</span><span class="kw">lambda</span> x: [<span class="ss">f"</span><span class="sc">{</span>v<span class="sc">:.0%}</span><span class="ss">"</span> <span class="cf">for</span> v <span class="kw">in</span> x])</span>
+<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> labs(title<span class="op">=</span><span class="st">"Pass Rate by Course"</span>, x<span class="op">=</span><span class="st">""</span>, y<span class="op">=</span><span class="st">"Pass Rate"</span>)</span>
+<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> modern_theme()</span>
+<span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="7">
-   <div id="v0qvKL"></div>
+   <div id="IyU8ha"></div>
    <script type="text/javascript" data-lets-plot-script="plot">
    
    (function() {
@@ -1147,13 +1148,13 @@ Rebuild the Chapter 8 histogram of <code>exam_score</code> using <code>geom_hist
        };
    }
    
-   const containerDiv = document.getElementById("v0qvKL");
+   const containerDiv = document.getElementById("IyU8ha");
    let fig = null;
    
    function renderPlot() {
        if (fig === null) {
            const plotSpec = {
-"__error_message":"Variable not found: 'reorder(course, pass_rate)'. Variables in data frame: ['course', 'pass_rate']"
+"__error_message":"Not a List: labels: String"
 };
            window.letsPlotCall(function() { fig = LetsPlot.buildPlotFromProcessedSpecs(plotSpec, containerDiv, sizing); });
        } else {
@@ -1198,20 +1199,24 @@ Rebuild the Chapter 8 histogram of <code>exam_score</code> using <code>geom_hist
    </script>
 </div>
 </div>
-<div class="ark-activity">
-<p><span class="ark-activity-title"><i class="bi bi-puzzle-fill"></i> Activity 3 - Lollipop vs.&nbsp;Bar</span><br><br></p>
-Replace <code>geom_lollipop</code> with <code>geom_bar(stat=“identity”)</code> and compare. Which conveys rank more clearly at a glance?
-<pre>ggplot(pass_rate_by_course, aes(x="reorder(course, pass_rate)", y="pass_rate"))
-    + geom_bar(stat="identity", fill=PRIMARY)
-    + coord_flip()
-    + labs(title="Pass Rate by Course", x="", y="Pass Rate")
-    + modern_theme()</pre>
-</div>
+<p>from lets_plot import labs</p>
+<p>from ark.plot.theme import modern_theme from ark.plot.tokens import PRIMARY</p>
+<p>pass_rate_by_course = ( results.groupby(“course”)[“exam_score”] .apply(lambda x: (x &gt;= 60).mean()) .reset_index() .rename(columns={“exam_score”: “pass_rate”}) .sort_values(“pass_rate”) )</p>
+</section>
+<section id="preserve-sort-order-as-a-categorical-so-lets-plot-respects-it-on-the-axis" class="level1">
+<h1>Preserve sort order as a categorical so lets-plot respects it on the axis</h1>
+</section>
+<section id="pandas-3-uses-stringdtype-by-default-which-lets-plot-cannot-introspect" class="level1">
+<h1>pandas 3 uses StringDtype by default, which lets-plot cannot introspect;</h1>
+</section>
+<section id="pd.index-dtypeobject-keeps-categories-as-plain-numpy-object-dtype" class="level1">
+<h1>pd.Index(…, dtype=object) keeps categories as plain numpy object dtype</h1>
+<p>_courses = pass_rate_by_course[“course”].tolist() pass_rate_by_course = pass_rate_by_course.assign( course=pd.Categorical( _courses, categories=pd.Index(_courses, dtype=object), ordered=True, ) )</p>
+<p>( ggplot(pass_rate_by_course, aes(x=“course”, y=“pass_rate”)) + geom_lollipop(size=4, color=PRIMARY) + coord_flip() + scale_y_continuous(labels=lambda x: [f”{v:.0%}” for v in x]) + labs(title=“Pass Rate by Course”, x=““, y=”Pass Rate”) + modern_theme() )</p>
 <div id="24" class="cell" data-execution_count="8">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: replace geom_lollipop with geom_bar(stat="identity") and compare</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-</section>
 <section id="mapping-vs.-setting" class="level2">
 <h2 class="anchored" data-anchor-id="mapping-vs.-setting">3. Mapping vs.&nbsp;setting</h2>
 <p><code>aes(color="course")</code> <strong>maps</strong> the <code>course</code> column to colour: each course gets its own colour, chosen automatically, with a legend. <code>color="#4477AA"</code> <strong>sets</strong> every point to the exact same fixed colour, with no legend, because there is nothing left to distinguish. Confusing the two is the single most common mistake when learning any grammar of graphics, in Python or R:</p>
@@ -1222,7 +1227,7 @@ Replace <code>geom_lollipop</code> with <code>geom_bar(stat=“identity”)</cod
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Mapping: course determines colour, one colour per course, with a legend</span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>ggplot(results, aes(x<span class="op">=</span><span class="st">"study_hours"</span>, y<span class="op">=</span><span class="st">"exam_score"</span>, color<span class="op">=</span><span class="st">"course"</span>)) <span class="op">+</span> geom_point(alpha<span class="op">=</span><span class="fl">0.6</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="9">
-   <div id="6sOknS"></div>
+   <div id="Wdhtto"></div>
    <script type="text/javascript" data-lets-plot-script="plot">
    
    (function() {
@@ -1247,7 +1252,7 @@ Replace <code>geom_lollipop</code> with <code>geom_bar(stat=“identity”)</cod
        };
    }
    
-   const containerDiv = document.getElementById("6sOknS");
+   const containerDiv = document.getElementById("Wdhtto");
    let fig = null;
    
    function renderPlot() {
@@ -1340,7 +1345,7 @@ Replace <code>geom_lollipop</code> with <code>geom_bar(stat=“identity”)</cod
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Setting: every point is the same fixed colour, no legend needed</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>ggplot(results, aes(x<span class="op">=</span><span class="st">"study_hours"</span>, y<span class="op">=</span><span class="st">"exam_score"</span>)) <span class="op">+</span> geom_point(color<span class="op">=</span><span class="st">"#4477AA"</span>, alpha<span class="op">=</span><span class="fl">0.6</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="10">
-   <div id="YputdA"></div>
+   <div id="g7RhG4"></div>
    <script type="text/javascript" data-lets-plot-script="plot">
    
    (function() {
@@ -1365,7 +1370,7 @@ Replace <code>geom_lollipop</code> with <code>geom_bar(stat=“identity”)</cod
        };
    }
    
-   const containerDiv = document.getElementById("YputdA");
+   const containerDiv = document.getElementById("g7RhG4");
    let fig = null;
    
    function renderPlot() {
@@ -1472,7 +1477,7 @@ Replace <code>geom_lollipop</code> with <code>geom_bar(stat=“identity”)</cod
 <span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> geom_smooth(color<span class="op">=</span><span class="st">"#EE6677"</span>, se<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="11">
-   <div id="DKB0sv"></div>
+   <div id="9vtjSP"></div>
    <script type="text/javascript" data-lets-plot-script="plot">
    
    (function() {
@@ -1497,7 +1502,7 @@ Replace <code>geom_lollipop</code> with <code>geom_bar(stat=“identity”)</cod
        };
    }
    
-   const containerDiv = document.getElementById("DKB0sv");
+   const containerDiv = document.getElementById("9vtjSP");
    let fig = null;
    
    function renderPlot() {
@@ -1630,7 +1635,7 @@ geom_smooth(method='lm', se=True)</pre>
 <span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> modern_theme()</span>
 <span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="12">
-   <div id="AaH4k5"></div>
+   <div id="LviHcp"></div>
    <script type="text/javascript" data-lets-plot-script="plot">
    
    (function() {
@@ -1655,7 +1660,7 @@ geom_smooth(method='lm', se=True)</pre>
        };
    }
    
-   const containerDiv = document.getElementById("AaH4k5");
+   const containerDiv = document.getElementById("LviHcp");
    let fig = null;
    
    function renderPlot() {
@@ -1923,7 +1928,7 @@ geom_smooth(method='lm', se=True)</pre>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>ggplot(results, aes(x<span class="op">=</span><span class="st">"exam_score"</span>, fill<span class="op">=</span><span class="st">"course"</span>)) <span class="op">+</span> geom_density(alpha<span class="op">=</span><span class="fl">0.4</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="13">
-   <div id="M7mrmj"></div>
+   <div id="bqZQDm"></div>
    <script type="text/javascript" data-lets-plot-script="plot">
    
    (function() {
@@ -1948,7 +1953,7 @@ geom_smooth(method='lm', se=True)</pre>
        };
    }
    
-   const containerDiv = document.getElementById("M7mrmj");
+   const containerDiv = document.getElementById("bqZQDm");
    let fig = null;
    
    function renderPlot() {
@@ -2043,7 +2048,7 @@ geom_smooth(method='lm', se=True)</pre>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>ggplot(results, aes(x<span class="op">=</span><span class="st">"course"</span>, y<span class="op">=</span><span class="st">"exam_score"</span>, fill<span class="op">=</span><span class="st">"course"</span>)) <span class="op">+</span> geom_boxplot(alpha<span class="op">=</span><span class="fl">0.7</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="14">
-   <div id="whSlrY"></div>
+   <div id="OGAwrI"></div>
    <script type="text/javascript" data-lets-plot-script="plot">
    
    (function() {
@@ -2068,7 +2073,7 @@ geom_smooth(method='lm', se=True)</pre>
        };
    }
    
-   const containerDiv = document.getElementById("whSlrY");
+   const containerDiv = document.getElementById("OGAwrI");
    let fig = null;
    
    function renderPlot() {
@@ -2212,7 +2217,7 @@ ggmarginal(p, type="density")</pre>
 <span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> ggsize(<span class="dv">700</span>, <span class="dv">250</span>)</span>
 <span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="15">
-   <div id="FKEFnF"></div>
+   <div id="1i9vaa"></div>
    <script type="text/javascript" data-lets-plot-script="plot">
    
    (function() {
@@ -2237,7 +2242,7 @@ ggmarginal(p, type="density")</pre>
        };
    }
    
-   const containerDiv = document.getElementById("FKEFnF");
+   const containerDiv = document.getElementById("1i9vaa");
    let fig = null;
    
    function renderPlot() {
@@ -2350,7 +2355,7 @@ ggmarginal(p, type="density")</pre>
 <span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> ggsize(<span class="dv">850</span>, <span class="dv">450</span>)</span>
 <span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="16">
-   <div id="kMSMYb"></div>
+   <div id="W8ZYJ3"></div>
    <script type="text/javascript" data-lets-plot-script="plot">
    
    (function() {
@@ -2375,7 +2380,7 @@ ggmarginal(p, type="density")</pre>
        };
    }
    
-   const containerDiv = document.getElementById("kMSMYb");
+   const containerDiv = document.getElementById("W8ZYJ3");
    let fig = null;
    
    function renderPlot() {
@@ -2510,7 +2515,7 @@ Build a scatter plot of <code>study_hours</code> vs.&nbsp;<code>exam_score</code
 <span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> scale_color_manual(values<span class="op">=</span>pro_colors)</span>
 <span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="18">
-   <div id="I9mdLi"></div>
+   <div id="3mfjjJ"></div>
    <script type="text/javascript" data-lets-plot-script="plot">
    
    (function() {
@@ -2535,7 +2540,7 @@ Build a scatter plot of <code>study_hours</code> vs.&nbsp;<code>exam_score</code
        };
    }
    
-   const containerDiv = document.getElementById("I9mdLi");
+   const containerDiv = document.getElementById("3mfjjJ");
    let fig = null;
    
    function renderPlot() {
@@ -2795,6 +2800,7 @@ ggplot(results, aes(x="exam_score")) \
 <p><strong>Next:</strong> <code>10-data-storytelling.ipynb</code>, covering what makes a chart good and applying this project’s house style to both matplotlib and lets-plot.</p>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->

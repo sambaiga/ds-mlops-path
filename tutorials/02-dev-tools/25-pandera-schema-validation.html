@@ -61,7 +61,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </style>
 
 
-<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js" integrity="sha384-ZvpUoO/+PpLXR1lu4jmpXWu80pZlYUAfxl5NsBMWOEPSjUn/6Z/hRTt8+pR6L4N2" crossorigin="anonymous"></script><script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
 <script src="../../site_libs/quarto-nav/headroom.min.js"></script>
 <script src="../../site_libs/clipboard/clipboard.min.js"></script>
 <script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
@@ -108,9 +108,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   }
 }</script>
 <style>html{ scroll-behavior: smooth; }</style>
-<script src="../../site_libs/quarto-diagram/mermaid.min.js"></script>
-<script src="../../site_libs/quarto-diagram/mermaid-init.js"></script>
-<link href="../../site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.min.js" integrity="sha384-c9c+LnTbwQ3aujuU7ULEPVvgLs+Fn6fJUvIGTsuu1ZcCf11fiEubah0ttpca4ntM sha384-6V1/AdqZRWk1KAlWbKBlGhN7VG4iE/yAZcO6NZPMF8od0vukrvr0tg4qY6NSrItx" crossorigin="anonymous"></script>
+
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
 
 
 </head>
@@ -424,18 +424,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">In this chapter</h2>
    
   <ul>
-  <li><a href="#pydantic-validated-the-row.-who-validates-the-table" id="toc-pydantic-validated-the-row.-who-validates-the-table" class="nav-link active" data-scroll-target="#pydantic-validated-the-row.-who-validates-the-table">0. Pydantic validated the row. Who validates the table?</a>
-  <ul class="collapse">
-  <li><a href="#install" id="toc-install" class="nav-link" data-scroll-target="#install">Install</a></li>
-  </ul></li>
-  <li><a href="#row-validation-vs-schema-validation" id="toc-row-validation-vs-schema-validation" class="nav-link" data-scroll-target="#row-validation-vs-schema-validation">1. Row Validation vs Schema Validation</a></li>
-  <li><a href="#defining-a-dataframeschema" id="toc-defining-a-dataframeschema" class="nav-link" data-scroll-target="#defining-a-dataframeschema">2. Defining a <code>DataFrameSchema</code></a></li>
-  <li><a href="#dataframemodel-the-class-based-api" id="toc-dataframemodel-the-class-based-api" class="nav-link" data-scroll-target="#dataframemodel-the-class-based-api">3. <code>DataFrameModel</code>: the class-based API</a></li>
-  <li><a href="#custom-checks" id="toc-custom-checks" class="nav-link" data-scroll-target="#custom-checks">4. Custom checks</a></li>
-  <li><a href="#validation-in-a-pipeline" id="toc-validation-in-a-pipeline" class="nav-link" data-scroll-target="#validation-in-a-pipeline">5. Validation in a pipeline</a></li>
-  <li><a href="#schemas-as-data-contracts-in-tests" id="toc-schemas-as-data-contracts-in-tests" class="nav-link" data-scroll-target="#schemas-as-data-contracts-in-tests">6. Schemas as data contracts in tests</a></li>
+  <li><a href="#defining-a-dataframeschema" id="toc-defining-a-dataframeschema" class="nav-link active" data-scroll-target="#defining-a-dataframeschema">1. Defining a <code>DataFrameSchema</code></a></li>
+  <li><a href="#dataframemodel-the-class-based-api" id="toc-dataframemodel-the-class-based-api" class="nav-link" data-scroll-target="#dataframemodel-the-class-based-api">2. <code>DataFrameModel</code>: the class-based API</a></li>
+  <li><a href="#custom-checks" id="toc-custom-checks" class="nav-link" data-scroll-target="#custom-checks">3. Custom checks</a></li>
+  <li><a href="#validation-in-a-pipeline" id="toc-validation-in-a-pipeline" class="nav-link" data-scroll-target="#validation-in-a-pipeline">4. Validation in a pipeline</a></li>
+  <li><a href="#schemas-as-data-contracts-in-tests" id="toc-schemas-as-data-contracts-in-tests" class="nav-link" data-scroll-target="#schemas-as-data-contracts-in-tests">5. Schemas as data contracts in tests</a></li>
   <li><a href="#capstone-data-contract-for-grade-predictor" id="toc-capstone-data-contract-for-grade-predictor" class="nav-link" data-scroll-target="#capstone-data-contract-for-grade-predictor">Capstone: Data Contract for grade-predictor</a></li>
-  <li><a href="#why-pandera-comparing-schema-validation-tools" id="toc-why-pandera-comparing-schema-validation-tools" class="nav-link" data-scroll-target="#why-pandera-comparing-schema-validation-tools">7. Why Pandera? comparing schema validation tools</a></li>
+  <li><a href="#why-pandera-comparing-schema-validation-tools" id="toc-why-pandera-comparing-schema-validation-tools" class="nav-link" data-scroll-target="#why-pandera-comparing-schema-validation-tools">6. Why Pandera? comparing schema validation tools</a></li>
   <li><a href="#further-reading" id="toc-further-reading" class="nav-link" data-scroll-target="#further-reading">Further reading</a></li>
   <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary">Summary</a></li>
   </ul>
@@ -464,10 +459,17 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 <p><a href="https://colab.research.google.com/github/sambaiga/ds-mlops-path/blob/main/tutorials/02-dev-tools/25-pandera-schema-validation.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open In Colab"></a> <a href="https://raw.githubusercontent.com/sambaiga/ds-mlops-path/main/tutorials/02-dev-tools/25-pandera-schema-validation.ipynb"><img src="https://img.shields.io/badge/Download-Notebook-blue.svg?logo=jupyter&amp;logoColor=white" class="img-fluid" alt="Download Notebook"></a></p>
-<p>Pydantic (Chapter 24) validated <code>StudentRecord</code> at the boundary: one record, one set of fields, one pass or fail. DS pipelines work on DataFrames: 2,400 rows loaded in one call. The problems in a DataFrame are different. Not “this record has the wrong type” but “this column contains mixed types across 40 rows.” Not “this field is missing” but “this column’s value range implies a data entry error at the source.”</p>
-<p>You could check these things manually after loading: assert dtypes, loop through columns, print summary statistics. That is validation by inspection: it runs once, in a notebook cell, and it is never run again. The next batch of data arrives and nobody runs the check.</p>
-<p>The alternative is a data contract: a formal, executable statement of what the DataFrame must look like before any transformation runs. Write the contract once and it runs on every batch, fails loudly on the first violation, and names the column, the row, and the rule that was broken.</p>
-<p>Pandera is that contract, expressed as a Python class. The <code>grade-predictor</code> project gains a schema for the university analytics DataFrame in this chapter. Chapter 26 adds the logging that records what the schema catches.</p>
+<p>The grade-predictor pipeline finishes training. Accuracy: 87%. You deploy it.</p>
+<p>Three weeks later a data engineer flags something: 23 rows in <code>university_analytics.csv</code> have <code>final_score = 999</code>. The data entry system used 999 as a sentinel for “not recorded”. Nobody documented it. The model trained on those 23 rows as if 999 were a valid exam score. There was no error, no warning. The model just learned the wrong thing for 23 students.</p>
+<p>The check you ran at load time called <code>.dtypes</code> and printed <code>.head()</code>. Neither caught a score of 999. Validation by inspection runs once, in a notebook cell, by whoever is at the keyboard. It is forgotten the next time the pipeline runs.</p>
+<p>What you needed was a <strong>data contract</strong>: a formal specification of what the DataFrame must look like: column types, allowed value ranges, uniqueness constraints, that runs automatically every time data enters the pipeline and fails loudly with a precise error when violated. Pydantic gave you this for individual records at the system boundary. Pandera gives you this for whole DataFrames inside the pipeline.</p>
+<p><strong>Next:</strong> <a href="../../tutorials/02-dev-tools/26-logging.html">Chapter 26: Logging</a> adds the audit trail that records which validation errors occurred and when, the permanent record that Pandera’s exceptions do not keep by themselves.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="https://github.com/sambaiga/ds-mlops-path/blob/main/tutorials/02-dev-tools/25-pandera-schema-validation.ipynb"><img src="https://img.shields.io/badge/Source-GitHub-181717.svg?logo=github" class="img-fluid figure-img"></a></p>
+<figcaption>View Source on GitHub</figcaption>
+</figure>
+</div>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
@@ -530,45 +532,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="figs/pandera-contract.svg" class="img-fluid figure-img" alt="Three columns: raw DataFrame with highlighted bad rows (None, 102, empty string); Pandera schema in the centre listing column rules; validated frame on the right containing only conforming rows. A red SchemaError arrow exits downward from the schema when data fails."></p>
-<figcaption>Pandera as a schema contract for DataFrames: a raw DataFrame with mixed types and out-of-range values passes through the Pandera schema, which either returns a validated frame with only conforming rows or raises a SchemaError naming the column, row, and violated rule.</figcaption>
-</figure>
-</div>
-<section id="pydantic-validated-the-row.-who-validates-the-table" class="level2">
-<h2 class="anchored" data-anchor-id="pydantic-validated-the-row.-who-validates-the-table">0. Pydantic validated the row. Who validates the table?</h2>
-<p>You have a <code>StudentRecord</code> Pydantic model. It validates <code>midterm_score</code> is between 0 and 100, that <code>student_id</code> matches <code>S\d{4}</code>, and that <code>program</code> is a non-empty string. Pydantic runs when a <em>single record</em> enters the system.</p>
-<p>Now you load <code>university_analytics.csv</code> into a DataFrame. There are 2,400 rows. You could loop through them with <code>StudentRecord.model_validate</code>, but that tells you nothing about the <em>table</em>: whether <code>student_id</code> is unique across all rows, whether the distribution of <code>program</code> values matches what you expect, whether the proportion of missing values in <code>has_internet</code> is within an acceptable bound. A row validator answers “is this row correct?”. A schema validator answers “is this table correct?”.</p>
-<p><strong>Pandera</strong> (<a href="https://pandera.readthedocs.io/">pandera.readthedocs.io</a>) is a statistical data validation library for DataFrames. You define a schema: column types, constraints, uniqueness, allowed values, statistical properties, and Pandera checks the whole DataFrame against it in one call. It supports pandas and Polars, integrates with pytest, and can generate synthetic data for testing.</p>
-<section id="install" class="level3">
-<h3 class="anchored" data-anchor-id="install">Install</h3>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> add pandera          <span class="co"># or: pip install pandera</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</section>
-</section>
-<section id="row-validation-vs-schema-validation" class="level2">
-<h2 class="anchored" data-anchor-id="row-validation-vs-schema-validation">1. Row Validation vs Schema Validation</h2>
-<div class="cell" data-layout-align="default">
-<div class="cell-output-display">
-<div>
-<p></p><figure class="figure"><p></p>
-<div>
-<pre class="mermaid mermaid-js">flowchart LR
-    CSV["university_analytics.csv"] --&gt; DF["pandas DataFrame\n2,400 rows × 10 cols"]
-    DF --&gt; PA["Pandera schema\nColumn types, constraints,\nuniqueness, statistics"]
-    PA --&gt;|"schema violation"| ERR["SchemaError\ncell location + rule"]
-    PA --&gt;|"all checks pass"| OK["validated DataFrame\nsafe to use downstream"]
-
-    style OK fill:#EBF5F0,stroke:#059669,color:#065F46
-    style ERR fill:#FEF2F2,stroke:#DC2626,color:#991B1B
-    style PA fill:#EAF3FA,stroke:#0369A1,color:#0C4A6E
-</pre>
-</div>
-<p></p></figure><p></p>
-</div>
-</div>
-</div>
-<p>Pydantic and Pandera answer different questions:</p>
+<p>Pydantic validated the shape of a single record as it entered the system: one row, one pass or fail. A DataFrame is not a record. It is a table. The properties that matter at the table level are different: is <code>student_id</code> unique across all 2,400 rows? Is the distribution of <code>program</code> values consistent with what the source system should produce? Does <code>final_score</code> stay between 0 and 100 for every row, not just the one you checked manually?</p>
+<p>These are questions Pydantic cannot answer, because Pydantic operates on one object at a time.</p>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 33%">
@@ -611,77 +576,150 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </tbody>
 </table>
 <div class="ark-concept">
-<p><span class="ark-concept-title"><i class="bi bi-key-fill"></i> Key Concept: Use both, not one</span><br><br> Pydantic and Pandera are not alternatives; they validate at different levels. A production pipeline uses Pydantic to validate records as they arrive (JSON from an API, rows from a queue) and Pandera to validate the assembled DataFrame before it enters a model or a write operation. Together they form a complete contract on the data.</p>
+<p><span class="ark-concept-title"><i class="bi bi-key-fill"></i> Key concept: a schema is documentation that runs</span><br><br> A Pandera schema is not a test you write once. It is a living specification: the schema says what the DataFrame must look like, and the pipeline is only allowed to proceed when the data keeps that promise. Every time the pipeline runs, the contract is checked. When the data changes in a way that violates it, you know immediately, with a row index, a column name, and the rule that failed.</p>
 </div>
-</section>
+<p>The diagram below shows the contract in action: a raw DataFrame enters Pandera, the schema checks each column’s type, nullability, range, and uniqueness, and either returns a validated frame or raises a <code>SchemaError</code> with the exact row index and rule that failed.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="figs/pandera-contract.svg" class="img-fluid figure-img" alt="Three columns: raw DataFrame with highlighted bad rows (None, 102, empty string); Pandera schema in the centre listing column rules; validated frame on the right containing only conforming rows. A red SchemaError arrow exits downward from the schema when data fails."></p>
+<figcaption>Pandera as a schema contract for DataFrames: a raw DataFrame with mixed types and out-of-range values passes through the Pandera schema, which either returns a validated frame with only conforming rows or raises a SchemaError naming the column, row, and violated rule.</figcaption>
+</figure>
+</div>
 <section id="defining-a-dataframeschema" class="level2">
-<h2 class="anchored" data-anchor-id="defining-a-dataframeschema">2. Defining a <code>DataFrameSchema</code></h2>
-<p>The functional API creates a schema by describing each column with <code>pa.Column</code>:</p>
-<div id="9" class="cell" data-execution_count="1">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandera <span class="im">as</span> pa</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>schema <span class="op">=</span> pa.DataFrameSchema(</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    {</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>        <span class="st">"student_id"</span>: pa.Column(<span class="bu">str</span>, pa.Check.str_matches(<span class="vs">r"</span><span class="dv">^</span><span class="vs">S</span><span class="dv">\d</span><span class="op">{4}</span><span class="dv">$</span><span class="vs">"</span>)),</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>        <span class="st">"midterm_score"</span>: pa.Column(<span class="bu">float</span>, [pa.Check.ge(<span class="fl">0.0</span>), pa.Check.le(<span class="fl">100.0</span>)]),</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>        <span class="st">"final_score"</span>: pa.Column(<span class="bu">float</span>, [pa.Check.ge(<span class="fl">0.0</span>), pa.Check.le(<span class="fl">100.0</span>)]),</span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>        <span class="st">"project_score"</span>: pa.Column(<span class="bu">float</span>, [pa.Check.ge(<span class="fl">0.0</span>), pa.Check.le(<span class="fl">100.0</span>)]),</span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>        <span class="st">"program"</span>: pa.Column(<span class="bu">str</span>, pa.Check.isin([<span class="st">"CS"</span>, <span class="st">"EE"</span>, <span class="st">"Math"</span>, <span class="st">"Physics"</span>, <span class="st">"Biology"</span>])),</span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>        <span class="st">"has_internet"</span>: pa.Column(<span class="bu">bool</span>),</span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>        <span class="st">"school_id"</span>: pa.Column(<span class="bu">str</span>, nullable<span class="op">=</span><span class="va">True</span>),</span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>        <span class="st">"teacher_count"</span>: pa.Column(<span class="bu">int</span>, pa.Check.ge(<span class="dv">1</span>)),</span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>        <span class="st">"school_size"</span>: pa.Column(<span class="bu">str</span>, pa.Check.isin([<span class="st">"Small"</span>, <span class="st">"Medium"</span>, <span class="st">"Large"</span>])),</span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>        <span class="st">"pass_threshold"</span>: pa.Column(<span class="bu">float</span>, pa.Check.between(<span class="fl">50.0</span>, <span class="fl">80.0</span>), nullable<span class="op">=</span><span class="va">True</span>),</span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>    },</span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>    checks<span class="op">=</span>[</span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>        pa.Check(<span class="kw">lambda</span> df: df[<span class="st">"student_id"</span>].is_unique, error<span class="op">=</span><span class="st">"student_id must be unique"</span>),</span>
-<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>    ],</span>
-<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>    <span class="bu">coerce</span><span class="op">=</span><span class="va">True</span>,</span>
-<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Schema created with"</span>, <span class="bu">len</span>(schema.columns), <span class="st">"columns"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<h2 class="anchored" data-anchor-id="defining-a-dataframeschema">1. Defining a <code>DataFrameSchema</code></h2>
+<p>The functional API creates a schema by passing a dict of column names to <code>pa.Column</code> definitions. Each <code>pa.Column</code> declares the dtype and the checks it must satisfy.</p>
+<div id="7" class="cell" data-execution_count="1">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandera <span class="im">as</span> pa</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Set <code>coerce=True</code> to let Pandera convert <code>"78.5"</code> to <code>78.5</code> before checking a <code>float</code> column. This mirrors Pydantic’s type coercion at the row level. The top-level <code>checks</code> list accepts table-level constraints such as uniqueness across the entire column.</p>
+<div id="9" class="cell" data-execution_count="2">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>schema <span class="op">=</span> pa.DataFrameSchema(</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    {</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>        <span class="st">"student_id"</span>: pa.Column(<span class="bu">str</span>, pa.Check.str_matches(<span class="vs">r"</span><span class="dv">^</span><span class="vs">S</span><span class="dv">\d</span><span class="op">{4}</span><span class="dv">$</span><span class="vs">"</span>)),</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>        <span class="st">"midterm_score"</span>: pa.Column(<span class="bu">float</span>, [pa.Check.ge(<span class="fl">0.0</span>), pa.Check.le(<span class="fl">100.0</span>)]),</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>        <span class="st">"final_score"</span>: pa.Column(<span class="bu">float</span>, [pa.Check.ge(<span class="fl">0.0</span>), pa.Check.le(<span class="fl">100.0</span>)]),</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>        <span class="st">"project_score"</span>: pa.Column(<span class="bu">float</span>, [pa.Check.ge(<span class="fl">0.0</span>), pa.Check.le(<span class="fl">100.0</span>)]),</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>        <span class="st">"program"</span>: pa.Column(<span class="bu">str</span>, pa.Check.isin([<span class="st">"CS"</span>, <span class="st">"EE"</span>, <span class="st">"Math"</span>, <span class="st">"Physics"</span>, <span class="st">"Biology"</span>])),</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>        <span class="st">"has_internet"</span>: pa.Column(<span class="bu">bool</span>),</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>        <span class="st">"school_id"</span>: pa.Column(<span class="bu">str</span>, nullable<span class="op">=</span><span class="va">True</span>),</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>        <span class="st">"teacher_count"</span>: pa.Column(<span class="bu">int</span>, pa.Check.ge(<span class="dv">1</span>)),</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>        <span class="st">"school_size"</span>: pa.Column(<span class="bu">str</span>, pa.Check.isin([<span class="st">"Small"</span>, <span class="st">"Medium"</span>, <span class="st">"Large"</span>])),</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>        <span class="st">"pass_threshold"</span>: pa.Column(<span class="bu">float</span>, pa.Check.between(<span class="fl">50.0</span>, <span class="fl">80.0</span>), nullable<span class="op">=</span><span class="va">True</span>),</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    },</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    checks<span class="op">=</span>[</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>        pa.Check(<span class="kw">lambda</span> df: df[<span class="st">"student_id"</span>].is_unique, error<span class="op">=</span><span class="st">"student_id must be unique"</span>),</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>    ],</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>    <span class="bu">coerce</span><span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Schema created with"</span>, <span class="bu">len</span>(schema.columns), <span class="st">"columns"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Schema created with 10 columns</code></pre>
 </div>
 </div>
-<p><code>coerce=True</code> tells Pandera to attempt type coercion before validation: <code>"78.5"</code> becomes <code>78.5</code> for a <code>float</code> column, mirroring Pydantic’s behaviour at the row level.</p>
-<p>Validate a DataFrame:</p>
-<div id="11" class="cell" data-execution_count="2">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Build a small valid sample</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>sample_df <span class="op">=</span> pd.DataFrame(</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    {</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>        <span class="st">"student_id"</span>: [<span class="st">"S0001"</span>, <span class="st">"S0002"</span>, <span class="st">"S0003"</span>],</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>        <span class="st">"midterm_score"</span>: [<span class="fl">78.5</span>, <span class="fl">65.0</span>, <span class="fl">90.0</span>],</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>        <span class="st">"final_score"</span>: [<span class="fl">82.0</span>, <span class="fl">70.0</span>, <span class="fl">88.0</span>],</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>        <span class="st">"project_score"</span>: [<span class="fl">91.0</span>, <span class="fl">75.0</span>, <span class="fl">85.0</span>],</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>        <span class="st">"program"</span>: [<span class="st">"CS"</span>, <span class="st">"EE"</span>, <span class="st">"Math"</span>],</span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>        <span class="st">"has_internet"</span>: [<span class="va">True</span>, <span class="va">False</span>, <span class="va">True</span>],</span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>        <span class="st">"school_id"</span>: [<span class="st">"SCH01"</span>, <span class="st">"SCH01"</span>, <span class="st">"SCH02"</span>],</span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>        <span class="st">"teacher_count"</span>: [<span class="dv">12</span>, <span class="dv">8</span>, <span class="dv">15</span>],</span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>        <span class="st">"school_size"</span>: [<span class="st">"Large"</span>, <span class="st">"Medium"</span>, <span class="st">"Large"</span>],</span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>        <span class="st">"pass_threshold"</span>: [<span class="fl">60.0</span>, <span class="fl">60.0</span>, <span class="fl">65.0</span>],</span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>validated <span class="op">=</span> schema.validate(sample_df)</span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Validation passed:"</span>, validated.shape)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Build a small valid sample to test against:</p>
+<div id="11" class="cell" data-execution_count="3">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>sample_df <span class="op">=</span> pd.DataFrame(</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    {</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>        <span class="st">"student_id"</span>: [<span class="st">"S0001"</span>, <span class="st">"S0002"</span>, <span class="st">"S0003"</span>],</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>        <span class="st">"midterm_score"</span>: [<span class="fl">78.5</span>, <span class="fl">65.0</span>, <span class="fl">90.0</span>],</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>        <span class="st">"final_score"</span>: [<span class="fl">82.0</span>, <span class="fl">70.0</span>, <span class="fl">88.0</span>],</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>        <span class="st">"project_score"</span>: [<span class="fl">91.0</span>, <span class="fl">75.0</span>, <span class="fl">85.0</span>],</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>        <span class="st">"program"</span>: [<span class="st">"CS"</span>, <span class="st">"EE"</span>, <span class="st">"Math"</span>],</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>        <span class="st">"has_internet"</span>: [<span class="va">True</span>, <span class="va">False</span>, <span class="va">True</span>],</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>        <span class="st">"school_id"</span>: [<span class="st">"SCH01"</span>, <span class="st">"SCH01"</span>, <span class="st">"SCH02"</span>],</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>        <span class="st">"teacher_count"</span>: [<span class="dv">12</span>, <span class="dv">8</span>, <span class="dv">15</span>],</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>        <span class="st">"school_size"</span>: [<span class="st">"Large"</span>, <span class="st">"Medium"</span>, <span class="st">"Large"</span>],</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>        <span class="st">"pass_threshold"</span>: [<span class="fl">60.0</span>, <span class="fl">60.0</span>, <span class="fl">65.0</span>],</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>sample_df.head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="3">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">student_id</th>
+<th data-quarto-table-cell-role="th">midterm_score</th>
+<th data-quarto-table-cell-role="th">final_score</th>
+<th data-quarto-table-cell-role="th">project_score</th>
+<th data-quarto-table-cell-role="th">program</th>
+<th data-quarto-table-cell-role="th">has_internet</th>
+<th data-quarto-table-cell-role="th">school_id</th>
+<th data-quarto-table-cell-role="th">teacher_count</th>
+<th data-quarto-table-cell-role="th">school_size</th>
+<th data-quarto-table-cell-role="th">pass_threshold</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>S0001</td>
+<td>78.5</td>
+<td>82.0</td>
+<td>91.0</td>
+<td>CS</td>
+<td>True</td>
+<td>SCH01</td>
+<td>12</td>
+<td>Large</td>
+<td>60.0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1</th>
+<td>S0002</td>
+<td>65.0</td>
+<td>70.0</td>
+<td>75.0</td>
+<td>EE</td>
+<td>False</td>
+<td>SCH01</td>
+<td>8</td>
+<td>Medium</td>
+<td>60.0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2</th>
+<td>S0003</td>
+<td>90.0</td>
+<td>88.0</td>
+<td>85.0</td>
+<td>Math</td>
+<td>True</td>
+<td>SCH02</td>
+<td>15</td>
+<td>Large</td>
+<td>65.0</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<p>Call <code>.validate()</code> on a conforming DataFrame. It returns the validated frame unchanged:</p>
+<div id="13" class="cell" data-execution_count="4">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>validated <span class="op">=</span> schema.validate(sample_df)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Validation passed:"</span>, validated.shape)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Validation passed: (3, 10)</code></pre>
 </div>
 </div>
-<p>Now introduce a row with an out-of-range value and confirm Pandera raises a <code>SchemaError</code>:</p>
-<div id="13" class="cell" data-execution_count="3">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Introduce an invalid row (midterm_score &gt; 100)</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>bad_df <span class="op">=</span> sample_df.copy()</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>bad_df.loc[<span class="dv">0</span>, <span class="st">"midterm_score"</span>] <span class="op">=</span> <span class="fl">150.0</span></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span>:</span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    schema.validate(bad_df)</span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="cf">except</span> pa.errors.SchemaError <span class="im">as</span> e:</span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="bu">type</span>(e).<span class="va">__name__</span>)</span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(e)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Introduce a row with <code>midterm_score = 150</code> and confirm Pandera raises <code>SchemaError</code> with the row index and the violated rule:</p>
+<div id="15" class="cell" data-execution_count="5">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>bad_df <span class="op">=</span> sample_df.copy()</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>bad_df.loc[<span class="dv">0</span>, <span class="st">"midterm_score"</span>] <span class="op">=</span> <span class="fl">150.0</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span>:</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    schema.validate(bad_df)</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="cf">except</span> pa.errors.SchemaError <span class="im">as</span> e:</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="bu">type</span>(e).<span class="va">__name__</span>)</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(e)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>SchemaError
 Column 'midterm_score' failed element-wise validator number 1: less_than_or_equal_to(100.0) failure cases: 150.0</code></pre>
@@ -695,36 +733,38 @@ schema.validate(dup_df)  # should raise</pre>
 </div>
 </section>
 <section id="dataframemodel-the-class-based-api" class="level2">
-<h2 class="anchored" data-anchor-id="dataframemodel-the-class-based-api">3. <code>DataFrameModel</code>: the class-based API</h2>
-<p>The functional <code>DataFrameSchema</code> API is explicit but verbose. Pandera’s class-based API, <code>pa.DataFrameModel</code>, mirrors Pydantic’s <code>BaseModel</code>: define columns as class-level fields with type annotations, and use <code>pa.Field</code> for constraints:</p>
-<div id="16" class="cell" data-execution_count="4">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> typing <span class="im">import</span> Optional</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandera <span class="im">as</span> pa</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pandera.typing <span class="im">import</span> Series</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> StudentDataSchema(pa.DataFrameModel):</span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    student_id: Series[<span class="bu">str</span>] <span class="op">=</span> pa.Field(str_matches<span class="op">=</span><span class="vs">r"</span><span class="dv">^</span><span class="vs">S</span><span class="dv">\d</span><span class="op">{4}</span><span class="dv">$</span><span class="vs">"</span>)</span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    midterm_score: Series[<span class="bu">float</span>] <span class="op">=</span> pa.Field(ge<span class="op">=</span><span class="fl">0.0</span>, le<span class="op">=</span><span class="fl">100.0</span>)</span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>    final_score: Series[<span class="bu">float</span>] <span class="op">=</span> pa.Field(ge<span class="op">=</span><span class="fl">0.0</span>, le<span class="op">=</span><span class="fl">100.0</span>)</span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>    project_score: Series[<span class="bu">float</span>] <span class="op">=</span> pa.Field(ge<span class="op">=</span><span class="fl">0.0</span>, le<span class="op">=</span><span class="fl">100.0</span>)</span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>    program: Series[<span class="bu">str</span>] <span class="op">=</span> pa.Field(isin<span class="op">=</span>[<span class="st">"CS"</span>, <span class="st">"EE"</span>, <span class="st">"Math"</span>, <span class="st">"Physics"</span>, <span class="st">"Biology"</span>])</span>
-<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>    has_internet: Series[<span class="bu">bool</span>]</span>
-<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>    school_id: Series[<span class="bu">str</span>] <span class="op">|</span> <span class="va">None</span> <span class="op">=</span> pa.Field(nullable<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>    teacher_count: Series[<span class="bu">int</span>] <span class="op">=</span> pa.Field(ge<span class="op">=</span><span class="dv">1</span>)</span>
-<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>    school_size: Series[<span class="bu">str</span>] <span class="op">=</span> pa.Field(isin<span class="op">=</span>[<span class="st">"Small"</span>, <span class="st">"Medium"</span>, <span class="st">"Large"</span>])</span>
-<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>    <span class="kw">class</span> Config:</span>
-<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>        <span class="bu">coerce</span> <span class="op">=</span> <span class="va">True</span></span>
-<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">@pa.check</span>(<span class="st">"student_id"</span>)</span>
-<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> student_id_unique(cls, series: Series[<span class="bu">str</span>]) <span class="op">-&gt;</span> <span class="bu">bool</span>:  <span class="co"># noqa: N805</span></span>
-<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> series.is_unique</span>
-<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>validated <span class="op">=</span> StudentDataSchema.validate(sample_df)</span>
-<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Class-based validation passed:"</span>, validated.shape)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<h2 class="anchored" data-anchor-id="dataframemodel-the-class-based-api">2. <code>DataFrameModel</code>: the class-based API</h2>
+<p>The functional <code>DataFrameSchema</code> API is explicit but verbose. Pandera’s class-based API mirrors Pydantic’s <code>BaseModel</code>: columns become annotated class fields, and <code>pa.Field</code> carries the constraints.</p>
+<div id="18" class="cell" data-execution_count="6">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> typing <span class="im">import</span> Optional</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandera <span class="im">as</span> pa</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pandera.typing <span class="im">import</span> Series</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Define the schema as a class. The <code>Config</code> inner class sets options such as <code>coerce</code>. A <code>@pa.check</code> classmethod adds a column-level constraint that the built-in <code>pa.Field</code> arguments cannot express:</p>
+<div id="20" class="cell" data-execution_count="7">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> StudentDataSchema(pa.DataFrameModel):</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    student_id: Series[<span class="bu">str</span>] <span class="op">=</span> pa.Field(str_matches<span class="op">=</span><span class="vs">r"</span><span class="dv">^</span><span class="vs">S</span><span class="dv">\d</span><span class="op">{4}</span><span class="dv">$</span><span class="vs">"</span>)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    midterm_score: Series[<span class="bu">float</span>] <span class="op">=</span> pa.Field(ge<span class="op">=</span><span class="fl">0.0</span>, le<span class="op">=</span><span class="fl">100.0</span>)</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    final_score: Series[<span class="bu">float</span>] <span class="op">=</span> pa.Field(ge<span class="op">=</span><span class="fl">0.0</span>, le<span class="op">=</span><span class="fl">100.0</span>)</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    project_score: Series[<span class="bu">float</span>] <span class="op">=</span> pa.Field(ge<span class="op">=</span><span class="fl">0.0</span>, le<span class="op">=</span><span class="fl">100.0</span>)</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    program: Series[<span class="bu">str</span>] <span class="op">=</span> pa.Field(isin<span class="op">=</span>[<span class="st">"CS"</span>, <span class="st">"EE"</span>, <span class="st">"Math"</span>, <span class="st">"Physics"</span>, <span class="st">"Biology"</span>])</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    has_internet: Series[<span class="bu">bool</span>]</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>    school_id: Series[<span class="bu">str</span>] <span class="op">|</span> <span class="va">None</span> <span class="op">=</span> pa.Field(nullable<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>    teacher_count: Series[<span class="bu">int</span>] <span class="op">=</span> pa.Field(ge<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>    school_size: Series[<span class="bu">str</span>] <span class="op">=</span> pa.Field(isin<span class="op">=</span>[<span class="st">"Small"</span>, <span class="st">"Medium"</span>, <span class="st">"Large"</span>])</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>    <span class="kw">class</span> Config:</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>        <span class="bu">coerce</span> <span class="op">=</span> <span class="va">True</span></span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">@pa.check</span>(<span class="st">"student_id"</span>)</span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> student_id_unique(cls, series: Series[<span class="bu">str</span>]) <span class="op">-&gt;</span> <span class="bu">bool</span>:  <span class="co"># noqa: N805</span></span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> series.is_unique</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Validate by calling the class name directly. No schema object needed:</p>
+<div id="22" class="cell" data-execution_count="8">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>validated <span class="op">=</span> StudentDataSchema.validate(sample_df)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Class-based validation passed:"</span>, validated.shape)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Class-based validation passed: (3, 10)</code></pre>
 </div>
@@ -740,31 +780,32 @@ schema.validate(dup_df)  # should raise</pre>
 </div>
 </section>
 <section id="custom-checks" class="level2">
-<h2 class="anchored" data-anchor-id="custom-checks">4. Custom checks</h2>
-<p>Built-in checks cover ranges, null counts, string patterns, and allowed values. Custom checks handle business rules that require more logic:</p>
-<div id="19" class="cell" data-execution_count="5">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandera <span class="im">as</span> pa</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pandera.typing <span class="im">import</span> Series</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> GradeSchema(pa.DataFrameModel):</span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    midterm_score: Series[<span class="bu">float</span>] <span class="op">=</span> pa.Field(ge<span class="op">=</span><span class="fl">0.0</span>, le<span class="op">=</span><span class="fl">100.0</span>)</span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    final_score: Series[<span class="bu">float</span>] <span class="op">=</span> pa.Field(ge<span class="op">=</span><span class="fl">0.0</span>, le<span class="op">=</span><span class="fl">100.0</span>)</span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>    project_score: Series[<span class="bu">float</span>] <span class="op">=</span> pa.Field(ge<span class="op">=</span><span class="fl">0.0</span>, le<span class="op">=</span><span class="fl">100.0</span>)</span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">@pa.check</span>(<span class="st">"midterm_score"</span>, name<span class="op">=</span><span class="st">"not_all_perfect"</span>)</span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> not_all_perfect_scores(cls, series: Series[<span class="bu">float</span>]) <span class="op">-&gt;</span> <span class="bu">bool</span>:  <span class="co"># noqa: N805</span></span>
-<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> (series <span class="op">==</span> <span class="fl">100.0</span>).mean() <span class="op">&lt;</span> <span class="fl">0.5</span>  <span class="co"># less than 50% perfect scores</span></span>
-<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">@pa.dataframe_check</span></span>
-<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> weighted_average_reasonable(cls, df: pd.DataFrame) <span class="op">-&gt;</span> <span class="bu">bool</span>:  <span class="co"># noqa: N805</span></span>
-<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>        avg <span class="op">=</span> df[<span class="st">"midterm_score"</span>] <span class="op">*</span> <span class="fl">0.3</span> <span class="op">+</span> df[<span class="st">"final_score"</span>] <span class="op">*</span> <span class="fl">0.45</span> <span class="op">+</span> df[<span class="st">"project_score"</span>] <span class="op">*</span> <span class="fl">0.25</span></span>
-<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> (avg <span class="op">&gt;=</span> <span class="fl">0.0</span>).<span class="bu">all</span>() <span class="kw">and</span> (avg <span class="op">&lt;=</span> <span class="fl">100.0</span>).<span class="bu">all</span>()</span>
-<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Validate the sample</span></span>
-<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>result <span class="op">=</span> GradeSchema.validate(sample_df[[<span class="st">"midterm_score"</span>, <span class="st">"final_score"</span>, <span class="st">"project_score"</span>]])</span>
-<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Custom checks passed:"</span>, result.shape)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<h2 class="anchored" data-anchor-id="custom-checks">3. Custom checks</h2>
+<p>Built-in checks cover ranges, null counts, string patterns, and allowed values. Custom checks handle business rules that require more logic.</p>
+<div id="25" class="cell" data-execution_count="9">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandera <span class="im">as</span> pa</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pandera.typing <span class="im">import</span> Series</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><code>@pa.check("column_name")</code> adds a column-level check: the method receives the full <code>Series</code> and must return <code>True</code> (whole series passes) or a boolean <code>Series</code> (element-wise). <code>@pa.dataframe_check</code> receives the full DataFrame for cross-column constraints:</p>
+<div id="27" class="cell" data-execution_count="10">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> GradeSchema(pa.DataFrameModel):</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    midterm_score: Series[<span class="bu">float</span>] <span class="op">=</span> pa.Field(ge<span class="op">=</span><span class="fl">0.0</span>, le<span class="op">=</span><span class="fl">100.0</span>)</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    final_score: Series[<span class="bu">float</span>] <span class="op">=</span> pa.Field(ge<span class="op">=</span><span class="fl">0.0</span>, le<span class="op">=</span><span class="fl">100.0</span>)</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    project_score: Series[<span class="bu">float</span>] <span class="op">=</span> pa.Field(ge<span class="op">=</span><span class="fl">0.0</span>, le<span class="op">=</span><span class="fl">100.0</span>)</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">@pa.check</span>(<span class="st">"midterm_score"</span>, name<span class="op">=</span><span class="st">"not_all_perfect"</span>)</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> not_all_perfect_scores(cls, series: Series[<span class="bu">float</span>]) <span class="op">-&gt;</span> <span class="bu">bool</span>:  <span class="co"># noqa: N805</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> (series <span class="op">==</span> <span class="fl">100.0</span>).mean() <span class="op">&lt;</span> <span class="fl">0.5</span></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">@pa.dataframe_check</span></span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> weighted_average_reasonable(cls, df: pd.DataFrame) <span class="op">-&gt;</span> <span class="bu">bool</span>:  <span class="co"># noqa: N805</span></span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>        avg <span class="op">=</span> df[<span class="st">"midterm_score"</span>] <span class="op">*</span> <span class="fl">0.3</span> <span class="op">+</span> df[<span class="st">"final_score"</span>] <span class="op">*</span> <span class="fl">0.45</span> <span class="op">+</span> df[<span class="st">"project_score"</span>] <span class="op">*</span> <span class="fl">0.25</span></span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> (avg <span class="op">&gt;=</span> <span class="fl">0.0</span>).<span class="bu">all</span>() <span class="kw">and</span> (avg <span class="op">&lt;=</span> <span class="fl">100.0</span>).<span class="bu">all</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Run it against the sample to confirm both checks pass:</p>
+<div id="29" class="cell" data-execution_count="11">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>result <span class="op">=</span> GradeSchema.validate(sample_df[[<span class="st">"midterm_score"</span>, <span class="st">"final_score"</span>, <span class="st">"project_score"</span>]])</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Custom checks passed:"</span>, result.shape)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Custom checks passed: (3, 3)</code></pre>
 </div>
@@ -779,46 +820,46 @@ def not_both_zero(cls, df: pd.DataFrame) -&gt; pd.Series:
 </div>
 </section>
 <section id="validation-in-a-pipeline" class="level2">
-<h2 class="anchored" data-anchor-id="validation-in-a-pipeline">5. Validation in a pipeline</h2>
-<p>In a pipeline, you want to validate without crashing on the first error, collecting all failures and decide what to do with them:</p>
-<div id="23" class="cell" data-execution_count="6">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandera <span class="im">as</span> pa</span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> load_and_validate(</span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    path: <span class="bu">str</span>,</span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    schema: <span class="bu">type</span>[pa.DataFrameModel],</span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>    <span class="op">*</span>,</span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>    lazy: <span class="bu">bool</span> <span class="op">=</span> <span class="va">True</span>,</span>
-<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>) <span class="op">-&gt;</span> <span class="bu">tuple</span>[pd.DataFrame, <span class="bu">list</span>[<span class="bu">dict</span>]]:</span>
-<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> pd.read_csv(path)</span>
-<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="kw">not</span> lazy:</span>
-<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> schema.validate(df, lazy<span class="op">=</span><span class="va">False</span>), []</span>
-<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span>:</span>
-<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> schema.validate(df, lazy<span class="op">=</span><span class="va">True</span>), []</span>
-<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>    <span class="cf">except</span> pa.errors.SchemaErrors <span class="im">as</span> e:</span>
-<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a>        error_df <span class="op">=</span> e.failure_cases</span>
-<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a>        errors <span class="op">=</span> error_df.to_dict(orient<span class="op">=</span><span class="st">"records"</span>)</span>
-<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Return only the valid rows for downstream use</span></span>
-<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a>        bad_idx <span class="op">=</span> <span class="bu">set</span>(error_df[<span class="st">"index"</span>].dropna().astype(<span class="bu">int</span>).tolist())</span>
-<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a>        clean_df <span class="op">=</span> df.drop(index<span class="op">=</span><span class="bu">list</span>(bad_idx)).reset_index(drop<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> clean_df, errors</span>
-<span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-26"><a href="#cb12-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-27"><a href="#cb12-27" aria-hidden="true" tabindex="-1"></a><span class="co"># Use it</span></span>
-<span id="cb12-28"><a href="#cb12-28" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span>:</span>
-<span id="cb12-29"><a href="#cb12-29" aria-hidden="true" tabindex="-1"></a>    clean, errors <span class="op">=</span> load_and_validate(</span>
-<span id="cb12-30"><a href="#cb12-30" aria-hidden="true" tabindex="-1"></a>        <span class="st">"tutorials/data/university_analytics.csv"</span>,</span>
-<span id="cb12-31"><a href="#cb12-31" aria-hidden="true" tabindex="-1"></a>        StudentDataSchema,</span>
-<span id="cb12-32"><a href="#cb12-32" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb12-33"><a href="#cb12-33" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"Clean rows: </span><span class="sc">{</span><span class="bu">len</span>(clean)<span class="sc">}</span><span class="ss">, Errors: </span><span class="sc">{</span><span class="bu">len</span>(errors)<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb12-34"><a href="#cb12-34" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> errors:</span>
-<span id="cb12-35"><a href="#cb12-35" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="st">"First error:"</span>, errors[<span class="dv">0</span>])</span>
-<span id="cb12-36"><a href="#cb12-36" aria-hidden="true" tabindex="-1"></a><span class="cf">except</span> <span class="pp">FileNotFoundError</span>:</span>
-<span id="cb12-37"><a href="#cb12-37" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"CSV not found in this context; run from repo root"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<h2 class="anchored" data-anchor-id="validation-in-a-pipeline">4. Validation in a pipeline</h2>
+<p>In a pipeline, failing on the first error stops the run and loses all subsequent error information. Use <code>lazy=True</code> to collect every failure before raising:</p>
+<div id="33" class="cell" data-execution_count="12">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandera <span class="im">as</span> pa</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><code>load_and_validate</code> wraps <code>schema.validate(df, lazy=True)</code>: it catches <code>SchemaErrors</code>, extracts the failure cases, drops the invalid rows, and returns the clean frame alongside a list of error dicts for logging:</p>
+<div id="35" class="cell" data-execution_count="13">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> load_and_validate(</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>    path: <span class="bu">str</span>,</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    schema: <span class="bu">type</span>[pa.DataFrameModel],</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>    <span class="op">*</span>,</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>    lazy: <span class="bu">bool</span> <span class="op">=</span> <span class="va">True</span>,</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>) <span class="op">-&gt;</span> <span class="bu">tuple</span>[pd.DataFrame, <span class="bu">list</span>[<span class="bu">dict</span>]]:</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> pd.read_csv(path)</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="kw">not</span> lazy:</span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> schema.validate(df, lazy<span class="op">=</span><span class="va">False</span>), []</span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span>:</span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> schema.validate(df, lazy<span class="op">=</span><span class="va">True</span>), []</span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">except</span> pa.errors.SchemaErrors <span class="im">as</span> e:</span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a>        error_df <span class="op">=</span> e.failure_cases</span>
+<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a>        errors <span class="op">=</span> error_df.to_dict(orient<span class="op">=</span><span class="st">"records"</span>)</span>
+<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a>        bad_idx <span class="op">=</span> <span class="bu">set</span>(error_df[<span class="st">"index"</span>].dropna().astype(<span class="bu">int</span>).tolist())</span>
+<span id="cb18-18"><a href="#cb18-18" aria-hidden="true" tabindex="-1"></a>        clean_df <span class="op">=</span> df.drop(index<span class="op">=</span><span class="bu">list</span>(bad_idx)).reset_index(drop<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb18-19"><a href="#cb18-19" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> clean_df, errors</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Call it with the <code>StudentDataSchema</code> defined in section 2:</p>
+<div id="37" class="cell" data-execution_count="14">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span>:</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>    clean, errors <span class="op">=</span> load_and_validate(</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>        <span class="st">"tutorials/data/university_analytics.csv"</span>,</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>        StudentDataSchema,</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"Clean rows: </span><span class="sc">{</span><span class="bu">len</span>(clean)<span class="sc">}</span><span class="ss">, Errors: </span><span class="sc">{</span><span class="bu">len</span>(errors)<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> errors:</span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="st">"First error:"</span>, errors[<span class="dv">0</span>])</span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a><span class="cf">except</span> <span class="pp">FileNotFoundError</span>:</span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"CSV not found in this context; run from repo root"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>CSV not found in this context; run from repo root</code></pre>
 </div>
@@ -831,82 +872,95 @@ def not_both_zero(cls, df: pd.DataFrame) -&gt; pd.Series:
 </div>
 </section>
 <section id="schemas-as-data-contracts-in-tests" class="level2">
-<h2 class="anchored" data-anchor-id="schemas-as-data-contracts-in-tests">6. Schemas as data contracts in tests</h2>
-<p>A Pandera schema is documentation that runs. Put it in a pytest fixture and every test that touches a DataFrame automatically validates the contract:</p>
-<div id="26" class="cell" data-execution_count="7">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># tests/test_data_contracts.py  (save and run: uv run pytest tests/)</span></span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ── paste into a test file and run with pytest ──</span></span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandera <span class="im">as</span> pa</span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pandera.typing <span class="im">import</span> Series</span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pytest</span>
-<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> StudentDataSchema(pa.DataFrameModel):</span>
-<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>    student_id: Series[<span class="bu">str</span>] <span class="op">=</span> pa.Field(str_matches<span class="op">=</span><span class="vs">r"</span><span class="dv">^</span><span class="vs">S</span><span class="dv">\d</span><span class="op">{4}</span><span class="dv">$</span><span class="vs">"</span>)</span>
-<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>    midterm_score: Series[<span class="bu">float</span>] <span class="op">=</span> pa.Field(ge<span class="op">=</span><span class="fl">0.0</span>, le<span class="op">=</span><span class="fl">100.0</span>)</span>
-<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>    final_score: Series[<span class="bu">float</span>] <span class="op">=</span> pa.Field(ge<span class="op">=</span><span class="fl">0.0</span>, le<span class="op">=</span><span class="fl">100.0</span>)</span>
-<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>    project_score: Series[<span class="bu">float</span>] <span class="op">=</span> pa.Field(ge<span class="op">=</span><span class="fl">0.0</span>, le<span class="op">=</span><span class="fl">100.0</span>)</span>
-<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>    program: Series[<span class="bu">str</span>] <span class="op">=</span> pa.Field(isin<span class="op">=</span>[<span class="st">"CS"</span>, <span class="st">"EE"</span>, <span class="st">"Math"</span>, <span class="st">"Physics"</span>, <span class="st">"Biology"</span>])</span>
-<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>    has_internet: Series[<span class="bu">bool</span>]</span>
-<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>    teacher_count: Series[<span class="bu">int</span>] <span class="op">=</span> pa.Field(ge<span class="op">=</span><span class="dv">1</span>)</span>
-<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a>    school_size: Series[<span class="bu">str</span>] <span class="op">=</span> pa.Field(isin<span class="op">=</span>[<span class="st">"Small"</span>, <span class="st">"Medium"</span>, <span class="st">"Large"</span>])</span>
-<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a>    <span class="kw">class</span> Config:</span>
-<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a>        <span class="bu">coerce</span> <span class="op">=</span> <span class="va">True</span></span>
-<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a><span class="at">@pytest.fixture</span></span>
-<span id="cb14-25"><a href="#cb14-25" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> valid_df():</span>
-<span id="cb14-26"><a href="#cb14-26" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> pd.DataFrame(</span>
-<span id="cb14-27"><a href="#cb14-27" aria-hidden="true" tabindex="-1"></a>        {</span>
-<span id="cb14-28"><a href="#cb14-28" aria-hidden="true" tabindex="-1"></a>            <span class="st">"student_id"</span>: [<span class="st">"S0001"</span>, <span class="st">"S0002"</span>],</span>
-<span id="cb14-29"><a href="#cb14-29" aria-hidden="true" tabindex="-1"></a>            <span class="st">"midterm_score"</span>: [<span class="fl">78.5</span>, <span class="fl">65.0</span>],</span>
-<span id="cb14-30"><a href="#cb14-30" aria-hidden="true" tabindex="-1"></a>            <span class="st">"final_score"</span>: [<span class="fl">82.0</span>, <span class="fl">70.0</span>],</span>
-<span id="cb14-31"><a href="#cb14-31" aria-hidden="true" tabindex="-1"></a>            <span class="st">"project_score"</span>: [<span class="fl">91.0</span>, <span class="fl">75.0</span>],</span>
-<span id="cb14-32"><a href="#cb14-32" aria-hidden="true" tabindex="-1"></a>            <span class="st">"program"</span>: [<span class="st">"CS"</span>, <span class="st">"EE"</span>],</span>
-<span id="cb14-33"><a href="#cb14-33" aria-hidden="true" tabindex="-1"></a>            <span class="st">"has_internet"</span>: [<span class="va">True</span>, <span class="va">False</span>],</span>
-<span id="cb14-34"><a href="#cb14-34" aria-hidden="true" tabindex="-1"></a>            <span class="st">"teacher_count"</span>: [<span class="dv">12</span>, <span class="dv">8</span>],</span>
-<span id="cb14-35"><a href="#cb14-35" aria-hidden="true" tabindex="-1"></a>            <span class="st">"school_size"</span>: [<span class="st">"Large"</span>, <span class="st">"Medium"</span>],</span>
-<span id="cb14-36"><a href="#cb14-36" aria-hidden="true" tabindex="-1"></a>        }</span>
-<span id="cb14-37"><a href="#cb14-37" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb14-38"><a href="#cb14-38" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-39"><a href="#cb14-39" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-40"><a href="#cb14-40" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> test_valid_data_passes_schema(valid_df):</span>
-<span id="cb14-41"><a href="#cb14-41" aria-hidden="true" tabindex="-1"></a>    validated <span class="op">=</span> StudentDataSchema.validate(valid_df)</span>
-<span id="cb14-42"><a href="#cb14-42" aria-hidden="true" tabindex="-1"></a>    <span class="cf">assert</span> <span class="bu">len</span>(validated) <span class="op">==</span> <span class="dv">2</span>  <span class="co"># noqa: S101</span></span>
-<span id="cb14-43"><a href="#cb14-43" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-44"><a href="#cb14-44" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-45"><a href="#cb14-45" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> test_invalid_score_raises(valid_df):</span>
-<span id="cb14-46"><a href="#cb14-46" aria-hidden="true" tabindex="-1"></a>    bad <span class="op">=</span> valid_df.copy()</span>
-<span id="cb14-47"><a href="#cb14-47" aria-hidden="true" tabindex="-1"></a>    bad.loc[<span class="dv">0</span>, <span class="st">"midterm_score"</span>] <span class="op">=</span> <span class="fl">150.0</span></span>
-<span id="cb14-48"><a href="#cb14-48" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> pytest.raises(pa.errors.SchemaError):</span>
-<span id="cb14-49"><a href="#cb14-49" aria-hidden="true" tabindex="-1"></a>        StudentDataSchema.validate(bad)</span>
-<span id="cb14-50"><a href="#cb14-50" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-51"><a href="#cb14-51" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-52"><a href="#cb14-52" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> test_invalid_program_raises(valid_df):</span>
-<span id="cb14-53"><a href="#cb14-53" aria-hidden="true" tabindex="-1"></a>    bad <span class="op">=</span> valid_df.copy()</span>
-<span id="cb14-54"><a href="#cb14-54" aria-hidden="true" tabindex="-1"></a>    bad.loc[<span class="dv">0</span>, <span class="st">"program"</span>] <span class="op">=</span> <span class="st">"Underwater Basket Weaving"</span></span>
-<span id="cb14-55"><a href="#cb14-55" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> pytest.raises(pa.errors.SchemaError):</span>
-<span id="cb14-56"><a href="#cb14-56" aria-hidden="true" tabindex="-1"></a>        StudentDataSchema.validate(bad)</span>
-<span id="cb14-57"><a href="#cb14-57" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-58"><a href="#cb14-58" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-59"><a href="#cb14-59" aria-hidden="true" tabindex="-1"></a><span class="co"># Demonstration (not a real pytest run)</span></span>
-<span id="cb14-60"><a href="#cb14-60" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Tests defined. Run with: uv run pytest tests/test_data_contracts.py -v"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<h2 class="anchored" data-anchor-id="schemas-as-data-contracts-in-tests">5. Schemas as data contracts in tests</h2>
+<p>A Pandera schema is documentation that runs. Put it in a pytest fixture and every test that touches a DataFrame automatically validates the contract.</p>
+<p>Define <code>StudentDataSchema</code> in <code>grade_predictor/schemas.py</code> so it can be imported by both the pipeline and the tests:</p>
+<div id="41" class="cell" data-execution_count="15">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># grade_predictor/schemas.py</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandera <span class="im">as</span> pa</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pandera.typing <span class="im">import</span> Series</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> StudentDataSchema(pa.DataFrameModel):</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>    student_id: Series[<span class="bu">str</span>] <span class="op">=</span> pa.Field(str_matches<span class="op">=</span><span class="vs">r"</span><span class="dv">^</span><span class="vs">S</span><span class="dv">\d</span><span class="op">{4}</span><span class="dv">$</span><span class="vs">"</span>)</span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>    midterm_score: Series[<span class="bu">float</span>] <span class="op">=</span> pa.Field(ge<span class="op">=</span><span class="fl">0.0</span>, le<span class="op">=</span><span class="fl">100.0</span>)</span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>    final_score: Series[<span class="bu">float</span>] <span class="op">=</span> pa.Field(ge<span class="op">=</span><span class="fl">0.0</span>, le<span class="op">=</span><span class="fl">100.0</span>)</span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>    project_score: Series[<span class="bu">float</span>] <span class="op">=</span> pa.Field(ge<span class="op">=</span><span class="fl">0.0</span>, le<span class="op">=</span><span class="fl">100.0</span>)</span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>    program: Series[<span class="bu">str</span>] <span class="op">=</span> pa.Field(isin<span class="op">=</span>[<span class="st">"CS"</span>, <span class="st">"EE"</span>, <span class="st">"Math"</span>, <span class="st">"Physics"</span>, <span class="st">"Biology"</span>])</span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a>    has_internet: Series[<span class="bu">bool</span>]</span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>    teacher_count: Series[<span class="bu">int</span>] <span class="op">=</span> pa.Field(ge<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>    school_size: Series[<span class="bu">str</span>] <span class="op">=</span> pa.Field(isin<span class="op">=</span>[<span class="st">"Small"</span>, <span class="st">"Medium"</span>, <span class="st">"Large"</span>])</span>
+<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a>    <span class="kw">class</span> Config:</span>
+<span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a>        <span class="bu">coerce</span> <span class="op">=</span> <span class="va">True</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>A <code>@pytest.fixture</code> builds a minimal valid DataFrame. Each test gets a fresh copy:</p>
+<div id="43" class="cell" data-execution_count="16">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pytest</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a><span class="at">@pytest.fixture</span></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> valid_df():</span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> pd.DataFrame(</span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>        {</span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>            <span class="st">"student_id"</span>: [<span class="st">"S0001"</span>, <span class="st">"S0002"</span>],</span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>            <span class="st">"midterm_score"</span>: [<span class="fl">78.5</span>, <span class="fl">65.0</span>],</span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>            <span class="st">"final_score"</span>: [<span class="fl">82.0</span>, <span class="fl">70.0</span>],</span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>            <span class="st">"project_score"</span>: [<span class="fl">91.0</span>, <span class="fl">75.0</span>],</span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a>            <span class="st">"program"</span>: [<span class="st">"CS"</span>, <span class="st">"EE"</span>],</span>
+<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a>            <span class="st">"has_internet"</span>: [<span class="va">True</span>, <span class="va">False</span>],</span>
+<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a>            <span class="st">"teacher_count"</span>: [<span class="dv">12</span>, <span class="dv">8</span>],</span>
+<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a>            <span class="st">"school_size"</span>: [<span class="st">"Large"</span>, <span class="st">"Medium"</span>],</span>
+<span id="cb22-17"><a href="#cb22-17" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb22-18"><a href="#cb22-18" aria-hidden="true" tabindex="-1"></a>    )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-error">
 <div class="ansi-escaped-output">
 <pre><span class="ansi-red-fg">---------------------------------------------------------------------------</span>
 <span class="ansi-red-fg">ModuleNotFoundError</span>                       Traceback (most recent call last)
-<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[7]</span><span class="ansi-green-fg">, line 7</span>
-<span class="ansi-green-fg">      5</span> <span style="font-weight:bold;color:rgb(0,135,0)">import</span><span style="color:rgb(188,188,188)"> </span><span class="ansi-blue-fg ansi-bold">pandera</span><span style="color:rgb(188,188,188)"> </span><span style="font-weight:bold;color:rgb(0,135,0)">as</span><span style="color:rgb(188,188,188)"> </span><span class="ansi-blue-fg ansi-bold">pa</span>
-<span class="ansi-green-fg">      6</span> <span style="font-weight:bold;color:rgb(0,135,0)">from</span><span style="color:rgb(188,188,188)"> </span><span class="ansi-blue-fg ansi-bold">pandera</span><span class="ansi-blue-fg ansi-bold">.</span><span class="ansi-blue-fg ansi-bold">typing</span><span style="color:rgb(188,188,188)"> </span><span style="font-weight:bold;color:rgb(0,135,0)">import</span> Series
-<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">7</span> <span style="font-weight:bold;color:rgb(0,135,0)">import</span><span style="color:rgb(188,188,188)"> </span><span class="ansi-blue-fg ansi-bold">pytest</span>
-<span class="ansi-green-fg">     10</span> <span style="font-weight:bold;color:rgb(0,135,0)">class</span><span style="color:rgb(188,188,188)"> </span><span class="ansi-blue-fg ansi-bold">StudentDataSchema</span>(pa.DataFrameModel):
-<span class="ansi-green-fg">     11</span>     student_id: Series[<span style="color:rgb(0,135,0)">str</span>] = pa.Field(str_matches=<span class="ansi-yellow-fg">r</span><span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">^S</span><span class="ansi-yellow-fg">\</span><span class="ansi-yellow-fg">d</span><span style="font-weight:bold;color:rgb(175,95,135)">{4}</span><span class="ansi-yellow-fg">$</span><span class="ansi-yellow-fg">"</span>)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[16]</span><span class="ansi-green-fg">, line 2</span>
+<span class="ansi-green-fg">      1</span> <span style="font-weight:bold;color:rgb(0,135,0)">import</span><span style="color:rgb(188,188,188)"> </span><span class="ansi-blue-fg ansi-bold">pandas</span><span style="color:rgb(188,188,188)"> </span><span style="font-weight:bold;color:rgb(0,135,0)">as</span><span style="color:rgb(188,188,188)"> </span><span class="ansi-blue-fg ansi-bold">pd</span>
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">2</span> <span style="font-weight:bold;color:rgb(0,135,0)">import</span><span style="color:rgb(188,188,188)"> </span><span class="ansi-blue-fg ansi-bold">pytest</span>
+<span class="ansi-green-fg">      5</span> <span style="color:rgb(175,0,255)">@pytest</span>.fixture
+<span class="ansi-green-fg">      6</span> <span style="font-weight:bold;color:rgb(0,135,0)">def</span><span style="color:rgb(188,188,188)"> </span><span class="ansi-blue-fg">valid_df</span>():
+<span class="ansi-green-fg">      7</span>     <span style="font-weight:bold;color:rgb(0,135,0)">return</span> pd.DataFrame(
+<span class="ansi-green-fg">      8</span>         {
+<span class="ansi-green-fg">      9</span>             <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">student_id</span><span class="ansi-yellow-fg">"</span>: [<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">S0001</span><span class="ansi-yellow-fg">"</span>, <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">S0002</span><span class="ansi-yellow-fg">"</span>],
+<span class="ansi-green-fg">   (...)</span><span class="ansi-green-fg">     17</span>         }
+<span class="ansi-green-fg">     18</span>     )
 
 <span class="ansi-red-fg">ModuleNotFoundError</span>: No module named 'pytest'</pre>
 </div>
+</div>
+</div>
+<p>Test that clean data passes the schema:</p>
+<div id="45" class="cell" data-execution_count="17">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> test_valid_data_passes_schema(valid_df):</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>    validated <span class="op">=</span> StudentDataSchema.validate(valid_df)</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">assert</span> <span class="bu">len</span>(validated) <span class="op">==</span> <span class="dv">2</span>  <span class="co"># noqa: S101</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Test that a score above 100 raises <code>SchemaError</code>:</p>
+<div id="47" class="cell" data-execution_count="18">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> test_invalid_score_raises(valid_df):</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>    bad <span class="op">=</span> valid_df.copy()</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>    bad.loc[<span class="dv">0</span>, <span class="st">"midterm_score"</span>] <span class="op">=</span> <span class="fl">150.0</span></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> pytest.raises(pa.errors.SchemaError):</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>        StudentDataSchema.validate(bad)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Test that an unknown program value raises <code>SchemaError</code>:</p>
+<div id="49" class="cell" data-execution_count="19">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> test_invalid_program_raises(valid_df):</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>    bad <span class="op">=</span> valid_df.copy()</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>    bad.loc[<span class="dv">0</span>, <span class="st">"program"</span>] <span class="op">=</span> <span class="st">"Underwater Basket Weaving"</span></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> pytest.raises(pa.errors.SchemaError):</span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>        StudentDataSchema.validate(bad)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Run the tests from the repo root:</p>
+<div id="51" class="cell" data-execution_count="20">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Save the cells above to tests/test_data_contracts.py, then:</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Run with: uv run pytest tests/test_data_contracts.py -v"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Run with: uv run pytest tests/test_data_contracts.py -v</code></pre>
 </div>
 </div>
 <div class="ark-tip">
@@ -943,7 +997,7 @@ Run <code>uv run pytest -v</code> and confirm all three pass
 </div>
 </section>
 <section id="why-pandera-comparing-schema-validation-tools" class="level2">
-<h2 class="anchored" data-anchor-id="why-pandera-comparing-schema-validation-tools">7. Why Pandera? comparing schema validation tools</h2>
+<h2 class="anchored" data-anchor-id="why-pandera-comparing-schema-validation-tools">6. Why Pandera? comparing schema validation tools</h2>
 <p>Before Pandera became the community standard for DataFrame validation, several tools tackled the same problem in different ways. Understanding the landscape helps you choose the right tool for your context.</p>
 <div class="ark-concept">
 <p><span class="ark-concept-title"><i class="bi bi-key-fill"></i> Key Concept: Schema validation is not the same as data cleaning</span><br><br> Schema validation answers a yes/no question: does this DataFrame conform to the contract? It runs fast and fails loudly. Data cleaning transforms and repairs data. The two serve different purposes: validate at the pipeline boundary, clean before you get there.</p>
