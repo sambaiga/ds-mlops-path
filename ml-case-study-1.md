@@ -14,9 +14,21 @@ discipline, and knowing what problem you're solving for whom. Ch31-32
 inline, type-annotated functions. Part 2 (dev-tools) taught the
 engineering-discipline side as ten standalone chapters. Nothing in the book
 yet forces those two sides together in one artifact. Case Study 1 is where
-they meet, so the project should look like the smallest real thing a
-practitioner would actually ship: a small tested library module plus a
-notebook that narrates it, not one long cell sequence.
+they meet.
+
+**Correction after review**: the module cannot be pre-built and simply
+imported by the notebook. The book's own model, stated on its own cover
+page, is "run top to bottom, not just read," with Activity callouts
+where the reader fills in a `\`...\`` themselves before moving on. A
+notebook that opens with `from ark.case_studies.spend_regression import
+*` teaches nothing, the reader would be reading a finished library, not
+building anything. So the module isn't written first and then narrated,
+it's **built inside the notebook, function by function, with the reader
+doing some of the writing**, and only *promoted* into
+`ark/case_studies/spend_regression/` once each piece works, the same
+prototype-then-productionize move a real practitioner makes. See "How
+construction actually happens" below, it changes the build order from
+what an earlier version of this plan said.
 
 ## Grounded in what's already in the repo, not invented fresh
 
@@ -67,10 +79,42 @@ tutorials/05-classical-ml-projects/
 └── data/                       # gitignored; populated by data.py at run time
 ```
 
-The notebook becomes thin on purpose: it calls into the tested module and
-narrates *why*, matching how Ch31-32 already treat sklearn, except the
-reusable parts are promoted out of the notebook this time because this
-project is meant to be re-run and extended, not just read once.
+## How construction actually happens: the notebook builds the module, not the reverse
+
+Per section (roughly, one per Ch30 workflow stage), the notebook follows
+the same five-beat pattern, which is also the real workflow a
+practitioner follows when a prototype earns its way into a shared
+library:
+
+1. **Motivate and build inline.** Write the function directly in a
+   notebook cell against the real, already-loaded data, exactly like
+   Ch31-32 already do for sklearn. One concept per cell, markdown before
+   it explaining why this step matters *for this dataset*.
+2. **Activity: the reader completes part of it.** At least one function
+   per major stage (the household-aggregation groupby, the excluded-
+   columns filter, the dollar-value formula) ships with a `\`...\`` the
+   reader fills in themselves, the same mechanism every other chapter in
+   the book already uses, not a new pattern invented for this one.
+3. **Sanity-check on real data.** Run it, look at the actual output
+   (row counts, a `themed_gt()` preview), confirm it did what section 1
+   said it would.
+4. **Promote it.** "This works, now let's make it reusable": the same
+   code moves into `ark/case_studies/spend_regression/{file}.py`, gains
+   full type annotations, a docstring, and (where relevant) a pandera
+   schema guarding its input. This is the extraction step, shown
+   happening, not assumed to have already happened.
+5. **Test it, live, in the notebook.** A cell runs the new pytest test
+   for what was just promoted (e.g. `!uv run pytest
+   tests/case_studies/test_spend_regression.py -k features -v`) so the
+   reader watches it pass. The *first* time this happens in Ch33 is the
+   repo's first real test suite going green on the page, in front of the
+   reader, not a fact buried in CI logs they'll never open.
+
+From that point on in the notebook, later cells `import` the promoted
+version rather than redefine it, so the reader sees the module actually
+get used once it exists, the same way Case Studies 2-7 will import it
+later. The module and the notebook are therefore written together, in
+notebook order, not module-first-then-narrated.
 
 ## Mapping to Ch30's nine-stage workflow (including both feedback loops)
 
