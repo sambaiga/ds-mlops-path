@@ -166,6 +166,21 @@ way into a shared library:
    repo's first real test suite going green on the page, in front of the
    reader, not a fact buried in CI logs they'll never open.
 
+**Exception, confirmed while building Data Collection**: not every
+function earns the full five-beat treatment. Infrastructure, the
+Dataverse download-and-cache utility specifically, isn't a data science
+concept, it's plumbing a working data scientist would just import rather
+than reinvent. For utilities like this, the notebook imports it directly,
+highlights the specific practices baked into it (idempotent caching,
+chunked reads, an HTTPS-only guard, the browser-like User-Agent header
+Dataverse's server actually requires) as a short prose list, and still
+proves it with a live test run, but skips building it inline and skips
+the fill-in-the-blank Activity. The five-beat treatment is reserved for
+code that teaches a data science or ML idea: the household aggregation in
+`features.py`, the model training and evaluation in `model.py`. The
+distinction is "is this something the reader needs to be able to build,"
+not "is this code worth having."
+
 From that point on in the notebook, later cells `import` the promoted
 version rather than redefine it, so the reader sees the module actually
 get used once it exists, the same way Case Studies 2-7 will import it
