@@ -81,7 +81,7 @@ notebook, not just a reference image:
 |---|---|
 | Problem framing | The five-component spec card (Ch30 Section 1), rendered as a pydantic model in `config.py` so the acceptable threshold is a real, importable value, not just a table in markdown |
 | Data collection | `data.py` downloads and caches the Nature dataset; logged with loguru (row counts, date range, cache hit/miss) |
-| EDA | Notebook-only (exploratory, not something to freeze into a tested function): spend distributions, the COVID-era shift, missingness |
+| EDA | Notebook-only (exploratory, not something to freeze into a tested function): spend distributions, the COVID-era shift, missingness, all charted with `lets_plot` + `ark.plot` theming, per the visualization section below |
 | Feature engineering | `features.py`: household-level aggregation, demographic join, validated on the way out by a pandera schema |
 | Model selection | Baseline (predict the mean) -> Ridge -> a small boosting model, per the project spine in `ML_CASE_STUDY_PLAN.md` |
 | Training | `model.py`, logged per step |
@@ -90,7 +90,7 @@ notebook, not just a reference image:
 | Deployment / Monitoring | Not implemented (that's the MLOps part's job, per `ML_CASE_STUDY_PLAN.md`'s template). The closing section names what a monitor would watch (drift in the demographic mix, spend-distribution shift) |
 | **Feedback loop 2: Monitoring -> Problem framing** | Stated, not coded: one paragraph on what a monitoring alert on that drift would force a team to revisit in the spec card (is "predict spend" even the right target anymore, or did the population being sold to change) |
 
-## Dev-tools chapters, each with a concrete touchpoint (not a checklist mention)
+## Dev-tools chapters (Part 2), each with a concrete touchpoint
 
 | Ch | Practice | Where it shows up here |
 |---|---|---|
@@ -106,6 +106,45 @@ notebook, not just a reference image:
 
 Ch18 (VS Code setup) has no natural code touchpoint, it's an environment
 prerequisite, not something a notebook demonstrates.
+
+## Data analysis and visualization chapters (Part 1), each with a concrete touchpoint
+
+Checked what Part 1 actually taught, section by section, rather than
+gesturing at "pandas skills" generally. Every touchpoint below is a named
+section a learner already sat through:
+
+| Ch | Practice | Where it shows up here |
+|---|---|---|
+| 05 Math and statistics | The `statistics` module's mean/stdev is literally the baseline model (Ch30's "compute a baseline first": predict the mean) |
+| 08 Pandas core | Boolean filtering and Section 7 "Handling Missing Data" apply directly to the real blank `Category` rows in `amazon-purchases.csv` |
+| 09 Pandas operations | Section 4 "Descriptive Statistics and Summarization" is the EDA pass before any modelling |
+| 10 Combining and reshaping | Section 2 "Joining Data with `pd.merge`" is exactly the `amazon-purchases.csv` + `survey.csv` join on `Survey ResponseID`; Section 3 "Group by Operations" is the household-level aggregation in `features.py` |
+| 11 Time series | `Order Date` parsing and any recency/frequency features reuse Section 1 (date/time dtypes) and Section 3 (selecting from a time series), the heavier resampling/lag content is Case Study 3's job (forecasting), not this one |
+| 13 Great Tables | Section 8 "Model Comparison with `metrics_report()`" is not a new technique here, it's the exact function (`ark.plot.gt_style.metrics_report`) Ch31-32 already used and this project reuses again |
+| 15 lets-plot | The grammar (`ggplot`, `aes`, `geom`, layering, faceting) is how every EDA and results chart in this notebook gets built, see below |
+| 16 Data storytelling | Section 1 ("picking the right chart"), Section 6 (preattentive attributes), and Section 7 (annotation as narrative) directly shape which EDA chart gets built and how the one striking finding (whatever surfaces from the data) gets annotated rather than left for the reader to spot unaided |
+
+## Visualization: lets-plot and the `ark.plot` house style, not matplotlib
+
+Ch14 teaches matplotlib/Seaborn and Ch15 teaches lets-plot, the book
+teaches both, but Ch31-32 (the closest precedent to this project, not a
+Part 1 fundamentals chapter) already settled on a single convention for
+ML chapters that this case study should match exactly rather than pick
+its own:
+
+- **Charts**: `lets_plot` (`ggplot`, `aes`, `geom_*`), styled with
+  `ark.plot.theme.modern_theme()` and coloured from `ark.plot.tokens`
+  (`PRIMARY`, `SUCCESS`, `INFO`, `WARNING`, `DANGER`, `AI_ACCENT`, the
+  same brand palette used everywhere else in the book), never raw
+  matplotlib/Seaborn defaults.
+- **Tables**: `ark.plot.gt_style.themed_gt()` for any styled summary
+  table (feature cardinality, schema-validation results) and
+  `ark.plot.gt_style.metrics_report()` specifically for model comparison,
+  the same function Ch13 names and Ch31-32 already call, with `title`/
+  `subtitle` always set (Ch13's own convention), never a bare
+  `print(df)` or an unstyled `df.head()`.
+- No new plotting code needs writing, `ark.plot` already has everything
+  this case study needs. The only new work is calling it consistently.
 
 ## Closing section (per `ML_CASE_STUDY_PLAN.md`'s required template)
 
