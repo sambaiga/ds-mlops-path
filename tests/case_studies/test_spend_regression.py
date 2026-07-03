@@ -1,5 +1,6 @@
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 import pandera.errors
 import pytest
@@ -7,6 +8,7 @@ import pytest
 from ark.case_studies.spend_regression.config import SpendRegressionSettings
 from ark.case_studies.spend_regression.data import download_dataverse_file, load_survey
 from ark.case_studies.spend_regression.features import DEMOGRAPHIC_COLUMNS, build_feature_matrix
+from ark.case_studies.spend_regression.model import estimate_incremental_value, top_decile_lift
 from ark.case_studies.spend_regression.schema import FeatureMatrixSchema
 
 
@@ -113,3 +115,22 @@ def test_feature_matrix_schema_rejects_negative_spend(tmp_path: Path) -> None:
 
     with pytest.raises(pandera.errors.SchemaError):
         FeatureMatrixSchema.validate(invalid)
+
+
+def test_top_decile_lift_is_one_for_a_constant_prediction() -> None:
+    y_true = np.array([10.0, 20.0, 30.0, 100.0])
+    y_pred = np.full_like(y_true, 5.0)
+
+    assert top_decile_lift(y_true, y_pred) == pytest.approx(1.0)
+
+
+def test_estimate_incremental_value_scales_with_conversion_rate() -> None:
+    # Top decile (>=90th pctile of predictions) is the household worth 100,
+    # a $60 gap over the mean of 40. 10% of 10 households is 1, so a 50%
+    # conversion rate should return half of that $60 gap.
+    y_true = np.array([10.0, 20.0, 30.0, 100.0, 40.0, 40.0, 40.0, 40.0, 40.0, 40.0])
+    y_pred = y_true.copy()
+
+    value = estimate_incremental_value(y_true, y_pred, total_households=10, conversion_rate=0.5)
+
+    assert value == pytest.approx(30.0)
