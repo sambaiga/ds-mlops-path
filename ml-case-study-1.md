@@ -118,11 +118,24 @@ monitoring/problem-framing forward-pointer from the table above.
 
 ## Open questions: resolved
 
-1. **Coverage gate: set to 80.** ARK CID's `--cov-fail-under` is now 80
-   (PR #53), matching `pyproject.toml`'s default. It's a no-op today
-   (pytest still exits 5, "no tests collected", which the workflow
-   tolerates) and activates automatically the moment
-   `tests/case_studies/test_spend_regression.py` exists.
+1. **Coverage gate: correction after CI actually failed on PR #53.** The
+   first version of this fix assumed setting `--cov-fail-under=80` now
+   would safely no-op until real tests exist, matching the existing
+   tolerance for pytest's plain "no tests collected" exit code (5). That
+   assumption was wrong, verified empirically: with zero test data
+   collected, pytest-cov hard-fails (exit 1) for *any*
+   `--cov-fail-under > 0`, it does not fall back to exit 5. It failed
+   immediately against `ark/plot/*`'s existing 0% coverage. Fixed by (a)
+   reverting `--cov-fail-under` to 0 for now, and (b) adding
+   `.coveragerc` (didn't exist despite `pyproject.toml` already
+   referencing it) with `omit = */ark/plot/*`, so that when the gate is
+   raised to 80 **in the same PR that adds `ark/case_studies/spend_regression`
+   and its tests**, it measures coverage against that tested project
+   surface, not blended with the pre-existing, untested plotting module.
+   This is also the fix for "test of 80 should be per project not the
+   entire codebase." The gate cannot be turned on ahead of the code it's
+   meant to measure, that was the actual mistake, not just the omit
+   scoping.
 2. **Branch alignment: done.** `feature/case-study-1-spend-regression` was
    rebased onto current `main` (picks up the Pages revert, the chapter-
    number fix, and the ML-workflow diagram fix) and force-pushed.
