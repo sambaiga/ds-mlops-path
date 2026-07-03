@@ -87,25 +87,41 @@ test applied one stage earlier. The chapter's opening section is not
 data scientist who has just been handed this dataset and a business ask,
 with no code written yet.**
 
-The section runs in this order:
+The section runs in this order, and the key correction from the previous
+draft of this plan: **the ask that opens the chapter is vague, the way a
+real stakeholder actually talks, not a pre-formed data science problem
+in disguise.** The reader does the refining, the chapter doesn't do it
+for them and then perform the refinement as theatre.
 
-1. **The hook**: a concrete, specific moment from the real data (per the
-   Writing approach section below), not a recap of Ch18-32.
-2. **The business framing**: who is asking for this and why, stated in
-   plain terms, no target variable named yet. (E.g., a retention or
-   marketing team wants to know which households are worth investing
-   more attention in, stated the way a stakeholder would actually ask
-   it, not the way a data scientist would restate it.)
-3. **Work the five-component spec card as a discussion**, in the exact
-   order Ch30 Section 1 defines it, out loud, on the page: what could the
-   target variable even be (and why the obvious first guess might be
-   wrong), which task type and paradigm this is and why, what success
-   metric a business person would actually recognise, what threshold
-   would make this worth deploying, what data is actually available at
-   what grain. This is prose and reasoning, there is nothing to run yet.
+1. **The hook**: a real, verified moment from the actual downloaded
+   data, not an invented anecdote. (Confirmed while drafting: one
+   household in the dataset, single person, unremarkable income bracket,
+   spends about $49 in a typical month, then in one specific week buys a
+   65" TV, a PS4 Pro, a Surface tablet, an Apple Watch, a GoPro, a
+   trampoline, and a kayak, roughly $12,000 in eight days, then goes back
+   to normal. Nothing in the demographics explains it. That's the hook.)
+2. **The vague ask, stated the way it would actually arrive.** Not
+   "predict household spend from demographics". Something closer to what
+   a marketing or lifecycle team really says: "we want to know which
+   customers are worth investing more in." That sentence is vague on
+   purpose, "worth investing in" could mean total spend, growth,
+   frequency, loyalty, or something else entirely, and the chapter does
+   not resolve the ambiguity for the reader.
+3. **Refine it on the page, as questions, not as a solved checklist.**
+   The chapter asks the questions a data scientist would actually ask
+   back: worth investing in *how*, over what time frame, measured
+   against what, using what data the business actually has. Each
+   question narrows the ask until it lands on one of Ch30's five spec-
+   card components, in order, but arrived at through the questioning,
+   not announced. This is the part that changed: earlier drafts of this
+   plan had the chapter "work the five-component spec card as a
+   discussion", which still risked reading as the data scientist
+   explaining the five components *to* the reader. This version has the
+   vague ask create genuine friction first, the five components are the
+   resolution of that friction, not a framework introduced ahead of it.
 4. **Activity, mirroring Ch30's own "write the Spec Card" activity**:
-   before the resolved spec card is shown, the reader is asked to draft
-   their own five-component answer first, the same fill-in-before-you-
+   before the resolved spec card is shown, the reader drafts their own
+   answer to the refining questions first, the same fill-in-before-you-
    see-the-answer mechanism Ch30 already used for three *different*
    problems, now applied to this one.
 5. **Only now, codify it.** "We've reasoned through this, now let's make
