@@ -71,11 +71,13 @@ jobs:
           uv run ruff check . --exit-non-zero-on-fix
           uv run ruff format . --check
       - name: Run Tests with Coverage
-        # No tests/ directory yet - tolerate pytest's "no tests collected" exit
-        # code (5) so this step doesn't block CI before tests are written.
+        # Coverage gate is 80% (matches pyproject.toml's default), enforced
+        # as soon as any tests/ directory exists. Until then, pytest exits
+        # with code 5 ("no tests collected"), which is tolerated so this
+        # step doesn't block CI before the first test suite is written.
         run: |
           set +e
-          uv run pytest --cov=ark --cov-report=xml --cov-fail-under=0
+          uv run pytest --cov=ark --cov-report=xml --cov-fail-under=80
           code=$?
           set -e
           if [ "$code" -ne 0 ] && [ "$code" -ne 5 ]; then exit "$code"; fi
