@@ -2,44 +2,17 @@
 title: "Project setup with uv"
 ---
 
-Chapter 17 configured the workbench. This chapter automates what happens inside it: dependency resolution, virtual environments, and project layout. Every project you build from Chapter 19 onward starts with the commands introduced here.
+You share a Jupyter notebook with a colleague. They clone the repo and run it. The first import fails. Same code, different machine, different packages. You spend 45 minutes on versions before they ever see what the notebook does.
 
-**Next:** [Chapter 19: Code quality with Ruff](19-code-quality-ruff.qmd) enforces the style rules that keep the codebase you set up here readable.
+The problem is not the code. The problem is that the environment is implicit: it exists in your head, not in the repository. Without a tool that captures and reproduces the exact set of packages that worked, the only guarantee you can offer is "it works on my machine."
+
+Virtual environments solve isolation. Lockfiles solve reproducibility. Until recently, you needed separate tools for each: pip and venv for isolation, pip-tools or Poetry for locking. uv does both in one binary, 10 to 100 times faster than pip.
+
+The `grade-predictor` project you build here runs through every remaining dev-tools chapter: Ruff lints it, git versions it, pytest tests it.
+
+**Next:** [Chapter 19: Code quality with Ruff](19-code-quality-ruff.qmd) lints the codebase you build here.
 
 [![View Source on GitHub](https://img.shields.io/badge/Source-GitHub-181717.svg?logo=github)](https://github.com/sambaiga/ds-mlops-path/blob/main/tutorials/02-dev-tools/18-uv-project-setup.qmd)
-
-
-**DS-MLOps Dev Tools**
-
-**Python 3.12+ | Author: Anthony Faustine**
-
-You install `scikit-learn` for one project. Three weeks later a second project breaks because a shared dependency updated. You didn't change anything. The fix is per-project isolation: and `uv` delivers it in one tool: project init, dependency tracking, reproducible lockfiles, and script running, all faster than `pip` alone.
-
-The project you build here carries through every remaining Dev Tools chapter: ruff will lint it, git will version it, and pytest will test it.
-
-::: {.callout-note collapse="true" icon=false}
-## Before you begin
-
-This chapter assumes you have completed Parts 1 and 2. No prior experience with virtual environments is required. If you have used `pip` and `venv` before, every concept here maps directly onto what you already know.
-
-You will build a project called `grade-predictor`, a small Python package that computes and analyses student grades from `university_analytics.csv`. This project thread continues through all six Dev Tools chapters, giving every tool a real codebase to act on.
-
-::: {.callout-note collapse="true" icon=false}
-:::
-
-## Topics covered
-
-| Topic | Why it matters |
-|---|---|
-| **uv vs pip/venv/Poetry** | Faster installs, built-in lockfiles, one tool for everything |
-| **`pyproject.toml`** | The single source of truth for dependencies and project metadata |
-| **`uv init` and `uv add`** | Create and extend projects without manually editing TOML |
-| **Lockfile (`uv.lock`)** | Pins every transitive dependency for reproducible environments |
-| **Extras and dev dependencies** | Separate production, test, and development dependencies cleanly |
-| **`uv run`** | Execute scripts in the project environment without activating it |
-:::
-
-> Callout markers used throughout this notebook are explained on the [book cover page](../../index.qmd#callout-guide).
 
 ::: {.callout-note collapse="true" icon=false}
 ## Learning objectives
