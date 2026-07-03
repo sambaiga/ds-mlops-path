@@ -137,14 +137,31 @@ its own:
   (`PRIMARY`, `SUCCESS`, `INFO`, `WARNING`, `DANGER`, `AI_ACCENT`, the
   same brand palette used everywhere else in the book), never raw
   matplotlib/Seaborn defaults.
-- **Tables**: `ark.plot.gt_style.themed_gt()` for any styled summary
-  table (feature cardinality, schema-validation results) and
-  `ark.plot.gt_style.metrics_report()` specifically for model comparison,
-  the same function Ch13 names and Ch31-32 already call, with `title`/
-  `subtitle` always set (Ch13's own convention), never a bare
-  `print(df)` or an unstyled `df.head()`.
-- No new plotting code needs writing, `ark.plot` already has everything
-  this case study needs. The only new work is calling it consistently.
+- **Tables, without exception**: every DataFrame the notebook shows a
+  reader goes through `ark.plot.gt_style`, never a bare `print(df)` or an
+  unstyled `df.head()`/`df.describe()`. Concretely, every one of these is
+  a `themed_gt()` call with `title`/`subtitle` set (Ch13's own
+  convention):
+  - the spec card itself (Ch30's five components, rendered from the
+    `config.py` pydantic model, not a markdown table)
+  - the raw-data preview and the EDA descriptive-statistics summary
+  - the categorical feature cardinality table (the same pattern Ch32
+    already used for Hotel Booking)
+  - the pandera schema-validation summary (rows passed/failed, which
+    rule caught what)
+  - baseline -> Ridge -> boosting model comparison, via
+    `ark.plot.gt_style.metrics_report()` specifically, the exact
+    function Ch13 Section 8 names and Ch31-32 already call
+  - the feature-importance table for the chosen model
+  - the closing dollar-value estimate and the model-card summary
+  This doesn't override Ch16's "when a table beats a chart" judgement,
+  distributions and trends still get a `lets_plot` chart, not a table.
+  It's a styling rule: whichever output *is* a table, it's always a
+  `themed_gt()` table, not a raw pandas dump.
+- No new plotting or table code needs writing, `ark.plot` already has
+  everything this case study needs. The only new work is calling it
+  consistently, everywhere, rather than reaching for `print()` out of
+  habit partway through.
 
 ## Closing section (per `ML_CASE_STUDY_PLAN.md`'s required template)
 
