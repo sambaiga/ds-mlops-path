@@ -71,13 +71,17 @@ jobs:
           uv run ruff check . --exit-non-zero-on-fix
           uv run ruff format . --check
       - name: Run Tests with Coverage
-        # Coverage gate is 80% (matches pyproject.toml's default), enforced
-        # as soon as any tests/ directory exists. Until then, pytest exits
-        # with code 5 ("no tests collected"), which is tolerated so this
-        # step doesn't block CI before the first test suite is written.
+        # cov-fail-under must stay 0 until real tests exist: with zero test
+        # data collected, pytest-cov hard-fails (exit 1, not the tolerated
+        # "no tests collected" exit 5) for ANY fail-under > 0, regardless of
+        # .coveragerc omissions. Raise this to 80 (matching pyproject.toml's
+        # default) in the same PR that adds the first case-study module and
+        # its tests under ark/case_studies/, not before. .coveragerc already
+        # excludes ark/plot/* so that future 80% target measures the tested
+        # project surface, not the whole ark package.
         run: |
           set +e
-          uv run pytest --cov=ark --cov-report=xml --cov-fail-under=80
+          uv run pytest --cov=ark --cov-report=xml --cov-fail-under=0
           code=$?
           set -e
           if [ "$code" -ne 0 ] && [ "$code" -ne 5 ]; then exit "$code"; fi
