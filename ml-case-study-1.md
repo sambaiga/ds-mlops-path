@@ -116,18 +116,124 @@ estimate and its assumptions (targeting the top-decile predicted spenders
 vs. random targeting, per the plan's formula for Ch33), and (3) the
 monitoring/problem-framing forward-pointer from the table above.
 
-## Open questions to confirm before writing code
+## Open questions: resolved
 
-1. **Coverage gate**: once `tests/` exists with real tests, do we also flip
-   ARK CID's `--cov-fail-under=0` back toward the `pyproject.toml` default
-   of 80% for `ark`? Not decided here, flagging it since this case study
-   is what would make that gate meaningful for the first time.
-2. **This branch is currently behind `main`** (created before PR #50's
-   revert merged), needs a rebase before any of this ships.
-3. Exact Dataverse download mechanics (auth needed or not, file size,
-   license/DUA terms) still need to be confirmed against the live dataset
-   page before `data.py` is written, per the open item already flagged in
-   `ML_CASE_STUDY_PLAN.md`.
+1. **Coverage gate: set to 80.** ARK CID's `--cov-fail-under` is now 80
+   (PR #53), matching `pyproject.toml`'s default. It's a no-op today
+   (pytest still exits 5, "no tests collected", which the workflow
+   tolerates) and activates automatically the moment
+   `tests/case_studies/test_spend_regression.py` exists.
+2. **Branch alignment: done.** `feature/case-study-1-spend-regression` was
+   rebased onto current `main` (picks up the Pages revert, the chapter-
+   number fix, and the ML-workflow diagram fix) and force-pushed.
+3. **Dataverse mechanics: confirmed against the live dataset via its
+   REST API**, not just the dataset page (which is a JS-rendered SPA that
+   doesn't expose file details to a plain fetch):
+   - License is **CC0 1.0** (public domain), cite as courtesy
+     (Berke et al. 2024, *Scientific Data*), no DUA or access-request
+     approval actually gates the files despite the dataset showing
+     `fileAccessRequest: true`, every file itself is `restricted: false`
+     and downloads with a plain unauthenticated `GET`.
+   - Download endpoint: `https://dataverse.harvard.edu/api/access/datafile/{id}`
+     (redirects to a presigned S3 URL, works with `requests`/`curl -L`,
+     no API token needed). Confirmed file IDs: `amazon-purchases.csv` =
+     7616235 (**298.5 MB**), `survey.csv` = 7616231 (**1.5 MB**),
+     `fields.csv` = 7616233 (2.5 KB, a column dictionary for
+     `survey.csv`). Two PDFs (survey instruments) exist but aren't needed
+     by the pipeline.
+   - **Gotcha confirmed**: `survey.csv` is tab-separated despite the
+     `.csv` extension (`Content-Type: text/tab-separated-values`).
+     `data.py` must load it with `sep="\t"`, a plain `pd.read_csv` would
+     silently produce a single garbage column.
+   - Both `amazon-purchases.csv` (298.5 MB) and `survey.csv` (1.5 MB)
+     confirm the download-script decision above; neither fits the 1200 KB
+     pre-commit cap.
+   - Join key confirmed: `Survey ResponseID` in both files.
+     `amazon-purchases.csv` columns: `Order Date`, `Purchase Price Per
+     Unit`, `Quantity`, `Shipping Address State`, `Title`,
+     `ASIN/ISBN (Product Code)`, `Category`, `Survey ResponseID`.
+     `Category` is genuinely blank on some real rows, a real missingness
+     case for the pandera schema to declare nullable, not a synthetic one.
+   - **New finding, changes `features.py`'s scope**: `survey.csv` includes
+     sensitive fields alongside demographics, substance use
+     (`Q-substance-use-cigarettes/marijuana/alcohol`), a disability/health
+     question (`Q-personal-diabetes`, `Q-personal-wheelchair`), and
+     sexual orientation (`Q-sexual-orientation`). `features.py` will use
+     only non-sensitive demographic/lifestyle/usage fields (age
+     bracket, education, income bracket, household size, state, Amazon
+     usage frequency) and **explicitly exclude** the health,
+     substance-use, and orientation columns from the feature set, an
+     explicit exclusion list in `config.py`, not just an omission. Worth
+     one sentence in the notebook itself: predicting spend doesn't need
+     those fields, and training on them by default (because they happen
+     to be in the file) is exactly the kind of feature-selection
+     carelessness the book's later Value-driven AI part will name
+     directly.
+
+## Writing approach: balancing hands-on and theory
+
+Checked the book's own writing-practice memory (Pressfield/Dicks/Zinsser
+principles, notebook cell design, chapter connections and openings, UX
+laws, diagram/voice rules) against what this specific chapter needs to do.
+The short version: **theory share should be small on purpose**. Every
+concept this chapter touches, the spec card, the nine-stage workflow,
+train/test splits, MAE/MAPE, pandera, pydantic, pytest, loguru, was
+already taught and named in Ch18-32. Re-explaining any of them here would
+violate "concept earned before named" in reverse, and it wastes the one
+thing this chapter is actually for: showing what happens when all of that
+meets a dataset nobody designed to be clean.
+
+Concretely:
+
+- **Don't open with a recap.** "Chapters 18-32 taught you X, Y, Z, now
+  let's apply them" is exactly the gated, recap-first opening the
+  chapter-openings rule warns against. Open on something specific and
+  real from the data itself, a household whose spend pattern does
+  something the demographics don't explain, and let the "this is where
+  the spec card finally meets messy data" framing arrive as the second
+  or third sentence, not the first.
+- **One line of attribution per concept, not a re-derivation.** When a
+  cell uses a pandera schema, one sentence: "this is the Ch26 pattern,
+  applied to a file where `Category` really is sometimes blank." Then
+  move on. The reader either remembers Ch26 (in which case more would be
+  patronising) or doesn't (in which case a link back, not a re-teach, is
+  the right amount of help).
+- **One executed concept per cell, markdown-before-code explaining why
+  now, not what.** Since logic lives in `ark.case_studies.spend_regression`
+  rather than inline, most cells become "call one function, look at one
+  result." The markdown above each cell should say why this step matters
+  *for this dataset*, not describe the function signature.
+- **Spend the craft budget on the ending, not the setup.** Peak-End
+  Rule: this chapter is remembered by how it closes far more than how it
+  opens. The dollar-value estimate and the monitoring/problem-framing
+  forward-pointer deserve real sentences, not a bullet list bolted onto
+  the end. This is also where the preface's whole thesis ("technically
+  solid isn't enough") gets its first concrete payoff in the book, so it
+  should land like one.
+- **Reserve callout treatment for what's actually novel here** (Von
+  Restorff: scarcity is what makes a callout mean something). The one
+  Key Concept callout worth using is the live feedback loop (first pass
+  under-performs, add a behavioral feature, re-evaluate), because that's
+  the one thing this chapter demonstrates that no earlier chapter could
+  (Ch30 only described the loop; this is the first time the book actually
+  runs it). Everything else can stay plain prose.
+- **One diagram, used for the one genuinely abstract step.** The
+  household-level aggregation (many transaction rows plus one survey row
+  collapsing into a single feature row per household) is the one step
+  that benefits from a picture; an EDA scatter plot already handles
+  everything else visually. Doesn't need a second diagram for the
+  feedback loop, a simple before/after metrics table communicates that
+  more precisely than a picture would.
+- **Hick's Law in the model-selection section**: baseline -> Ridge -> one
+  boosting model, per the existing project spine. Don't add a fourth or
+  fifth candidate for completeness, more options here would read as
+  padding, not rigor, and the point of this chapter is the workflow, not
+  a model bake-off.
+
+Net effect: a chapter where the code is doing most of the teaching and
+the prose is doing the framing, connective tissue, and the close, which
+is the opposite ratio of Ch28-30 (where prose taught concepts the code
+hadn't earned yet) and the intended one for a project chapter.
 
 ## Not doing in this pass
 
