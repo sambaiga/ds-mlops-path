@@ -4,40 +4,13 @@ title: "Pre-commit automation"
 
 [![View Source on GitHub](https://img.shields.io/badge/Source-GitHub-181717.svg?logo=github)](https://github.com/sambaiga/ds-mlops-path/blob/main/tutorials/02-dev-tools/23-pre-commit-automation.qmd)
 
+You push a commit at 11 pm. CI runs in three minutes. CI fails: an unused import that Ruff flags as an error. You fix it and push again. CI fails again: the commit message uses "Update stuff" instead of the conventional format. You fix the message. CI fails a third time: a notebook cell with raw outputs slipped through. Three round trips, 20 minutes, and your entire focus has shifted from the feature to the plumbing.
 
-**DS-MLOps Dev Tools**
+Every one of those failures could have been caught before the commit existed.
 
-**Python 3.12+ | Author: Anthony Faustine**
+CI is the last line of defence. Pre-commit is the first. By the time CI runs, the broken commit is already in git history: teammates have pulled it, or will. Pre-commit runs the same checks the moment you type `git commit`, before the commit is created. A failed check aborts the commit with a specific error and a fixed version of the file. The commit only exists when it is clean.
 
-You push a commit. CI fails because ruff found an unused import you missed. You fix it and push again. CI fails again: the commit message format is wrong. Each round trip costs five minutes and breaks your focus.
-
-`pre-commit` catches all of this the moment you type `git commit`. By the end of this chapter, every quality check from the previous four chapters runs automatically before any commit can land.
-
-Chapter 24 (`24-pydantic-validation.ipynb`) introduces runtime data validation.
-
-::: {.callout-note collapse="true" icon=false}
-## Before you begin
-
-This chapter assumes you have completed [Chapter 18](18-uv-project-setup.qmd) through [Chapter 22](22-pytest-testing.qmd). The `grade-predictor` project should have typed, linted, tested code under version control. This chapter automates every quality check so they run without remembering to.
-
-The `.pre-commit-config.yaml` used by this book itself is the live reference for every pattern shown here. When you see a hook described, you can find its working configuration in the book repository.
-
-::: {.callout-note collapse="true" icon=false}
-:::
-
-## Topics covered
-
-| Topic | Why it matters |
-|---|---|
-| **Git hooks** | Scripts that run automatically at commit, push, or other git events |
-| **`.pre-commit-config.yaml`** | Declarative hook list with pinned versions and auto-update |
-| **Ruff and format hooks** | Lint and auto-fix before a commit can land |
-| **`nbstripout`** | Remove notebook outputs so git diffs stay readable |
-| **`commitizen`** | Enforce Conventional Commit messages at commit time |
-| **`pre-commit run --all-files`** | Apply all hooks to the full codebase in one command |
-:::
-
-> Callout markers used throughout this chapter are explained on the [book cover page](../../index.qmd#callout-guide).
+**Next:** [Chapter 24: Data validation with Pydantic](24-pydantic-validation.ipynb) applies the same automation mindset to runtime data contracts.
 
 ::: {.callout-note collapse="true" icon=false}
 ## Learning objectives

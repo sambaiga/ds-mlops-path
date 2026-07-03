@@ -4,40 +4,13 @@ title: "Testing with pytest"
 
 [![View Source on GitHub](https://img.shields.io/badge/Source-GitHub-181717.svg?logo=github)](https://github.com/sambaiga/ds-mlops-path/blob/main/tutorials/02-dev-tools/22-pytest-testing.qmd)
 
+A grade computation function passes every test you wrote by hand. It handles 100, 0, and typical values. Four months later, someone adds weighted rounding for borderline cases. One boundary changes: a student with a final score of exactly 59.5 gets a passing grade when they should not. The function looks correct. The existing tests still pass. No exception is raised. Wrong grades propagate for two weeks before a manual audit catches them.
 
-**DS-MLOps Dev Tools**
+The difference between that bug and a caught bug is one test: the 59.5 boundary. Tests are not documentation of how your code works. They are executable contracts: whatever else changes, these inputs must produce these outputs. Break the contract and the pipeline fails before the wrong answer reaches production.
 
-**Python 3.12+ | Author: Anthony Faustine**
+Pytest is why you write that contract in three lines instead of twelve. No class inheritance, no setup method, no registration: a test is a function whose name starts with `test_`, and pytest finds it, runs it, and reports what broke. That is why DS teams use pytest instead of the standard-library `unittest`: less ceremony, more tests written.
 
-Your function returns the right answer on the three examples you tested by hand. A colleague adds one line two months later and it silently returns the wrong answer for weeks. A test suite runs every time the code changes and reports the breakage in seconds: not after it reaches production.
-
-The `grade-predictor` project is now versioned. Here you'll write tests for it using pytest. [Chapter 23](23-pre-commit-automation.qmd) automates those tests before every commit.
-
-::: {.callout-note collapse="true" icon=false}
-## Before you begin
-
-This chapter assumes you have completed [Chapter 18](18-uv-project-setup.qmd) through [Chapter 21](21-git-github.qmd). The `grade-predictor` project should have typed, linted code under version control. This chapter writes tests for it.
-
-The testing patterns here apply to any DS function or data pipeline step, not just `grade-predictor`. If you have written tests before, focus on sections 4 and 5: they cover DataFrame testing and schema validation, which are rarely covered in standard pytest tutorials.
-
-::: {.callout-note collapse="true" icon=false}
-:::
-
-## Topics covered
-
-| Topic | Why it matters |
-|---|---|
-| **What pytest is** | A test runner that replaces unittest with far less boilerplate |
-| **Test discovery and structure** | pytest finds and runs tests automatically without registration |
-| **`@pytest.mark.parametrize`** | One test body, many inputs: all boundary cases in a table |
-| **Fixtures and `conftest.py`** | Reusable, scoped test data shared across all test files |
-| **DataFrame testing** | `assert_frame_equal`, shape checks, dtype and schema assertions |
-| **Coverage measurement** | Which code paths run; enforce a minimum with `--cov-fail-under` |
-| **Mocking I/O** | Replace file reads and API calls with controlled substitutes |
-| **Modern built-in fixtures** | `tmp_path`, `monkeypatch`, `capfd`: no import, no extra package |
-:::
-
-> Callout markers used throughout this chapter are explained on the [book cover page](../../index.qmd#callout-guide).
+**Next:** [Chapter 23: Pre-commit automation](23-pre-commit-automation.qmd) runs these tests automatically on every commit.
 
 ::: {.callout-note collapse="true" icon=false}
 ## Learning objectives
