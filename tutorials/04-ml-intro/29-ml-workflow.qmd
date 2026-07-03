@@ -1,21 +1,21 @@
 ---
-title: "Part 24: The ML Workflow and Problem Framing"
+title: "The ML workflow"
 ---
 
-[![View Source on GitHub](https://img.shields.io/badge/Source-GitHub-181717.svg?logo=github)](https://github.com/sambaiga/ds-mlops-path/blob/main/tutorials/04-ml-intro/03-ml-workflow.qmd)
+[![View Source on GitHub](https://img.shields.io/badge/Source-GitHub-181717.svg?logo=github)](https://github.com/sambaiga/ds-mlops-path/blob/main/tutorials/04-ml-intro/29-ml-workflow.qmd)
 
 **DS-MLOps ML Landscape**
 
 **Python 3.12+ | Author: Anthony Faustine**
 
-You classified the energy theft problem in Part 23: anomaly detection, unsupervised paradigm. Knowing what kind of problem you have doesn't tell you how to collect the data, how to split it without leaking the future into training, or how to know when the model is good enough to deploy. This chapter maps the nine-step workflow that every ML project follows, from problem framing to production monitoring.
+You classified the energy theft problem in Chapter 28: anomaly detection, unsupervised paradigm. Knowing what kind of problem you have doesn't tell you how to collect the data, how to split it without leaking the future into training, or how to know when the model is good enough to deploy. This chapter maps the nine-step workflow that every ML project follows, from problem framing to production monitoring.
 
 Parts 22-23 built the landscape and taxonomy. This workflow is the operating manual for everything in Parts 25-27 (sklearn, pipelines, sklearn-pipeline).
 
 ::: {.callout-note collapse="true" icon=false}
 ## Before you begin
 
-This chapter continues from [Part 22: The AI Landscape](01-ml-introduction.qmd) and [Part 23: What Is Machine Learning?](02-ml-what-is-ml.qmd). You should be able to classify any problem by learning paradigm and task type before reading further. The energy theft scenario introduced in Part 22 and classified in Part 23 runs through this chapter as the primary worked example.
+This chapter continues from [Chapter 27: The AI Landscape](01-ml-introduction.qmd) and [Chapter 28: What Is Machine Learning?](28-ml-what-is-ml.qmd). You should be able to classify any problem by learning paradigm and task type before reading further. The energy theft scenario introduced in Chapter 27 and classified in Chapter 28 runs through this chapter as the primary worked example.
 
 This chapter is conceptual. There is no code to run. The goal is to move from knowing what kind of ML problem you have to knowing how to frame it correctly, evaluate it honestly, and diagnose it when it fails.
 
@@ -35,7 +35,7 @@ This chapter is conceptual. There is no code to run. The goal is to move from kn
 
 ## Why Workflow Matters
 
-In Part 23 you classified the energy theft problem: it's anomaly detection, unsupervised paradigm. Knowing what kind of problem you have doesn't tell you how to build a working system.
+In Chapter 28 you classified the energy theft problem: it's anomaly detection, unsupervised paradigm. Knowing what kind of problem you have doesn't tell you how to build a working system.
 
 The naive path is tempting. Load the meter data. Fit an isolation forest. Look at the output. Report a result. This path fails in practice, and it fails in ways that are hard to detect from inside the project.
 
@@ -44,9 +44,9 @@ Consider what happens on a dataset where 0.5% of meters are tampered. A model th
 The structured workflow exists to prevent this. It forces you to specify what success means before you start, to evaluate on data the model has never influenced, and to diagnose failure rather than paper over it. The rest of this chapter walks through each stage.
 
 ::: {.callout-note collapse="true" icon=false}
-## Learning Objectives
+## Learning objectives
 
-By the end of Part 24 you will be able to:
+By the end of this chapter you will be able to:
 
 | # | Skill | Covered in |
 |---|---|---|
@@ -65,7 +65,7 @@ The most consequential step in any ML project happens before a line of model cod
 A complete ML problem specification has five components.
 
 <div class='ark-concept'>
-<span class='ark-concept-title'><i class="bi bi-info-circle-fill"></i> Key Concept: The five-component ML spec</span><br><br>
+<span class='ark-concept-title'><i class="bi bi-key-fill"></i> Key Concept: The five-component ML spec</span><br><br>
 
 | Component | The question it answers |
 |---|---|
@@ -82,7 +82,7 @@ Write this down before touching data. If any row can't be filled in, the problem
 
 The same five components apply regardless of domain or task type.
 
-**Energy theft detection (from Part 22)**
+**Energy theft detection (from Chapter 27)**
 
 | Component | Specification |
 |---|---|
@@ -120,7 +120,7 @@ If your success metric and acceptable threshold can't be agreed on with the stak
 </div>
 
 <div class='ark-concept'>
-<span class='ark-concept-title'><i class="bi bi-info-circle-fill"></i> Key Concept: Optimizing and satisfying metrics</span><br><br>
+<span class='ark-concept-title'><i class="bi bi-key-fill"></i> Key Concept: Optimizing and satisfying metrics</span><br><br>
 
 When a spec card lists multiple metrics, designate one as the **optimizing metric**: the single number you maximise (or minimise) without bound. All others become **satisfying metrics**: constraints that must be met, but once met, require no further improvement.
 
@@ -130,7 +130,7 @@ The distinction matters because it governs which trade-offs are acceptable. You 
 </div>
 
 <div class='ark-activity'>
-<span class='ark-activity-title'><i class="bi bi-puzzle-fill"></i> Activity 1 - Write the Spec Card</span><br><br>
+<span class='ark-activity-title'><i class="bi bi-puzzle-fill"></i> Activity 1: write the Spec Card</span><br><br>
 <b>Goal:</b> Complete a five-component ML specification for each problem below.<br><br>
 <ol>
 <li>A hospital wants to reduce unplanned ICU admissions. They have 3 years of patient records including vitals, lab results, medications, and discharge outcomes.</li>
@@ -156,17 +156,17 @@ The nine stages cluster into four phases. **Problem framing** is the only stage 
 
 **Feature engineering.** Transforming raw data into inputs the model can use. For the energy theft problem: aggregating 15-minute readings to daily consumption profiles, computing deviation from neighbourhood median, encoding time-of-day and day-of-week patterns.
 
-**Model selection.** Choosing the algorithm family and architecture appropriate for the task type and paradigm identified in the spec card. Part 25 covers this in depth.
+**Model selection.** Choosing the algorithm family and architecture appropriate for the task type and paradigm identified in the spec card. Chapter 30 covers this in depth.
 
 **Training.** The model learns by processing training examples repeatedly, adjusting its parameters to reduce error each time. Hyperparameter choices (learning rate, model depth, regularisation strength) are made by observing validation set performance, not training performance.
 
 **Evaluation.** Testing the trained model on the held-out test split using the metric from the spec card. This is the honest assessment. If the model doesn't meet the acceptable threshold, return to feature engineering or model selection.
 
-**Deployment.** Packaging the model as a service or embedded component that receives new data and returns predictions. Covered in Part 7.
+**Deployment.** Packaging the model as a service or embedded component that receives new data and returns predictions. Covered in the MLOps section.
 
 **Monitoring.** Tracking model performance in production over time. When performance degrades (because the world changes), the monitoring signal feeds back to the problem framing stage and the cycle begins again.
 
-The three-step process from Part 23 (identify a pattern, build a model, use the model) maps directly onto this pipeline. Step 1 spans data collection through feature engineering. Step 2 is model selection and training. Step 3 is evaluation, deployment, and monitoring.
+The three-step process from Chapter 28 (identify a pattern, build a model, use the model) maps directly onto this pipeline. Step 1 spans data collection through feature engineering. Step 2 is model selection and training. Step 3 is evaluation, deployment, and monitoring.
 
 ## 3. Data splits done right
 
@@ -220,7 +220,7 @@ Correct splits and clean features ensure the model is trained and evaluated hone
 
 Before choosing a metric, compute a baseline: the performance of the simplest possible prediction. For regression, predict the mean of the training set. For classification, predict the majority class. For forecasting, use yesterday's value. For anomaly detection, flag nothing. A model that doesn't beat this baseline isn't adding value, regardless of what the metric number says.
 
-The seven task types from Part 23 divide into three groups based on how evaluation works.
+The seven task types from Chapter 28 divide into three groups based on how evaluation works.
 
 ### 4.1 Group 1: Supervised tasks with a clear ground truth
 
@@ -230,16 +230,16 @@ You have labeled examples. Evaluation is a comparison between the model's output
 
 Use precision (of the accounts you flagged, how many were actually tampered), recall (of all tampered accounts, how many did you catch), and F1 (their harmonic mean). Choose between them based on which error is more costly: missing a theft (low recall) or wasting an inspector visit on a legitimate account (low precision). AUC-ROC summarises performance across all possible thresholds.
 
-**Regression.** MAE (mean absolute error) is interpretable: it's the average prediction error in the same units as the target. RMSE penalises large errors more heavily. MAPE (mean absolute percentage error) is scale-independent and useful when comparing across products or meters of different sizes. R² alone is insufficient because a model with high R² can still be systematically biased in ways that matter: the Google Maps route optimiser from Part 22 depends on accurate per-segment travel time predictions, and a model that consistently overestimates congested roads will produce wrong routes even with a high R² overall.
+**Regression.** MAE (mean absolute error) is interpretable: it's the average prediction error in the same units as the target. RMSE penalises large errors more heavily. MAPE (mean absolute percentage error) is scale-independent and useful when comparing across products or meters of different sizes. R² alone is insufficient because a model with high R² can still be systematically biased in ways that matter: the Google Maps route optimiser from Chapter 27 depends on accurate per-segment travel time predictions, and a model that consistently overestimates congested roads will produce wrong routes even with a high R² overall.
 
-**Forecasting.** The challenge that separates forecasting from regression is that accuracy degrades as the prediction horizon extends. A metric that averages error across all horizons can hide a model that performs well for one-step-ahead predictions but collapses at longer ranges. Good evaluation checks performance at multiple horizons, not just overall. The specific scale-invariant metrics suited to forecasting are covered in Part 25 alongside forecasting algorithms; the principle to carry from here is that evaluation must respect the time structure of the problem.
+**Forecasting.** The challenge that separates forecasting from regression is that accuracy degrades as the prediction horizon extends. A metric that averages error across all horizons can hide a model that performs well for one-step-ahead predictions but collapses at longer ranges. Good evaluation checks performance at multiple horizons, not just overall. The specific scale-invariant metrics suited to forecasting are covered in Chapter 30 alongside forecasting algorithms; the principle to carry from here is that evaluation must respect the time structure of the problem.
 
-**Ranking.** A ranking model isn't classifying items as relevant or irrelevant: it's ordering them. This distinction changes how success is measured. Getting the right result to position 1 is far more valuable than getting it to position 10, because users rarely scroll past the first few results. All ranking metrics weight top positions more heavily than lower ones, and Part 25 covers the specific ones alongside ranking algorithms. What matters here is to resist using classification accuracy as a proxy: a model that puts the best result at position 8 out of 10 isn't 80% accurate. It has failed its purpose, because no user reaches position 8.
+**Ranking.** A ranking model isn't classifying items as relevant or irrelevant: it's ordering them. This distinction changes how success is measured. Getting the right result to position 1 is far more valuable than getting it to position 10, because users rarely scroll past the first few results. All ranking metrics weight top positions more heavily than lower ones, and Chapter 30 covers the specific ones alongside ranking algorithms. What matters here is to resist using classification accuracy as a proxy: a model that puts the best result at position 8 out of 10 isn't 80% accurate. It has failed its purpose, because no user reaches position 8.
 
 **Anomaly detection.** Class imbalance makes accuracy meaningless (same problem as classification, but more extreme). Use recall at a fixed false positive rate: given that you're willing to investigate at most 10% of accounts per month, how many anomalies do you catch? The F1 score at the chosen threshold and the precision-recall curve both give a full picture across thresholds.
 
 <div class='ark-concept'>
-<span class='ark-concept-title'><i class="bi bi-info-circle-fill"></i> Key Concept: Precision-recall tradeoff</span><br><br>
+<span class='ark-concept-title'><i class="bi bi-key-fill"></i> Key Concept: Precision-recall tradeoff</span><br><br>
 Every supervised model produces a score for each example rather than a hard prediction. Choosing a threshold converts that score into a binary decision. A lower threshold flags more examples as anomalies: recall rises but precision falls (more false alarms). A higher threshold flags fewer: precision rises but recall falls (more misses). The right threshold depends on the asymmetry of the two errors. In the energy theft case, the cost of missing theft (lost revenue, unfair distribution) typically outweighs the cost of an unnecessary inspector visit, so the threshold should be set to favour recall.
 </div>
 
@@ -249,7 +249,7 @@ Generation tasks have no single correct output. A good summary of a document isn
 
 For tasks where a reference output exists, such as translation or summarisation, automated metrics measure how closely the model's output resembles a human-written reference. These are useful for detecting regressions (if a new model version produces dramatically different outputs, the score will shift), but they're proxies, not ground truth. A high-scoring output can still miss the point of the source material.
 
-For open-ended generation, automated metrics capture even less of what matters. The output may be grammatically correct, fluent, and similar in style to the reference, while being factually wrong or unhelpful. Evaluating these systems requires a combination of human judgment, task-specific checks (does the generated code actually run? does the generated SQL return valid results?), and carefully defined criteria that reflect the specific use case. The evaluation approaches for language models are covered in Part 6.
+For open-ended generation, automated metrics capture even less of what matters. The output may be grammatically correct, fluent, and similar in style to the reference, while being factually wrong or unhelpful. Evaluating these systems requires a combination of human judgment, task-specific checks (does the generated code actually run? does the generated SQL return valid results?), and carefully defined criteria that reflect the specific use case. The evaluation approaches for language models are covered in the LLMs section.
 
 The principle that applies regardless of generation task type: define in the spec card how you'll distinguish a good output from a bad one before training anything. If that question can't be answered, the spec card is incomplete and the model has no clear objective.
 
@@ -257,7 +257,7 @@ The principle that applies regardless of generation task type: define in the spe
 
 Clustering belongs to the unsupervised paradigm: there are no labels to compare against, so the usual definition of "correct" doesn't exist. Evaluation works at two levels.
 
-Internal metrics measure mathematical structure: whether points within a cluster are more similar to each other than to points in other clusters. These can help you compare different configurations (five groups versus three groups, for instance), but they can't tell you whether the groups are meaningful. A result that looks clean by internal measures can still be useless in practice. The specific metrics used are covered in Part 25 alongside clustering algorithms.
+Internal metrics measure mathematical structure: whether points within a cluster are more similar to each other than to points in other clusters. These can help you compare different configurations (five groups versus three groups, for instance), but they can't tell you whether the groups are meaningful. A result that looks clean by internal measures can still be useless in practice. The specific metrics used are covered in Chapter 30 alongside clustering algorithms.
 
 Domain validation fills the gap that internal metrics can't. Show the result to someone who knows the domain: do the clusters correspond to recognisable patterns? For the energy theft problem, consumption-profile clusters are only valuable if they correspond to interpretable household types that an analyst can act on. If a clustering result can't be explained to a domain expert, the metric scores are irrelevant to the business decision.
 
@@ -290,7 +290,7 @@ Metric choice isn't purely technical. Healthcare screening systems optimise reca
 
 Knowing what to measure is half the challenge. The other half is knowing what to do when the number you measure falls short. When a model doesn't meet the acceptable threshold, the instinct is to reach for more data or a more complex model. Both can help, but applied to the wrong problem, both waste time. The bias-variance framework gives you a way to read failure systematically before reaching for any fix.
 
-**Start with a baseline.** Before diagnosing anything, you need a reference point: what level of performance should a reasonable solution achieve? For tasks humans can perform, human-level performance is a practical ceiling -- it approximates the best accuracy achievable given the signal in the data and the quality of the labels. For other tasks, a simple rule-based system or the previous production model serves the same purpose.
+**Start with a baseline.** Before diagnosing anything, you need a reference point: what level of performance should a reasonable solution achieve? For tasks humans can perform, human-level performance is a practical ceiling: it approximates the best accuracy achievable given the signal in the data and the quality of the labels. For other tasks, a simple rule-based system or the previous production model serves the same purpose.
 
 Two gaps then reveal where the problem lies. The gap between training error and the baseline is **avoidable bias**: the portion of training error that a better model could in principle reduce. The gap between training error and validation error is **variance**: error caused by fitting the noise in the training set rather than the underlying pattern. The larger gap is the bottleneck, and it determines which lever to pull:
 
@@ -310,7 +310,7 @@ That's the target state.
 ![Three learning curve patterns. Left panel: underfitting, where both training and validation error plateau at a high value and adding data produces little improvement. Centre panel: good fit, where both curves converge at a low error level. Right panel: overfitting, where training error is low but validation error remains substantially higher, with a persistent gap that indicates the model has memorised training examples rather than learning general patterns.](figs/ml-learning-curves.svg){fig-alt="Three side-by-side panels each showing two curves: training error (solid) and validation error (dashed). Left panel labelled Underfitting shows both curves converging at a high error level. Centre panel labelled Good Fit shows both curves converging at a low error level. Right panel labelled Overfitting shows training error low and flat while validation error remains high, with a wide gap between them."}
 
 <div class='ark-activity'>
-<span class='ark-activity-title'><i class="bi bi-puzzle-fill"></i> Activity 2 - Read the Learning Curve</span><br><br>
+<span class='ark-activity-title'><i class="bi bi-puzzle-fill"></i> Activity 2: read the Learning Curve</span><br><br>
 <b>Goal:</b> For each scenario below, identify the failure mode and name one intervention.<br><br>
 <ol>
 <li>A demand forecasting model has training MASE of 0.82 and validation MASE of 0.85 across all training set sizes. Both curves have plateaued.</li>
@@ -340,10 +340,10 @@ The last row deserves emphasis. Aggregate metrics hide failures that are concent
 
 Don't declare a model ready until you've sliced the metrics.
 
-Error analysis -- examining individual failures and slicing metrics by region, meter type, time of year, or customer segment -- is what separates engineering discipline from benchmark chasing.
+Error analysis: examining individual failures and slicing metrics by region, meter type, time of year, or customer segment: is what separates engineering discipline from benchmark chasing.
 
 <div class='ark-activity'>
-<span class='ark-activity-title'><i class="bi bi-puzzle-fill"></i> Activity 3 - Audit the Split and Metric</span><br><br>
+<span class='ark-activity-title'><i class="bi bi-puzzle-fill"></i> Activity 3: audit the Split and Metric</span><br><br>
 <b>Goal:</b> Identify what is wrong with each project setup below.<br><br>
 <ol>
 <li>A team is building a product recommendation system. They split their 2-year purchase history randomly into train/val/test and achieve Precision@10 of 0.74 on the test set. They are preparing to deploy.</li>
@@ -354,7 +354,7 @@ For each: identify the specific problem (wrong split, wrong metric, or something
 </div>
 
 ::: {.callout-note collapse="true" icon=false}
-## Further Reading
+## Further reading
 
 | Resource | What it covers |
 |---|---|
@@ -377,9 +377,9 @@ For each: identify the specific problem (wrong split, wrong metric, or something
 | Feature leakage | A feature that encodes future information or the target answer itself will inflate performance during evaluation and collapse in production |
 | Distribution mismatch | Val and test sets must reflect the actual production distribution, not the largest available data source; training can use mismatched data, evaluation cannot |
 | Metric by task type | Match the metric to the task type and the business cost of each error type; accuracy is rarely the right primary metric |
-| Generation evaluation | No single correct output exists; define evaluation criteria in the spec card; automated metrics detect regressions but are not ground truth; task-specific and human-judgment approaches are covered in Part 6 |
+| Generation evaluation | No single correct output exists; define evaluation criteria in the spec card; automated metrics detect regressions but are not ground truth; task-specific and human-judgment approaches are covered in the LLMs section |
 | Bias-variance diagnosis | Establish a baseline first; avoidable bias = gap between training error and baseline; variance = train/val gap; the larger gap is the bottleneck to fix |
 | Error analysis | Aggregate metrics hide subgroup failures; always slice by meaningful dimensions before declaring a model ready |
 :::
 
-**Next:** Part 25: The ML Algorithm Panorama maps the full landscape of algorithms across all seven task types. Given a well-specified problem and a correctly designed evaluation, which algorithm family do you reach for first, and when do you escalate to more complex approaches?
+**Next:** Chapter 30: The ML Algorithm Panorama maps the full landscape of algorithms across all seven task types. Given a well-specified problem and a correctly designed evaluation, which algorithm family do you reach for first, and when do you escalate to more complex approaches?

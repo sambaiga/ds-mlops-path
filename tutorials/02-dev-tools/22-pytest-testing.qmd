@@ -1,22 +1,22 @@
 ---
-title: "Part 17: Testing DS Code with pytest"
+title: "Testing with pytest"
 ---
 
-[![View Source on GitHub](https://img.shields.io/badge/Source-GitHub-181717.svg?logo=github)](https://github.com/sambaiga/ds-mlops-path/blob/main/tutorials/02-dev-tools/05-pytest-testing.qmd)
+[![View Source on GitHub](https://img.shields.io/badge/Source-GitHub-181717.svg?logo=github)](https://github.com/sambaiga/ds-mlops-path/blob/main/tutorials/02-dev-tools/22-pytest-testing.qmd)
 
 
 **DS-MLOps Dev Tools**
 
 **Python 3.12+ | Author: Anthony Faustine**
 
-Your function returns the right answer on the three examples you tested by hand. A colleague adds one line two months later and it silently returns the wrong answer for weeks. A test suite runs every time the code changes and reports the breakage in seconds -- not after it reaches production.
+Your function returns the right answer on the three examples you tested by hand. A colleague adds one line two months later and it silently returns the wrong answer for weeks. A test suite runs every time the code changes and reports the breakage in seconds: not after it reaches production.
 
-The `grade-predictor` project is now versioned. Here you'll write tests for it using pytest. [Part 18](06-pre-commit-automation.qmd) automates those tests before every commit.
+The `grade-predictor` project is now versioned. Here you'll write tests for it using pytest. [Chapter 23](23-pre-commit-automation.qmd) automates those tests before every commit.
 
 ::: {.callout-note collapse="true" icon=false}
 ## Before you begin
 
-This chapter assumes you have completed [Part 13](01-uv-project-setup.qmd) through [Part 16](04-git-github.qmd). The `grade-predictor` project should have typed, linted code under version control. This chapter writes tests for it.
+This chapter assumes you have completed [Chapter 18](18-uv-project-setup.qmd) through [Chapter 21](21-git-github.qmd). The `grade-predictor` project should have typed, linted code under version control. This chapter writes tests for it.
 
 The testing patterns here apply to any DS function or data pipeline step, not just `grade-predictor`. If you have written tests before, focus on sections 4 and 5: they cover DataFrame testing and schema validation, which are rarely covered in standard pytest tutorials.
 
@@ -40,9 +40,9 @@ The testing patterns here apply to any DS function or data pipeline step, not ju
 > Callout markers used throughout this chapter are explained on the [book cover page](../../index.qmd#callout-guide).
 
 ::: {.callout-note collapse="true" icon=false}
-## Learning Objectives
+## Learning objectives
 
-By the end of Part 17 you will be able to:
+By the end of this chapter you will be able to:
 
 | # | Skill | Covered in |
 |---|---|---|
@@ -58,7 +58,7 @@ By the end of Part 17 you will be able to:
 | 9 | Use built-in pytest fixtures: `tmp_path`, `monkeypatch`, `capfd` | Sec. 9 |
 :::
 
-## 0. What is pytest and Why Use It
+## 0. What is pytest and why use it
 
 Python ships with a built-in test runner called `unittest`. It works, but it forces you to subclass `TestCase`, call `self.assertEqual(...)` instead of `assert`, and write substantial boilerplate before a single assertion runs. pytest is the community standard for a reason: it discovers tests automatically, uses plain `assert` statements, and provides richer output with no extra effort.
 
@@ -81,11 +81,11 @@ uv run pytest --version
 ```
 
 <div class='ark-concept'>
-<span class='ark-concept-title'><i class="bi bi-info-circle-fill"></i> Key Concept: pytest discovers tests by naming convention</span><br><br>
+<span class='ark-concept-title'><i class="bi bi-key-fill"></i> Key Concept: pytest discovers tests by naming convention</span><br><br>
 Name your files <code>test_*.py</code> or <code>*_test.py</code>, and prefix your test functions with <code>test_</code>. No registration, no base class, no import of pytest in the test file. pytest finds them automatically.
 </div>
 
-## 1. Why DS Code Needs Tests
+## 1. Why DS Code needs tests
 
 A normalization function applied after the train/test split instead of before. A `fillna(0)` that should have been `fillna(df["score"].mean())`. A boolean column that silently became an integer. These bugs don't raise exceptions; they produce wrong outputs quietly.
 
@@ -127,13 +127,13 @@ uv run pytest tests/ -k "parametrize" # run tests matching a keyword
 ```
 
 <div class='ark-concept'>
-<span class='ark-concept-title'><i class="bi bi-info-circle-fill"></i> Key Concept: A test is an executable specification</span><br><br>
-<code>test_compute_grade_defaults</code> says: given these inputs, this function must return this value. If the function ever changes and breaks this, the test fails immediately. A failing test isn't a problem -- it's useful information. A passing test on wrong code is the actual problem.
+<span class='ark-concept-title'><i class="bi bi-key-fill"></i> Key Concept: A test is an executable specification</span><br><br>
+<code>test_compute_grade_defaults</code> says: given these inputs, this function must return this value. If the function ever changes and breaks this, the test fails immediately. A failing test isn't a problem: it's useful information. A passing test on wrong code is the actual problem.
 </div>
 
-## 2. Parametrize: One Test, Many Inputs
+## 2. Parametrize: one test, many inputs
 
-Writing one test function per boundary case produces a lot of duplicated code. `@pytest.mark.parametrize` runs the same test body once per row in a table of inputs -- adding a new edge case is one extra row, not a new function.
+Writing one test function per boundary case produces a lot of duplicated code. `@pytest.mark.parametrize` runs the same test body once per row in a table of inputs: adding a new edge case is one extra row, not a new function.
 
 Grade boundaries in `grade-predictor`:
 
@@ -163,7 +163,7 @@ tests/test_core.py::test_grade_letter_boundaries[75.0-78.0-80.0-B] PASSED
 The bracket notation in the output shows the exact inputs that produced the failure, which makes diagnosis fast.
 
 <div class='ark-activity'>
-<span class='ark-activity-title'><i class="bi bi-puzzle-fill"></i> Activity 1 - Parametrize a Boundary Test</span><br><br>
+<span class='ark-activity-title'><i class="bi bi-puzzle-fill"></i> Activity 1: parametrize a Boundary Test</span><br><br>
 <b>Goal:</b> Write a <code>normalize_score(raw, min_val, max_val)</code> function in <code>core.py</code> that maps a raw score to the 0-100 range. Write a parametrized test covering: raw equals min_val returns 0, raw equals max_val returns 100, and one midpoint. Confirm all three cases pass.
 <pre>@pytest.mark.parametrize("raw,min_val,max_val,expected", [
     (0.0, 0.0, 100.0, 0.0),   # raw == min
@@ -173,7 +173,7 @@ The bracket notation in the output shows the exact inputs that produced the fail
 def test_normalize_score(raw, min_val, max_val, expected): ...</pre>
 </div>
 
-## 3. Fixtures for Reusable Test Data
+## 3. Fixtures for reusable test data
 
 A fixture is a function that provides a value to a test. Any test that declares the fixture's name as a parameter receives it automatically. Fixtures live in `conftest.py` so they're shared across all test files.
 
@@ -220,14 +220,14 @@ def university_df() -> pd.DataFrame:
 ```
 
 <div class='ark-activity'>
-<span class='ark-activity-title'><i class="bi bi-puzzle-fill"></i> Activity 2 - Session-Scoped Fixture</span><br><br>
+<span class='ark-activity-title'><i class="bi bi-puzzle-fill"></i> Activity 2: session-Scoped Fixture</span><br><br>
 <b>Goal:</b> Write a session-scoped fixture in <code>conftest.py</code> that loads a 50-row sample from <code>university_analytics.csv</code> (use <code>.head(50)</code>). Write three tests that each use this fixture: one that checks column names, one that checks there are no null values in <code>student_id</code>, and one that confirms <code>passed</code> is boolean.
 <pre>@pytest.fixture(scope="session")
 def small_df():
     return pd.read_csv("data/university_analytics.csv").head(50)</pre>
 </div>
 
-## 4. Testing pandas Transforms
+## 4. Testing pandas transforms
 
 Three patterns cover almost every DataFrame test in DS code.
 
@@ -283,11 +283,11 @@ Together these four patterns test the shape, the values, the types, and numeric 
 
 <div class='ark-mistake'>
 <span class='ark-mistake-title'><i class="bi bi-bug-fill"></i> Common Mistake: <code>assert df1.equals(df2)</code> for floats</span><br><br>
-<code>DataFrame.equals</code> uses exact equality, and floating-point arithmetic means <code>0.30 * 80 + 0.45 * 85 + 0.25 * 90</code> may not equal <code>84.25</code> to the last bit on all platforms. Your test passes on your machine and fails in CI. Use <code>pd.testing.assert_frame_equal</code> instead -- it has <code>check_exact=False</code> and <code>rtol</code>/<code>atol</code> parameters for numeric tolerance.
+<code>DataFrame.equals</code> uses exact equality, and floating-point arithmetic means <code>0.30 * 80 + 0.45 * 85 + 0.25 * 90</code> may not equal <code>84.25</code> to the last bit on all platforms. Your test passes on your machine and fails in CI. Use <code>pd.testing.assert_frame_equal</code> instead: it has <code>check_exact=False</code> and <code>rtol</code>/<code>atol</code> parameters for numeric tolerance.
 </div>
 
 <div class='ark-activity'>
-<span class='ark-activity-title'><i class="bi bi-puzzle-fill"></i> Activity 3 - Test a Transform</span><br><br>
+<span class='ark-activity-title'><i class="bi bi-puzzle-fill"></i> Activity 3: test a Transform</span><br><br>
 <b>Goal:</b> Write an <code>add_average_marks(df)</code> function in <code>core.py</code> that adds a column <code>average_marks = (midterm + final + project) / 3</code>. Write three tests: shape assertion, <code>assert_frame_equal</code> on a manually computed expected DataFrame, and a dtype check. All three should pass.
 <pre>import pandas as pd
 
@@ -296,7 +296,7 @@ def test_add_average_marks_shape(sample_df):
     assert result.shape == (3, 7)</pre>
 </div>
 
-## 5. Testing Exception Handling
+## 5. Testing exception handling
 
 A function that raises a clear exception on bad input is better than one that silently returns a wrong answer. Test the exception:
 
@@ -321,13 +321,13 @@ def test_invalid_weights_all_raise(weights):
 ```
 
 <div class='ark-activity'>
-<span class='ark-activity-title'><i class="bi bi-puzzle-fill"></i> Activity 4 - Test an Exception</span><br><br>
+<span class='ark-activity-title'><i class="bi bi-puzzle-fill"></i> Activity 4: test an Exception</span><br><br>
 <b>Goal:</b> Add a <code>ValueError</code> to <code>compute_grade</code> when any weight is negative or the weights do not sum to approximately 1.0 (within 0.001). Write a parametrized test that covers three invalid cases. Confirm all three raise <code>ValueError</code> and that a valid call still passes.
 </div>
 
 ## 6. Coverage
 
-Coverage measures which lines of code are executed during the test suite. Lines that are never executed are either dead code or untested paths -- and you want to know which.
+Coverage measures which lines of code are executed during the test suite. Lines that are never executed are either dead code or untested paths: and you want to know which.
 
 ```bash
 uv run pytest tests/ --cov=grade_predictor --cov-report=term-missing
@@ -345,14 +345,14 @@ addopts = "--cov=grade_predictor --cov-report=term-missing --cov-fail-under=80"
 
 With `--cov-fail-under=80`, pytest exits with a non-zero code if coverage drops below 80%. CI catches this automatically.
 
-The right target for DS library code is 80% to 85%. 100% is often counterproductive -- it forces testing trivial property accessors and error messages that add no value. What matters is covering every code path that can produce a wrong answer silently.
+The right target for DS library code is 80% to 85%. 100% is often counterproductive: it forces testing trivial property accessors and error messages that add no value. What matters is covering every code path that can produce a wrong answer silently.
 
 <div class='ark-tip'>
 <span class='ark-tip-title'><i class="bi bi-lightbulb-fill"></i> Pro Tip: Focus coverage on the paths that matter</span><br><br>
 A missing line on a trivial <code>return self._name</code> property isn't worth a test. A missing line on the normalization branch of a preprocessing function is. Read the "missing" column as a checklist of untested logic paths, not a number to maximize for its own sake.
 </div>
 
-## 7. Organizing a DS Test Suite
+## 7. Organizing a DS test suite
 
 The standard structure for a DS project follows the test pyramid: many fast unit tests at the base, fewer integration tests in the middle, a small number of end-to-end tests at the top.
 
@@ -368,7 +368,7 @@ tests/
     └── test_pipeline.py   # end-to-end: load CSV, transform, compute grades
 ```
 
-Unit tests test one function in isolation with synthetic data. They run in milliseconds and should always run. Integration tests test the full pipeline with real data from disk -- they run in seconds and belong in CI and pre-release checks.
+Unit tests test one function in isolation with synthetic data. They run in milliseconds and should always run. Integration tests test the full pipeline with real data from disk: they run in seconds and belong in CI and pre-release checks.
 
 Run only unit tests locally during development, all tests in CI:
 
@@ -377,7 +377,7 @@ uv run pytest tests/unit/ -v                    # fast, local
 uv run pytest tests/ -v --override-ini=addopts=  # full suite, CI
 ```
 
-## 8. Mocking External Dependencies
+## 8. Mocking external dependencies
 
 Some code can't be tested with real data: a function that calls an API, reads from a database, or writes to a file. Mocking replaces that dependency with a controlled substitute for the duration of the test.
 
@@ -414,8 +414,8 @@ def test_fetch_course_list_returns_parsed_json():
 ```
 
 <div class='ark-concept'>
-<span class='ark-concept-title'><i class="bi bi-info-circle-fill"></i> Key Concept: Patch at the import location, not the definition location</span><br><br>
-Patching <code>requests.get</code> won't work because <code>fetch_course_list</code> already holds a reference to the original. You have to patch <code>"grade_predictor.io.requests.get"</code> -- the name as it appears inside the module under test. This is the single most common mock mistake.
+<span class='ark-concept-title'><i class="bi bi-key-fill"></i> Key Concept: Patch at the import location, not the definition location</span><br><br>
+Patching <code>requests.get</code> won't work because <code>fetch_course_list</code> already holds a reference to the original. You have to patch <code>"grade_predictor.io.requests.get"</code>: the name as it appears inside the module under test. This is the single most common mock mistake.
 </div>
 
 For pandas-based code, mock the file read so tests don't depend on a real CSV being present:
@@ -459,11 +459,11 @@ def test_fetch_course_list_with_mocker(mocker):
 
 <div class='ark-mistake'>
 <span class='ark-mistake-title'><i class="bi bi-bug-fill"></i> Common Mistake: Over-mocking</span><br><br>
-If a test mocks every function the code under test calls, it's no longer testing the code -- it's testing the mock. A unit test should run the real logic and mock only the I/O boundary: network calls, file reads, database queries. A function that computes a grade from numbers doesn't need any mocking. Mock the API; run the computation logic for real.
+If a test mocks every function the code under test calls, it's no longer testing the code: it's testing the mock. A unit test should run the real logic and mock only the I/O boundary: network calls, file reads, database queries. A function that computes a grade from numbers doesn't need any mocking. Mock the API; run the computation logic for real.
 </div>
 
 <div class='ark-activity'>
-<span class='ark-activity-title'><i class="bi bi-puzzle-fill"></i> Activity 5 - Mock a CSV Load</span><br><br>
+<span class='ark-activity-title'><i class="bi bi-puzzle-fill"></i> Activity 5: mock a CSV Load</span><br><br>
 <b>Goal:</b> Write a <code>load_grades(path: str) -> pd.DataFrame</code> function in <code>grade_predictor/io.py</code> that calls <code>pd.read_csv(path)</code>. Write a test that mocks <code>pd.read_csv</code> to return a two-row DataFrame, calls <code>load_grades("any/path.csv")</code>, and asserts the result has two rows without reading a real file.
 <pre>from unittest.mock import patch
 import pandas as pd
@@ -475,9 +475,9 @@ def test_load_grades_mocked():
     assert len(result) == 2</pre>
 </div>
 
-## 9. Modern Built-in Fixtures
+## 9. Modern built-in fixtures
 
-pytest ships three fixtures that cover a large class of I/O and environment problems without any extra package -- and they don't need to be imported.
+pytest ships three fixtures that cover a large class of I/O and environment problems without any extra package: and they don't need to be imported.
 
 **`tmp_path`: isolated temporary directories**
 
@@ -492,7 +492,7 @@ def test_pipeline_writes_output(tmp_path):
     assert output_file.stat().st_size > 0
 ```
 
-No cleanup needed -- pytest removes the directory after the test completes.
+No cleanup needed: pytest removes the directory after the test completes.
 
 **`monkeypatch`: patching environment variables and objects**
 
@@ -507,11 +507,11 @@ def test_pipeline_config_from_env(monkeypatch):
     assert cfg.model_threshold == 0.75
 ```
 
-Use `monkeypatch.setattr` to patch any object attribute -- `monkeypatch.setattr(module, "function_name", mock_fn)` -- and the original is restored when the test exits.
+Use `monkeypatch.setattr` to patch any object attribute: `monkeypatch.setattr(module, "function_name", mock_fn)`: and the original is restored when the test exits.
 
 **`capfd`: capturing stdout and stderr**
 
-`capfd` captures file-descriptor-level output, including output from C extensions and subprocesses -- useful when the code you're testing prints rather than returns:
+`capfd` captures file-descriptor-level output, including output from C extensions and subprocesses: useful when the code you're testing prints rather than returns:
 
 ```python
 def test_report_prints_summary(capfd):
@@ -531,7 +531,7 @@ Install <code>pytest-xdist</code> and run with <code>-n auto</code> to distribut
 </div>
 
 <div class='ark-activity'>
-<span class='ark-activity-title'><i class="bi bi-puzzle-fill"></i> Activity 6 - Built-in Fixtures</span><br><br>
+<span class='ark-activity-title'><i class="bi bi-puzzle-fill"></i> Activity 6: built-in Fixtures</span><br><br>
 <b>Goal:</b> Write three tests, one per fixture. (1) Use <code>tmp_path</code> to write a small CSV with <code>pd.DataFrame.to_csv</code> and assert the file exists. (2) Use <code>monkeypatch.setenv</code> to set <code>MODEL_THRESHOLD=0.9</code> and assert your <code>PipelineConfig</code> reads it correctly. (3) Use <code>capfd</code> to capture the output of a function that prints a summary line and assert the expected string appears in <code>out</code>.
 </div>
 
@@ -553,7 +553,7 @@ Write a test suite that achieves 80% coverage. It must include:
 </div>
 
 ::: {.callout-note collapse="true" icon=false}
-## Further Reading
+## Further reading
 
 | Resource | Why it matters |
 |---|---|
@@ -579,4 +579,4 @@ Write a test suite that achieves 80% coverage. It must include:
 | `pytest-mock` mocker fixture | Cleaner syntax for `patch` as a fixture; install as a test dependency. |
 :::
 
-**Next:** [Part 18: Automation with pre-commit](06-pre-commit-automation.qmd) -- every check from Parts 14-17, running automatically without having to remember to.
+**Next:** [Chapter 23: Automation with pre-commit](23-pre-commit-automation.qmd): every check from Parts 14-17, running automatically without having to remember to.
