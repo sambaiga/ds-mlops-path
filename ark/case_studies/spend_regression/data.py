@@ -32,3 +32,18 @@ def load_survey(settings: SpendRegressionSettings) -> pd.DataFrame:
     df = pd.read_csv(path, sep="\t")
     logger.info(f"Loaded {len(df):,} survey responses")
     return df
+
+
+def load_purchases(settings: SpendRegressionSettings) -> pd.DataFrame:
+    """Load the purchase history, downloading on first call.
+
+    Adds a ``total`` column (price per unit times quantity) since the raw
+    file only has the two factors, not the line total.
+    """
+    path = download_dataverse_file(
+        settings.purchases_file_id, settings.data_dir / "amazon-purchases.csv", settings.dataverse_base_url
+    )
+    df = pd.read_csv(path, parse_dates=["Order Date"])
+    df["total"] = df["Purchase Price Per Unit"] * df["Quantity"]
+    logger.info(f"Loaded {len(df):,} purchase records")
+    return df
