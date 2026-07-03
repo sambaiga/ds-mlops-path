@@ -2,15 +2,15 @@
 title: "The ML workflow"
 ---
 
-[![View Source on GitHub](https://img.shields.io/badge/Source-GitHub-181717.svg?logo=github)](https://github.com/sambaiga/ds-mlops-path/blob/main/tutorials/04-ml-intro/29-ml-workflow.qmd)
+[![View Source on GitHub](https://img.shields.io/badge/Source-GitHub-181717.svg?logo=github)](https://github.com/sambaiga/ds-mlops-path/blob/main/tutorials/04-ml-intro/30-ml-workflow.qmd)
 
 A team trained a model, evaluated it at 97% accuracy, and shipped it. Three months later the predictions were wrong on real data. The cause: the scaler was fit on the full dataset before the train/test split. The test set saw the training distribution during preprocessing. The 97% accuracy was real and meaningless.
 
-Knowing what kind of ML problem you have, from Chapter 28, does not prevent that failure. It does not tell you how to split your data without leaking the future into training, how to choose a metric that measures what actually matters, or how to diagnose a model that performs well in development and fails in production.
+Knowing what kind of ML problem you have, from Chapter 29, does not prevent that failure. It does not tell you how to split your data without leaking the future into training, how to choose a metric that measures what actually matters, or how to diagnose a model that performs well in development and fails in production.
 
 This chapter is the operating manual: the nine steps every ML project follows from problem framing to production monitoring, and the exact point where each failure mode enters.
 
-**Next:** [Chapter 30: Classical ML with scikit-learn](30-sklearn-core.ipynb) implements the first five steps of this workflow in code.
+**Next:** [Chapter 31: Classical ML with scikit-learn](31-sklearn-core.ipynb) implements the first five steps of this workflow in code.
 
 ## Why workflow matters
 
@@ -57,7 +57,7 @@ Write this down before touching data. If any row can't be filled in, the problem
 
 The same five components apply regardless of domain or task type.
 
-**Energy theft detection (from Chapter 27)**
+**Energy theft detection (from Chapter 28)**
 
 | Component | Specification |
 |---|---|
@@ -131,7 +131,7 @@ The nine stages cluster into four phases. **Problem framing** is the only stage 
 
 **Feature engineering.** Transforming raw data into inputs the model can use. For the energy theft problem: aggregating 15-minute readings to daily consumption profiles, computing deviation from neighbourhood median, encoding time-of-day and day-of-week patterns.
 
-**Model selection.** Choosing the algorithm family and architecture appropriate for the task type and paradigm identified in the spec card. Chapter 30 covers this in depth.
+**Model selection.** Choosing the algorithm family and architecture appropriate for the task type and paradigm identified in the spec card. Chapter 31 covers this in depth.
 
 **Training.** The model learns by processing training examples repeatedly, adjusting its parameters to reduce error each time. Hyperparameter choices (learning rate, model depth, regularisation strength) are made by observing validation set performance, not training performance.
 
@@ -141,7 +141,7 @@ The nine stages cluster into four phases. **Problem framing** is the only stage 
 
 **Monitoring.** Tracking model performance in production over time. When performance degrades (because the world changes), the monitoring signal feeds back to the problem framing stage and the cycle begins again.
 
-The three-step process from Chapter 28 (identify a pattern, build a model, use the model) maps directly onto this pipeline. Step 1 spans data collection through feature engineering. Step 2 is model selection and training. Step 3 is evaluation, deployment, and monitoring.
+The three-step process from Chapter 29 (identify a pattern, build a model, use the model) maps directly onto this pipeline. Step 1 spans data collection through feature engineering. Step 2 is model selection and training. Step 3 is evaluation, deployment, and monitoring.
 
 ## 3. Data splits done right
 
@@ -195,7 +195,7 @@ Correct splits and clean features ensure the model is trained and evaluated hone
 
 Before choosing a metric, compute a baseline: the performance of the simplest possible prediction. For regression, predict the mean of the training set. For classification, predict the majority class. For forecasting, use yesterday's value. For anomaly detection, flag nothing. A model that doesn't beat this baseline isn't adding value, regardless of what the metric number says.
 
-The seven task types from Chapter 28 divide into three groups based on how evaluation works.
+The seven task types from Chapter 29 divide into three groups based on how evaluation works.
 
 ### 4.1 Supervised tasks with a clear ground truth
 
@@ -205,11 +205,11 @@ You have labeled examples. Evaluation is a comparison between the model's output
 
 Use precision (of the accounts you flagged, how many were actually tampered), recall (of all tampered accounts, how many did you catch), and F1 (their harmonic mean). Choose between them based on which error is more costly: missing a theft (low recall) or wasting an inspector visit on a legitimate account (low precision). AUC-ROC summarises performance across all possible thresholds.
 
-**Regression.** MAE (mean absolute error) is interpretable: it's the average prediction error in the same units as the target. RMSE penalises large errors more heavily. MAPE (mean absolute percentage error) is scale-independent and useful when comparing across products or meters of different sizes. R² alone is insufficient because a model with high R² can still be systematically biased in ways that matter: the Google Maps route optimiser from Chapter 27 depends on accurate per-segment travel time predictions, and a model that consistently overestimates congested roads will produce wrong routes even with a high R² overall.
+**Regression.** MAE (mean absolute error) is interpretable: it's the average prediction error in the same units as the target. RMSE penalises large errors more heavily. MAPE (mean absolute percentage error) is scale-independent and useful when comparing across products or meters of different sizes. R² alone is insufficient because a model with high R² can still be systematically biased in ways that matter: the Google Maps route optimiser from Chapter 28 depends on accurate per-segment travel time predictions, and a model that consistently overestimates congested roads will produce wrong routes even with a high R² overall.
 
-**Forecasting.** The challenge that separates forecasting from regression is that accuracy degrades as the prediction horizon extends. A metric that averages error across all horizons can hide a model that performs well for one-step-ahead predictions but collapses at longer ranges. Good evaluation checks performance at multiple horizons, not just overall. The specific scale-invariant metrics suited to forecasting are covered in Chapter 30 alongside forecasting algorithms; the principle to carry from here is that evaluation must respect the time structure of the problem.
+**Forecasting.** The challenge that separates forecasting from regression is that accuracy degrades as the prediction horizon extends. A metric that averages error across all horizons can hide a model that performs well for one-step-ahead predictions but collapses at longer ranges. Good evaluation checks performance at multiple horizons, not just overall. The specific scale-invariant metrics suited to forecasting are covered in Chapter 31 alongside forecasting algorithms; the principle to carry from here is that evaluation must respect the time structure of the problem.
 
-**Ranking.** A ranking model isn't classifying items as relevant or irrelevant: it's ordering them. This distinction changes how success is measured. Getting the right result to position 1 is far more valuable than getting it to position 10, because users rarely scroll past the first few results. All ranking metrics weight top positions more heavily than lower ones, and Chapter 30 covers the specific ones alongside ranking algorithms. What matters here is to resist using classification accuracy as a proxy: a model that puts the best result at position 8 out of 10 isn't 80% accurate. It has failed its purpose, because no user reaches position 8.
+**Ranking.** A ranking model isn't classifying items as relevant or irrelevant: it's ordering them. This distinction changes how success is measured. Getting the right result to position 1 is far more valuable than getting it to position 10, because users rarely scroll past the first few results. All ranking metrics weight top positions more heavily than lower ones, and Chapter 31 covers the specific ones alongside ranking algorithms. What matters here is to resist using classification accuracy as a proxy: a model that puts the best result at position 8 out of 10 isn't 80% accurate. It has failed its purpose, because no user reaches position 8.
 
 **Anomaly detection.** Class imbalance makes accuracy meaningless (same problem as classification, but more extreme). Use recall at a fixed false positive rate: given that you're willing to investigate at most 10% of accounts per month, how many anomalies do you catch? The F1 score at the chosen threshold and the precision-recall curve both give a full picture across thresholds.
 
@@ -232,7 +232,7 @@ The principle that applies regardless of generation task type: define in the spe
 
 Clustering belongs to the unsupervised paradigm: there are no labels to compare against, so the usual definition of "correct" doesn't exist. Evaluation works at two levels.
 
-Internal metrics measure mathematical structure: whether points within a cluster are more similar to each other than to points in other clusters. These can help you compare different configurations (five groups versus three groups, for instance), but they can't tell you whether the groups are meaningful. A result that looks clean by internal measures can still be useless in practice. The specific metrics used are covered in Chapter 30 alongside clustering algorithms.
+Internal metrics measure mathematical structure: whether points within a cluster are more similar to each other than to points in other clusters. These can help you compare different configurations (five groups versus three groups, for instance), but they can't tell you whether the groups are meaningful. A result that looks clean by internal measures can still be useless in practice. The specific metrics used are covered in Chapter 31 alongside clustering algorithms.
 
 Domain validation fills the gap that internal metrics can't. Show the result to someone who knows the domain: do the clusters correspond to recognisable patterns? For the energy theft problem, consumption-profile clusters are only valuable if they correspond to interpretable household types that an analyst can act on. If a clustering result can't be explained to a domain expert, the metric scores are irrelevant to the business decision.
 
@@ -357,4 +357,4 @@ For each: identify the specific problem (wrong split, wrong metric, or something
 | Error analysis | Aggregate metrics hide subgroup failures; always slice by meaningful dimensions before declaring a model ready |
 :::
 
-**Next:** Chapter 30: The ML Algorithm Panorama maps the full landscape of algorithms across all seven task types. Given a well-specified problem and a correctly designed evaluation, which algorithm family do you reach for first, and when do you escalate to more complex approaches?
+**Next:** Chapter 31: The ML Algorithm Panorama maps the full landscape of algorithms across all seven task types. Given a well-specified problem and a correctly designed evaluation, which algorithm family do you reach for first, and when do you escalate to more complex approaches?
