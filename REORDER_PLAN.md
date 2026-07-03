@@ -91,17 +91,43 @@ data-storytelling."
 
 ### Work items
 
-1. `git mv` the 9 files above to their new names
+1. `git mv` the 9 files above to their new names — **done**
 2. Each moved file: update its own `title: "Chapter N: ..."` front matter
-   and the Colab/download badge URLs (cell 1) to the new filename
+   and the Colab/download badge URLs (cell 1) to the new filename — **done**
 3. Sweep every `tutorials/01-python-basics/*.ipynb` and
    `tutorials/02-dev-tools/17-vscode-setup.qmd` for `Chapter N` / `Sec. N`
-   cross-references and remap using the table above; verify by content, not
-   just number, since Chapter 16's meaning changes
-4. Update `_quarto.yml` navigation order
-5. Unify the running dataset: rewrite Chapters 14-16 (matplotlib, lets-plot,
-   data-storytelling) to use the pandas-taught `university_analytics.csv`
-   as their primary example instead of hand-built numpy `DataFrame`s, since
-   pandas is now taught first
-6. Re-execute every touched notebook end-to-end; zero tolerance for errors
-7. Commit on `feature/act1-reorder`, off `main`
+   cross-references and remap using the table above — **done**. This also
+   surfaced pre-existing chapter-number/filename mismatches that predate
+   the reorder (e.g. Chapter 9's own cell 2 cited "Chapter 10" pointing at
+   `13-combining-reshaping.ipynb`, off by 3, likely stale from an even
+   earlier numbering pass). Fixed using the filename as ground truth.
+   Chapter 8's and Chapter 16's connective prose needed a rewrite, not just
+   a number swap, since their neighbors changed entirely: Chapter 8 no
+   longer follows visualization (it now opens Data Analysis, right after
+   Chapter 7), and Chapter 16 no longer precedes pandas-core (it's now the
+   last chapter before Dev Tools) — added its missing "Next:" pointer to
+   Chapter 17 to match every other chapter's convention.
+4. Update `_quarto.yml` navigation order — **done**. Split the old
+   "Python foundations" part (which held both language basics and
+   visualization together) into three: "Python foundations" (1-7),
+   "Data analysis" (8-13), "Data visualization" (14-16).
+5. Re-execute every touched notebook end-to-end; zero tolerance for errors
+6. Commit on `feature/let-plot-udate`
+
+## 3. Deferred: unify the running dataset
+
+**Status: not done, deliberately deferred as its own follow-up.**
+
+The original scope included rewriting Chapters 14-16 (matplotlib, lets-plot,
+data-storytelling — 199 cells combined) to use the pandas-taught
+`university_analytics.csv` as their primary example instead of the
+hand-built numpy `DataFrame`s they currently construct from scratch, since
+pandas is now taught first and could supply the running dataset directly.
+
+This is a substantially bigger job than the renumbering above: every
+example, every stated statistic in prose, and every chart's pedagogical
+point needs re-deriving against real data, then re-executing and
+re-reviewing for craft, not just correctness. Rushing it in the same pass
+as the reorder risked exactly the kind of shallow, inconsistent rewrite
+the book's own standards argue against. Do this as a dedicated pass, one
+chapter at a time, after this reorder has landed and been sanity-checked.
