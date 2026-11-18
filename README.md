@@ -126,3 +126,12 @@ Understand and explore the dataset to build familiarity with its structure, cont
 - https://github.com/sambaiga/AI4DLearning?tab=readme-ov-file
 
 </details>
+
+## The cover
+
+The cover is drawn by code, from the same brand as the web book. `uv run python -m ark.cover --pages 520` writes the
+front cover (`assets/cover.pdf`, used by the LaTeX print edition, and `assets/cover.png`), the print wrap with back
+cover, spine and bleed (`assets/print/wrap-rgb.pdf`, not stored), the same wrap in CMYK with the ink limited to 240 %
+(`assets/print/wrap-cmyk.pdf`) and a check sheet with the trim, bleed, safe zone and folds (`assets/print/wrap-guides.png`).
+Set `--pages` from the built print PDF, because the spine is the page count times 0.0572 mm. The defaults are a trim
+of 170 by 240 mm and a 3.175 mm bleed; a printer's own template and colour profile decide the final file.
