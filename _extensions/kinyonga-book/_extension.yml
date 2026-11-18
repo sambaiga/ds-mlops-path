@@ -1,0 +1,126 @@
+# kinyonga book: a Quarto book in the kinyonga brand, as a web edition (HTML) and two print editions: a LaTeX one (lualatex, scrbook) and a Typst one.
+#
+# One extension per document kind: Quarto splits `kinyonga-book-typst` at the last hyphen, so an extension can give
+# one format per base format. brand.yml, tokens/, shared/, fonts/ and assets/ here are copies written by `kinyonga
+# sync`; never edit them. The Typst format follows the structure of the bundled orange-book extension (MIT, with its
+# Typst package and marginalia, Unlicense, vendored in typst/), which Quarto needs to merge the chapters into one
+# book; the colour comes from brand.yml. The HTML theme reads colours only from tokens/. The extension does not set the
+# The landing-page components (cover hero, roadmap, author page) are in scss/kinyonga-book-landing.scss and its dark twin,
+# which a book adds to its theme when it has such a page. The extension does not set the
+# project brand: a book names its own in _quarto.yml (`project: brand:`), so an existing book keeps its own logo.
+
+title: kinyonga book
+author: sambaiga
+version: 0.1.1
+quarto-required: ">=1.9.17"
+
+contributes:
+  formats:
+    typst:
+      papersize: a4
+      toc: true
+      toc-depth: 2
+      number-sections: true
+      template-partials:
+        - numbering.typ
+        - page.typ
+        - typst-show.typ
+      filters:
+        - path: filters/boxes.lua
+          at: pre-quarto
+        - path: orange-book.lua
+          at: post-quarto
+      format-resources:
+        - fonts/Jost-Regular.ttf
+        - fonts/Jost-SemiBold.ttf
+        - fonts/Jost-Bold.ttf
+        - fonts/LibreFranklin-Regular.ttf
+        - fonts/LibreFranklin-Medium.ttf
+        - fonts/LibreFranklin-Italic.ttf
+        - fonts/LibreFranklin-SemiBold.ttf
+        - fonts/LibreFranklin-SemiBoldItalic.ttf
+        - fonts/JetBrainsMono-Regular.ttf
+        - fonts/JetBrainsMono-Bold.ttf
+        - assets/logo.svg
+        - assets/logo-dark.svg
+        - assets/mark.svg
+
+    pdf:
+      pdf-engine: lualatex
+      documentclass: scrbook
+      classoption:
+        - oneside
+        - open=any
+      papersize: a4
+      fontsize: 10pt
+      linestretch: 1.15
+      colorlinks: true
+      block-headings: false
+      number-sections: true
+      toc: true
+      toc-depth: 2
+      fig-align: center
+      fig-cap-location: bottom
+      tbl-cap-location: bottom
+      code-overflow: wrap
+      highlight-style: github
+      date-format: "D MMMM YYYY"
+      geometry:
+        - top=2.4cm
+        - bottom=2.4cm
+        - left=2.6cm
+        - right=2.6cm
+      keep-tex: true
+      filters:
+        - path: filters/boxes.lua
+          at: pre-quarto
+      include-in-header:
+        - tokens/colors.tex
+        - latex/fonts.tex
+        - latex/typography.tex
+        - latex/page-style.tex
+      include-before-body:
+        - latex/cover.tex
+      include-after-body:
+        - latex/back-page.tex
+      format-resources:
+        - fonts/Jost-Regular.ttf
+        - fonts/Jost-SemiBold.ttf
+        - fonts/Jost-Bold.ttf
+        - fonts/LibreFranklin-Regular.ttf
+        - fonts/LibreFranklin-Medium.ttf
+        - fonts/LibreFranklin-Italic.ttf
+        - fonts/LibreFranklin-SemiBold.ttf
+        - fonts/LibreFranklin-SemiBoldItalic.ttf
+        - fonts/JetBrainsMono-Regular.ttf
+        - fonts/JetBrainsMono-Bold.ttf
+        - assets/logo.svg
+        - assets/logo-dark.svg
+        - assets/mark.svg
+
+    html:
+      theme:
+        light:
+          - cosmo
+          - brand
+          - scss/kinyonga-book.scss
+        dark:
+          - darkly
+          - brand
+          - scss/kinyonga-book-dark.scss
+      toc: true
+      number-sections: true
+      format-resources:
+        - fonts/Jost-Regular.ttf
+        - fonts/Jost-SemiBold.ttf
+        - fonts/Jost-Bold.ttf
+        - fonts/LibreFranklin-Regular.ttf
+        - fonts/LibreFranklin-Medium.ttf
+        - fonts/LibreFranklin-Italic.ttf
+        - fonts/LibreFranklin-SemiBold.ttf
+        - fonts/LibreFranklin-SemiBoldItalic.ttf
+        - fonts/JetBrainsMono-Regular.ttf
+        - fonts/JetBrainsMono-Bold.ttf
+        - assets/logo.svg
+        - assets/logo-dark.svg
+        - assets/mark.svg

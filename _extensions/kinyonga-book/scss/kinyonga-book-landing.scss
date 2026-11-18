@@ -1,0 +1,699 @@
+/*-- scss:defaults --*/
+@import "../tokens/tokens";
+
+/*-- scss:rules --*/
+// Optional landing-page components of a book site: the cover hero, the pipeline strip, call-to-action buttons,
+// the learning-path roadmap and the author page. Add this file to the theme of a book that has such a page.
+
+// ── Sidebar: hide spurious chapter-number on welcome entry ───────────────────
+.sidebar-menu-container > ul.list-unstyled.mt-1 > li.sidebar-item:first-child .chapter-number,
+.quarto-title-breadcrumbs .breadcrumb-item:first-child .chapter-number {
+  display: none;
+}
+
+// ── Cover page: suppress the automatic title block ──────────────────────────
+// index.qmd's .cover-hero already carries title/subtitle/author; without this
+// Quarto's book-level title header renders the same info again just above it.
+body:has(.cover-hero) #title-block-header {
+  display: none;
+}
+
+// ── Cover hero ───────────────────────────────────────────────────────────────
+
+.cover-hero {
+  // Anchored on the same dark background the rest of the brand's dark theme
+  // already uses ($dark-body-bg $kn-ink-deep on sambaiga.github.io), not an
+  // invented texture.
+  background: linear-gradient(135deg, $kn-ink 0%, $kn-ink-deep 60%, $kn-ink-night 100%);
+  border: 1px solid rgba(148, 163, 184, 0.08);
+  box-shadow: 0 24px 60px -24px rgba(2, 6, 23, 0.65);
+  border-radius: 14px;
+  padding: 40px 48px 32px;
+  margin-bottom: 36px;
+  color: $kn-white;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 26px;
+
+  // Two soft glows in the site's own named brand accents (ai-accent violet,
+  // energy-accent emerald), not generic blue: this book is both of those.
+  &::before {
+    content: '';
+    position: absolute;
+    top: -90px;
+    right: -60px;
+    width: 320px;
+    height: 320px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(139,92,246,0.10) 0%, transparent 65%);
+    pointer-events: none;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -60px;
+    left: -40px;
+    width: 220px;
+    height: 220px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(16,185,129,0.08) 0%, transparent 65%);
+    pointer-events: none;
+  }
+
+  h1 {
+    font-family: $headings-font-family;
+    font-size: 2.25rem;
+    font-weight: 800;
+    color: $kn-white;
+    margin-bottom: 12px;
+    letter-spacing: -0.03em;
+  }
+
+  p {
+    color: $kn-slate-pale;
+    font-size: 1rem;
+    text-align: left;
+    hyphens: none;
+    margin-bottom: 0;
+    max-width: 620px;
+    line-height: 1.65;
+  }
+
+  @media (max-width: 576px) {
+    padding: 28px 24px;
+    h1 { font-size: 1.65rem; }
+  }
+}
+
+.cover-hero-row {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  flex-wrap: wrap;
+}
+
+.cover-hero-text {
+  flex: 1 1 320px;
+  min-width: 0;
+}
+
+// The signal-to-analytics-to-value diagram: real Bootstrap icons (matching
+// the pipeline strip below), not hand-drawn shapes. Three plain nodes end to
+// end: the raw signal, what processes it, and the payoff, not a repeat of
+// the technique-by-technique breakdown the roadmap grid already covers.
+.cover-hero-visual {
+  flex: 1 1 300px;
+  max-width: 360px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+
+  @media (max-width: 640px) {
+    display: none;
+  }
+}
+
+.hero-visual-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+}
+
+.hero-visual-caption {
+  font-size: 0.68rem;
+  font-weight: 600;
+  font-style: italic;
+  color: $kn-slate;
+  text-align: center;
+  margin: 0 !important;
+}
+
+.signal-node {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 9px;
+  flex-shrink: 0;
+}
+
+.signal-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  font-size: 1.5rem;
+  color: $kn-ink-deep;
+
+  .signal-node-meter & { background: $kn-sky-bright; }
+  .signal-node-model & { background: $kn-violet-light; }
+  .signal-node-value & { background: $kn-amber-light; }
+}
+
+.signal-node-label {
+  font-family: $headings-font-family;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: $kn-slate-pale;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.signal-connector {
+  width: 22px;
+  height: 1.5px;
+  background: rgba(148, 163, 184, 0.35);
+  flex-shrink: 0;
+}
+
+.cover-cta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+// ── Cover pipeline strip: the book's 5 parts, shown not described ───────────
+
+.pipeline-flow-label {
+  text-align: center;
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: $kn-slate;
+  margin: 22px 0 12px !important;
+  padding-top: 22px;
+  border-top: 1px solid rgba(255,255,255,0.08);
+  position: relative;
+  z-index: 1;
+}
+
+.pipeline-flow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px 6px;
+  position: relative;
+  z-index: 1;
+}
+
+.pipeline-step {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+}
+
+// Parts 3-5 wrap their pipeline-step in a link. Pandoc's HTML-block parser
+// only recognizes block-level tags (div, p, ...) at the top of a raw HTML
+// line, not `a`, so a bare top-level `<a class="pipeline-step">` gets
+// swallowed into a stray paragraph instead of staying a flex sibling. The
+// outer div keeps this a block; the anchor just repeats the same flex row.
+.pipeline-step-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: inherit;
+
+  &:hover .pipeline-label { color: $kn-sky-bright; text-decoration: none; }
+}
+
+.pipeline-dot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  font-size: 1rem;
+  color: $kn-ink-deep;
+  flex-shrink: 0;
+
+  &.pipeline-dot-1 { background: $kn-sky-bright; }
+  &.pipeline-dot-2 { background: $kn-violet-light; }
+  &.pipeline-dot-3 { background: $kn-emerald-light; }
+  &.pipeline-dot-4 { background: $kn-amber-light; }
+  &.pipeline-dot-5 { background: $kn-violet-pale; }
+  &.pipeline-dot-6 { background: $kn-teal; }
+  &.pipeline-dot-7 { background: $kn-salmon-light; }
+  &.pipeline-dot-8 { background: $kn-rose-light; }
+}
+
+.pipeline-label {
+  font-family: $headings-font-family;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  color: $kn-rule;
+  white-space: nowrap;
+}
+
+.pipeline-arrow {
+  flex-shrink: 0;
+  color: $kn-slate-dark;
+  font-size: 1.1rem;
+  margin: 0 4px;
+}
+
+@media (max-width: 700px) {
+  .pipeline-arrow { display: none; }
+}
+
+.cover-eyebrow {
+  font-family: $headings-font-family;
+  font-size: 0.65rem !important;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: $kn-sky-bright !important;
+  opacity: 0.75;
+  margin-bottom: 8px !important;
+  max-width: none !important;
+  line-height: 1.4 !important;
+}
+
+.cover-author {
+  font-size: 0.9rem;
+  color: $kn-slate-light;
+  margin-top: 8px;
+  margin-bottom: 24px;
+  a { text-decoration: none; }
+  i { font-size: 1.05em; vertical-align: middle; }
+}
+
+.cover-stat-row {
+  display: flex;
+  gap: 32px;
+  flex-wrap: wrap;
+  margin-bottom: 28px;
+
+  @media (max-width: 400px) { gap: 20px; }
+}
+
+.cover-stat {
+  .stat-value {
+    display: block;
+    font-family: $headings-font-family;
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: $kn-sky-bright;
+    line-height: 1;
+  }
+  .stat-label {
+    display: block;
+    font-size: 0.68rem;
+    color: $kn-slate-light;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-top: 3px;
+  }
+}
+
+// ── Cover CTA buttons ────────────────────────────────────────────────────────
+
+.btn-cover {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 22px;
+  border-radius: 7px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.875rem;
+  margin-right: 10px;
+  margin-top: 4px;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+
+  &:hover {
+    opacity: 0.88;
+    transform: translateY(-1px);
+    text-decoration: none;
+  }
+
+  &.btn-primary-cover  { background: $kn-white; color: $kn-ink; }
+  &.btn-secondary-cover {
+    background: transparent;
+    color: $kn-white;
+    border: 1.5px solid rgba(255,255,255,0.4);
+  }
+}
+
+// ── Cover section divider label ───────────────────────────────────────────────
+
+.section-label {
+  font-family: $headings-font-family;
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: $kn-slate-light;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  &::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: $kn-tint-line;
+  }
+}
+
+// ── 4-act learning-path roadmap ───────────────────────────────────────────────
+
+.roadmap-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 1.125rem !important;
+  margin: 1.5rem 0 2rem;
+}
+
+.act-card {
+  border: 1px solid $kn-tint-gray;
+  border-radius: 12px;
+  overflow: hidden;
+  background: $kn-white;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+
+  &:hover {
+    box-shadow: 0 6px 24px rgba(30,41,59,0.09);
+    transform: translateY(-2px);
+  }
+}
+
+.act-stripe {
+  height: 5px;
+  flex-shrink: 0;
+
+  &.act-1 { background: $kn-blue; }
+  &.act-2 { background: $kn-violet-deep; }
+  &.act-3 { background: $kn-success; }
+  &.act-4 { background: $kn-amber-deep; }
+  &.act-5 { background: $kn-violet; }
+  &.act-6 { background: $kn-emerald; }
+  &.act-7 { background: $kn-salmon; }
+  &.act-8 { background: $kn-rose-deep; }
+}
+
+.act-inner {
+  padding: 20px 22px 24px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.act-icon {
+  font-size: 1.75rem;
+  display: block;
+  margin-bottom: 10px;
+  line-height: 1;
+
+  &.act-icon-1 { color: $kn-blue; }
+  &.act-icon-2 { color: $kn-violet-deep; }
+  &.act-icon-3 { color: $kn-success; }
+  &.act-icon-4 { color: $kn-amber-deep; }
+  &.act-icon-5 { color: $kn-violet; }
+  &.act-icon-6 { color: $kn-emerald; }
+  &.act-icon-7 { color: $kn-salmon; }
+  &.act-icon-8 { color: $kn-rose-deep; }
+}
+
+.act-eyebrow {
+  font-family: $headings-font-family;
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  text-transform: none;
+  color: $kn-ink;
+  display: block;
+  margin-bottom: 6px;
+}
+
+.act-desc {
+  font-size: 0.795rem;
+  color: $kn-slate;
+  line-height: 1.5;
+  text-align: left;
+  hyphens: none;
+  margin-bottom: 0;
+}
+
+.act-chapters {
+  list-style: none;
+  padding: 0;
+  margin: 14px 0 0;
+  border-top: 1px solid $kn-tint-slate;
+  padding-top: 12px;
+}
+
+.act-chapters li {
+  padding: 3px 0;
+
+  a {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.8rem;
+    text-decoration: none;
+    color: $kn-ink;
+    &:hover { color: $kn-blue; text-decoration: none; }
+  }
+
+  .ch-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.8rem;
+    color: $kn-gray-light;
+  }
+}
+
+.ch-num {
+  font-family: $headings-font-family;
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: $kn-slate-pale;
+  min-width: 20px;
+  flex-shrink: 0;
+}
+
+.ch-name { flex: 1; }
+
+.ch-check {
+  color: $kn-emerald;
+  font-size: 0.7rem;
+  flex-shrink: 0;
+}
+
+.ch-soon {
+  font-size: 0.58rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: $kn-gray-light;
+  background: $kn-tint-gray-2;
+  border: 1px solid $kn-tint-gray;
+  padding: 1px 6px;
+  border-radius: 99px;
+  flex-shrink: 0;
+}
+
+.act-note {
+  font-size: 0.72rem;
+  font-style: italic;
+  color: $kn-gray-light;
+  margin: 10px 0 0 !important;
+  text-align: left;
+  hyphens: none;
+}
+
+// ── About the Author page ────────────────────────────────────────────────────
+
+.author-profile {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.75rem;
+  margin-bottom: 2.25rem;
+  padding: 1.75rem 2rem;
+  background: linear-gradient(135deg, $kn-ink 0%, $kn-ink-deep 100%);
+  border-radius: 14px;
+  color: $kn-white;
+
+  @media (max-width: 576px) {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 1.5rem 1.25rem;
+  }
+}
+
+.author-avatar {
+  flex-shrink: 0;
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid $kn-blue;
+  display: block;
+  border: 3px solid rgba(56,189,248,0.3);
+}
+
+.author-meta { flex: 1; }
+
+.author-name {
+  font-family: $headings-font-family;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: $kn-white;
+  margin: 0 0 4px;
+  border-bottom: none !important;
+  padding-bottom: 0 !important;
+  margin-top: 0 !important;
+  letter-spacing: -0.025em;
+}
+
+.author-title {
+  font-size: 0.9rem;
+  color: $kn-slate-light;
+  margin: 0 0 14px;
+  text-align: left;
+  hyphens: none;
+}
+
+.author-social-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+
+  a {
+    font-size: 0.78rem;
+    color: $kn-sky-bright;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: color 0.15s ease;
+
+    i { font-size: 0.85rem; }
+    &:hover { color: $kn-sky-light; text-decoration: none; }
+  }
+
+  @media (max-width: 576px) {
+    justify-content: center;
+  }
+}
+
+// Project cards on about page
+.project-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1rem;
+  margin: 1rem 0 2rem;
+}
+
+.project-item {
+  border: 1px solid $kn-tint-gray;
+  border-radius: 10px;
+  padding: 16px 18px;
+  background: $kn-white;
+  transition: box-shadow 0.2s ease;
+
+  &:hover { box-shadow: 0 4px 16px rgba(30,41,59,0.08); }
+}
+
+.project-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.project-name {
+  font-family: $headings-font-family;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: $kn-ink;
+}
+
+.project-year {
+  font-size: 0.72rem;
+  color: $kn-slate-light;
+  font-family: $headings-font-family;
+  font-weight: 600;
+}
+
+.project-desc {
+  font-size: 0.8rem;
+  color: $kn-slate-dark;
+  line-height: 1.55;
+  margin-bottom: 10px;
+  text-align: left;
+  hyphens: none;
+}
+
+.project-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+
+  a {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: $kn-blue;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+
+    &:hover { text-decoration: underline; }
+    i { font-size: 0.8rem; }
+  }
+}
+
+// Publications list on about page
+.pub-list {
+  margin: 1rem 0 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.pub-item {
+  padding: 14px 0;
+  border-bottom: 1px solid $kn-tint-slate;
+
+  &:last-child { border-bottom: none; }
+}
+
+.pub-title {
+  font-size: 0.9rem;
+  font-weight: 500;
+  margin-bottom: 3px;
+  text-align: left;
+  hyphens: none;
+
+  a { color: $kn-ink; text-decoration: none; &:hover { color: $kn-blue; text-decoration: underline; } }
+}
+
+.pub-meta {
+  font-size: 0.775rem;
+  color: $kn-slate;
+  margin-bottom: 0;
+  text-align: left;
+  hyphens: none;
+}
+
