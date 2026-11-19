@@ -1,0 +1,46 @@
+% Back cover: closes the book on the ground of the cover with the title, the author and, when set, the web address.
+\clearpage
+% The back cover is furniture rather than content: it should not appear in the
+% table of contents, carry a running head, or continue the page count.
+\thispagestyle{bkcover}
+\makeatletter
+\begin{titlepage}
+\thispagestyle{bkcover}
+% Everything is drawn in the one background picture of the page, so that no node depends on where a second picture
+% was typeset in the text flow on the earlier run (on a long book the title and the credit line were misplaced).
+\AddToShipoutPictureBG*{%
+  \begin{tikzpicture}[remember picture, overlay]
+    \fill[knInk] (current page.south west) rectangle (current page.north east);
+    % The same halftone field as the cover, at the same density and direction,
+    % so the two pages are recognisably one design.
+    \foreach \r in {0,...,4}{%
+      \foreach \c in {0,...,29}{%
+        \pgfmathsetmacro{\rad}{0.19*max((1-\c/30)^1.6*(0.35+0.65*(\r/5)), 0.06)}
+        \fill[knSkyBright, opacity=0.24]
+          ([xshift=\c*0.72cm-0.4cm, yshift=-\r*0.72cm+2.7cm]current page.south west)
+          circle (\rad cm);
+      }%
+    }%
+  \node[anchor=center, yshift=1.6cm] at (current page.center) {%
+    \begin{minipage}{13cm}
+      \centering
+      {\color{knSkyBright}\rule{2.2cm}{2.5pt}}\par
+      \vspace{18pt}
+      {\bkCoverFont\fontsize{19}{24}\selectfont\color{white}\@title}\par
+      \vspace{8pt}
+      {\rmfamily\fontsize{10}{14}\selectfont\color{white!70}\@author}\par
+      \vspace{1.5cm}
+      \ifx\bookweb\empty\else{\rmfamily\fontsize{9}{14}\selectfont\color{white!75}Read the live edition at\par
+        \vspace{3pt}{\color{knSkyBright}\bookweb}}\par\fi
+      \ifx\bookrepo\empty\else\vspace{10pt}{\rmfamily\fontsize{9}{14}\selectfont\color{white!75}Source\par
+        \vspace{3pt}{\color{knSkyBright}\bookrepo}}\par\fi
+    \end{minipage}};
+  \node[anchor=south, yshift=2.0cm] at (current page.south) {%
+    {\rmfamily\fontsize{7.5}{9}\selectfont\color{white!50}%
+      \copyright\ \the\year{} \@author}};
+  \end{tikzpicture}%
+}
+\makeatother
+% An empty page still needs content to be shipped out.
+\null
+\end{titlepage}

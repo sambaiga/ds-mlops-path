@@ -1,0 +1,57 @@
+% ---------------------------------------------------------------------------
+% Typographic hygiene. None of this is brand; it is the set of defaults that
+% separates a document that looks typeset from one that looks emitted.
+%
+% Loaded before page-style.tex, which depends on \setlist and on parskip's
+% paragraph model.
+% ---------------------------------------------------------------------------
+
+% Block paragraphs rather than first-line indents, matching the HTML build. An
+% indented PDF would be the one output of the two that reads differently.
+\usepackage{parskip}
+
+% Optical margin alignment and slight glyph scaling: fewer overfull lines and a
+% straighter right edge in justified text.
+\usepackage{microtype}
+
+\usepackage{enumitem}
+\setlist{leftmargin=*, itemsep=2pt, parsep=0pt, topsep=4pt}
+
+% Orphans and widows. The stock 150 is low enough that TeX will strand a single
+% line across a page break; 2000 makes it pay a high enough price to find
+% another solution, without 10000's tendency to produce underfull pages instead.
+\clubpenalty=2000
+\widowpenalty=2000
+\displaywidowpenalty=2000
+
+% Float placement. The stock fractions push figures to the end of a chapter,
+% far from the text referring to them, which in a book with a figure per section
+% is close to unusable.
+\renewcommand{\topfraction}{0.85}
+\renewcommand{\bottomfraction}{0.7}
+\renewcommand{\textfraction}{0.15}
+\renewcommand{\floatpagefraction}{0.75}
+
+% Quarto does not always emit \subtitle, and the cover reads \@subtitle
+% unconditionally. Without this, a build with no subtitle dies with "Undefined
+% control sequence" rather than simply having no subtitle.
+\makeatletter
+\providecommand{\subtitle}[1]{\gdef\@subtitle{#1}}
+\providecommand{\@subtitle}{}
+\makeatother
+
+% Captions smaller and muted, with the label in the primary so a figure number is
+% findable when scanning. `caption` is loaded here rather than relied upon,
+% because Quarto only pulls it in when a document happens to need it.
+\usepackage{caption}
+\captionsetup{font={small,color=knSlate}, labelfont={small,bf,color=knInk}}
+
+% amsmath and amssymb are loaded because \text and \mathbb are used in equations; siunitx gives the unit macros.
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{siunitx}
+
+% Long tables of metrics are the most common float in this book, and several run
+% wider than the text block. Scaling them is better than letting them bleed into
+% the margin, which is what Pandoc's default does.
+\usepackage{adjustbox}
