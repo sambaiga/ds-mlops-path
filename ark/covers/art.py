@@ -1,8 +1,9 @@
-"""The three parts of the cover picture: scattered data, a small network and a rising impact curve.
+"""The parts of the cover picture: a stream of data that falls into order, a small network and a rising line.
 
-The picture is the one of the web book's landing page, redrawn for print: data flows through a model and ends as impact.
-Positions and values come from a seeded simulation, so a rebuild changes no byte. Functions return arrays in unit boxes;
-the drawing places them on the page.
+The picture is the one of the web book's landing page, redrawn as one flow for print: data is scattered at first, finds
+its lanes as it enters a model, and leaves as a single line that rises to the full stop of the title. Positions come
+from a seeded simulation, so a rebuild changes no byte. Functions return numbers in unit ranges; the drawing places
+them.
 """
 
 import numpy as np
@@ -12,29 +13,28 @@ SEED = 20261118
 LAYERS = (4, 3, 2)
 
 
-def data(rng: np.random.Generator, count: int = 15) -> tuple[np.ndarray, np.ndarray, list[tuple[int, int]]]:
-    """Scattered data points, their sizes and the links between neighbours.
+def particles(rng: np.random.Generator, count: int = 150) -> dict[str, np.ndarray]:
+    """The particles of the data stream.
 
-    Points are drawn on a jittered grid, so that they scatter without overlapping.
+    Each particle travels along the stream from ``t = 0`` to ``t = 1``, where it enters the network in one of the lanes
+    of the input layer. Far from the network its height is scattered; near it, the particle is in its lane.
 
     Args:
         rng: The random generator.
-        count: The number of points.
+        count: The number of particles.
 
     Returns:
-        The positions in the unit box, one size from 0 to 1 for each point, and the pairs of neighbours that are linked.
+        ``t``, the progress along the stream from 0 to 1; ``lane``, the input node it enters, from 0 to the number of
+        inputs minus one; ``offset``, a scatter from -1 to 1 that is applied in proportion to the distance left;
+        ``size``, a relative size from 0 to 1.
     """
-    rows = 5
-    cols = int(np.ceil(count / rows))
-    cells = [(c, r) for r in range(rows) for c in range(cols)][:count]
-    points = np.array([[(c + rng.uniform(0.15, 0.85)) / cols, (r + rng.uniform(0.15, 0.85)) / rows] for c, r in cells])
-    sizes = rng.uniform(0.2, 1.0, count)
-    links = []
-    for i in range(count):
-        distance = np.hypot(*(points - points[i]).T)
-        near = int(np.argsort(distance)[1])
-        links.append((min(i, near), max(i, near)))
-    return points, sizes, sorted(set(links))
+    t = np.sort(rng.beta(1.25, 1.0, count))
+    return {
+        "t": t,
+        "lane": rng.integers(0, LAYERS[0], count),
+        "offset": rng.uniform(-1.0, 1.0, count),
+        "size": rng.uniform(0.25, 1.0, count),
+    }
 
 
 def network() -> list[np.ndarray]:
@@ -51,16 +51,14 @@ def network() -> list[np.ndarray]:
     return layers
 
 
-def impact(points: int = 7) -> tuple[np.ndarray, np.ndarray]:
-    """The impact curve: a quantity that grows slowly at first and then fast, as value does once a model is in use.
+def rise(points: int = 120) -> np.ndarray:
+    """The parameter of the rising line: slow at first and then fast, as value grows once a model is in use.
 
     Args:
-        points: The number of marked points.
+        points: The number of samples.
 
     Returns:
-        The x and y of the marked points in the unit box, and the smooth curve through them is the same function on a
-        finer grid, so ``y`` rises and ends at 1.
+        Values from 0 to 1 that rise slowly and then quickly, to be used as the progress along the line.
     """
-    x = np.linspace(0.0, 1.0, points)
-    y = (np.exp(2.6 * x) - 1.0) / (np.exp(2.6) - 1.0)
-    return x, y
+    s = np.linspace(0.0, 1.0, points)
+    return (np.exp(2.2 * s) - 1.0) / (np.exp(2.2) - 1.0)

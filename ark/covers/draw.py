@@ -199,10 +199,11 @@ def gradient(ax, x0: float, y0: float, x1: float, y1: float, top: str, foot: str
 
 
 def front(canvas: Canvas) -> None:
-    """Draw the front cover on an A4 sheet, in design millimetres: the title and the picture of the book's landing page.
+    """Draw the front cover on an A4 sheet, in design millimetres: the title and one flow from data to impact.
 
-    The picture reads from left to right as the title does: scattered data, a small network, and a curve that rises to
-    one orange mark, the impact. It is the web book's illustration, redrawn large, in the brand colours.
+    Data enters at the left, scattered; it finds its lanes as it enters a small network; and it leaves as one line that
+    rises to the full stop of the title, drawn in orange. The idea is the one of the web book's landing page, drawn as
+    one gesture instead of three separate pictures.
 
     Args:
         canvas: The canvas of the front panel.
@@ -210,68 +211,74 @@ def front(canvas: Canvas) -> None:
     ax, w = canvas.ax, DESIGN[0]
     canvas.text(EYEBROW, w / 2, 277.5, 3.0, HEAD, SLATE, "center", track=0.12)
     canvas.text("From Data", w / 2, 252, 20.5, TITLE, WHITE, "center")
-    canvas.text("to Impact", w / 2, 232, 20.5, TITLE, WHITE, "center")
-    canvas.line([w / 2 - 13, w / 2 + 13], [223.5, 223.5], SKY, 0.6)
-    canvas.text("From Python fundamentals to", w / 2, 213, 5.8, BODY, PALE, "center")
-    canvas.text("production-ready ML systems", w / 2, 205, 5.8, BODY, PALE, "center")
+    width, _ = canvas.text("to Impact", w / 2, 232, 20.5, TITLE, WHITE, "center")
+    stop = (w / 2 + width / 2 + 7.2, 233.4)  # the full stop of the title, where the line ends
     rng = np.random.default_rng(art.SEED)
-    top, foot = 174.0, 64.0  # the picture lies between these two heights
-    height = top - foot
-    # DATA: scattered points joined to their neighbours
-    x0, x1 = 20.0, 62.0
-    points, sizes, links = art.data(rng)
-    px, py = x0 + points[:, 0] * (x1 - x0), foot + 4 + points[:, 1] * (height - 8)
-    for i, j in links:
-        canvas.line([px[i], px[j]], [py[i], py[j]], SKY, 0.2, alpha=0.45)
-    for x, y, size in zip(px, py, sizes, strict=True):
-        ax.add_patch(Circle((x, y), 0.9 + 1.7 * size, fc=SKY if size > 0.45 else BLUE, ec="none", alpha=0.95, zorder=3))
-    # MODEL: three layers of nodes, every node joined to the next layer
-    n0, n1 = 82.0, 128.0
-    layers = [np.column_stack([n0 + p[:, 0] * (n1 - n0), foot + 6 + p[:, 1] * (height - 12)]) for p in art.network()]
+    # the network, in the middle of the page
+    n0, n1, y_lo, y_hi = 84.0, 130.0, 108.0, 166.0
+    layers = [np.column_stack([n0 + p[:, 0] * (n1 - n0), y_lo + p[:, 1] * (y_hi - y_lo)]) for p in art.network()]
     for left, right in zip(layers[:-1], layers[1:], strict=True):
         for a in left:
             for b in right:
-                canvas.line([a[0], b[0]], [a[1], b[1]], SKY, 0.18, alpha=0.4)
+                canvas.line([a[0], b[0]], [a[1], b[1]], SKY, 0.2, alpha=0.4)
+    # the stream: scattered far from the network, in its lanes as it arrives
+    stream = art.particles(rng)
+    lanes = layers[0][:, 1]
+    x0 = 16.0
+    xs = x0 + stream["t"] * (n0 - 6.0 - x0)
+    spread = 34.0 * (1.0 - stream["t"]) ** 1.5
+    ys = lanes[stream["lane"]] + stream["offset"] * spread
+    for x, y, t, size in zip(xs, ys, stream["t"], stream["size"], strict=True):
+        canvas.line([x - 3.2 * t, x], [y, y], SKY, 0.18, alpha=0.35 * t)
+        ax.add_patch(
+            Circle(
+                (x, y),
+                0.45 + 0.95 * size * (0.5 + 0.5 * t),
+                fc=SKY if t > 0.35 else SLATE,
+                ec="none",
+                alpha=0.35 + 0.6 * t,
+                zorder=3,
+            )
+        )
+    for y in lanes:
+        canvas.line([n0 - 6.0, n0 - 3.6], [y, y], SKY, 0.3, alpha=0.7)
     for k, layer in enumerate(layers):
         for x, y in layer:
             ax.add_patch(
                 Circle(
                     (x, y),
-                    3.3 + 0.5 * k,
+                    3.3 + 0.4 * k,
                     fc=NIGHT,
                     ec=SKY if k < 2 else WHITE,
                     lw=(0.5 + 0.2 * k) / 25.4 * 72,
-                    zorder=3,
+                    zorder=4,
                 )
             )
-    # data flows into the network
-    for y in layers[0][:, 1]:
-        canvas.line([x1 + 3, n0 - 4.5], [y, y], SKY, 0.25, alpha=0.5)
-    canvas.line([n1 + 7, n1 + 15], [foot + height / 2] * 2, SKY, 0.5)
-    ax.add_patch(
-        Polygon(
-            [[n1 + 15, foot + height / 2 + 2.2], [n1 + 15, foot + height / 2 - 2.2], [n1 + 19, foot + height / 2]],
-            fc=SKY,
-            ec="none",
-            zorder=3,
-        )
+    # the line: from the two output nodes to one line that rises to the full stop
+    start = np.array([n1 + 12.0, (y_lo + y_hi) / 2])
+    for y in layers[-1][:, 1]:
+        canvas.line([n1 + 3.8, start[0]], [y, start[1]], SKY, 0.35, alpha=0.8)
+    end = np.array(stop) - np.array([0.0, 2.4])
+    p0, p1, p2, p3 = start, start + np.array([58.0, 10.0]), end + np.array([24.0, -80.0]), end
+    s = art.rise()
+    s = (s - s.min()) / (s.max() - s.min())
+    t = s
+    curve = (
+        ((1 - t)[:, None] ** 3) * p0
+        + 3 * ((1 - t)[:, None] ** 2) * t[:, None] * p1
+        + 3 * (1 - t)[:, None] * (t[:, None] ** 2) * p2
+        + (t[:, None] ** 3) * p3
     )
-    # OUTPUT: the impact curve, with one orange mark at its end
-    o0, o1 = 150.0, 192.0
-    cx, cy = art.impact()
-    xs, ys = o0 + cx * (o1 - o0 - 6), foot + 4 + cy * (height - 24)
-    canvas.line([o0, o0], [foot, top - 4], SLATE, 0.25, alpha=0.7)
-    canvas.line([o0, o1], [foot, foot], SLATE, 0.25, alpha=0.7)
-    ax.fill_between(xs, foot, ys, color=SKY, alpha=0.12, lw=0, zorder=2)
-    canvas.line(xs, ys, SKY, 0.9, zorder=3)
-    for x, y in zip(xs[:-1], ys[:-1], strict=True):
-        ax.add_patch(Circle((x, y), 1.2, fc=SKY, ec="none", zorder=4))
-    ax.add_patch(Circle((xs[-1], ys[-1]), 2.4, fc=ORANGE, ec="none", zorder=4))
-    ax.add_patch(Circle((xs[-1], ys[-1]), 5.0, fc="none", ec=ORANGE, lw=0.5 / 25.4 * 72, zorder=4))
-    canvas.text("IMPACT", xs[-1] - 6.5, ys[-1] + 1.0, 3.0, HEAD, ORANGE, "right", track=0.12)
-    # the three words of the picture
-    for label, x in (("DATA", (x0 + x1) / 2), ("MODEL", (n0 + n1) / 2), ("OUTPUT", (o0 + o1) / 2)):
-        canvas.text(label, x, foot - 8.5, 3.0, HEAD, SLATE, "center", track=0.14)
+    canvas.line(curve[:, 0], curve[:, 1], SKY, 1.0, zorder=3)
+    for k in range(1, 7):
+        x, y = curve[int(k / 7 * (len(curve) - 1))]
+        ax.add_patch(Circle((x, y), 1.1, fc=SKY, ec="none", zorder=4))
+    ax.add_patch(Circle(stop, 3.2, fc=ORANGE, ec="none", zorder=6))
+    ax.add_patch(Circle(stop, 5.2, fc="none", ec=ORANGE, lw=0.5 / 25.4 * 72, alpha=0.8, zorder=6))
+    # the two words of the picture
+    canvas.text("DATA", (x0 + n0) / 2, y_lo - 18.0, 3.0, HEAD, SLATE, "center", track=0.14)
+    canvas.text("MODEL", (n0 + n1) / 2, y_lo - 18.0, 3.0, HEAD, SLATE, "center", track=0.14)
+    canvas.text("From Python fundamentals to production-ready ML systems", w / 2, 38.0, 4.5, BODY, PALE, "center")
     ax.add_patch(Rectangle((0, 0), w, 24, fc=NIGHT, ec="none", lw=0, zorder=70))
     canvas.text("Anthony Faustine", w / 2, 10.5, 6.2, HEAD, WHITE, "center")
 

@@ -52,17 +52,16 @@ def test_the_cmyk_file_has_no_rgb_colour_and_never_exceeds_the_ink_limit(tmp_pat
 
 
 def test_the_pictures_are_computed_and_a_rebuild_changes_nothing():
-    first = art.data(np.random.default_rng(art.SEED))[0]
-    second = art.data(np.random.default_rng(art.SEED))[0]
+    first = art.particles(np.random.default_rng(art.SEED))["offset"]
+    second = art.particles(np.random.default_rng(art.SEED))["offset"]
     assert np.array_equal(first, second)
 
 
 def test_the_parts_of_the_picture_have_their_shape():
-    points, sizes, links = art.data(np.random.default_rng(art.SEED))
-    assert points.min() >= 0.0 and points.max() <= 1.0
-    assert all(i < j for i, j in links)
-    layers = art.network()
-    assert [len(layer) for layer in layers] == list(art.LAYERS)
-    x, y = art.impact()
-    assert np.all(np.diff(y) > 0)  # impact only grows
-    assert y[0] == pytest.approx(0.0) and y[-1] == pytest.approx(1.0)
+    stream = art.particles(np.random.default_rng(art.SEED))
+    assert np.all(np.diff(stream["t"]) >= 0)
+    assert stream["lane"].max() < art.LAYERS[0]
+    assert [len(layer) for layer in art.network()] == list(art.LAYERS)
+    rise = art.rise()
+    assert rise[0] == pytest.approx(0.0) and rise[-1] == pytest.approx(1.0)
+    assert np.all(np.diff(rise) > 0)  # the line only rises
