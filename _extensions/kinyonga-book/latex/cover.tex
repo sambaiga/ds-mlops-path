@@ -1,10 +1,20 @@
 % Cover: the brand ground with the title in the open space, the subtitle beneath it and the author at the foot. It reads
 % the title, subtitle, author and date of the book from the project metadata. Spacing uses \par and \vspace because a
 % line break after an empty field, such as an unset subtitle, fails with "There's no line here to end".
+% A finished cover, with its own title and author, is a PDF at assets/cover-full.pdf: it is shown alone, full page, and nothing
+% is printed over it. Without it, the cover is built from the brand ground, an optional picture at assets/cover.pdf and the
+% title, subtitle and author of the book.
 \makeatletter
-\providecommand{\@subtitle}{}
-
 \xdef\booktitle{\@title}
+\IfFileExists{assets/cover-full.pdf}{%
+  \begin{titlepage}
+  \thispagestyle{bkcover}
+  \AddToShipoutPictureBG*{%
+    \includegraphics[width=\paperwidth, height=\paperheight]{assets/cover-full.pdf}}
+  \null
+  \end{titlepage}
+}{%
+\providecommand{\@subtitle}{}
 \begin{titlepage}
 \thispagestyle{bkcover}
 \AddToShipoutPictureBG*{%
@@ -40,4 +50,5 @@
     {\rmfamily\fontsize{8.5}{10}\selectfont\color{white!60}\bookweb}};
 \end{tikzpicture}
 \end{titlepage}
+}
 \makeatother
