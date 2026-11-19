@@ -130,7 +130,7 @@ Understand and explore the dataset to build familiarity with its structure, cont
 ## The cover
 
 The cover is drawn by code, from the same brand as the web book. `uv run python -m ark.covers --pages 520` writes the
-front cover (`assets/cover.pdf`, used by the LaTeX print edition, and `assets/cover.png`), the print wrap with back
+front cover (`assets/cover-full.pdf`, shown alone by the LaTeX print edition, and `assets/cover.png`), the print wrap with back
 cover, spine and bleed (`assets/print/wrap-rgb.pdf`, not stored), the same wrap in CMYK with the ink limited to 240 %
 (`assets/print/wrap-cmyk.pdf`) and a check sheet with the trim, bleed, safe zone and folds (`assets/print/wrap-guides.png`).
 Set `--pages` from the built print PDF, because the spine is the page count times 0.0572 mm. The defaults are a trim

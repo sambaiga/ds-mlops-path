@@ -35,7 +35,7 @@ def main() -> None:
     fig, _ = sheet(spec, guides=True, barcode_label=True)
     fig.savefig(out / "wrap-guides.png", dpi=110)
     fig, _ = front_only()
-    fig.savefig(args.out / "cover.pdf")
+    fig.savefig(args.out / "cover-full.pdf")
     fig.savefig(args.out / "cover.png", dpi=130)
     from kinyonga.cmyk import convert
 

@@ -191,10 +191,9 @@ def gradient(ax, x0: float, y0: float, x1: float, y1: float, top: str, foot: str
     edges = np.linspace(y0, y1, steps + 1)
     for i in range(steps):
         t = i / (steps - 1)
+        # each strip runs to the top and the next paints over it, so no hairline of the ground shows between them
         ax.add_patch(
-            Rectangle(
-                (x0, edges[i]), x1 - x0, edges[i + 1] - edges[i] + 0.05, fc=tuple(b + (a - b) * t), ec="none", lw=0
-            )
+            Rectangle((x0, edges[i]), x1 - x0, y1 - edges[i], fc=tuple(b + (a - b) * t), ec="none", lw=0, zorder=-5)
         )
 
 
