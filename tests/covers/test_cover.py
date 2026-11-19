@@ -52,20 +52,17 @@ def test_the_cmyk_file_has_no_rgb_colour_and_never_exceeds_the_ink_limit(tmp_pat
 
 
 def test_the_pictures_are_computed_and_a_rebuild_changes_nothing():
-    first = art.table(np.random.default_rng(art.SEED))[0]
-    second = art.table(np.random.default_rng(art.SEED))[0]
+    first = art.data(np.random.default_rng(art.SEED))[0]
+    second = art.data(np.random.default_rng(art.SEED))[0]
     assert np.array_equal(first, second)
 
 
-def test_the_stages_have_the_shape_of_their_task():
-    rng = np.random.default_rng(art.SEED)
-    fpr, tpr = art.roc()
-    assert np.all(tpr >= fpr - 1e-3)  # the classifier is better than chance everywhere
-    bars, p95 = art.latency(rng)
-    assert bars.max() == pytest.approx(1.0)
-    assert 0.0 < p95 < 1.0
-    index, crossing = art.drift(rng)
-    assert index[crossing] > 0.25 >= index[:crossing].max()  # the first crossing of the threshold
-    corr = art.correlation(rng)
-    assert np.allclose(corr, corr.T)
-    assert np.allclose(np.diag(corr), 1.0)
+def test_the_parts_of_the_picture_have_their_shape():
+    points, sizes, links = art.data(np.random.default_rng(art.SEED))
+    assert points.min() >= 0.0 and points.max() <= 1.0
+    assert all(i < j for i, j in links)
+    layers = art.network()
+    assert [len(layer) for layer in layers] == list(art.LAYERS)
+    x, y = art.impact()
+    assert np.all(np.diff(y) > 0)  # impact only grows
+    assert y[0] == pytest.approx(0.0) and y[-1] == pytest.approx(1.0)

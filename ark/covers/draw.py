@@ -198,73 +198,11 @@ def gradient(ax, x0: float, y0: float, x1: float, y1: float, top: str, foot: str
         )
 
 
-COS, SIN = 0.8660254, 0.3
-
-
-class Iso:
-    """An isometric projection of one layer: plane coordinates from -0.5 to 0.5 mapped to millimetres on the page.
-
-    Attributes:
-        cx: The x of the centre of the layer, in millimetres.
-        cy: The y of the centre of the layer, in millimetres.
-        size: The side of the layer, in millimetres.
-    """
-
-    def __init__(self, cx: float, cy: float, size: float) -> None:
-        """Place a layer.
-
-        Args:
-            cx: The x of the centre of the layer.
-            cy: The y of the centre of the layer.
-            size: The side of the layer.
-        """
-        self.cx, self.cy, self.size = cx, cy, size
-
-    def at(self, u, v, z: float = 0.0):
-        """Project plane coordinates, and a height, onto the page.
-
-        Args:
-            u: Position across the layer, from -0.5 to 0.5.
-            v: Position into the layer, from -0.5 to 0.5.
-            z: Height above the layer, in millimetres.
-
-        Returns:
-            The x and y on the page, in millimetres.
-        """
-        u, v = np.asarray(u, dtype=float), np.asarray(v, dtype=float)
-        return self.cx + (u - v) * self.size * COS, self.cy + (u + v) * self.size * SIN + z
-
-
-def _slab(ax, iso: Iso, thick: float, top_alpha: float, z0: float) -> None:
-    """Draw one layer as a slab: a top face, two sides and a bright edge.
-
-    Args:
-        ax: The axes.
-        iso: The projection of the layer.
-        thick: The thickness of the slab, in millimetres.
-        top_alpha: The opacity of the top face.
-        z0: The drawing order of the layer; its picture is drawn above it and below the next layer.
-    """
-    corners = [(-0.5, -0.5), (0.5, -0.5), (0.5, 0.5), (-0.5, 0.5)]
-    top = np.array([iso.at(u, v) for u, v in corners]).T
-    top_poly = np.column_stack(top)
-    left = np.array([top_poly[0], top_poly[3], top_poly[3] - [0, thick], top_poly[0] - [0, thick]])
-    right = np.array([top_poly[0], top_poly[1], top_poly[1] - [0, thick], top_poly[0] - [0, thick]])
-    front_l = np.array([top_poly[3], top_poly[2], top_poly[2] - [0, thick], top_poly[3] - [0, thick]])
-    front_r = np.array([top_poly[1], top_poly[2], top_poly[2] - [0, thick], top_poly[1] - [0, thick]])
-    del left, right
-    ax.add_patch(Polygon(front_l, fc=BLUE, ec="none", alpha=0.95, lw=0, zorder=z0))
-    ax.add_patch(Polygon(front_r, fc=NIGHT, ec="none", alpha=0.98, lw=0, zorder=z0))
-    ax.add_patch(Polygon(top_poly, fc="#12304A", ec="none", alpha=top_alpha, lw=0, zorder=z0 + 0.5))
-    ax.add_patch(Polygon(top_poly, fc="none", ec=SKY, lw=0.35 / 25.4 * 72, zorder=z0 + 0.6))
-
-
 def front(canvas: Canvas) -> None:
-    """Draw the front cover on an A4 sheet, in design millimetres: the title and a cut-away of the system in layers.
+    """Draw the front cover on an A4 sheet, in design millimetres: the title and the picture of the book's landing page.
 
-    A signal rises through five layers of a machine learning system (data, features, model, service and monitor) and
-    ends in one orange mark, the decision. Each layer carries the picture of its stage, computed from a seeded
-    simulation.
+    The picture reads from left to right as the title does: scattered data, a small network, and a curve that rises to
+    one orange mark, the impact. It is the web book's illustration, redrawn large, in the brand colours.
 
     Args:
         canvas: The canvas of the front panel.
@@ -273,91 +211,67 @@ def front(canvas: Canvas) -> None:
     canvas.text(EYEBROW, w / 2, 277.5, 3.0, HEAD, SLATE, "center", track=0.12)
     canvas.text("From Data", w / 2, 252, 20.5, TITLE, WHITE, "center")
     canvas.text("to Impact", w / 2, 232, 20.5, TITLE, WHITE, "center")
-    canvas.text("From Python fundamentals to", w / 2, 214, 5.6, BODY, PALE, "center")
-    canvas.text("production-ready ML systems", w / 2, 206.5, 5.6, BODY, PALE, "center")
+    canvas.line([w / 2 - 13, w / 2 + 13], [223.5, 223.5], SKY, 0.6)
+    canvas.text("From Python fundamentals to", w / 2, 213, 5.8, BODY, PALE, "center")
+    canvas.text("production-ready ML systems", w / 2, 205, 5.8, BODY, PALE, "center")
     rng = np.random.default_rng(art.SEED)
-    size, thick, cx, first, pitch = 64.0, 2.6, 105.0, 62.0, 26.0
-    layers = [Iso(cx, first + i * pitch, size) for i in range(len(art.STAGES))]
-    beam_x = cx
-    for i, iso in enumerate(layers):
-        _slab(ax, iso, thick, 0.92, 2 + 10 * i)
-    values, bad = art.table(rng, rows=9, cols=9)
-    corr = art.correlation(rng)
-    fpr, tpr = art.roc()
-    bars, p95 = art.latency(rng, bins=22)
-    index, _ = art.drift(rng)
-    line = 0.6
-    # DATA: a grid of points, one of which fails its schema
-    iso, z = layers[0], 3.0
-    for r in range(9):
-        for c in range(9):
-            x, y = iso.at(-0.42 + c * 0.105, -0.42 + r * 0.105)
-            ax.add_patch(Circle((x, y), 0.45 + 0.9 * values[r, c], fc=SKY, ec="none", alpha=0.85, zorder=z))
-    x, y = iso.at(-0.42 + bad[1] * 0.105, -0.42 + bad[0] * 0.105)
-    ax.add_patch(Circle((x, y), 2.0, fc="none", ec=WHITE, lw=0.4 / 25.4 * 72, zorder=z + 0.2))
-    # FEATURES: a matrix of shaded cells
-    iso, z = layers[1], 13.0
-    for r in range(len(corr)):
-        for c in range(len(corr)):
-            u0, v0, d = -0.44 + c * 0.098, -0.44 + r * 0.098, 0.085
-            quad = np.array([iso.at(u0, v0), iso.at(u0 + d, v0), iso.at(u0 + d, v0 + d), iso.at(u0, v0 + d)])
-            shade = 0.12 + 0.8 * abs(corr[r, c])
-            ax.add_patch(Polygon(quad, fc=SKY if corr[r, c] >= 0 else BLUE, alpha=shade, ec="none", lw=0, zorder=z))
-    # MODEL: the ROC curve laid on the layer, with the chance diagonal
-    iso, z = layers[2], 23.0
-    rx, ry = iso.at(fpr * 0.84 - 0.42, tpr * 0.5 - 0.46)
-    corner = iso.at(0.42, -0.46)
-    area = np.column_stack([np.append(rx, corner[0]), np.append(ry, corner[1])])
-    ax.add_patch(Polygon(area, fc=SKY, alpha=0.16, ec="none", lw=0, zorder=z))
-    canvas.line(
-        *iso.at(np.array([-0.42, 0.42]), np.array([-0.46, 0.04])),
-        WHITE,
-        0.3,
-        dash=(1.2, 0.9),
-        alpha=0.9,
-        zorder=z + 0.1,
-    )
-    canvas.line(rx, ry, SKY, line, zorder=z + 0.2)
-    # SERVE: bars that stand on the layer, with the 95th percentile marked
-    iso, z = layers[3], 33.0
-    for i, value in enumerate(bars):
-        u = -0.42 + i * 0.84 / (len(bars) - 1)
-        (x0, y0), (x1, y1) = iso.at(u, 0.0), iso.at(u, 0.0, max(value, 0.03) * 12)
-        canvas.line([x0, x1], [y0, y1], SKY, 0.7, zorder=z)
-    px = iso.at(-0.42 + p95 * 0.84, 0.0)
-    canvas.line([px[0], px[0]], [px[1], px[1] + 13], WHITE, 0.3, dash=(1.0, 0.8), zorder=z + 0.1)
-    # MONITOR: the drift of a live feature on the top layer, against the line where a team retrains
-    iso, z = layers[4], 43.0
-    t = np.linspace(-0.42, 0.42, len(index))
-    dx, dy = iso.at(t, index / index.max() * 0.7 - 0.35)
-    corner = iso.at(0.42, -0.35)
+    top, foot = 174.0, 64.0  # the picture lies between these two heights
+    height = top - foot
+    # DATA: scattered points joined to their neighbours
+    x0, x1 = 20.0, 62.0
+    points, sizes, links = art.data(rng)
+    px, py = x0 + points[:, 0] * (x1 - x0), foot + 4 + points[:, 1] * (height - 8)
+    for i, j in links:
+        canvas.line([px[i], px[j]], [py[i], py[j]], SKY, 0.2, alpha=0.45)
+    for x, y, size in zip(px, py, sizes, strict=True):
+        ax.add_patch(Circle((x, y), 0.9 + 1.7 * size, fc=SKY if size > 0.45 else BLUE, ec="none", alpha=0.95, zorder=3))
+    # MODEL: three layers of nodes, every node joined to the next layer
+    n0, n1 = 82.0, 128.0
+    layers = [np.column_stack([n0 + p[:, 0] * (n1 - n0), foot + 6 + p[:, 1] * (height - 12)]) for p in art.network()]
+    for left, right in zip(layers[:-1], layers[1:], strict=True):
+        for a in left:
+            for b in right:
+                canvas.line([a[0], b[0]], [a[1], b[1]], SKY, 0.18, alpha=0.4)
+    for k, layer in enumerate(layers):
+        for x, y in layer:
+            ax.add_patch(
+                Circle(
+                    (x, y),
+                    3.3 + 0.5 * k,
+                    fc=NIGHT,
+                    ec=SKY if k < 2 else WHITE,
+                    lw=(0.5 + 0.2 * k) / 25.4 * 72,
+                    zorder=3,
+                )
+            )
+    # data flows into the network
+    for y in layers[0][:, 1]:
+        canvas.line([x1 + 3, n0 - 4.5], [y, y], SKY, 0.25, alpha=0.5)
+    canvas.line([n1 + 7, n1 + 15], [foot + height / 2] * 2, SKY, 0.5)
     ax.add_patch(
         Polygon(
-            np.column_stack([np.append(dx, corner[0]), np.append(dy, corner[1])]),
+            [[n1 + 15, foot + height / 2 + 2.2], [n1 + 15, foot + height / 2 - 2.2], [n1 + 19, foot + height / 2]],
             fc=SKY,
-            alpha=0.18,
             ec="none",
-            lw=0,
-            zorder=z,
+            zorder=3,
         )
     )
-    canvas.line(dx, dy, SKY, line, zorder=z + 0.2)
-    level = 0.25 / index.max() * 0.7 - 0.35
-    canvas.line(
-        *iso.at(np.array([-0.42, 0.42]), np.array([level, level])), SKY, 0.3, dash=(1.2, 0.9), alpha=0.9, zorder=z + 0.1
-    )
-    # the beam rises through every layer; the one orange mark is where it leaves the stack: the decision
-    top = layers[-1].cy
-    canvas.line([beam_x, beam_x], [layers[0].cy, top + 12], SKY, 0.35, alpha=0.9, zorder=60)
-    for iso in layers:
-        ax.add_patch(Circle((beam_x, iso.cy), 0.8, fc=SKY, ec="none", zorder=61))
-    ax.add_patch(Circle((beam_x, top + 12), 1.7, fc=ORANGE, ec="none", zorder=62))
-    ax.add_patch(Circle((beam_x, top + 12), 4.0, fc="none", ec=ORANGE, lw=0.5 / 25.4 * 72, zorder=62))
-    canvas.text("DECISION", beam_x, top + 19.0, 2.8, HEAD, ORANGE, "center", track=0.12, zorder=80)
-    for iso, stage in zip(layers, art.STAGES, strict=True):
-        canvas.text(stage.name, cx + size * COS + 6, iso.cy - 1.2, 2.8, HEAD, SKY, track=0.1)
-        for k, tool in enumerate(stage.tools):
-            canvas.text(tool, cx - size * COS - 6, iso.cy + 2.4 - k * 5.2, 2.8, BODY, PALE, "right")
+    # OUTPUT: the impact curve, with one orange mark at its end
+    o0, o1 = 150.0, 192.0
+    cx, cy = art.impact()
+    xs, ys = o0 + cx * (o1 - o0 - 6), foot + 4 + cy * (height - 24)
+    canvas.line([o0, o0], [foot, top - 4], SLATE, 0.25, alpha=0.7)
+    canvas.line([o0, o1], [foot, foot], SLATE, 0.25, alpha=0.7)
+    ax.fill_between(xs, foot, ys, color=SKY, alpha=0.12, lw=0, zorder=2)
+    canvas.line(xs, ys, SKY, 0.9, zorder=3)
+    for x, y in zip(xs[:-1], ys[:-1], strict=True):
+        ax.add_patch(Circle((x, y), 1.2, fc=SKY, ec="none", zorder=4))
+    ax.add_patch(Circle((xs[-1], ys[-1]), 2.4, fc=ORANGE, ec="none", zorder=4))
+    ax.add_patch(Circle((xs[-1], ys[-1]), 5.0, fc="none", ec=ORANGE, lw=0.5 / 25.4 * 72, zorder=4))
+    canvas.text("IMPACT", xs[-1] - 6.5, ys[-1] + 1.0, 3.0, HEAD, ORANGE, "right", track=0.12)
+    # the three words of the picture
+    for label, x in (("DATA", (x0 + x1) / 2), ("MODEL", (n0 + n1) / 2), ("OUTPUT", (o0 + o1) / 2)):
+        canvas.text(label, x, foot - 8.5, 3.0, HEAD, SLATE, "center", track=0.14)
     ax.add_patch(Rectangle((0, 0), w, 24, fc=NIGHT, ec="none", lw=0, zorder=70))
     canvas.text("Anthony Faustine", w / 2, 10.5, 6.2, HEAD, WHITE, "center")
 
@@ -385,6 +299,9 @@ def back(canvas: Canvas) -> None:
         canvas.text(line, left + 15, y - 2.2, 3.3, BODY, SLATE)
     canvas.text("IN EVERY CHAPTER", left, 96, 2.8, HEAD, SLATE, track=0.12)
     canvas.text("Key concept   Activity   Common mistake   Pro tip", left, 89, 3.6, BODY, SKY)
+    canvas.text("THE TOOLS", left, 76, 2.8, HEAD, SLATE, track=0.12)
+    canvas.text("uv, ruff, pytest, pandas, polars, scikit-learn,", left, 69, 3.5, BODY, PALE)
+    canvas.text("pydantic, MLflow, FastAPI, Docker and Prefect", left, 63.5, 3.5, BODY, PALE)
     canvas.text("READ ONLINE", left, 52, 2.8, HEAD, SLATE, track=0.12)
     canvas.text(URL, left, 45, 4.2, HEAD, SKY)
 
