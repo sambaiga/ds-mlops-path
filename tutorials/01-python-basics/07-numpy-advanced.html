@@ -86,9 +86,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../../site_libs/quarto-html/quarto-syntax-highlighting-b5dd4a3dad4a14cacb13808a6fedce1e.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-ae0c47e7e81032cba74c80ddb8e22ce3.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../../site_libs/bootstrap/bootstrap-dark-2200433aa4358df1883964837c597a63.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<link href="../../site_libs/bootstrap/bootstrap-ae0c47e7e81032cba74c80ddb8e22ce3.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dc40c1eafaa3df1fec0a6ee92d2e64c0.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark-7ab576fe3482fb521ce7f34cb3a06d8b.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../../site_libs/bootstrap/bootstrap-dc40c1eafaa3df1fec0a6ee92d2e64c0.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -905,16 +905,22 @@ student_data_scaled.max(axis=0)  # -&gt; array([1., 1., 1.])</pre>
 <span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Vectorised time  : </span><span class="sc">{</span>vector_time<span class="sc">:.4f}</span><span class="ss">s"</span>)</span>
 <span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Speedup          : </span><span class="sc">{</span>loop_time <span class="op">/</span> vector_time<span class="sc">:,.0f}</span><span class="ss">x"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Python loop time : 0.3243s
-Vectorised time  : 0.0139s
-Speedup          : 23x</code></pre>
+<pre><code>Python loop time : 0.2617s
+Vectorised time  : 0.0097s
+Speedup          : 27x</code></pre>
 </div>
 </div>
 <div class="ark-tip">
 <p><span class="ark-tip-title"><i class="bi bi-lightbulb-fill"></i> Pro Tip: if you’re writing a <code>for</code> loop over an array, stop and look for a vectorised way</span><br><br> Almost every elementwise transformation, filter, or aggregation you would write as a Python loop already has a NumPy equivalent: arithmetic operators, <code>np.where</code>, boolean masks, <code>axis</code> aggregations. Reach for those first: a hand-written loop over a large array is one of the most common NumPy performance bugs, and it’s usually a 10-100x slowdown for no benefit.</p>
 </div>
 <div class="ark-activity">
-<p><span class="ark-activity-title"><i class="bi bi-puzzle-fill"></i> Activity 2: benchmark loop vs vectorised z-score</span><br><br> Measure the speedup of vectorisation.<br><br> 1. Create <code>arr = np.random.default_rng(0).normal(size=100_000)</code>.<br> 2. Implement a Python loop z-score (iterate element by element).<br> 3. Implement the vectorised version: <code>(arr - arr.mean()) / arr.std()</code>.<br> 4. Time both with <code>import time</code> and print the speedup ratio.<br><br> <b>Expected:</b> vectorised is 50-200x faster.</p>
+<p><span class="ark-activity-title"><i class="bi bi-puzzle-fill"></i> Activity 2: benchmark loop vs vectorised z-score</span><br><br> Measure the speedup of vectorisation.<br><br></p>
+<ol type="1">
+<li>Create <code>arr = np.random.default_rng(0).normal(size=100_000)</code>.<br></li>
+<li>Implement a Python loop z-score (iterate element by element).<br></li>
+<li>Implement the vectorised version: <code>(arr - arr.mean()) / arr.std()</code>.<br></li>
+<li>Time both with <code>import time</code> and print the speedup ratio.<br><br> <b>Expected:</b> vectorised is 50-200x faster.</li>
+</ol>
 </div>
 </section>
 <section id="linear-algebra-essentials" class="level2">
@@ -966,7 +972,13 @@ RMSE   : 8.10</code></pre>
 <p><span class="ark-mistake-title"><i class="bi bi-bug-fill"></i> Common Mistake: comparing floats with ==</span><br><br> <code>np.allclose(a, b)</code> was used above instead of <code>(a == b).all()</code> on purpose: floating-point arithmetic accumulates tiny rounding errors, so two mathematically-equal results can differ in their last bit. Always compare floats with a tolerance: <code>np.allclose</code>, or <code>abs(a - b) &lt; 1e-9</code>, never with exact <code>==</code>.</p>
 </div>
 <div class="ark-activity">
-<p><span class="ark-activity-title"><i class="bi bi-puzzle-fill"></i> Activity 3: linear prediction with @</span><br><br> Use matrix multiplication to compute predictions.<br><br> Using <code>student_data</code> from the setup section:<br> 1. Define <code>weights = np.array([0.3, 0.4, 1.5])</code> and <code>bias = -2.0</code>.<br> 2. Compute predicted scores as <code>preds = student_data @ weights + bias</code>.<br> 3. Confirm <code>preds.shape == (5,)</code>.<br> 4. Print the index of the highest-scoring student using <code>np.argmax(preds)</code>.</p>
+<p><span class="ark-activity-title"><i class="bi bi-puzzle-fill"></i> Activity 3: linear prediction with @</span><br><br> Use matrix multiplication to compute predictions.<br><br> Using <code>student_data</code> from the setup section:<br></p>
+<ol type="1">
+<li>Define <code>weights = np.array([0.3, 0.4, 1.5])</code> and <code>bias = -2.0</code>.<br></li>
+<li>Compute predicted scores as <code>preds = student_data @ weights + bias</code>.<br></li>
+<li>Confirm <code>preds.shape == (5,)</code>.<br></li>
+<li>Print the index of the highest-scoring student using <code>np.argmax(preds)</code>.</li>
+</ol>
 </div>
 </section>
 <section id="saving-and-loading-arrays" class="level2">
@@ -1014,7 +1026,12 @@ target : [88. 65. 95.]</code></pre>
 <h2 class="anchored" data-anchor-id="common-gotchas">11. Common gotchas</h2>
 <p>Like the Python gotchas in Chapter 4, none of these raise an exception. They silently produce a wrong (or surprising) result. Recognise them now so you do not lose hours to them later.</p>
 <div class="ark-concept">
-<p><span class="ark-concept-title"><i class="bi bi-key-fill"></i> Key Concept: three gotchas that never raise an exception</span><br><br> 1. <b>View vs copy</b>: <code>sub = student_data[:2]</code> shares memory; mutating <code>sub</code> mutates <code>student_data</code>. Fix: <code>student_data[:2].copy()</code>.<br> 2. <b>Integer overflow</b>: <code>np.array([120, 10], dtype=np.int8)</code> wraps silently. Fix: check dtype before arithmetic.<br> 3. <b>Shape mismatch in broadcasting</b>: <code>(5, 3) - (3, 5)</code> may broadcast unexpectedly. Always check shapes before subtracting.</p>
+<p><span class="ark-concept-title"><i class="bi bi-key-fill"></i> Key Concept: three gotchas that never raise an exception</span><br><br></p>
+<ol type="1">
+<li><b>View vs copy</b>: <code>sub = student_data[:2]</code> shares memory; mutating <code>sub</code> mutates <code>student_data</code>. Fix: <code>student_data[:2].copy()</code>.<br></li>
+<li><b>Integer overflow</b>: <code>np.array([120, 10], dtype=np.int8)</code> wraps silently. Fix: check dtype before arithmetic.<br></li>
+<li><b>Shape mismatch in broadcasting</b>: <code>(5, 3) - (3, 5)</code> may broadcast unexpectedly. Always check shapes before subtracting.</li>
+</ol>
 </div>
 <div id="36" class="cell" data-execution_count="11">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># GOTCHA 1: basic slicing returns a VIEW, not a copy</span></span>
