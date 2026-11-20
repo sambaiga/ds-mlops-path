@@ -53,7 +53,64 @@ the book's motivating example lines up with the anomaly-detection case
 study that actually gets built in code. This is a follow-up edit to Ch28-30
 after Ch37 exists, not something to do now.
 
-## Decisions
+## Revision of 20 November 2026: scope against the two mbuga volumes
+
+The author is writing two further books in the repository `mbuga`: Volume 1, *Finding Structure in Time Series*
+(clustering, ranking, retrieval, recommendation and anomaly detection), and Volume 2, *Forecasting for Operations*
+(signals, forecasters, probabilistic forecasting, retail structure and decisions). Four of the seven case studies below
+cover the same methods. This book does not repeat them.
+
+**Principle.** This book teaches the workflow and the craft of a data science project: framing the problem, building the
+pipeline, evaluating honestly, shipping and monitoring, and stating the value. The two volumes teach the methods in
+depth, with their mathematics, assumptions and failure modes. Where a method belongs to a volume, this book shows the
+workflow on one small case and then points to the volume instead of deriving the method.
+
+**Revised case studies.**
+
+| Ch | Task | Decision | Reason |
+|---|---|---|---|
+| 33 | Regression (spend) | Keep, as built | In neither volume |
+| 34 | Classification (churn) | Keep | In neither volume |
+| 35 | Forecasting (spend) | Keep as the single forecasting case: baseline, chronological split, dollar value | Depth (probabilistic forecasts, hierarchies, intermittent demand) is Volume 2 |
+| 36 | Clustering (segmentation) | Replace by a short framing chapter | Clustering is Volume 1, Part II |
+| 37 | Survival analysis and remaining useful life (SCANIA) | Keep, and give it the most care | In neither volume, and most books skip it |
+| 38 | Anomaly detection (SCANIA) | Replace by a short framing chapter | Anomaly detection is Volume 1, Part IV |
+| 39 | Recommendation and ranking (Olist) | Replace by a short framing chapter | Retrieval, ranking and recommendation are Volume 1, Part III |
+
+A framing chapter is a few pages: the business question, the spec card, the choice of success metric and the decision it
+changes, one small worked example, and a pointer to the volume for the method. It carries no new method.
+
+**The empty parts hold what neither volume covers.**
+
+| Part | Scope |
+|---|---|
+| MLOps | Pipelines, CI/CD, serving, experiment tracking, reproducibility |
+| Production monitoring | Data and prediction drift, performance decay, retraining triggers, alerting |
+| ML system design | Decision-first framing, cost and latency trade-offs, build against buy |
+| Value-driven AI | Stating and checking the value of a model, communicating results to a stakeholder |
+| Deep learning and LLMs | At project level: when to use them, how to adapt and evaluate them, without time-series specifics |
+
+**Datasets.** The datasets of this book (Nature Open e-commerce, SCANIA Component X, Olist, IBM Telco churn, Hotel
+Booking Demand) differ from those of the volumes (M5, VN1, VN2, FreshRetailNet-50K and energy data). They stay different,
+so that no worked example repeats and the methods are seen to generalise.
+
+**Cross-references.** A pointer names the volume and its part, not a chapter number, because the volumes are drafts and
+their numbering will move. Volume 1, Parts III and IV, and Volume 2 are not yet published; a framing chapter links to a
+volume only once the target chapter is public. Until then it says that the method is treated in the volume and gives the
+title. Each volume stays self-contained and does not require this book.
+
+**Open decisions for the author.**
+
+1. Whether pointers should cite chapter numbers once the volumes are published, or stay at the level of part and title.
+2. Where the shared vocabulary of the spec card is defined, so that both volumes can cite one source.
+3. Whether the short chapter on data contracts, testing and reproducibility for machine learning code belongs to the
+   "Dev tools" part or to "MLOps".
+
+**What this changes in the repository.** `_quarto.yml` lists only chapter 33 under "Classical ML projects"; chapters
+34, 35 and 37 are added as they are written, and the framing chapters for 36, 38 and 39 are written last. The section
+below, "Decisions", is the original plan and stands except where this revision replaces it.
+
+## Decisions (original plan of the first revision; superseded where the revision above says so)
 
 **Structure**: new part "Classical ML Projects" in `_quarto.yml`, inserted
 between "ML landscape" (ends Ch32) and "Deep learning". New directory
